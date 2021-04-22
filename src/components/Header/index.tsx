@@ -22,11 +22,7 @@ import Menu from '../Menu'
 
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
-import ClaimModal from '../claim/ClaimModal'
-import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 import { useUserHasAvailableClaim } from '../../state/claim/hooks'
-import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
-import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
@@ -302,23 +298,17 @@ export default function Header() {
   // const [isDark] = useDarkModeManager()
   const [darkMode, toggleDarkMode] = useDarkModeManager()
 
-  const toggleClaimModal = useToggleSelfClaimModal()
-
   const availableClaim: boolean = useUserHasAvailableClaim(account)
-
-  const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-  const showClaimPopup = useShowClaimPopup()
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
-      <ClaimModal />
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal>
@@ -332,27 +322,8 @@ export default function Header() {
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink>
-          <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/create') ||
-              pathname.startsWith('/find')
-            }
-          >
-            {t('pool')}
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/uni'}>
-            UNI
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            Vote
-          </StyledNavLink>
-          <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
-            Charts <span style={{ fontSize: '11px' }}>↗</span>
+          <StyledExternalLink id={`stake-nav-link`} href={'https://alchemist.farm'}>
+            Crucible <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
@@ -363,16 +334,6 @@ export default function Header() {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
-          {availableClaim && !showClaimPopup && (
-            <UNIWrapper onClick={toggleClaimModal}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? <Dots>Claiming UNI</Dots> : 'Claim UNI'}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )}
           {!availableClaim && aggregateBalance && (
             <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
               <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
