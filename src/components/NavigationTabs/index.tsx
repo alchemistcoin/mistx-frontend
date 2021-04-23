@@ -2,15 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
-import { NavLink, Link as HistoryLink } from 'react-router-dom'
-
-import { ArrowLeft } from 'react-feather'
-import { RowBetween } from '../Row'
+import { NavLink } from 'react-router-dom'
 // import QuestionHelper from '../QuestionHelper'
-import Settings from '../Settings'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from 'state'
-import { resetMintState } from 'state/mint/actions'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -47,15 +40,6 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `
 
-const ActiveText = styled.div`
-  font-weight: 500;
-  font-size: 20px;
-`
-
-const StyledArrowLeft = styled(ArrowLeft)`
-  color: ${({ theme }) => theme.text1};
-`
-
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
   const { t } = useTranslation()
   return (
@@ -66,42 +50,6 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
         {t('pool')}
       </StyledNavLink>
-    </Tabs>
-  )
-}
-
-export function FindPoolTabs() {
-  return (
-    <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-        <HistoryLink to="/pool">
-          <StyledArrowLeft />
-        </HistoryLink>
-        <ActiveText>Import Pool</ActiveText>
-        <Settings />
-      </RowBetween>
-    </Tabs>
-  )
-}
-
-export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating: boolean }) {
-  // reset states on back
-  const dispatch = useDispatch<AppDispatch>()
-
-  return (
-    <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-        <HistoryLink
-          to="/pool"
-          onClick={() => {
-            adding && dispatch(resetMintState())
-          }}
-        >
-          <StyledArrowLeft />
-        </HistoryLink>
-        <ActiveText>{creating ? 'Create a pair' : adding ? 'Add Liquidity' : 'Remove Liquidity'}</ActiveText>
-        <Settings />
-      </RowBetween>
     </Tabs>
   )
 }
