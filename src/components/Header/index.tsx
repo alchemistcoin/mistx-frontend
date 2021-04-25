@@ -1,35 +1,15 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React, { useState } from 'react'
-import { Text } from 'rebass'
-import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
+import React from 'react'
+import { NavLink, Link } from 'react-router-dom'
+import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
-
 import styled from 'styled-components'
-
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo_white.svg'
-import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
-import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
-import { CardNoise } from '../earn/styled'
-import { CountUp } from 'use-count-up'
-import { TYPE, ExternalLink } from '../../theme'
-
-import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
-import Menu from '../Menu'
-
+import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
+import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
-import Web3Status from '../Web3Status'
-import { useUserHasAvailableClaim } from '../../state/claim/hooks'
-import Modal from '../Modal'
-import UniBalanceContent from './UniBalanceContent'
-import usePrevious from '../../hooks/usePrevious'
+import { GithubIcon, DiscordIcon, UniswapIcon, EtherscanIcon, CoingeckoIcon } from '../Icons'
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   align-items: center;
@@ -38,160 +18,50 @@ const HeaderFrame = styled.div`
   top: 0;
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  padding: 1rem 1rem;
   z-index: 2;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    padding: 0 1rem;
-    width: calc(100%);
-    position: relative;
-  `};
-
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
   `}
-`
-
-const HeaderControls = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-self: flex-end;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    width: 100%;
-    max-width: 960px;
-    padding: 1rem;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    z-index: 99;
-    height: 72px;
-    border-radius: 12px 12px 0 0;
-    background-color: ${({ theme }) => theme.bg1};
-  `};
-`
-
-const HeaderElement = styled.div`
-  display: flex;
-  align-items: center;
-
-  /* addresses safari's lack of support for "gap" */
-  & > *:not(:first-child) {
-    margin-left: 8px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-   flex-direction: row-reverse;
-    align-items: center;
-  `};
-`
-
-const HeaderElementWrap = styled.div`
-  display: flex;
-  align-items: center;
+  background: linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(0 0 0 / 45%) 100%);
 `
 
 const HeaderRow = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  flex-grow: 1;
+  flex-basis: 0;
+  flex: ${({ theme }) => theme.mediaWidth.upToMedium`
    width: 100%;
   `};
 `
 
 const HeaderLinks = styled(Row)`
-  justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem 0 1rem 1rem;
-    justify-content: flex-end;
 `};
 `
 
-const AccountElement = styled.div<{ active: boolean }>`
+const LogoWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
-  border-radius: 12px;
-  white-space: nowrap;
-  width: 100%;
-  cursor: pointer;
+  margin: 1rem 0;
+  height: ${rem(80)};
 
-  :focus {
-    border: 1px solid blue;
+  > svg {
+    height: 100%;
+    width: auto;
   }
 `
 
-const UNIAmount = styled(AccountElement)`
-  color: white;
-  padding: 4px 8px;
-  height: 36px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
-`
-
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.8;
-  }
-
-  :active {
-    opacity: 0.9;
-  }
-`
-
-const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
-const NetworkCard = styled(YellowCard)`
-  border-radius: 12px;
-  padding: 8px 12px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0;
-    margin-right: 0.5rem;
-    width: initial;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-  `};
-`
-
-const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
-`
-
-const Title = styled.a`
+const LogoLink = styled(Link)`
   display: flex;
-  align-items: center;
-  pointer-events: auto;
-  justify-self: flex-start;
-  margin-right: 12px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    justify-self: center;
-  `};
-  :hover {
-    cursor: pointer;
-  }
+  flex-direction: column;
 `
 
-const UniIcon = styled.div`
-  transition: transform 0.3s ease;
-  :hover {
-    transform: rotate(-5deg);
-  }
+const HideSmall = styled.div`
+  display: flex;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
 `
 
 const activeClassName = 'ACTIVE'
@@ -208,13 +78,25 @@ const StyledNavLink = styled(NavLink).attrs({
   color: ${({ theme }) => theme.text2};
   font-size: 1rem;
   width: fit-content;
-  margin: 0 12px;
+  margin: 0 0.75rem;
   font-weight: 500;
+  position: relative;
 
   &.${activeClassName} {
     border-radius: 12px;
-    font-weight: 600;
+    font-weight: 700;
     color: ${({ theme }) => theme.text1};
+
+    &:after {
+      content: '';
+      width: ${rem(35)};
+      height: ${rem(4)};
+      bottom: -${rem(15)};
+      left: 0;
+      position: absolute;
+      background: ${({ theme }) => theme.yellow1};
+      border-radius: 1rem;
+    }
   }
 
   :hover,
@@ -235,7 +117,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   color: ${({ theme }) => theme.text2};
   font-size: 1rem;
   width: fit-content;
-  margin: 0 12px;
+  margin: 0 0.75rem;
   font-weight: 500;
 
   &.${activeClassName} {
@@ -262,9 +144,9 @@ export const StyledMenuButton = styled.button`
   background-color: transparent;
   margin: 0;
   padding: 0;
-  height: 35px;
+  height: ${rem(35)};
   background-color: ${({ theme }) => theme.bg3};
-  margin-left: 8px;
+  margin-left: 0.5rem;
   padding: 0.15rem 0.5rem;
   border-radius: 0.5rem;
 
@@ -283,99 +165,84 @@ export const StyledMenuButton = styled.button`
   }
 `
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan'
-}
+export const SocialLinkWrapper = styled.div`
+  display: flex;
+  position: relative;
+  margin: 0 0 0 1rem;
+  width: ${rem(36)};
+  height: ${rem(36)};
+`
+
+export const SocialLink = styled(ExternalLink)`
+  display: flex;
+  position: absolute;
+  top: 0;
+  border-radius: 100%;
+  border: 2px solid transparent;
+  transition: border 0.5s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.yellow1};
+  }
+
+  > svg {
+    height: ${rem(36)};
+    width: auto;
+  }
+`
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
-
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  // const [isDark] = useDarkModeManager()
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
-
-  const availableClaim: boolean = useUserHasAvailableClaim(account)
-
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
-
-  const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
-      <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
-        <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
-      </Modal>
-      <HeaderRow>
-        <Title href=".">
-          <UniIcon>
-            <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
-          </UniIcon>
-        </Title>
+      <HeaderRow align="start">
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
+          <StyledNavLink id={`swap-nav-link`} to={'/Swap'}>
+            {t('exchange')}
           </StyledNavLink>
           <StyledExternalLink id={`stake-nav-link`} href={'https://alchemist.farm'}>
-            Crucible <span style={{ fontSize: '11px' }}>↗</span>
+            {t('crucible')} <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
-      <HeaderControls>
-        <HeaderElement>
-          <HideSmall>
-            {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-            )}
-          </HideSmall>
-          {!availableClaim && aggregateBalance && (
-            <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                {account && (
-                  <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem'
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                  </HideSmall>
-                )}
-                UNI
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )}
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {account && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
-              </BalanceText>
-            ) : null}
-            <Web3Status />
-          </AccountElement>
-        </HeaderElement>
-        <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
-          <Menu />
-        </HeaderElementWrap>
-      </HeaderControls>
+      <LogoWrapper>
+        <LogoLink to="/" title={t('mistx')}>
+          <Logo />
+        </LogoLink>
+      </LogoWrapper>
+      <HeaderRow align="end" justify="flex-end">
+        <HideSmall>
+          <SocialLinkWrapper>
+            <SocialLink href="http://discord.alchemist.wtf" title={t('discord')}>
+              <DiscordIcon />
+            </SocialLink>
+          </SocialLinkWrapper>
+          <SocialLinkWrapper>
+            <SocialLink href="https://github.com/alchemistcoin" title={t('github')}>
+              <GithubIcon />
+            </SocialLink>
+          </SocialLinkWrapper>
+          <SocialLinkWrapper>
+            <SocialLink href="https://etherscan.io/" title={t('etherscan')}>
+              <EtherscanIcon />
+            </SocialLink>
+          </SocialLinkWrapper>
+          <SocialLinkWrapper>
+            <SocialLink
+              href="https://info.uniswap.org/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
+              title={t('uniswap')}
+            >
+              <UniswapIcon />
+            </SocialLink>
+          </SocialLinkWrapper>
+          <SocialLinkWrapper>
+            <SocialLink href="https://www.coingecko.com/en/coins/alchemist" title={t('coingecko')}>
+              <CoingeckoIcon />
+            </SocialLink>
+          </SocialLinkWrapper>
+        </HideSmall>
+      </HeaderRow>
     </HeaderFrame>
   )
 }
