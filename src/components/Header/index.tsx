@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
-import { GithubIcon, DiscordIcon, UniswapIcon, EtherscanIcon, CoingeckoIcon } from '../Icons'
+import { GithubIcon, DiscordIcon, UniswapIcon, EtherscanIcon, CoingeckoIcon, EllipseIcon } from '../Icons'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -118,17 +118,24 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   font-size: 1rem;
   width: fit-content;
   margin: 0 0.75rem;
-  font-weight: 500;
+  font-weight: 400;
+  color: ${({ theme }) => theme.yellow1};
 
   &.${activeClassName} {
     border-radius: 12px;
-    font-weight: 600;
+    font-weight: 700;
     color: ${({ theme }) => theme.text1};
+
+    :hover,
+    :focus {
+      color: ${({ theme }) => theme.text1};
+    }
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => darken(0.2, theme.yellow1)};
+    text-decoration: none;
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -136,33 +143,8 @@ const StyledExternalLink = styled(ExternalLink).attrs({
 `}
 `
 
-export const StyledMenuButton = styled.button`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border: none;
-  background-color: transparent;
-  margin: 0;
-  padding: 0;
-  height: ${rem(35)};
-  background-color: ${({ theme }) => theme.bg3};
-  margin-left: 0.5rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
-
-  :hover,
-  :focus {
-    cursor: pointer;
-    outline: none;
-    background-color: ${({ theme }) => theme.bg4};
-  }
-
-  svg {
-    margin-top: 2px;
-  }
-  > * {
-    stroke: ${({ theme }) => theme.text1};
-  }
+export const StyledExternalLinkEl = styled.span`
+  margin: 0 0 0 0.5rem;
 `
 
 export const SocialLinkWrapper = styled.div`
@@ -173,16 +155,29 @@ export const SocialLinkWrapper = styled.div`
   height: ${rem(36)};
 `
 
+const StyledEllipseWapper = styled.div`
+  display: flex;
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+
+  > svg {
+    height: ${rem(42)};
+    width: auto;
+  }
+`
+
 export const SocialLink = styled(ExternalLink)`
   display: flex;
   position: absolute;
   top: 0;
-  border-radius: 100%;
-  border: 2px solid transparent;
-  transition: border 0.5s ease;
 
   &:hover {
-    border-color: ${({ theme }) => theme.yellow1};
+    ${StyledEllipseWapper} {
+      opacity: 1;
+    }
   }
 
   > svg {
@@ -202,7 +197,7 @@ export default function Header() {
             {t('exchange')}
           </StyledNavLink>
           <StyledExternalLink id={`stake-nav-link`} href={'https://alchemist.farm'}>
-            {t('crucible')} <span style={{ fontSize: '11px' }}>↗</span>
+            {t('crucible')} <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
@@ -215,16 +210,28 @@ export default function Header() {
         <HideSmall>
           <SocialLinkWrapper>
             <SocialLink href="http://discord.alchemist.wtf" title={t('discord')}>
+              <StyledEllipseWapper>
+                <EllipseIcon />
+              </StyledEllipseWapper>
               <DiscordIcon />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
             <SocialLink href="https://github.com/alchemistcoin" title={t('github')}>
+              <StyledEllipseWapper>
+                <EllipseIcon />
+              </StyledEllipseWapper>
               <GithubIcon />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
-            <SocialLink href="https://etherscan.io/" title={t('etherscan')}>
+            <SocialLink
+              href="https://etherscan.io/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
+              title={t('etherscan')}
+            >
+              <StyledEllipseWapper>
+                <EllipseIcon />
+              </StyledEllipseWapper>
               <EtherscanIcon />
             </SocialLink>
           </SocialLinkWrapper>
@@ -233,11 +240,17 @@ export default function Header() {
               href="https://info.uniswap.org/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
               title={t('uniswap')}
             >
+              <StyledEllipseWapper>
+                <EllipseIcon />
+              </StyledEllipseWapper>
               <UniswapIcon />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
             <SocialLink href="https://www.coingecko.com/en/coins/alchemist" title={t('coingecko')}>
+              <StyledEllipseWapper>
+                <EllipseIcon />
+              </StyledEllipseWapper>
               <CoingeckoIcon />
             </SocialLink>
           </SocialLinkWrapper>
