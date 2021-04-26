@@ -58,7 +58,7 @@ const UniswapIcon = ({ ...props }: React.SVGProps<SVGSVGElement>): ReactElement 
   )
 }
 
-const CoingeckoIcon = ({ ...props }: React.SVGProps<SVGSVGElement>): ReactElement => {
+const CoingeckoIcon = (): ReactElement => {
   return (
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 48.4 48">
       <g transform="translate(9.499 10.501)">
@@ -104,7 +104,7 @@ const CoingeckoIcon = ({ ...props }: React.SVGProps<SVGSVGElement>): ReactElemen
   )
 }
 
-const CoingeckoLightIcon = ({ ...props }: React.SVGProps<SVGSVGElement>): ReactElement => {
+const CoingeckoLightIcon = (): ReactElement => {
   return (
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 48.4 48">
       <g transform="translate(9.499 10.501)">
