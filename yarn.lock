@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@alchemistcoin/sdk@git+https://github.com/alchemistcoin/uniswap-sdk-v2.git#dev":
+"@alchemistcoin/sdk@git+https://github.com/alchemistcoin/alchemist-sdk.git#dev":
   version "3.0.3"
-  resolved "git+https://github.com/alchemistcoin/uniswap-sdk-v2.git#1c38b937579299dcb17e7026e6c125b37aa025ba"
+  resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#b3071ae333ab6cc9a180e30a83cfd1ee97b0ecd1"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"

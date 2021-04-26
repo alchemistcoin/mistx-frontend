@@ -4,7 +4,7 @@
   "homepage": ".",
   "private": true,
   "devDependencies": {
-    "@alchemistcoin/sdk": "git+https://github.com/alchemistcoin/uniswap-sdk-v2.git#dev",
+    "@alchemistcoin/sdk": "git+https://github.com/alchemistcoin/alchemist-sdk.git#dev",
     "@ethersproject/experimental": "^5.0.1",
     "@popperjs/core": "^2.4.4",
     "@reach/dialog": "^0.10.3",
