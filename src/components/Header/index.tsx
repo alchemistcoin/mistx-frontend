@@ -197,13 +197,13 @@ export const SocialLinkWrapper = styled.div`
 const StyledEllipseWapper = styled.div`
   display: flex;
   position: absolute;
-  top: -3px;
-  left: -3px;
+  top: -2px;
+  left: -2px;
   opacity: 0;
   transition: opacity 0.2s ease-in;
 
   > svg {
-    height: ${rem(42)};
+    height: ${rem(40)};
     width: auto;
   }
 `
