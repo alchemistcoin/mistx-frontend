@@ -2,11 +2,8 @@ name: Lint
 
 on:
   push:
-    branches:
-      - main
-  pull_request_target:
-    branches:
-      - main
+    branches: dev
+  pull_request:
 
 jobs:
   run-linters:
