@@ -4,9 +4,11 @@ import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
+import { ReactComponent as LogoLight } from '../../assets/svg/logo_light.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import { GithubIcon, DiscordIcon, UniswapIcon, EtherscanIcon, CoingeckoIcon, EllipseIcon } from '../Icons'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -20,10 +22,10 @@ const HeaderFrame = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem 1rem;
   z-index: 2;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0.5rem 1rem;
   `}
-  background: linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(0 0 0 / 45%) 100%);
+  background: ${({ theme }) => theme.headerBg};
 `
 
 const HeaderRow = styled(RowFixed)`
@@ -35,8 +37,9 @@ const HeaderRow = styled(RowFixed)`
 `
 
 const HeaderLinks = styled(Row)`
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem 0 1rem 1rem;
+  padding: 1rem 0 1rem 1rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0.5rem 0 0.5rem 0;
 `};
 `
 
@@ -45,6 +48,23 @@ const LogoWrapper = styled.div`
   flex-direction: row;
   margin: 1rem 0;
   height: ${rem(80)};
+
+  > svg {
+    height: 100%;
+    width: auto;
+  }
+`
+
+const LogoWrapperMobile = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: ${rem(60)};
+  margin: 0.5rem 0;
+
+  > a {
+    position: relative;
+    right: 1.5rem;
+  }
 
   > svg {
     height: 100%;
@@ -64,6 +84,13 @@ const HideSmall = styled.div`
   `};
 `
 
+const HideLarge = styled.div`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: flex;
+  `};
+`
+
 const activeClassName = 'ACTIVE'
 
 const StyledNavLink = styled(NavLink).attrs({
@@ -75,7 +102,7 @@ const StyledNavLink = styled(NavLink).attrs({
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.secondaryText1};
   font-size: 1rem;
   width: fit-content;
   margin: 0 0.75rem;
@@ -94,8 +121,13 @@ const StyledNavLink = styled(NavLink).attrs({
       bottom: -${rem(15)};
       left: 0;
       position: absolute;
-      background: ${({ theme }) => theme.yellow1};
+      background: ${({ theme }) => theme.secondaryText1};
       border-radius: 1rem;
+
+      :hover,
+      :focus {
+        color: ${({ theme }) => darken(0.1, theme.secondaryText1)};
+      }
     }
   }
 
@@ -114,33 +146,32 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.secondaryText1};
   font-size: 1rem;
   width: fit-content;
   margin: 0 0.75rem;
   font-weight: 400;
-  color: ${({ theme }) => theme.yellow1};
 
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 700;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.secondaryText1};
 
     :hover,
     :focus {
-      color: ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.secondaryText1};
     }
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.2, theme.yellow1)};
+    color: ${({ theme }) => darken(0.2, theme.secondaryText1)};
     text-decoration: none;
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: none;
-`}
+    display: none;
+  `}
 `
 
 export const StyledExternalLinkEl = styled.span`
@@ -188,9 +219,17 @@ export const SocialLink = styled(ExternalLink)`
 
 export default function Header() {
   const { t } = useTranslation()
+  const [darkMode] = useDarkModeManager()
 
   return (
     <HeaderFrame>
+      <HideLarge>
+        <LogoWrapperMobile>
+          <LogoLink to="/" title={t('mistx')}>
+            {darkMode ? <Logo /> : <LogoLight />}
+          </LogoLink>
+        </LogoWrapperMobile>
+      </HideLarge>
       <HeaderRow align="start">
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/Swap'}>
@@ -201,27 +240,29 @@ export default function Header() {
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
-      <LogoWrapper>
-        <LogoLink to="/" title={t('mistx')}>
-          <Logo />
-        </LogoLink>
-      </LogoWrapper>
+      <HideSmall>
+        <LogoWrapper>
+          <LogoLink to="/" title={t('mistx')}>
+            {darkMode ? <Logo /> : <LogoLight />}
+          </LogoLink>
+        </LogoWrapper>
+      </HideSmall>
       <HeaderRow align="end" justify="flex-end">
         <HideSmall>
           <SocialLinkWrapper>
             <SocialLink href="http://discord.alchemist.wtf" title={t('discord')}>
               <StyledEllipseWapper>
-                <EllipseIcon />
+                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
               </StyledEllipseWapper>
-              <DiscordIcon />
+              <DiscordIcon fill={darkMode ? '#FFF' : '#1a0434'} />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
             <SocialLink href="https://github.com/alchemistcoin" title={t('github')}>
               <StyledEllipseWapper>
-                <EllipseIcon />
+                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
               </StyledEllipseWapper>
-              <GithubIcon />
+              <GithubIcon fill={darkMode ? '#FFF' : '#1a0434'} />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
@@ -230,9 +271,9 @@ export default function Header() {
               title={t('etherscan')}
             >
               <StyledEllipseWapper>
-                <EllipseIcon />
+                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
               </StyledEllipseWapper>
-              <EtherscanIcon />
+              <EtherscanIcon fill={darkMode ? '#FFF' : '#1a0434'} />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
@@ -241,17 +282,17 @@ export default function Header() {
               title={t('uniswap')}
             >
               <StyledEllipseWapper>
-                <EllipseIcon />
+                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
               </StyledEllipseWapper>
-              <UniswapIcon />
+              <UniswapIcon fill={darkMode ? '#FFF' : '#1a0434'} />
             </SocialLink>
           </SocialLinkWrapper>
           <SocialLinkWrapper>
             <SocialLink href="https://www.coingecko.com/en/coins/alchemist" title={t('coingecko')}>
               <StyledEllipseWapper>
-                <EllipseIcon />
+                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
               </StyledEllipseWapper>
-              <CoingeckoIcon />
+              <CoingeckoIcon fill={darkMode ? '#FFF' : '#1a0434'} />
             </SocialLink>
           </SocialLinkWrapper>
         </HideSmall>
