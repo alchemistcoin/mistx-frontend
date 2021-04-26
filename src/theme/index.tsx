@@ -57,6 +57,9 @@ export function colors(darkMode: boolean): Colors {
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
+    headerBg: darkMode
+      ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
+      : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
 
     //primary colors
     primary1: darkMode ? '#2172E5' : '#ff007a',
@@ -67,6 +70,7 @@ export function colors(darkMode: boolean): Colors {
 
     // color text
     primaryText1: darkMode ? '#6da8ff' : '#ff007a',
+    secondaryText1: darkMode ? '#FFBF00' : '#1a0434',
 
     // secondary colors
     secondary1: darkMode ? '#2172E5' : '#ff007a',
@@ -78,7 +82,7 @@ export function colors(darkMode: boolean): Colors {
     red2: '#F82D3A',
     red3: '#D60000',
     green1: '#27AE60',
-    yellow1: '#FFE270',
+    yellow1: '#FFBF00',
     yellow2: '#F3841E',
     blue1: '#2172E5'
 
@@ -177,13 +181,16 @@ export const TYPE = {
 }
 
 export const FixedGlobalStyle = createGlobalStyle`
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700&display=swap');
+
 html, input, textarea, button {
   font-family: 'Inter', sans-serif;
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 }
 
@@ -212,7 +219,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv03' on;
-  
+    
 }
 `
 
