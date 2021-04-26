@@ -7,7 +7,15 @@ import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoLight } from '../../assets/svg/logo_light.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
-import { GithubIcon, DiscordIcon, UniswapIcon, EtherscanIcon, CoingeckoIcon, EllipseIcon } from '../Icons'
+import {
+  GithubIcon,
+  DiscordIcon,
+  UniswapIcon,
+  EtherscanIcon,
+  CoingeckoIcon,
+  EllipseIcon,
+  CoingeckoLightIcon
+} from '../Icons'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const HeaderFrame = styled.div`
@@ -105,7 +113,7 @@ const StyledNavLink = styled(NavLink).attrs({
   color: ${({ theme }) => theme.secondaryText1};
   font-size: 1rem;
   width: fit-content;
-  margin: 0 0.75rem;
+  margin: 0 2.5rem 0 0;
   font-weight: 500;
   position: relative;
 
@@ -149,7 +157,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   color: ${({ theme }) => theme.secondaryText1};
   font-size: 1rem;
   width: fit-content;
-  margin: 0 0.75rem;
+  margin: 0 2.5rem 0 0;
   font-weight: 400;
 
   &.${activeClassName} {
@@ -292,7 +300,7 @@ export default function Header() {
               <StyledEllipseWapper>
                 <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
               </StyledEllipseWapper>
-              <CoingeckoIcon fill={darkMode ? '#FFF' : '#1a0434'} />
+              {darkMode ? <CoingeckoIcon /> : <CoingeckoLightIcon />}
             </SocialLink>
           </SocialLinkWrapper>
         </HideSmall>
