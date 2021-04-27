@@ -9,6 +9,10 @@ export const Wrapper = styled.div`
   padding: 1rem;
 `
 
+export const RelativeWrapper = styled.div`
+  position: relative
+`
+
 export const ArrowPosition = styled.div`
   position: absolute;
   top: 100%;

@@ -12,10 +12,10 @@ import Column, { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { AutoRow, RowBetween } from '../../components/Row'
-import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
+// import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import BetterTradeLink, { DefaultVersionLink } from '../../components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
-import { ArrowPosition, ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
+import { ArrowPosition, ArrowWrapper, BottomGrouping, RelativeWrapper, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
@@ -48,6 +48,7 @@ import AppBody from '../AppBody'
 import { ClickableText } from './styleds'
 import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
+import SwapLabel from 'components/swap/SwapLabel'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
 import { RouteComponentProps } from 'react-router-dom'
@@ -366,7 +367,13 @@ export default function Swap({ history }: RouteComponentProps) {
           />
 
           <AutoColumn>
-            <div style={{ position: 'relative' }}>
+            <RelativeWrapper>
+              <SwapLabel
+                currency={currencies[Field.INPUT]}
+                id="from-label"
+                placement="left"
+                showMaxButton={!atMaxAmountInput}
+              />
               <CurrencyInputPanel
                 label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
                 value={formattedAmounts[Field.INPUT]}
@@ -383,13 +390,13 @@ export default function Swap({ history }: RouteComponentProps) {
                   <ArrowWrapper
                     clickable
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
+                    onClick={() => {
+                      setApprovalSubmitted(false) // reset 2 step UI for approvals
+                      onSwitchTokens()
+                    }}
                   >
                     <ArrowDownCircle
                       size="24"
-                      onClick={() => {
-                        setApprovalSubmitted(false) // reset 2 step UI for approvals
-                        onSwitchTokens()
-                      }}
                     />
                   </ArrowWrapper>
                   {recipient === null && !showWrap && isExpertMode ? (
@@ -399,17 +406,19 @@ export default function Swap({ history }: RouteComponentProps) {
                   ) : null}
                 </AutoRow>
               </ArrowPosition>
-            </div>
-            <CurrencyInputPanel
-              value={formattedAmounts[Field.OUTPUT]}
-              onUserInput={handleTypeOutput}
-              label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
-              showMaxButton={false}
-              currency={currencies[Field.OUTPUT]}
-              onCurrencySelect={handleOutputSelect}
-              otherCurrency={currencies[Field.INPUT]}
-              id="swap-currency-output"
-            />
+            </RelativeWrapper>
+            <RelativeWrapper>
+              <CurrencyInputPanel
+                value={formattedAmounts[Field.OUTPUT]}
+                onUserInput={handleTypeOutput}
+                label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
+                showMaxButton={false}
+                currency={currencies[Field.OUTPUT]}
+                onCurrencySelect={handleOutputSelect}
+                otherCurrency={currencies[Field.INPUT]}
+                id="swap-currency-output"
+              />
+            </RelativeWrapper>
 
             {recipient !== null && !showWrap ? (
               <>
@@ -560,11 +569,17 @@ export default function Swap({ history }: RouteComponentProps) {
           </BottomGrouping>
         </Wrapper>
       </AppBody>
-      {!swapIsUnsupported ? (
-        <AdvancedSwapDetailsDropdown trade={trade} />
-      ) : (
-        <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
-      )}
+      {!swapIsUnsupported
+        ? (
+          null // <AdvancedSwapDetailsDropdown trade={trade} /> // todo: decide what to do with extra details
+        )
+        : (
+          <UnsupportedCurrencyFooter
+            show={swapIsUnsupported}
+            currencies={[currencies.INPUT, currencies.OUTPUT]}
+          />
+        )
+      }
     </>
   )
 }

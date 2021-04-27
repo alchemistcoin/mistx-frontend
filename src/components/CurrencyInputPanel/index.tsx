@@ -46,13 +46,19 @@ const LabelRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   color: ${({ theme }) => theme.text1};
+  display: none;
   font-size: 0.75rem;
   line-height: 1rem;
   padding: 0.75rem 1rem 0 1rem;
+
   span:hover {
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
   }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: block;
+  `};
 `
 
 const Aligner = styled.span`
@@ -102,16 +108,16 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
 `
 
 const StyledBalanceMax = styled.button`
-  height: 28px;
   background-color: ${({ theme }) => theme.primary5};
   border: 1px solid ${({ theme }) => theme.primary5};
   border-radius: 0.5rem;
-  font-size: 0.875rem;
-
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
   color: ${({ theme }) => theme.primaryText1};
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 28px;
+  margin-right: 0.5rem;
+  
   :hover {
     border: 1px solid ${({ theme }) => theme.primary1};
   }
@@ -179,19 +185,24 @@ export default function CurrencyInputPanel({
             <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
               {label}
             </TYPE.body>
-            {account && (
-              <TYPE.body
-                onClick={onMax}
-                color={theme.text2}
-                fontWeight={500}
-                fontSize={14}
-                style={{ display: 'inline', cursor: 'pointer' }}
-              >
-                {!hideBalance && !!currency && selectedCurrencyBalance
-                  ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
-                  : ' -'}
-              </TYPE.body>
-            )}
+            {account &&
+              <span>
+                {currency && showMaxButton && label !== 'To' && (
+                  <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+                )}
+                <TYPE.body
+                  onClick={onMax}
+                  color={theme.text2}
+                  fontWeight={500}
+                  fontSize={14}
+                  style={{ display: 'inline', cursor: 'pointer' }}
+                >
+                  {!hideBalance && !!currency && selectedCurrencyBalance
+                    ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
+                    : ' -'}
+                </TYPE.body>
+              </span>
+            }
           </RowBetween>
         </LabelRow>
       )}
@@ -248,9 +259,6 @@ export default function CurrencyInputPanel({
                   onUserInput(val)
                 }}
               />
-              {account && currency && showMaxButton && label !== 'To' && (
-                <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
-              )}
             </>
           )}
         </InputRow>
