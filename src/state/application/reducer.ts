@@ -3,6 +3,13 @@ import { addPopup, PopupContent, removePopup, updateBlockNumber, ApplicationModa
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 
+export interface IGas {
+  readonly rapid: string
+  readonly fast: string
+  readonly slow: string
+  readonly standard: string
+  readonly timestamp: number
+}
 export interface ApplicationState {
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
