@@ -15,7 +15,8 @@ import { Version } from './useToggledVersion'
 import { MISTX_RELAY_URI, BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
-import { SignatureLike } from "@ethersproject/bytes";
+import { SignatureLike } from "@ethersproject/bytes"
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 
 export enum SwapCallbackState {
@@ -231,23 +232,40 @@ export function useSwapCallback(
             .catch(err => console.error(err))
         }
 
-        return contract.populateTransaction[methodName]({
-          //to: contract.address
-          //from: account,
+        if (!(contract.signer instanceof JsonRpcSigner)) {
+          throw new Error(`Cannot sign transactions with this wallet type`)
+        }
+
+        // ethers will change eth_sign to personal_sign if it detects metamask
+        let web3Provider: Web3Provider | undefined
+        let isMetamask: boolean | undefined
+        if (library instanceof Web3Provider) {
+          web3Provider = library as Web3Provider
+          isMetamask = web3Provider.provider.isMetaMask
+          web3Provider.provider.isMetaMask = false
+        }
+
+        return contract.populateTransaction[methodName](...args, {
           gasLimit: calculateGasMargin(gasEstimate),
-          ...(relayDeadline ? { gasPrice: 0 } : {}),
-          ...(value && !isZero(value) ? { value: value } : {}),
+          ...(value && !isZero(value) ? { value } : {})
         }).then(populatedTx => {
-          //TODO check what got populated
+          //delete for serialize necessary
+          delete populatedTx.from
           const serialized = ethers.utils.serializeTransaction(populatedTx);
           const hash = keccak256(serialized)
-          return contract.request("eth_sign", [account, hash])
+          return library.jsonRpcFetchFunc("eth_sign", [account, hash])
             .then((signature: SignatureLike) => {
               //this returns the transaction & signature serialized and ready to broadcast
               //basically does everything that AD does with hexlify etc. - kek
               const txWithSig = ethers.utils.serializeTransaction(populatedTx, signature)
               return { signedTx: txWithSig, populatedTx: populatedTx }
-            }).then(({ signedTx, populatedTx }: { signedTx: string, populatedTx: PopulatedTransaction }) => {
+            })
+            .finally(() => {
+              if (web3Provider) {
+                web3Provider.provider.isMetaMask = isMetamask
+              }
+            })
+            .then(({ signedTx, populatedTx }: { signedTx: string, populatedTx: PopulatedTransaction }) => {
               const hash = keccak256(signedTx)
               const inputSymbol = trade.inputAmount.currency.symbol
               const outputSymbol = trade.outputAmount.currency.symbol
