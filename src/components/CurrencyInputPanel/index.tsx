@@ -83,7 +83,7 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
 const InputDivider = styled.div`
   background-color: ${({ theme }) => theme.text3}
   height: 44px;
-  margin: 0 1rem;
+  margin: 0 .75rem;
   width: 1px;
 `
 
@@ -92,11 +92,13 @@ const Container = styled.div<{ hideInput: boolean }>`
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   background-color: inherit;
   display: flex;
+  padding: 0 .5rem;
 `
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
   font-size:  ${({ active }) => (active ? '20px' : '16px')};
+  flex: 1;
 `
 
 const StyledBalanceMax = styled.button`
@@ -206,16 +208,6 @@ export default function CurrencyInputPanel({
           <Aligner>
             {pair
               ? (
-                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
-              )
-              : currency
-                ? (
-                  <CurrencyLogo currency={currency} size={'24px'} />
-                )
-                : null
-            }
-            {pair
-              ? (
                 <StyledTokenName className="pair-name-container">
                   {pair?.token0.symbol}:{pair?.token1.symbol}
                 </StyledTokenName>
@@ -230,6 +222,16 @@ export default function CurrencyInputPanel({
                 </StyledTokenName>
               )
             }
+            {pair
+              ? (
+                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+              )
+              : currency
+                ? (
+                  <CurrencyLogo currency={currency} size={'36px'} />
+                )
+                : null
+            }
             {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
           </Aligner>
         </CurrencySelect>
@@ -240,6 +242,7 @@ export default function CurrencyInputPanel({
               <NumericalInput
                 className="token-amount-input"
                 fontSize="4rem"
+                fontWeight="200"
                 value={value}
                 onUserInput={val => {
                   onUserInput(val)

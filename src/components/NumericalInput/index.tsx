@@ -2,7 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 import { escapeRegExp } from '../../utils'
 
-const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string }>`
+const StyledInput = styled.input<{
+  error?: boolean;
+  align?: string;
+  fontSize?: string;
+  fontWeight?: string;
+}>`
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   width: 0;
   position: relative;
@@ -12,6 +17,7 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
   flex: 1 1 auto;
   background-color: inherit;
   font-size: ${({ fontSize }) => fontSize ?? '24px'};
+  font-weight: ${({ fontWeight }) => fontWeight && fontWeight}
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
   overflow: hidden;
@@ -49,6 +55,7 @@ export const Input = React.memo(function InnerInput({
   onUserInput: (input: string) => void
   error?: boolean
   fontSize?: string
+  fontWeight?: string
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {

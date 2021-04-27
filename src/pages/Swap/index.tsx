@@ -1,6 +1,6 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@alchemistcoin/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown } from 'react-feather'
+import { ArrowDownCircle } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
@@ -51,7 +51,6 @@ import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
 import { RouteComponentProps } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -86,7 +85,6 @@ const StyledPageTitle = styled.h1`
 `
 
 export default function Swap({ history }: RouteComponentProps) {
-  const { t } = useTranslation();
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
@@ -350,7 +348,6 @@ export default function Swap({ history }: RouteComponentProps) {
         onConfirm={handleConfirmTokenWarning}
         onDismiss={handleDismissTokenWarning}
       />
-      <TYPE.black fontWeight={500}>{t('Swap Tokens')}</TYPE.black>
       <SwapHeader />
       <AppBody>
         <Wrapper id="swap-page">
@@ -387,8 +384,8 @@ export default function Swap({ history }: RouteComponentProps) {
                     clickable
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
                   >
-                    <ArrowDown
-                      size="16"
+                    <ArrowDownCircle
+                      size="24"
                       onClick={() => {
                         setApprovalSubmitted(false) // reset 2 step UI for approvals
                         onSwitchTokens()
@@ -418,7 +415,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <>
                 <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
                   <ArrowWrapper clickable={false}>
-                    <ArrowDown size="16" color={theme.text2} />
+                    <ArrowDownCircle size="16" color={theme.text2} />
                   </ArrowWrapper>
                   <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
                     - Remove send

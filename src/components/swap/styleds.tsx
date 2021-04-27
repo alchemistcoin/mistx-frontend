@@ -22,12 +22,11 @@ export const ArrowWrapper = styled.div<{
 }>`
   align-items: center;
   border-radius: 50%;
-  border: 1px solid white;
-  color: ${({ color }) => color}
-  height: 22px;
+  background-color: ${({ theme }) => theme.bg2}
+  height: 2.5rem;
   display: flex;
   justify-content: center;
-  width: 22px;
+  width: 2.5rem;
 
   ${({ clickable }) =>
     clickable
