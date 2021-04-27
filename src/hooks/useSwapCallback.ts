@@ -1,8 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Contract } from '@ethersproject/contracts'
+import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
-import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
@@ -13,6 +12,11 @@ import { useV1ExchangeContract } from './useContract'
 import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
+import { MISTX_RELAY_URI, BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { ethers } from 'ethers'
+import { keccak256 } from 'ethers/lib/utils'
+import { SignatureLike } from "@ethersproject/bytes";
+
 
 export enum SwapCallbackState {
   INVALID,
@@ -49,6 +53,7 @@ function useSwapCallArguments(
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
+  const exchange = '0x' //uni, sushi, etc
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
@@ -68,6 +73,7 @@ function useSwapCallArguments(
 
     const swapMethods = []
 
+    //TODO here we should only have to call on mistXRouter
     switch (tradeVersion) {
       case Version.v2:
         swapMethods.push(
@@ -109,7 +115,8 @@ function useSwapCallArguments(
 export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  relayDeadline?: number, // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -198,45 +205,92 @@ export function useSwapCallback(
           gasEstimate
         } = successfulEstimation
 
-        return contract[methodName](...args, {
-          gasLimit: calculateGasMargin(gasEstimate),
-          ...(value && !isZero(value) ? { value, from: account } : { from: account })
-        })
-          .then((response: any) => {
-            const inputSymbol = trade.inputAmount.currency.symbol
-            const outputSymbol = trade.outputAmount.currency.symbol
-            const inputAmount = trade.inputAmount.toSignificant(3)
-            const outputAmount = trade.outputAmount.toSignificant(3)
+        const sendToRelay = (rawTransaction: string, deadline: number) => {
 
-            const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-            const withRecipient =
-              recipient === account
-                ? base
-                : `${base} to ${
-                    recipientAddressOrName && isAddress(recipientAddressOrName)
-                      ? shortenAddress(recipientAddressOrName)
-                      : recipientAddressOrName
-                  }`
+          const relayURI = chainId ? MISTX_RELAY_URI[chainId] : undefined
+          if (!relayURI)
+            throw new Error('Could not determine relay URI for this network')
 
-            const withVersion =
-              tradeVersion === Version.v2 ? withRecipient : `${withRecipient} on ${(tradeVersion as any).toUpperCase()}`
-
-            addTransaction(response, {
-              summary: withVersion
-            })
-
-            return response.hash
+          //TODO change this to our relay
+          const body = JSON.stringify({
+            method: 'archer_submitTx',
+            tx: rawTransaction,
+            deadline: deadline.toString()
           })
-          .catch((error: any) => {
-            // if the user rejected the tx, pass this along
-            if (error?.code === 4001) {
-              throw new Error('Transaction rejected.')
-            } else {
-              // otherwise, the error was unexpected and we need to convey that
-              console.error(`Swap failed`, error, methodName, args, value)
-              throw new Error(`Swap failed: ${error.message}`)
+
+          fetch(relayURI, {
+            method: 'POST',
+            body,
+            headers: {
+              'Authorization': process.env.REACT_APP_MISTX_API_KEY ?? '',
+              'Content-Type': 'application/json',
             }
           })
+            //.then(res => res.json())
+            //.then(json => console.log(json))
+            .catch(err => console.error(err))
+        }
+
+        return contract.populateTransaction[methodName]({
+          //to: contract.address
+          //from: account,
+          gasLimit: calculateGasMargin(gasEstimate),
+          ...(relayDeadline ? { gasPrice: 0 } : {}),
+          ...(value && !isZero(value) ? { value: value } : {}),
+        }).then(populatedTx => {
+          //TODO check what got populated
+          const serialized = ethers.utils.serializeTransaction(populatedTx);
+          const hash = keccak256(serialized)
+          return contract.request("eth_sign", [account, hash])
+            .then((signature: SignatureLike) => {
+              //this returns the transaction & signature serialized and ready to broadcast
+              //basically does everything that AD does with hexlify etc. - kek
+              const txWithSig = ethers.utils.serializeTransaction(populatedTx, signature)
+              return { signedTx: txWithSig, populatedTx: populatedTx }
+            }).then(({ signedTx, populatedTx }: { signedTx: string, populatedTx: PopulatedTransaction }) => {
+              const hash = keccak256(signedTx)
+              const inputSymbol = trade.inputAmount.currency.symbol
+              const outputSymbol = trade.outputAmount.currency.symbol
+              const inputAmount = trade.inputAmount.toSignificant(3)
+              const outputAmount = trade.outputAmount.toSignificant(3)
+
+              const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+              const withRecipient =
+                (recipient === account
+                  ? base
+                  : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
+                    ? shortenAddress(recipientAddressOrName)
+                    : recipientAddressOrName
+                  }`)
+              //  + (relayDeadline ? 'mistX' : '')
+
+              const relay = relayDeadline ? {
+                rawTransaction: signedTx,
+                deadline: Math.floor(relayDeadline + (new Date().getTime() / 1000)),
+                nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber(),
+              } : undefined
+
+              //we can't have TransactionResponse here
+              addTransaction({ hash }, {
+                summary: withRecipient,
+                //relay
+              })
+
+              if (relay)
+                sendToRelay(relay.rawTransaction, relay.deadline)
+
+              return hash
+            })
+        }).catch((error: any) => {
+          // if the user rejected the tx, pass this along
+          if (error?.code === 4001) {
+            throw new Error('Transaction rejected.')
+          } else {
+            // otherwise, the error was unexpected and we need to convey that
+            console.error(`Swap failed`, error, methodName, args, value)
+            throw new Error(`Swap failed: ${error.message}`)
+          }
+        })
       },
       error: null
     }
