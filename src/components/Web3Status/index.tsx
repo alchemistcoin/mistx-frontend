@@ -1,10 +1,10 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { darken, lighten } from 'polished'
+import { darken } from 'polished'
 import React, { useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useHasSocks } from '../../hooks/useSocksBalance'
@@ -26,11 +26,16 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
   width: 100%;
   align-items: center;
   padding: 0.5rem;
-  border-radius: 12px;
+  border-radius: 36px;
   cursor: pointer;
   user-select: none;
+  border-radius: 36px;
+
+  :hover,
   :focus {
     outline: none;
+    border: 1px solid ${({ theme }) => darken(0.05, theme.btnBorder)};
+    box-shadow: none;
   }
 `
 const Web3StatusError = styled(Web3StatusGeneric)`
@@ -38,57 +43,40 @@ const Web3StatusError = styled(Web3StatusGeneric)`
   border: 1px solid ${({ theme }) => theme.red1};
   color: ${({ theme }) => theme.white};
   font-weight: 500;
+
   :hover,
   :focus {
     background-color: ${({ theme }) => darken(0.1, theme.red1)};
   }
 `
 
-const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean; darkMode?: boolean }>`
+const Web3StatusConnect = styled(Web3StatusGeneric)<{ darkMode?: boolean }>`
   background-color: none;
   border: none;
-  color: ${({ theme, darkMode }) => (darkMode ? theme.yellow1 : theme.text1)};
-  border: 1px solid ${({ theme }) => darken(0.05, theme.btnBorder)};
+  color: ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.text1)};
+  border: 1px solid ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.text1)};
   font-weight: 500;
 
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.btnBorder)};
-    color: ${({ theme }) => theme.text1};
+    border: 1px solid ${({ theme }) => darken(0.05, theme.darkMode ? theme.yellow1 : theme.text1)};
+    color: ${({ theme }) => darken(0.05, theme.darkMode ? theme.yellow1 : theme.text1)};
   }
-
-  ${({ faded }) =>
-    faded &&
-    css`
-      border: 1px solid ${({ theme }) => theme.btnBorder};
-      color: ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.text1)};
-
-      :hover,
-      :focus {
-        border: 1px solid ${({ theme }) => darken(0.05, theme.btnBorder)};
-        color: ${({ theme }) => darken(0.05, theme.darkMode ? theme.yellow1 : theme.text1)};
-      }
-    `}
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  background-color: ${({ pending, theme }) => (pending ? theme.btnBorder : theme.btnBorder)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.btnBorder : theme.btnBorder)};
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text5)};
+  background-color: ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.text1)};
+  border: 1px solid ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.text1)};
+  color: ${({ theme }) => (theme.darkMode ? theme.text5 : theme.text1)};
   font-weight: 700;
-  border-radius: 5rem;
+  
   :hover,
   :focus {
-    background-color: ${({ pending, theme }) =>
-      pending ? darken(0.05, theme.primary1) : lighten(0.05, theme.yellow1)};
+    background-color: ${({ pending, theme }) => darken(0.05, theme.yellow1)};
 
     :focus {
       border: 1px solid
-        ${({ pending, theme }) =>
-          pending
-            ? darken(0.1, theme.darkMode ? theme.yellow1 : theme.text1)
-            : darken(0.1, theme.darkMode ? theme.yellow1 : theme.text1)};
-    }
+        ${({ pending, theme }) => darken(0.1, theme.darkMode ? theme.yellow1 : theme.text1)}
   }
 `
 
@@ -167,7 +155,7 @@ function Web3StatusInner() {
       <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
         {hasPendingTransactions ? (
           <RowBetween>
-            <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
+            <Text>{pending?.length} Pending</Text> <Loader stroke={darkMode ? colors.text5 : colors.text1} />
           </RowBetween>
         ) : (
           <>
@@ -187,7 +175,7 @@ function Web3StatusInner() {
     )
   } else {
     return (
-      <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
+      <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal}>
         <Text>{t('Connect Wallet')}</Text>{' '}
         <StyledConnectIconWrapper>
           <ConnectIcon fill={darkMode ? colors.yellow1 : colors.text1} />

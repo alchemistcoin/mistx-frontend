@@ -7,17 +7,11 @@ import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
-  align-items: center;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  width: 100%;
+  display: flex;
   top: 0;
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  padding: 0;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
@@ -33,9 +27,7 @@ const HeaderFrame = styled.div`
 
 const HeaderControls = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-self: flex-end;
+  margin-left: auto;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-direction: row;

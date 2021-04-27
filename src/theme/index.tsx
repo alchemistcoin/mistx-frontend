@@ -54,6 +54,9 @@ export function colors(darkMode: boolean): Colors {
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
 
+    // borders
+    border1: darkMode ? '#1F2E3C' : '#FFFFFF',
+
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
@@ -61,22 +64,24 @@ export function colors(darkMode: boolean): Colors {
       ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
       : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
     btnBorder: darkMode ? '#FFBF00' : '#1a0434',
+    dialogBg: darkMode ? '#34314B' : '#FCFCFC',
 
     //primary colors
-    primary1: darkMode ? '#2172E5' : '#ff007a',
-    primary2: darkMode ? '#3680E7' : '#FF8CC3',
-    primary3: darkMode ? '#4D8FEA' : '#FF99C9',
+    primary1: '#0e0913',
+    primary2: '#CC59FF',
+    primary3: '#FEA6F6',
     primary4: darkMode ? '#376bad70' : '#F6DDE8',
     primary5: darkMode ? '#153d6f70' : '#FDEAF1',
+    primary6: darkMode ? '#901EF2' : '#901EF2',
 
     // color text
     primaryText1: darkMode ? '#6da8ff' : '#ff007a',
     secondaryText1: darkMode ? '#FFBF00' : '#1a0434',
 
     // secondary colors
-    secondary1: darkMode ? '#2172E5' : '#ff007a',
-    secondary2: darkMode ? '#17000b26' : '#F6DDE8',
-    secondary3: darkMode ? '#17000b26' : '#FDEAF1',
+    secondary1: '#34314B',
+    secondary2: '#42AEFE',
+    secondary3: '#71E7FF',
 
     // other
     red1: '#FD4040',

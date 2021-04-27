@@ -18,7 +18,7 @@ import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import PortisIcon from '../../assets/images/portisIcon.png'
 import Identicon from '../Identicon'
-import { ButtonSecondary } from '../Button'
+import { ButtonPrimary } from '../Button'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import { ExternalLink, LinkStyledButton, TYPE } from '../../theme'
 
@@ -76,7 +76,6 @@ const AccountGroupingRow = styled.div`
 `
 
 const AccountSection = styled.div`
-  background-color: ${({ theme }) => theme.bg1};
   padding: 0rem 1rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0rem 1rem 1.5rem 1rem;`};
 `
@@ -98,7 +97,6 @@ const LowerSection = styled.div`
   padding: 1.5rem;
   flex-grow: 1;
   overflow: auto;
-  background-color: ${({ theme }) => theme.bg2};
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 
@@ -184,7 +182,7 @@ const TransactionListWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
 `
 
-const WalletAction = styled(ButtonSecondary)`
+const WalletAction = styled(ButtonPrimary)`
   width: fit-content;
   font-weight: 400;
   margin-left: 8px;
@@ -304,7 +302,7 @@ export default function AccountDetails({
                 <div>
                   {connector !== injected && connector !== walletlink && (
                     <WalletAction
-                      style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
+                      style={{ fontSize: '.825rem', fontWeight: 600, marginRight: '8px' }}
                       onClick={() => {
                         ;(connector as any).close()
                       }}
@@ -313,7 +311,7 @@ export default function AccountDetails({
                     </WalletAction>
                   )}
                   <WalletAction
-                    style={{ fontSize: '.825rem', fontWeight: 400 }}
+                    style={{ fontSize: '.825rem', fontWeight: 600 }}
                     onClick={() => {
                       openOptions()
                     }}
