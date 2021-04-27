@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk'
+import { ChainId } from '@alchemistcoin/sdk'
 import React from 'react'
 import styled from 'styled-components'
 import { useActiveWeb3React } from '../../hooks'
