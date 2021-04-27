@@ -23,6 +23,7 @@ export interface Colors {
   modalBG: Color
   advancedBG: Color
   headerBg: Color
+  btnBorder: Color
 
   //blues
   primary1: Color
@@ -57,6 +58,8 @@ export interface Grids {
 
 declare module 'styled-components' {
   export interface DefaultTheme extends Colors {
+    darkMode: boolean
+    
     grids: Grids
 
     // shadows

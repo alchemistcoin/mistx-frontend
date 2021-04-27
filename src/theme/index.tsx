@@ -60,6 +60,7 @@ export function colors(darkMode: boolean): Colors {
     headerBg: darkMode
       ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
       : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
+    btnBorder: darkMode ? '#FFBF00' : '#1a0434',
 
     //primary colors
     primary1: darkMode ? '#2172E5' : '#ff007a',
@@ -94,6 +95,8 @@ export function colors(darkMode: boolean): Colors {
 
 export function theme(darkMode: boolean): DefaultTheme {
   return {
+    darkMode,
+
     ...colors(darkMode),
 
     grids: {
