@@ -116,9 +116,12 @@ export function useApproveCallback(
     //use populate instead of broadcasting
     return tokenContract.populateTransaction
       .approve(spender, amountToApprove.raw.toString(), {
-        gasLimit: calculateGasMargin(estimatedGas)
+        nonce: tokenContract.signer.getTransactionCount(),
+        gasLimit: calculateGasMargin(estimatedGas) //needed?
       })
       .then((response: PopulatedTransaction) => {
+        delete response.from
+        response.chainId = chainId
         const serialized = ethers.utils.serializeTransaction(response);
         const hash = keccak256(serialized)
         library.jsonRpcFetchFunc("eth_sign", [account, hash])

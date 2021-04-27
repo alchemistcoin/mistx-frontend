@@ -246,11 +246,13 @@ export function useSwapCallback(
         }
 
         return contract.populateTransaction[methodName](...args, {
-          gasLimit: calculateGasMargin(gasEstimate),
+          nonce: contract.signer.getTransactionCount(),
+          gasLimit: calculateGasMargin(gasEstimate), //needed?
           ...(value && !isZero(value) ? { value } : {})
         }).then(populatedTx => {
           //delete for serialize necessary
           delete populatedTx.from
+          populatedTx.chainId = chainId
           const serialized = ethers.utils.serializeTransaction(populatedTx);
           const hash = keccak256(serialized)
           return library.jsonRpcFetchFunc("eth_sign", [account, hash])
