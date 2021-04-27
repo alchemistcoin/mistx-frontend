@@ -6,12 +6,28 @@ import { Text } from 'rebass'
 import { AutoColumn } from '../Column'
 
 export const Wrapper = styled.div`
-  position: relative;
   padding: 1rem;
 `
 
-export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  padding: 2px;
+export const ArrowPosition = styled.div`
+  position: absolute;
+  top: 100%;
+  transform: translateY(-50%);
+  width: 100%;
+`;
+
+export const ArrowWrapper = styled.div<{
+  color?: string
+  clickable: boolean
+}>`
+  align-items: center;
+  border-radius: 50%;
+  border: 1px solid white;
+  color: ${({ color }) => color}
+  height: 22px;
+  display: flex;
+  justify-content: center;
+  width: 22px;
 
   ${({ clickable }) =>
     clickable

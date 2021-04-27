@@ -50,8 +50,8 @@ export function colors(darkMode: boolean): Colors {
     // backgrounds / greys
     bg1: darkMode ? '#1F2E3C' : '#FFFFFF',
     bg2: darkMode ? '#1D2230' : '#FCFCFC',
-    bg3: darkMode ? '#40444F' : '#EDEEF2',
-    bg4: darkMode ? '#565A69' : '#CED0D9',
+    bg3: darkMode ? '#222D3B' : '#EDEEF2',
+    bg4: darkMode ? '#2A3543' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
 
     // borders
@@ -245,7 +245,7 @@ body {
   min-height: 100vh;
   background-position: 0 -30vh;
   background-repeat: no-repeat;
-  background-image: ${({ theme }) =>
+  background: ${({ theme }) =>
     `radial-gradient(48.8% 62.34% at 50% 0%, ${transparentize(0.1, theme.bg1)} 0%, ${transparentize(
       1,
       theme.bg2
