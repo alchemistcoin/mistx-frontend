@@ -53,7 +53,7 @@ function useSwapCallArguments(
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
-  const exchange = '0x' //uni, sushi, etc
+  //const exchange = '0x' //uni, sushi, etc
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
@@ -139,7 +139,7 @@ export function useSwapCallback(
       }
     }
 
-    const tradeVersion = getTradeVersion(trade)
+    //const tradeVersion = getTradeVersion(trade)
 
     return {
       state: SwapCallbackState.VALID,
@@ -294,5 +294,5 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction, relayDeadline])
 }
