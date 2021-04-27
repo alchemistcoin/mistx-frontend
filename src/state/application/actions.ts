@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
+import { Gas } from './reducer'
 
 export type PopupContent =
   | {
@@ -29,6 +30,7 @@ export enum ApplicationModal {
   VOTE
 }
 
+export const updateGas = createAction<Gas>('application/updateGas')
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal')
 export const addPopup = createAction<{ key?: string; removeAfterMs?: number | null; content: PopupContent }>(
