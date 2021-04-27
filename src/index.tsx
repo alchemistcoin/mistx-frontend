@@ -12,6 +12,7 @@ import './i18n'
 import App from './pages/App'
 import store from './state'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
+import Websockets from './websocket'
 import ApplicationUpdater from './state/application/updater'
 import ListsUpdater from './state/lists/updater'
 import MulticallUpdater from './state/multicall/updater'
@@ -68,6 +69,7 @@ ReactDOM.render(
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Blocklist>
           <Provider store={store}>
+            <Websockets />
             <Updaters />
             <ThemeProvider>
               <ThemedGlobalStyle />
