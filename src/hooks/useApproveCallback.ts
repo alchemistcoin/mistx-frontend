@@ -1,5 +1,3 @@
-import { MaxUint256 } from '@ethersproject/constants'
-import { TransactionResponse } from '@ethersproject/providers'
 import { Trade, TokenAmount, CurrencyAmount, ETHER } from '@alchemistcoin/sdk'
 import { useCallback, useMemo } from 'react'
 import { ROUTER_ADDRESS } from '../constants'
@@ -12,6 +10,10 @@ import { calculateGasMargin } from '../utils'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 import { Version } from './useToggledVersion'
+import { PopulatedTransaction } from '@ethersproject/contracts'
+import { keccak256 } from '@ethersproject/keccak256'
+import { ethers } from 'ethers'
+import { SignatureLike } from "@ethersproject/bytes";
 
 export enum ApprovalState {
   UNKNOWN,
@@ -73,28 +75,39 @@ export function useApproveCallback(
       return
     }
 
-    let useExact = false
-    const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
-      // general fallback for tokens who restrict approval amounts
-      useExact = true
-      return tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
-    })
+    // let useExact = false
+    // const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+    //   // general fallback for tokens who restrict approval amounts
+    //   useExact = true
+    //   return tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
+    // })
+    //we always useExact
+    const estimatedGas = await tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
 
-    return tokenContract
-      .approve(spender, useExact ? amountToApprove.raw.toString() : MaxUint256, {
+    //use populate instead of broadcasting
+    return tokenContract.populateTransaction
+      .approve(spender, amountToApprove.raw.toString(), {
         gasLimit: calculateGasMargin(estimatedGas)
       })
-      .then((response: TransactionResponse) => {
-        addTransaction(response, {
-          summary: 'Approve ' + amountToApprove.currency.symbol,
-          approval: { tokenAddress: token.address, spender: spender }
-        })
+      .then((response: PopulatedTransaction) => {
+        const serialized = ethers.utils.serializeTransaction(response);
+        const hash = keccak256(serialized)
+        tokenContract.request("eth_sign", [account, hash])
+          .then((signature: SignatureLike) => {
+            //this returns the transaction & signature serialized and ready to broadcast
+            const txWithSig = ethers.utils.serializeTransaction(response, signature)
+            const hash = keccak256(txWithSig)
+            addTransaction({ hash }, {
+              summary: 'Approve ' + amountToApprove.currency.symbol,
+              approval: { tokenAddress: token.address, spender: spender }
+            })
+          })
       })
       .catch((error: Error) => {
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction, account])
 
   return [approvalState, approve]
 }
