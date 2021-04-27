@@ -43,7 +43,7 @@ export default createReducer(initialState, builder =>
       }
     })
     .addCase(updateGas, (state, action) => {
-      const { gas } = action.payload
+      const gas = action.payload
       state.gas = gas
     })
     .addCase(setOpenModal, (state, action) => {
