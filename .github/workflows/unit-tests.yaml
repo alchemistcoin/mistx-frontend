@@ -1,8 +1,8 @@
 name: Unit Tests
 on:
-  push:
-    branches: dev
-  pull_request:
+  # push:
+  #   branches: dev
+  # pull_request:
 
 jobs:
   unit-tests:
