@@ -14,6 +14,7 @@ import { PopulatedTransaction } from '@ethersproject/contracts'
 import { keccak256 } from '@ethersproject/keccak256'
 import { ethers } from 'ethers'
 import { SignatureLike } from "@ethersproject/bytes";
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -27,7 +28,7 @@ export function useApproveCallback(
   amountToApprove?: CurrencyAmount,
   spender?: string
 ): [ApprovalState, () => Promise<void>] {
-  const { account } = useActiveWeb3React()
+  const { account, library, chainId } = useActiveWeb3React()
   const token = amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
@@ -60,6 +61,21 @@ export function useApproveCallback(
       return
     }
 
+    if (!library) {
+      console.error('no provider')
+      return
+    }
+
+    if (!chainId) {
+      console.error('no chainId')
+      return
+    }
+
+    if (!account) {
+      console.error('no account')
+      return
+    }
+
     if (!tokenContract) {
       console.error('tokenContract is null')
       return
@@ -84,6 +100,19 @@ export function useApproveCallback(
     //we always useExact
     const estimatedGas = await tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
 
+    if (!(tokenContract.signer instanceof JsonRpcSigner)) {
+      throw new Error(`Cannot sign transactions with this wallet type`)
+    }
+
+    // ethers will change eth_sign to personal_sign if it detects metamask
+    let web3Provider: Web3Provider | undefined
+    let isMetamask: boolean | undefined
+    if (library instanceof Web3Provider) {
+      web3Provider = library as Web3Provider
+      isMetamask = web3Provider.provider.isMetaMask
+      web3Provider.provider.isMetaMask = false
+    }
+
     //use populate instead of broadcasting
     return tokenContract.populateTransaction
       .approve(spender, amountToApprove.raw.toString(), {
@@ -92,7 +121,7 @@ export function useApproveCallback(
       .then((response: PopulatedTransaction) => {
         const serialized = ethers.utils.serializeTransaction(response);
         const hash = keccak256(serialized)
-        tokenContract.request("eth_sign", [account, hash])
+        library.jsonRpcFetchFunc("eth_sign", [account, hash])
           .then((signature: SignatureLike) => {
             //this returns the transaction & signature serialized and ready to broadcast
             const txWithSig = ethers.utils.serializeTransaction(response, signature)
@@ -102,12 +131,17 @@ export function useApproveCallback(
               approval: { tokenAddress: token.address, spender: spender }
             })
           })
+          .finally(() => {
+            if (web3Provider) {
+              web3Provider.provider.isMetaMask = isMetamask
+            }
+          })
       })
       .catch((error: Error) => {
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction, account])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction, account, chainId, library])
 
   return [approvalState, approve]
 }
