@@ -1,13 +1,13 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@alchemistcoin/sdk'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
-import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
+import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
 import Card, { GreyCard } from '../../components/Card'
-import Column, { AutoColumn } from '../../components/Column'
+import { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
@@ -18,14 +18,14 @@ import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpa
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
-import ProgressSteps from '../../components/ProgressSteps'
+// import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
 
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
-import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
+// import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
@@ -44,7 +44,7 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 import { ClickableText } from './styleds'
-import Loader from '../../components/Loader'
+// import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
@@ -179,17 +179,17 @@ export default function Swap({ history }: RouteComponentProps) {
   const noRoute = !route
 
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  // const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
 
   // check if user has gone through approval process, used to show two step buttons, reset on token change
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
+  // const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   // mark when a user has submitted an approval, reset onTokenSelection for input field
-  useEffect(() => {
-    if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true)
-    }
-  }, [approval, approvalSubmitted])
+  // useEffect(() => {
+  //   if (approval === ApprovalState.PENDING) {
+  //     setApprovalSubmitted(true)
+  //   }
+  // }, [approval, approvalSubmitted])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
@@ -262,12 +262,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // show approve flow when: no error on inputs, not approved or pending, or approved in current session
   // never show if price impact is above threshold in non expert mode
-  const showApproveFlow =
-    !swapInputError &&
-    (approval === ApprovalState.NOT_APPROVED ||
-      approval === ApprovalState.PENDING ||
-      (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
-    !(priceImpactSeverity > 3 && !isExpertMode)
+  // const showApproveFlow =
+  //   !swapInputError &&
+  //   (approval === ApprovalState.NOT_APPROVED ||
+  //     approval === ApprovalState.PENDING ||
+  //     (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
+  //   !(priceImpactSeverity > 3 && !isExpertMode)
+
 
   const handleConfirmDismiss = useCallback(() => {
     setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
@@ -283,7 +284,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleInputSelect = useCallback(
     inputCurrency => {
-      setApprovalSubmitted(false) // reset 2 step UI for approvals
+      //setApprovalSubmitted(false) // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency)
     },
     [onCurrencySelection]
@@ -343,7 +344,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   <ArrowDown
                     size="16"
                     onClick={() => {
-                      setApprovalSubmitted(false) // reset 2 step UI for approvals
+                      //setApprovalSubmitted(false) // reset 2 step UI for approvals
                       onSwitchTokens()
                     }}
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
@@ -427,53 +428,6 @@ export default function Swap({ history }: RouteComponentProps) {
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                 {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
               </GreyCard>
-            ) : showApproveFlow ? (
-              <RowBetween>
-                <ButtonConfirmed
-                  onClick={approveCallback}
-                  disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                  width="48%"
-                  altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
-                  confirmed={approval === ApprovalState.APPROVED}
-                >
-                  {approval === ApprovalState.PENDING ? (
-                    <AutoRow gap="6px" justify="center">
-                      Approving <Loader stroke="white" />
-                    </AutoRow>
-                  ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                    'Approved'
-                  ) : (
-                    'Approve ' + currencies[Field.INPUT]?.symbol
-                  )}
-                </ButtonConfirmed>
-                <ButtonError
-                  onClick={() => {
-                    if (isExpertMode) {
-                      handleSwap()
-                    } else {
-                      setSwapState({
-                        tradeToConfirm: trade,
-                        attemptingTxn: false,
-                        swapErrorMessage: undefined,
-                        showConfirm: true,
-                        txHash: undefined
-                      })
-                    }
-                  }}
-                  width="48%"
-                  id="swap-button"
-                  disabled={
-                    !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                  }
-                  error={isValid && priceImpactSeverity > 2}
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {priceImpactSeverity > 3 && !isExpertMode
-                      ? `Price Impact High`
-                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                  </Text>
-                </ButtonError>
-              </RowBetween>
             ) : (
               <ButtonError
                 onClick={() => {
@@ -501,11 +455,6 @@ export default function Swap({ history }: RouteComponentProps) {
                     : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
                 </Text>
               </ButtonError>
-            )}
-            {showApproveFlow && (
-              <Column style={{ marginTop: '1rem' }}>
-                <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-              </Column>
             )}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
             {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
