@@ -25,9 +25,9 @@ export default function useMinerBribe(
         setBribe(undefined)
         return
       }
-      
+
       const successfullCall = await estimationCall()
-      if (!successfullCall){
+      if (!successfullCall) {
         setBribe(undefined)
         return
       }
