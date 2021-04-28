@@ -120,21 +120,20 @@ const StyledTokenName = styled.span<{
 `
 
 const StyledBalanceMax = styled.button`
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
+  background-color: ${({ theme }) => theme.bg1};
+  border: 1px solid ${({ theme }) => theme.yellow1};
   border-radius: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
+  color: ${({ theme }) => theme.yellow1};
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
   height: 28px;
   margin-right: 0.5rem;
   
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
+  :hover,
   :focus {
     border: 1px solid ${({ theme }) => theme.primary1};
+    color: ${({ theme }) => theme.primary1};
     outline: none;
   }
 

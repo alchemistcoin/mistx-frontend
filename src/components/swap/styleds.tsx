@@ -7,6 +7,10 @@ import { AutoColumn } from '../Column'
 
 export const Wrapper = styled.div`
   padding: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 1rem 0;
+  `};
 `
 
 export const RelativeWrapper = styled.div`

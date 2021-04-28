@@ -21,6 +21,10 @@ const StyledLabelWrapper = styled.div<{
   top: 0;
   transform: translateX(${({ placement }) => placement === 'right' ? '100%' : '-100%'});
   width: 132px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none;
+  `};
 `
 
 const StyledLabel = styled.div`
