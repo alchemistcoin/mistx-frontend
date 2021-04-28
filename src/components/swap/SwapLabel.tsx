@@ -7,7 +7,7 @@ import styled from 'styled-components'
 const StyledLabelWrapper = styled.div<{
   placement: 'left' | 'right'
 }>`
-  background-color: ${({ theme }) => theme.bg2}
+  background-color: ${({ theme }) => theme.bg6}
   border-radius: 1rem;
   color: ${({ theme }) => theme.text2}
   display: flex;
@@ -20,11 +20,11 @@ const StyledLabelWrapper = styled.div<{
   right: ${({ placement }) => placement === 'right' && 0};
   top: 0;
   transform: translateX(${({ placement }) => placement === 'right' ? '100%' : '-100%'});
-  width: 144px;
+  width: 132px;
 `
 
 const StyledLabel = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: .75rem;
   text-align: right;
 `
 

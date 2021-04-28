@@ -53,6 +53,7 @@ export function colors(darkMode: boolean): Colors {
     bg3: darkMode ? '#222D3B' : '#EDEEF2',
     bg4: darkMode ? '#2A3543' : '#CED0D9',
     bg5: darkMode ? '#343F4D' : '#888D9B',
+    bg6: darkMode ? '#0E0F1E' : '#FFFFFF',
 
     // borders
     border1: darkMode ? '#1F2E3C' : '#FFFFFF',
