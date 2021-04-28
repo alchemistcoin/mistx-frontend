@@ -91,8 +91,7 @@ export default function SwapLabel({
             BAL
           </StyledBalanceLabel>
           <StyledBalanceAmount>
-            {selectedCurrencyBalance?.toSignificant(6)}
-            {currency.symbol}
+            {`${selectedCurrencyBalance ? `${selectedCurrencyBalance?.toSignificant(6)} ` : ''}${currency.symbol}`}
           </StyledBalanceAmount>
         </StyledLabel>
       )}
