@@ -124,7 +124,8 @@ export function useUserBribeMargin(): [number, (bribeMargin: number) => void] {
 
   const setUserBribeMargin = useCallback(
     (userBribeMargin: number) => {
-      dispatch(updateUserBribeMargin({ userBribeMargin }))
+      const bribeMargin = userBribeMargin < 1 ? 1 : userBribeMargin
+      dispatch(updateUserBribeMargin({ userBribeMargin: bribeMargin }))
     },
     [dispatch]
   )
