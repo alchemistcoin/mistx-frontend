@@ -57,15 +57,6 @@ export function colors(darkMode: boolean): Colors {
     // borders
     border1: darkMode ? '#1F2E3C' : '#FFFFFF',
 
-    //specialty colors
-    modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
-    advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
-    headerBg: darkMode
-      ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
-      : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
-    btnBorder: darkMode ? '#FFBF00' : '#1a0434',
-    dialogBg: darkMode ? '#34314B' : '#FCFCFC',
-
     //primary colors
     primary1: '#0e0913',
     primary2: '#CC59FF',
@@ -84,13 +75,26 @@ export function colors(darkMode: boolean): Colors {
     secondary3: '#71E7FF',
 
     // other
-    red1: '#FD4040',
+    red1: '#D96A19',
     red2: '#F82D3A',
     red3: '#D60000',
     green1: '#27AE60',
     yellow1: '#FFBF00',
     yellow2: '#F3841E',
-    blue1: '#2172E5'
+    blue1: '#2172E5',
+
+    // specialty colors
+    modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
+    advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
+    headerBg: darkMode
+      ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
+      : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
+    btnBorder: darkMode ? '#FFBF00' : '#1a0434',
+    dialogBg: darkMode ? '#34314B' : '#FCFCFC',
+
+    // buttons
+    btnPrimaryBg: darkMode ? '#190134' : '#190134',
+    btnSecondaryBg: darkMode ? '#901EF2' : '#901EF2'
 
     // dont wanna forget these blue yet
     // blue4: darkMode ? '#153d6f70' : '#C4D9F8',

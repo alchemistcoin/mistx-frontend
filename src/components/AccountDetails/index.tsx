@@ -54,7 +54,7 @@ const UpperSection = styled.div`
 
 const InfoCard = styled.div`
   padding: 1rem;
-  border: 1px solid ${({ theme }) => theme.bg3};
+  border: 1px solid ${({ theme }) => theme.primary6};
   border-radius: 20px;
   position: relative;
   display: grid;
@@ -160,7 +160,7 @@ const WalletName = styled.div`
   width: initial;
   font-size: 0.825rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.text3};
+  color: ${({ theme }) => theme.text2};
 `
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -188,9 +188,10 @@ const WalletAction = styled(ButtonPrimary)`
   margin-left: 8px;
   font-size: 0.825rem;
   padding: 4px 6px;
+
   :hover {
     cursor: pointer;
-    text-decoration: underline;
+    text-decoration: none;
   }
 `
 

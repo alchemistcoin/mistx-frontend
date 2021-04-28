@@ -54,6 +54,11 @@ export interface Colors {
   yellow1: Color
   yellow2: Color
   blue1: Color
+
+
+  // buttons
+  btnPrimaryBg: Color
+  btnSecondaryBg: Color
 }
 
 export interface Grids {

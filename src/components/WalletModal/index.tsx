@@ -103,7 +103,9 @@ const OptionGrid = styled.div`
 `
 
 const HoverText = styled.div`
-  :hover {
+  color: ${({ theme }) => theme.text1};
+
+  &:hover {
     cursor: pointer;
   }
 `

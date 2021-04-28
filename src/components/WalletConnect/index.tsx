@@ -10,7 +10,6 @@ const HeaderFrame = styled.div`
   display: flex;
   top: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`

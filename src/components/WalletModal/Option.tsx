@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
+import { darken } from 'polished'
 import { ExternalLink } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
+  background-color: ${({ theme, active }) => (active ? 'transparent' : '#190134')};
   padding: 1rem;
   outline: none;
   border: 1px solid;
@@ -12,7 +13,7 @@ const InfoCard = styled.button<{ active?: boolean }>`
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-  border-color: ${({ theme, active }) => (active ? 'transparent' : theme.bg3)};
+  border-color: ${({ theme, active }) => (active ? theme.primary6 : '#190134')};
 `
 
 const OptionCard = styled(InfoCard as any)`
@@ -32,11 +33,45 @@ const OptionCardLeft = styled.div`
 
 const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
   margin-top: 0;
+  cursor: pointer;
+
   &:hover {
     cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
-    border: ${({ clickable, theme }) => (clickable ? `1px solid ${theme.primary1}` : ``)};
+    border: ${({ clickable, theme }) => (clickable ? `1px solid ${darken(0.1, '#190134')}` : ``)};
   }
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
+`
+
+const StyledExternalLink = styled(ExternalLink)`
+  color: inherit;
+
+  :hover {
+    text-decoration: none;
+  }
+
+  :focus {
+    outline: none;
+    text-decoration: none;
+  }
+
+  :active {
+    text-decoration: none;
+  }
+
+  * {
+    :hover {
+      text-decoration: none;
+    }
+
+    :focus {
+      outline: none;
+      text-decoration: none;
+    }
+
+    :active {
+      text-decoration: none;
+    }
+  }
 `
 
 const GreenCircle = styled.div`
@@ -133,7 +168,7 @@ export default function Option({
     </OptionCardClickable>
   )
   if (link) {
-    return <ExternalLink href={link}>{content}</ExternalLink>
+    return <StyledExternalLink href={link}>{content}</StyledExternalLink>
   }
 
   return content
