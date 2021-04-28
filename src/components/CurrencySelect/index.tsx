@@ -1,6 +1,7 @@
 import { Currency, Pair } from '@alchemistcoin/sdk'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
+import { darken } from 'polished'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 
 import tokenHandSvg from '../../assets/svg/token_hand.svg';
@@ -17,6 +18,10 @@ const TokenSelectButton = styled.button`
   height: 110px;
   justify-content: center;
   width: 100%;
+
+  :hover {
+    background-color: ${({ theme }) => darken(.05, theme.yellow1)};
+  }
 `
 
 const TokenHandImage = styled.img`
