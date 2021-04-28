@@ -20,7 +20,6 @@ import { ArrowPosition, ArrowWrapper, BottomGrouping, RelativeWrapper, SwapCallb
 // import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
-import SwapHeader from '../../components/swap/SwapHeader'
 import WalletConnect from '../../components/WalletConnect'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
@@ -352,7 +351,6 @@ export default function Swap({ history }: RouteComponentProps) {
         onConfirm={handleConfirmTokenWarning}
         onDismiss={handleDismissTokenWarning}
       />
-      <SwapHeader />
       <AppBody>
         <Wrapper id="swap-page">
           <ConfirmSwapModal
