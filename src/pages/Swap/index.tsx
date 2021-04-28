@@ -40,6 +40,7 @@ import {
   useSwapActionHandlers,
   useSwapState
 } from '../../state/swap/hooks'
+import useMinerBribe from '../../hooks/useMinerBribe'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -160,6 +161,9 @@ export default function Swap({ history }: RouteComponentProps) {
         [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
         [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
       }
+
+  const bribe = useMinerBribe(trade, allowedSlippage, recipient)
+  console.log('miner bribe', bribe)
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
