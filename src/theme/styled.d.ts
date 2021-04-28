@@ -20,7 +20,7 @@ export interface Colors {
   bg4: Color
   bg5: Color
 
-  // borders 
+  // borders
   border1: Color
 
   //specialty colors
@@ -55,7 +55,6 @@ export interface Colors {
   yellow2: Color
   blue1: Color
 
-
   // buttons
   btnPrimaryBg: Color
   btnSecondaryBg: Color
@@ -70,7 +69,7 @@ export interface Grids {
 declare module 'styled-components' {
   export interface DefaultTheme extends Colors {
     darkMode: boolean
-    
+
     grids: Grids
 
     // shadows
