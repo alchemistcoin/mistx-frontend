@@ -15,9 +15,8 @@ import { Version } from './useToggledVersion'
 import { MISTX_RELAY_URI, BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
-import { SignatureLike } from "@ethersproject/bytes"
+import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
-
 
 export enum SwapCallbackState {
   INVALID,
@@ -117,7 +116,7 @@ export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
-  relayDeadline?: number, // deadline to use for relay -- set to undefined for no relay
+  relayDeadline?: number // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -207,10 +206,8 @@ export function useSwapCallback(
         } = successfulEstimation
 
         const sendToRelay = (rawTransaction: string, deadline: number) => {
-
           const relayURI = chainId ? MISTX_RELAY_URI[chainId] : undefined
-          if (!relayURI)
-            throw new Error('Could not determine relay URI for this network')
+          if (!relayURI) throw new Error('Could not determine relay URI for this network')
 
           //TODO change this to our relay
           const body = JSON.stringify({
@@ -223,8 +220,8 @@ export function useSwapCallback(
             method: 'POST',
             body,
             headers: {
-              'Authorization': process.env.REACT_APP_MISTX_API_KEY ?? '',
-              'Content-Type': 'application/json',
+              Authorization: process.env.REACT_APP_MISTX_API_KEY ?? '',
+              'Content-Type': 'application/json'
             }
           })
             //.then(res => res.json())
@@ -249,68 +246,76 @@ export function useSwapCallback(
           nonce: contract.signer.getTransactionCount(),
           gasLimit: calculateGasMargin(gasEstimate), //needed?
           ...(value && !isZero(value) ? { value } : {})
-        }).then(populatedTx => {
-          //delete for serialize necessary
-          delete populatedTx.from
-          populatedTx.chainId = chainId
-          const serialized = ethers.utils.serializeTransaction(populatedTx);
-          const hash = keccak256(serialized)
-          return library.jsonRpcFetchFunc("eth_sign", [account, hash])
-            .then((signature: SignatureLike) => {
-              //this returns the transaction & signature serialized and ready to broadcast
-              //basically does everything that AD does with hexlify etc. - kek
-              const txWithSig = ethers.utils.serializeTransaction(populatedTx, signature)
-              return { signedTx: txWithSig, populatedTx: populatedTx }
-            })
-            .finally(() => {
-              if (web3Provider) {
-                web3Provider.provider.isMetaMask = isMetamask
-              }
-            })
-            .then(({ signedTx, populatedTx }: { signedTx: string, populatedTx: PopulatedTransaction }) => {
-              const hash = keccak256(signedTx)
-              const inputSymbol = trade.inputAmount.currency.symbol
-              const outputSymbol = trade.outputAmount.currency.symbol
-              const inputAmount = trade.inputAmount.toSignificant(3)
-              const outputAmount = trade.outputAmount.toSignificant(3)
-
-              const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-              const withRecipient =
-                (recipient === account
-                  ? base
-                  : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
-                    ? shortenAddress(recipientAddressOrName)
-                    : recipientAddressOrName
-                  }`)
-              //  + (relayDeadline ? 'mistX' : '')
-
-              const relay = relayDeadline ? {
-                rawTransaction: signedTx,
-                deadline: Math.floor(relayDeadline + (new Date().getTime() / 1000)),
-                nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber(),
-              } : undefined
-
-              //we can't have TransactionResponse here
-              addTransaction({ hash }, {
-                summary: withRecipient,
-                //relay
-              })
-
-              if (relay)
-                sendToRelay(relay.rawTransaction, relay.deadline)
-
-              return hash
-            })
-        }).catch((error: any) => {
-          // if the user rejected the tx, pass this along
-          if (error?.code === 4001) {
-            throw new Error('Transaction rejected.')
-          } else {
-            // otherwise, the error was unexpected and we need to convey that
-            console.error(`Swap failed`, error, methodName, args, value)
-            throw new Error(`Swap failed: ${error.message}`)
-          }
         })
+          .then(populatedTx => {
+            //delete for serialize necessary
+            delete populatedTx.from
+            populatedTx.chainId = chainId
+            const serialized = ethers.utils.serializeTransaction(populatedTx)
+            const hash = keccak256(serialized)
+            return library
+              .jsonRpcFetchFunc('eth_sign', [account, hash])
+              .then((signature: SignatureLike) => {
+                //this returns the transaction & signature serialized and ready to broadcast
+                //basically does everything that AD does with hexlify etc. - kek
+                const txWithSig = ethers.utils.serializeTransaction(populatedTx, signature)
+                return { signedTx: txWithSig, populatedTx: populatedTx }
+              })
+              .finally(() => {
+                if (web3Provider) {
+                  web3Provider.provider.isMetaMask = isMetamask
+                }
+              })
+              .then(({ signedTx, populatedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
+                const hash = keccak256(signedTx)
+                const inputSymbol = trade.inputAmount.currency.symbol
+                const outputSymbol = trade.outputAmount.currency.symbol
+                const inputAmount = trade.inputAmount.toSignificant(3)
+                const outputAmount = trade.outputAmount.toSignificant(3)
+
+                const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                const withRecipient =
+                  recipient === account
+                    ? base
+                    : `${base} to ${
+                        recipientAddressOrName && isAddress(recipientAddressOrName)
+                          ? shortenAddress(recipientAddressOrName)
+                          : recipientAddressOrName
+                      }`
+                //  + (relayDeadline ? 'mistX' : '')
+
+                const relay = relayDeadline
+                  ? {
+                      rawTransaction: signedTx,
+                      deadline: Math.floor(relayDeadline + new Date().getTime() / 1000),
+                      nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber()
+                    }
+                  : undefined
+
+                //we can't have TransactionResponse here
+                addTransaction(
+                  { hash },
+                  {
+                    summary: withRecipient
+                    //relay
+                  }
+                )
+
+                if (relay) sendToRelay(relay.rawTransaction, relay.deadline)
+
+                return hash
+              })
+          })
+          .catch((error: any) => {
+            // if the user rejected the tx, pass this along
+            if (error?.code === 4001) {
+              throw new Error('Transaction rejected.')
+            } else {
+              // otherwise, the error was unexpected and we need to convey that
+              console.error(`Swap failed`, error, methodName, args, value)
+              throw new Error(`Swap failed: ${error.message}`)
+            }
+          })
       },
       error: null
     }
