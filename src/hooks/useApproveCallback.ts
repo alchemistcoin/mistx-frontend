@@ -4,7 +4,7 @@ import { ROUTER_ADDRESS } from '../constants'
 import { useTokenAllowance } from '../data/Allowances'
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { Field } from '../state/swap/actions'
-import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks'
+import { useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
 import { useTokenContract } from './useContract'
@@ -13,7 +13,7 @@ import { Version } from './useToggledVersion'
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { keccak256 } from '@ethersproject/keccak256'
 import { ethers } from 'ethers'
-import { SignatureLike } from "@ethersproject/bytes";
+import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 export enum ApprovalState {
@@ -27,7 +27,7 @@ export enum ApprovalState {
 export function useApproveCallback(
   amountToApprove?: CurrencyAmount,
   spender?: string
-): [ApprovalState, () => Promise<void>] {
+): [ApprovalState, () => Promise<string | undefined>] {
   const { account, library, chainId } = useActiveWeb3React()
   const token = amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
@@ -49,46 +49,46 @@ export function useApproveCallback(
   }, [amountToApprove, currentAllowance, pendingApproval, spender])
 
   const tokenContract = useTokenContract(token?.address)
-  const addTransaction = useTransactionAdder()
+  // const addTransaction = useTransactionAdder()
 
-  const approve = useCallback(async (): Promise<void> => {
+  const approve = useCallback(async (): Promise<string | undefined> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
       console.error('approve was called unnecessarily')
-      return
+      return undefined
     }
     if (!token) {
       console.error('no token')
-      return
+      return undefined
     }
 
     if (!library) {
       console.error('no provider')
-      return
+      return undefined
     }
 
     if (!chainId) {
       console.error('no chainId')
-      return
+      return undefined
     }
 
     if (!account) {
       console.error('no account')
-      return
+      return undefined
     }
 
     if (!tokenContract) {
       console.error('tokenContract is null')
-      return
+      return undefined
     }
 
     if (!amountToApprove) {
       console.error('missing amount to approve')
-      return
+      return undefined
     }
 
     if (!spender) {
       console.error('no spender')
-      return
+      return undefined
     }
 
     // let useExact = false
@@ -122,17 +122,19 @@ export function useApproveCallback(
       .then((response: PopulatedTransaction) => {
         delete response.from
         response.chainId = chainId
-        const serialized = ethers.utils.serializeTransaction(response);
+        const serialized = ethers.utils.serializeTransaction(response)
         const hash = keccak256(serialized)
-        library.jsonRpcFetchFunc("eth_sign", [account, hash])
+        return library
+          .jsonRpcFetchFunc('eth_sign', [account, hash])
           .then((signature: SignatureLike) => {
             //this returns the transaction & signature serialized and ready to broadcast
             const txWithSig = ethers.utils.serializeTransaction(response, signature)
-            const hash = keccak256(txWithSig)
-            addTransaction({ hash }, {
-              summary: 'Approve ' + amountToApprove.currency.symbol,
-              approval: { tokenAddress: token.address, spender: spender }
-            })
+            return txWithSig
+            // const hash = keccak256(txWithSig)
+            // addTransaction({ hash }, {
+            //   summary: 'Approve ' + amountToApprove.currency.symbol,
+            //   approval: { tokenAddress: token.address, spender: spender }
+            // })
           })
           .finally(() => {
             if (web3Provider) {
@@ -144,7 +146,7 @@ export function useApproveCallback(
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction, account, chainId, library])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library])
 
   return [approvalState, approve]
 }

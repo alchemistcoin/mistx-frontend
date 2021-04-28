@@ -17,6 +17,7 @@ import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { useApproveCallbackFromTrade } from './useApproveCallback'
 
 export enum SwapCallbackState {
   INVALID,
@@ -123,6 +124,8 @@ export function useSwapCallback(
   const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
 
   const addTransaction = useTransactionAdder()
+  const [approvalState, approve] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  console.log('Approval State', approvalState)
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
@@ -205,28 +208,28 @@ export function useSwapCallback(
           gasEstimate
         } = successfulEstimation
 
-        const sendToRelay = (rawTransaction: string, deadline: number) => {
+        const sendToRelay = (serializedApproval: string | undefined, serializedSwap: string, deadline: number) => {
           const relayURI = chainId ? MISTX_RELAY_URI[chainId] : undefined
           if (!relayURI) throw new Error('Could not determine relay URI for this network')
-
+          console.log('Send to relay', serializedApproval, serializedSwap, deadline)
           //TODO change this to our relay
-          const body = JSON.stringify({
-            method: 'archer_submitTx',
-            tx: rawTransaction,
-            deadline: deadline.toString()
-          })
+          // const body = JSON.stringify({
+          //   method: 'archer_submitTx',
+          //   tx: rawTransaction,
+          //   deadline: deadline.toString()
+          // })
 
-          fetch(relayURI, {
-            method: 'POST',
-            body,
-            headers: {
-              Authorization: process.env.REACT_APP_MISTX_API_KEY ?? '',
-              'Content-Type': 'application/json'
-            }
-          })
-            //.then(res => res.json())
-            //.then(json => console.log(json))
-            .catch(err => console.error(err))
+          // fetch(relayURI, {
+          //   method: 'POST',
+          //   body,
+          //   headers: {
+          //     Authorization: process.env.REACT_APP_MISTX_API_KEY ?? '',
+          //     'Content-Type': 'application/json'
+          //   }
+          // })
+          //.then(res => res.json())
+          //.then(json => console.log(json))
+          // .catch(err => console.error(err))
         }
 
         if (!(contract.signer instanceof JsonRpcSigner)) {
@@ -242,82 +245,101 @@ export function useSwapCallback(
           web3Provider.provider.isMetaMask = false
         }
 
-        return contract.populateTransaction[methodName](...args, {
-          nonce: contract.signer.getTransactionCount(),
-          gasLimit: calculateGasMargin(gasEstimate), //needed?
-          ...(value && !isZero(value) ? { value } : {})
-        })
-          .then(populatedTx => {
-            //delete for serialize necessary
-            delete populatedTx.from
-            populatedTx.chainId = chainId
-            const serialized = ethers.utils.serializeTransaction(populatedTx)
-            const hash = keccak256(serialized)
-            return library
-              .jsonRpcFetchFunc('eth_sign', [account, hash])
-              .then((signature: SignatureLike) => {
-                //this returns the transaction & signature serialized and ready to broadcast
-                //basically does everything that AD does with hexlify etc. - kek
-                const txWithSig = ethers.utils.serializeTransaction(populatedTx, signature)
-                return { signedTx: txWithSig, populatedTx: populatedTx }
-              })
-              .finally(() => {
-                if (web3Provider) {
-                  web3Provider.provider.isMetaMask = isMetamask
-                }
-              })
-              .then(({ signedTx, populatedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
-                const hash = keccak256(signedTx)
-                const inputSymbol = trade.inputAmount.currency.symbol
-                const outputSymbol = trade.outputAmount.currency.symbol
-                const inputAmount = trade.inputAmount.toSignificant(3)
-                const outputAmount = trade.outputAmount.toSignificant(3)
-
-                const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-                const withRecipient =
-                  recipient === account
-                    ? base
-                    : `${base} to ${
-                        recipientAddressOrName && isAddress(recipientAddressOrName)
-                          ? shortenAddress(recipientAddressOrName)
-                          : recipientAddressOrName
-                      }`
-                //  + (relayDeadline ? 'mistX' : '')
-
-                const relay = relayDeadline
-                  ? {
-                      rawTransaction: signedTx,
-                      deadline: Math.floor(relayDeadline + new Date().getTime() / 1000),
-                      nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber()
+        return approve()
+          .then(signedApproval => {
+            return contract.populateTransaction[methodName](...args, {
+              nonce: contract.signer.getTransactionCount(),
+              gasLimit: calculateGasMargin(gasEstimate), //needed?
+              ...(value && !isZero(value) ? { value } : {})
+            })
+              .then(populatedTx => {
+                //delete for serialize necessary
+                delete populatedTx.from
+                populatedTx.chainId = chainId
+                const serialized = ethers.utils.serializeTransaction(populatedTx)
+                const hash = keccak256(serialized)
+                return library
+                  .jsonRpcFetchFunc('eth_sign', [account, hash])
+                  .then((signature: SignatureLike) => {
+                    //this returns the transaction & signature serialized and ready to broadcast
+                    //basically does everything that AD does with hexlify etc. - kek
+                    const txWithSig = ethers.utils.serializeTransaction(populatedTx, signature)
+                    return { signedTx: txWithSig, populatedTx: populatedTx }
+                  })
+                  .finally(() => {
+                    if (web3Provider) {
+                      web3Provider.provider.isMetaMask = isMetamask
                     }
-                  : undefined
+                  })
+                  .then(({ signedTx, populatedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
+                    const hash = keccak256(signedTx)
+                    const inputSymbol = trade.inputAmount.currency.symbol
+                    const outputSymbol = trade.outputAmount.currency.symbol
+                    const inputAmount = trade.inputAmount.toSignificant(3)
+                    const outputAmount = trade.outputAmount.toSignificant(3)
 
-                //we can't have TransactionResponse here
-                addTransaction(
-                  { hash },
-                  {
-                    summary: withRecipient
-                    //relay
-                  }
-                )
+                    const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                    const withRecipient =
+                      recipient === account
+                        ? base
+                        : `${base} to ${
+                            recipientAddressOrName && isAddress(recipientAddressOrName)
+                              ? shortenAddress(recipientAddressOrName)
+                              : recipientAddressOrName
+                          }`
+                    //  + (relayDeadline ? 'mistX' : '')
 
-                if (relay) sendToRelay(relay.rawTransaction, relay.deadline)
+                    const relay = relayDeadline
+                      ? {
+                          serializedApprove: signedApproval,
+                          serializedSwap: signedTx,
+                          deadline: Math.floor(relayDeadline + new Date().getTime() / 1000),
+                          nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber()
+                        }
+                      : undefined
 
-                return hash
+                    //we can't have TransactionResponse here
+                    addTransaction(
+                      { hash },
+                      {
+                        summary: withRecipient
+                        //relay
+                      }
+                    )
+
+                    if (relay) sendToRelay(relay.serializedApprove, relay.serializedSwap, relay.deadline)
+
+                    return hash
+                  })
+              })
+              .catch((error: any) => {
+                // if the user rejected the tx, pass this along
+                if (error?.code === 4001) {
+                  throw new Error('Transaction rejected.')
+                } else {
+                  // otherwise, the error was unexpected and we need to convey that
+                  console.error(`Swap failed`, error, methodName, args, value)
+                  throw new Error(`Swap failed: ${error.message}`)
+                }
               })
           })
           .catch((error: any) => {
-            // if the user rejected the tx, pass this along
-            if (error?.code === 4001) {
-              throw new Error('Transaction rejected.')
-            } else {
-              // otherwise, the error was unexpected and we need to convey that
-              console.error(`Swap failed`, error, methodName, args, value)
-              throw new Error(`Swap failed: ${error.message}`)
-            }
+            console.error(`Approval failed`, error)
+            throw new Error(`Approval Failed: ${error.message}`)
           })
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction, relayDeadline])
+  }, [
+    trade,
+    library,
+    account,
+    chainId,
+    recipient,
+    recipientAddressOrName,
+    swapCalls,
+    addTransaction,
+    relayDeadline,
+    approve
+  ])
 }
