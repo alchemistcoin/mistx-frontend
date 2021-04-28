@@ -52,6 +52,7 @@ import SwapLabel from 'components/swap/SwapLabel'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
 import { RouteComponentProps } from 'react-router-dom'
+import CurrencySelect from 'components/CurrencySelect'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -368,23 +369,35 @@ export default function Swap({ history }: RouteComponentProps) {
 
           <AutoColumn>
             <RelativeWrapper>
-              <SwapLabel
-                currency={currencies[Field.INPUT]}
-                id="from-label"
-                placement="left"
-                showMaxButton={!atMaxAmountInput}
-              />
-              <CurrencyInputPanel
-                label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
-                value={formattedAmounts[Field.INPUT]}
-                showMaxButton={!atMaxAmountInput}
-                currency={currencies[Field.INPUT]}
-                onUserInput={handleTypeInput}
-                onMax={handleMaxInput}
-                onCurrencySelect={handleInputSelect}
-                otherCurrency={currencies[Field.OUTPUT]}
-                id="swap-currency-input"
-              />
+              {currencies[Field.INPUT]
+                ? (
+                  <>
+                    <SwapLabel
+                      currency={currencies[Field.INPUT]}
+                      id="from-label"
+                      onMax={handleMaxInput}
+                      placement="left"
+                      showMaxButton={!atMaxAmountInput}
+                    />
+                    <CurrencyInputPanel
+                      label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
+                      value={formattedAmounts[Field.INPUT]}
+                      showMaxButton={!atMaxAmountInput}
+                      currency={currencies[Field.INPUT]}
+                      onUserInput={handleTypeInput}
+                      onMax={handleMaxInput}
+                      onCurrencySelect={handleInputSelect}
+                      otherCurrency={currencies[Field.OUTPUT]}
+                      id="swap-currency-input"
+                    />
+                  </>
+                )
+                : (
+                  <CurrencySelect
+                    onCurrencySelect={handleInputSelect}
+                  />
+                )
+              }
               <ArrowPosition style={{ zIndex: 2 }}>
                 <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                   <ArrowWrapper
@@ -407,19 +420,36 @@ export default function Swap({ history }: RouteComponentProps) {
                 </AutoRow>
               </ArrowPosition>
             </RelativeWrapper>
-            <RelativeWrapper>
-              <CurrencyInputPanel
-                value={formattedAmounts[Field.OUTPUT]}
-                onUserInput={handleTypeOutput}
-                label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
-                showMaxButton={false}
-                currency={currencies[Field.OUTPUT]}
-                onCurrencySelect={handleOutputSelect}
-                otherCurrency={currencies[Field.INPUT]}
-                id="swap-currency-output"
-              />
-            </RelativeWrapper>
-
+            {currencies[Field.OUTPUT]
+              ? (
+                <RelativeWrapper>
+                  <CurrencyInputPanel
+                    value={formattedAmounts[Field.OUTPUT]}
+                    onUserInput={handleTypeOutput}
+                    label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
+                    showMaxButton={false}
+                    currency={currencies[Field.OUTPUT]}
+                    onCurrencySelect={handleOutputSelect}
+                    otherCurrency={currencies[Field.INPUT]}
+                    id="swap-currency-output"
+                  />
+                  {currencies[Field.OUTPUT] &&
+                    <SwapLabel
+                      currency={currencies[Field.OUTPUT]}
+                      id="to-label"
+                      onMax={handleMaxInput}
+                      placement="right"
+                      showMaxButton={false}
+                    />
+                  }
+                </RelativeWrapper>
+              )
+              : (
+                <CurrencySelect
+                  onCurrencySelect={handleOutputSelect}
+                />
+              )
+            }
             {recipient !== null && !showWrap ? (
               <>
                 <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>

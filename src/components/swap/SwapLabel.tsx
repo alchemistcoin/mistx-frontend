@@ -1,4 +1,4 @@
-import { Currency } from '@uniswap/sdk'
+import { Currency } from '@alchemistcoin/sdk'
 import React from 'react';
 import { useCurrencyBalance } from 'state/wallet/hooks';
 import { useActiveWeb3React } from '../../hooks'

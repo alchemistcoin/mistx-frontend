@@ -15,7 +15,10 @@ import { useActiveWeb3React } from '../../hooks'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
-const InputRow = styled.div<{ selected: boolean }>`
+const InputRow = styled.div<{
+  selected: boolean
+  value: string
+}>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   flex: 6;
@@ -247,13 +250,15 @@ export default function CurrencyInputPanel({
           </Aligner>
         </CurrencySelect>
         <InputDivider />
-        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+        <InputRow
+          style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect}
+          value={value}
+        >
           {!hideInput && (
             <>
               <NumericalInput
                 className="token-amount-input"
-                fontSize="4rem"
-                fontWeight="200"
+                fontSize="3.5rem"
                 value={value}
                 onUserInput={val => {
                   onUserInput(val)

@@ -17,7 +17,6 @@ const StyledInput = styled.input<{
   flex: 1 1 auto;
   background-color: inherit;
   font-size: ${({ fontSize }) => fontSize ?? '24px'};
-  font-weight: ${({ fontWeight }) => fontWeight && fontWeight}
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
   overflow: hidden;
@@ -40,6 +39,7 @@ const StyledInput = styled.input<{
 
   ::placeholder {
     color: ${({ theme }) => theme.text4};
+    font-weight: 200;
   }
 `
 
