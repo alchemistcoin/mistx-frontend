@@ -1,4 +1,4 @@
-import { Currency, Pair } from '@alchemistcoin/sdk'
+import { Currency } from '@alchemistcoin/sdk'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
@@ -33,7 +33,6 @@ interface CurrencySelectProps {
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
   disableCurrencySelect?: boolean
-  pair?: Pair | null
   otherCurrency?: Currency | null
   showCommonBases?: boolean
 }
@@ -42,7 +41,6 @@ export default function CurrencySelect({
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
-  pair = null, // used for double token logo
   otherCurrency,
   showCommonBases,
 }: CurrencySelectProps) {
