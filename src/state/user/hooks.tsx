@@ -17,6 +17,7 @@ import {
   updateUserDeadline,
   updateUserExpertMode,
   updateUserSlippageTolerance,
+  updateUserBribeMargin,
   toggleURLWarning,
   updateUserSingleHopOnly
 } from './actions'
@@ -113,6 +114,22 @@ export function useUserSlippageTolerance(): [number, (slippage: number) => void]
   )
 
   return [userSlippageTolerance, setUserSlippageTolerance]
+}
+
+export function useUserBribeMargin(): [number, (bribeMargin: number) => void] {
+  const dispatch = useDispatch<AppDispatch>()
+  const userBribeMargin = useSelector<AppState, AppState['user']['userBribeMargin']>(state => {
+    return state.user.userBribeMargin
+  })
+
+  const setUserBribeMargin = useCallback(
+    (userBribeMargin: number) => {
+      dispatch(updateUserBribeMargin({ userBribeMargin }))
+    },
+    [dispatch]
+  )
+
+  return [userBribeMargin, setUserBribeMargin]
 }
 
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
