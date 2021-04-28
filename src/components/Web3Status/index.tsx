@@ -69,14 +69,14 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   border: 1px solid ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.text1)};
   color: ${({ theme }) => (theme.darkMode ? theme.text5 : theme.text1)};
   font-weight: 700;
-  
+
   :hover,
   :focus {
-    background-color: ${({ pending, theme }) => darken(0.05, theme.yellow1)};
+    background-color: ${({ theme }) => darken(0.05, theme.yellow1)};
 
     :focus {
-      border: 1px solid
-        ${({ pending, theme }) => darken(0.1, theme.darkMode ? theme.yellow1 : theme.text1)}
+      border: 1px solid ${({ theme }) => darken(0.1, theme.darkMode ? theme.yellow1 : theme.text1)};
+    }
   }
 `
 

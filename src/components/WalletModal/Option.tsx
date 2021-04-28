@@ -4,7 +4,7 @@ import { darken } from 'polished'
 import { ExternalLink } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? 'transparent' : '#190134')};
+  background-color: ${({ active }) => (active ? 'transparent' : '#190134')};
   padding: 1rem;
   outline: none;
   border: 1px solid;
@@ -37,7 +37,7 @@ const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
 
   &:hover {
     cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
-    border: ${({ clickable, theme }) => (clickable ? `1px solid ${darken(0.1, '#190134')}` : ``)};
+    border: ${({ clickable }) => (clickable ? `1px solid ${darken(0.1, '#190134')}` : ``)};
   }
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
 `
