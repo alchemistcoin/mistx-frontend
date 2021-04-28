@@ -21,8 +21,9 @@ const InputRow = styled.div<{
 }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  flex: 6;
+  flex: ${({ value }) => value.length > 0 ? 20 : 6};
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
+  transition: flex .3s;
 `
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
@@ -30,12 +31,12 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   background-color: inherit;
   border: none;
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
+  cursor: pointer;
   font-weight: 500;
   height: 4.2rem;
   border-radius: 12px;
   flex: 4;
   outline: none;
-  cursor: pointer;
   user-select: none;
   padding: 0 0.5rem;
 
@@ -67,7 +68,8 @@ const LabelRow = styled.div`
 const Aligner = styled.span`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  position: relative;
 `
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
@@ -92,7 +94,7 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
 const InputDivider = styled.div`
   background-color: ${({ theme }) => theme.text3}
   height: 44px;
-  margin: 0 .75rem;
+  margin: 0 .25rem;
   width: 1px;
 `
 
@@ -104,10 +106,17 @@ const Container = styled.div<{ hideInput: boolean }>`
   padding: 0 .5rem;
 `
 
-const StyledTokenName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
-  font-size:  ${({ active }) => (active ? '20px' : '16px')};
-  flex: 1;
+const StyledTokenName = styled.span<{
+  active?: boolean
+  value: string
+}>`
+  margin: 0 0.25rem;
+  font-size:  ${({ active }) => (active ? '18px' : '16px')};
+  right: 4.25rem;
+  opacity: ${({ value }) => value.length > 0 ? 0 : 1}
+  position: absolute;
+  transition: opacity .3s, transform .3s;
+  ${({ value }) => value.length > 0 && 'transform: translateX(100%);'}
 `
 
 const StyledBalanceMax = styled.button`
@@ -222,12 +231,12 @@ export default function CurrencyInputPanel({
           <Aligner>
             {pair
               ? (
-                <StyledTokenName className="pair-name-container">
+                <StyledTokenName className="pair-name-container" value={value}>
                   {pair?.token0.symbol}:{pair?.token1.symbol}
                 </StyledTokenName>
               )
               : (
-                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)} value={value}>
                   {(currency && currency.symbol && currency.symbol.length > 20
                     ? currency.symbol.slice(0, 4) +
                       '...' +

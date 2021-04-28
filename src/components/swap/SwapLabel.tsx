@@ -30,19 +30,18 @@ const StyledLabel = styled.div`
 
 const StyledBalanceMax = styled.button`
   height: 28px;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
+  background-color: ${({ theme }) => theme.bg1};
+  border: 1px solid ${({ theme }) => theme.yellow1};
+  border-radius: 14px;
+  color: ${({ theme }) => theme.yellow1};
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
 
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
+  :hover,
   :focus {
     border: 1px solid ${({ theme }) => theme.primary1};
+    color: ${({ theme }) => theme.primary1};
     outline: none;
   }
 
@@ -51,6 +50,11 @@ const StyledBalanceMax = styled.button`
 
 const StyledBalanceLabel = styled.div`
   font-weight: 300;
+`
+
+const StyledBalanceAmount = styled.div`
+  color: ${({ theme }) => theme.text1}
+  font-weight: 700;
 `
 
 interface SwapLabelProps {
@@ -86,8 +90,10 @@ export default function SwapLabel({
           <StyledBalanceLabel>
             BAL
           </StyledBalanceLabel>
-          {selectedCurrencyBalance?.toSignificant(6)}
-          {currency.symbol}
+          <StyledBalanceAmount>
+            {selectedCurrencyBalance?.toSignificant(6)}
+            {currency.symbol}
+          </StyledBalanceAmount>
         </StyledLabel>
       )}
       {account && currency && showMaxButton && (
