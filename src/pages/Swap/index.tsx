@@ -269,7 +269,6 @@ export default function Swap({ history }: RouteComponentProps) {
   //     (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
   //   !(priceImpactSeverity > 3 && !isExpertMode)
 
-
   const handleConfirmDismiss = useCallback(() => {
     setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
