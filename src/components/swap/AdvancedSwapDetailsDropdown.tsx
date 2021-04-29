@@ -6,9 +6,9 @@ import { AdvancedSwapDetails, AdvancedSwapDetailsProps } from './AdvancedSwapDet
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   padding-top: calc(16px + 2rem);
   padding-bottom: 16px;
-  margin-top: -2rem;
+  margin-top: -1.75rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   color: ${({ theme }) => theme.text2};

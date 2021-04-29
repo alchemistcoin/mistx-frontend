@@ -6,19 +6,42 @@ import { Text } from 'rebass'
 import { AutoColumn } from '../Column'
 
 export const Wrapper = styled.div`
-  position: relative;
   padding: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 1rem 0;
+  `};
 `
 
-export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  padding: 2px;
+export const RelativeWrapper = styled.div`
+  position: relative;
+`
+
+export const ArrowPosition = styled.div`
+  position: absolute;
+  top: 100%;
+  transform: translateY(-50%);
+  width: 100%;
+`
+
+export const ArrowWrapper = styled.div<{
+  color?: string
+  clickable: boolean
+}>`
+  align-items: center;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.bg2}
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  width: 2.5rem;
 
   ${({ clickable }) =>
     clickable
       ? css`
           :hover {
             cursor: pointer;
-            opacity: 0.8;
+            color: ${({ theme }) => theme.text2};
           }
         `
       : null}
@@ -150,4 +173,23 @@ export const Separator = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${({ theme }) => theme.bg2};
+`
+
+export const TokenSelectButton = styled.button`
+  align-items: center;
+  background-color: ${({ theme }) => theme.yellow1};
+  border: 1px solid ${({ theme }) => theme.bg2};
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  font-weight: 700;
+  font-size: 1.25rem;
+  height: 110px;
+  justify-content: center;
+  width: 100%;
+`
+
+export const TokenHandImage = styled.img`
+  height: 1.875rem;
+  margin-right: 1rem;
 `
