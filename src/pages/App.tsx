@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import Polling from '../components/Header/Polling'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
@@ -38,6 +39,7 @@ const BodyWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
     padding-top: 2rem;
+    padding-bottom: 6rem;
   `};
 
   z-index: 1;
@@ -69,6 +71,7 @@ export default function App() {
             </Switch>
           </Web3ReactManager>
           <Marginer />
+          <Footer />
         </BodyWrapper>
       </AppWrapper>
     </Suspense>
