@@ -1,21 +1,8 @@
 import { useMemo } from 'react'
-import { useSwapCallArguments, SwapCall } from './useSwapCallArguments'
-import { Trade, TradeType, Currency, CurrencyAmount, TokenAmount, Token, JSBI } from '@alchemistcoin/sdk'
+import { useSwapCallArguments, SuccessfulCall, FailedCall } from './useSwapCallArguments'
+import { Trade } from '@alchemistcoin/sdk'
 import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
-import { useTradeExactIn, useTradeExactOut } from './Trades'
-import { useCurrency } from './Tokens'
 import isZero from '../utils/isZero'
-import { BigNumber } from '@ethersproject/bignumber'
-
-interface SuccessfulCall {
-  call: SwapCall
-  gasEstimate: BigNumber
-}
-
-interface FailedCall {
-  call: SwapCall
-  error: Error
-}
 
 type EstimatedSwapCall = SuccessfulCall | FailedCall
 
@@ -28,30 +15,36 @@ export function useEstimationCallback(
   return useMemo(() => {
     return async function estimateCallback(): Promise<SuccessfulCall | undefined> {
       const estimatedCalls: EstimatedSwapCall[] = await Promise.all(
-        swapCalls.map(call => {
+        swapCalls.map(pendingCall => {
+          const { call, modifiedCall } = pendingCall
           const {
             parameters: { methodName, args, value },
             contract
-          } = call
+          } = modifiedCall
           const options = !value || isZero(value) ? {} : { value }
 
           return contract.estimateGas[methodName](...args, options)
             .then(gasEstimate => {
               return {
                 call,
+                modifiedCall,
                 gasEstimate
               }
             })
             .catch(gasError => {
-              console.debug('Gas estimate failed, trying eth_call to extract error', call)
+              console.debug('Gas estimate failed, trying eth_call to extract error', modifiedCall)
 
               return contract.callStatic[methodName](...args, options)
                 .then(result => {
-                  console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
-                  return { call, error: new Error('Unexpected issue with estimating the gas. Please try again.') }
+                  console.debug('Unexpected successful call after failed estimate gas', modifiedCall, gasError, result)
+                  return {
+                    call,
+                    modifiedCall,
+                    error: new Error('Unexpected issue with estimating the gas. Please try again.')
+                  }
                 })
                 .catch(callError => {
-                  console.debug('Call threw error', call, callError)
+                  console.debug('Call threw error', modifiedCall, callError)
                   let errorMessage: string
                   switch (callError.reason) {
                     case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
@@ -62,7 +55,7 @@ export function useEstimationCallback(
                     default:
                       errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
                   }
-                  return { call, error: new Error(errorMessage) }
+                  return { call, modifiedCall, error: new Error(errorMessage) }
                 })
             })
         })
@@ -83,35 +76,4 @@ export function useEstimationCallback(
       return successfulEstimation
     }
   }, [swapCalls])
-}
-
-export function useModifiedTradeEstimationCallback(
-  trade: Trade | undefined,
-  allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE,
-  recipientAddressOrName: string | null
-): () => Promise<SuccessfulCall | undefined> {
-  const currencyInEth = useCurrency('ETH') as Currency
-  const currencyAmountIn = CurrencyAmount.ether(JSBI.BigInt(1))
-  let modifiedTrade: Trade | undefined
-  let currencyAmountOut: CurrencyAmount | undefined
-  let currencyOut: Currency | undefined
-
-  if (trade && trade.inputAmount.currency.symbol !== currencyInEth.symbol) {
-    currencyOut = trade.inputAmount.currency
-    currencyAmountOut = new TokenAmount(currencyOut as Token, JSBI.BigInt(1))
-  } else if (trade) {
-    currencyOut = trade.outputAmount.currency
-    currencyAmountOut = new TokenAmount(currencyOut as Token, JSBI.BigInt(1))
-  }
-
-  const modifiedExactInTrade = useTradeExactIn(currencyAmountIn, currencyOut)
-  const modifiedExactOutTrade = useTradeExactOut(currencyInEth, currencyAmountOut)
-  if (trade?.tradeType === TradeType.EXACT_INPUT) {
-    modifiedTrade = modifiedExactOutTrade || undefined
-  }
-  if (trade?.tradeType === TradeType.EXACT_OUTPUT) {
-    modifiedTrade = modifiedExactInTrade || undefined
-  }
-
-  return useEstimationCallback(modifiedTrade, allowedSlippage, recipientAddressOrName)
 }

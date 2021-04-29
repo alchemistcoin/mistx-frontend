@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useBlockNumber } from '../state/application/hooks'
 import { useUserBribeMargin } from '../state/user/hooks'
 import { useActiveWeb3React } from './index'
@@ -6,7 +6,7 @@ import { Trade } from '@alchemistcoin/sdk'
 import { calculateGasMargin } from '../utils'
 import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { BigNumber } from '@ethersproject/bignumber'
-import { useModifiedTradeEstimationCallback } from './useEstimationCallback'
+import { useEstimationCallback } from './useEstimationCallback'
 
 export default function useMinerBribe(
   trade: Trade | undefined,
@@ -14,10 +14,10 @@ export default function useMinerBribe(
   recipientAddressOrName: string | null
 ): BigNumber | undefined {
   const { library } = useActiveWeb3React()
-  const [bribe, setBribe] = useState<BigNumber | undefined>(undefined)
+  const [bribe, setBribe] = useState<string | undefined>(undefined)
   const currentBlock = useBlockNumber()
   const [userBribeMargin] = useUserBribeMargin()
-  const estimationCall = useModifiedTradeEstimationCallback(trade, allowedSlippage, recipientAddressOrName)
+  const estimationCall = useEstimationCallback(trade, allowedSlippage, recipientAddressOrName)
 
   useEffect(() => {
     async function calculateMinerBribe(): Promise<void> {
@@ -57,10 +57,12 @@ export default function useMinerBribe(
       const gasPriceToBeatWithMargin = gasPriceToBeat.add(gasPriceToBeat.mul(userBribeMargin).div(100))
       const estBribe = gasPriceToBeatWithMargin.mul(estimatedGasWithMargin)
 
-      setBribe(estBribe)
+      setBribe(estBribe.toString())
     }
     calculateMinerBribe()
-  }, [library, currentBlock, userBribeMargin, trade])
-
-  return bribe
+  }, [library, currentBlock, userBribeMargin, trade, estimationCall])
+  return useMemo(() => {
+    if (!bribe) return undefined
+    return BigNumber.from(bribe)
+  }, [bribe])
 }

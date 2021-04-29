@@ -163,8 +163,7 @@ export default function Swap({ history }: RouteComponentProps) {
       }
 
   const bribe = useMinerBribe(trade, allowedSlippage, recipient)
-  console.log('miner bribe', bribe)
-
+  console.log('bribe', bribe)
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
