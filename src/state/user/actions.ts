@@ -20,6 +20,7 @@ export const updateUserSingleHopOnly = createAction<{ userSingleHopOnly: boolean
 export const updateUserSlippageTolerance = createAction<{ userSlippageTolerance: number }>(
   'user/updateUserSlippageTolerance'
 )
+export const updateUserBribeMargin = createAction<{ userBribeMargin: number }>('user/updateUserBribeMargin')
 export const updateUserDeadline = createAction<{ userDeadline: number }>('user/updateUserDeadline')
 export const addSerializedToken = createAction<{ serializedToken: SerializedToken }>('user/addSerializedToken')
 export const removeSerializedToken = createAction<{ chainId: number; address: string }>('user/removeSerializedToken')

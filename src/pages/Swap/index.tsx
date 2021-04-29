@@ -3,7 +3,8 @@ import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
+import { rem } from 'polished'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
 import Card, { GreyCard } from '../../components/Card'
@@ -20,6 +21,7 @@ import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
+import WalletConnect from '../../components/WalletConnect'
 
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion } from '../../data/V1'
@@ -38,6 +40,7 @@ import {
   useSwapActionHandlers,
   useSwapState
 } from '../../state/swap/hooks'
+import useMinerBribe from '../../hooks/useMinerBribe'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -49,6 +52,38 @@ import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
 import { RouteComponentProps } from 'react-router-dom'
+
+const HeaderFrame = styled.div`
+  display: grid;
+  grid-template-columns: 1fr repeat(3, auto) 1fr;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  top: 0;
+  position: relative;
+  padding: 0 1rem;
+  margin-bottom: 6rem;
+  z-index: 2;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 0 1rem;
+    width: calc(100%);
+    position: relative;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0.5rem 1rem;
+  `}
+`
+
+const StyledPageTitle = styled.h1`
+  grid-column-start: 4;
+  font-weight: 400;
+  font-size: ${rem(38)};
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+`
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -127,6 +162,8 @@ export default function Swap({ history }: RouteComponentProps) {
         [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
       }
 
+  const bribe = useMinerBribe(trade, allowedSlippage, recipient)
+  console.log('bribe', bribe)
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
@@ -301,6 +338,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
   return (
     <>
+      <HeaderFrame>
+        <StyledPageTitle>Swap Tokens</StyledPageTitle>
+        <WalletConnect />
+      </HeaderFrame>
       <TokenWarningModal
         isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
         tokens={importTokensNotInDefault}

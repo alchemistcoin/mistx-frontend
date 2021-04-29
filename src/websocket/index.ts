@@ -32,8 +32,6 @@ export default function Sockets(): null {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    console.log('set socket on events')
-
     socket.on('connect', () => {
       console.log('websocket connected')
     })
@@ -44,12 +42,10 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
-      console.log('Socket session', session)
       localStorage.setItem(tokenKey, session.token)
     })
 
     socket.on(Event.GAS_CHANGE, gas => {
-      console.log('Gas change', gas)
       dispatch(updateGas(gas))
     })
 

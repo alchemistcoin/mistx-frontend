@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { injected } from '../../connectors'
-import { darken } from 'polished'
 import Loader from '../Loader'
+import { ButtonSecondary } from 'components/Button'
 
 const PendingSection = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -41,11 +41,11 @@ const ErrorGroup = styled.div`
   justify-content: flex-start;
 `
 
-const ErrorButton = styled.div`
+const ErrorButton = styled(ButtonSecondary)`
   border-radius: 8px;
   font-size: 12px;
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg4};
+  background-color: ${({ theme }) => theme.btnSecondaryBg};
   margin-left: 1rem;
   padding: 0.5rem;
   font-weight: 600;
@@ -53,7 +53,6 @@ const ErrorButton = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => darken(0.1, theme.text4)};
   }
 `
 
