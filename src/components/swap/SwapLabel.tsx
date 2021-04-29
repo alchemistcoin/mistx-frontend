@@ -58,9 +58,16 @@ const StyledBalanceLabel = styled.div`
   font-weight: 300;
 `
 
-const StyledBalanceAmount = styled.div`
+const StyledBalance = styled.div`
   color: ${({ theme }) => theme.text1}
+  display: flex;
   font-weight: 700;
+  justify-content: flex-end;
+`
+
+const StyledBalanceAmount = styled.span`
+  text-overflow: ellipsis;
+  overflow: hidden;
 `
 
 interface SwapLabelProps {
@@ -96,9 +103,14 @@ export default function SwapLabel({
           <StyledBalanceLabel>
             BAL
           </StyledBalanceLabel>
-          <StyledBalanceAmount>
-            {`${selectedCurrencyBalance ? `${selectedCurrencyBalance?.toSignificant(6)} ` : ''}${currency.symbol}`}
-          </StyledBalanceAmount>
+          <StyledBalance>
+            {selectedCurrencyBalance &&
+              <StyledBalanceAmount>
+                {selectedCurrencyBalance?.toSignificant(6)}
+              </StyledBalanceAmount>
+            }
+            &nbsp;{currency.symbol}
+          </StyledBalance>
         </StyledLabel>
       )}
       {account && currency && showMaxButton && (
