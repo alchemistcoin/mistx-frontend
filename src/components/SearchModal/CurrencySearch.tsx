@@ -36,7 +36,7 @@ const Footer = styled.div`
   padding: 20px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  background-color: ${({ theme }) => theme.bg1};
+  background-color: ${({ theme }) => theme.secondary1};
   border-top: 1px solid ${({ theme }) => theme.bg2};
 `
 
@@ -219,12 +219,12 @@ export function CurrencySearch({
       )}
       <Footer>
         <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.blue1} className="list-token-manage-button">
+          <ButtonText onClick={showManageView} color={theme.blue2} className="list-token-manage-button">
             <RowFixed>
               <IconWrapper size="16px" marginRight="6px">
                 <Edit />
               </IconWrapper>
-              <TYPE.main color={theme.blue1}>Manage</TYPE.main>
+              <TYPE.main color={theme.blue2}>Manage</TYPE.main>
             </RowFixed>
           </ButtonText>
         </Row>

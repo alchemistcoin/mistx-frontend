@@ -4,6 +4,7 @@ import ReactGA from 'react-ga'
 import { usePopper } from 'react-popper'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
+import { darken } from 'polished'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { TokenList } from '@uniswap/token-lists'
@@ -81,7 +82,8 @@ const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
 `
 
 const RowWrapper = styled(Row)<{ bgColor: string; active: boolean }>`
-  background-color: ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
+  background-color: ${({ bgColor, active, theme }) =>
+    active ? bgColor ?? 'transparent' : darken(0.025, theme.secondary1)};
   transition: 200ms;
   align-items: center;
   padding: 1rem;

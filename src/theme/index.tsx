@@ -71,9 +71,10 @@ export function colors(darkMode: boolean): Colors {
     secondaryText1: darkMode ? '#FFBF00' : '#1a0434',
 
     // secondary colors
-    secondary1: '#1938D9',
-    secondary2: '#42AEFE',
-    secondary3: '#71E7FF',
+    secondary1: '#34314B',
+    secondary2: '#2f2c43',
+    secondary3: '#201e2f',
+    secondary4: '#201e2f',
 
     // other
     red1: '#D96A19',
@@ -82,7 +83,9 @@ export function colors(darkMode: boolean): Colors {
     green1: '#27AE60',
     yellow1: '#FFBF00',
     yellow2: '#F3841E',
-    blue1: '#2172E5',
+    blue1: '#1938D9',
+    blue2: '#00b0ff',
+    blue3: '#71E7FF',
 
     // specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
