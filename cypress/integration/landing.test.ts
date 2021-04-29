@@ -6,8 +6,8 @@ describe('Landing Page', () => {
     cy.get('#swap-page')
   })
 
-  it('redirects to url /swap', () => {
-    cy.url().should('include', '/swap')
+  it('redirects to url /exchange', () => {
+    cy.url().should('include', '/exchange')
   })
 
   it('allows navigation to pool', () => {
