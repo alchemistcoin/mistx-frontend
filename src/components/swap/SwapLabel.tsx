@@ -12,6 +12,7 @@ const StyledLabelWrapper = styled.div<{
   color: ${({ theme }) => theme.text2}
   display: flex;
   flex-direction: column;
+  font-size: .9375rem;
   justify-content: center;
   height: 100%;
   left: ${({ placement }) => placement === 'left' && 0};
@@ -20,7 +21,7 @@ const StyledLabelWrapper = styled.div<{
   right: ${({ placement }) => placement === 'right' && 0};
   top: 0;
   transform: translateX(${({ placement }) => placement === 'right' ? '100%' : '-100%'});
-  width: 132px;
+  width: 140px;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
@@ -28,6 +29,7 @@ const StyledLabelWrapper = styled.div<{
 `
 
 const StyledLabel = styled.div`
+  line-height: 1.4em;
   margin-bottom: .75rem;
   text-align: right;
 `
