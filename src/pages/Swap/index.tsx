@@ -194,7 +194,7 @@ export default function Swap({ history }: RouteComponentProps) {
   // reset if they close warning without tokens in params
   const handleDismissTokenWarning = useCallback(() => {
     setDismissTokenWarning(true)
-    history.push('/swap/')
+    history.push('/exchange/')
   }, [history])
 
   // modal and loading

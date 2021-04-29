@@ -232,7 +232,7 @@ export default function Header() {
       </HideLarge>
       <HeaderRow align="start">
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/Swap'}>
+          <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
           </StyledNavLink>
           <StyledExternalLink id={`stake-nav-link`} href={'https://alchemist.farm'}>
