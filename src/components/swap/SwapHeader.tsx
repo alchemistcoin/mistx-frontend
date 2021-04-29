@@ -24,12 +24,10 @@ const StyledSwapHeader = styled.div`
 `
 
 export default function SwapHeader() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <StyledSwapHeader>
-      <TYPE.black fontWeight="400">
-        {t('Swap Tokens')}
-      </TYPE.black>
+      <TYPE.black fontWeight="400">{t('Swap Tokens')}</TYPE.black>
       <Settings />
     </StyledSwapHeader>
   )

@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import { escapeRegExp } from '../../utils'
 
 const StyledInput = styled.input<{
-  error?: boolean;
-  align?: string;
-  fontSize?: string;
-  fontWeight?: string;
+  error?: boolean
+  align?: string
+  fontSize?: string
+  fontWeight?: string
 }>`
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   width: 0;

@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
 `
 
 export const RelativeWrapper = styled.div`
-  position: relative
+  position: relative;
 `
 
 export const ArrowPosition = styled.div`
@@ -22,7 +22,7 @@ export const ArrowPosition = styled.div`
   top: 100%;
   transform: translateY(-50%);
   width: 100%;
-`;
+`
 
 export const ArrowWrapper = styled.div<{
   color?: string
@@ -41,7 +41,7 @@ export const ArrowWrapper = styled.div<{
       ? css`
           :hover {
             cursor: pointer;
-            color: ${({ theme }) => theme.text2}
+            color: ${({ theme }) => theme.text2};
           }
         `
       : null}

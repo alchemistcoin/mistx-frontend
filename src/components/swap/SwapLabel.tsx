@@ -1,6 +1,6 @@
 import { Currency } from '@alchemistcoin/sdk'
-import React from 'react';
-import { useCurrencyBalance } from 'state/wallet/hooks';
+import React from 'react'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import styled from 'styled-components'
 
@@ -20,7 +20,7 @@ const StyledLabelWrapper = styled.div<{
   position: absolute;
   right: ${({ placement }) => placement === 'right' && 0};
   top: 0;
-  transform: translateX(${({ placement }) => placement === 'right' ? '100%' : '-100%'});
+  transform: translateX(${({ placement }) => (placement === 'right' ? '100%' : '-100%')});
   width: 140px;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -30,7 +30,7 @@ const StyledLabelWrapper = styled.div<{
 
 const StyledLabel = styled.div`
   line-height: 1.4em;
-  margin-bottom: .75rem;
+  margin-bottom: 0.75rem;
   text-align: right;
 `
 
@@ -85,37 +85,24 @@ interface SwapLabelProps {
   customBalanceText?: string
 }
 
-export default function SwapLabel({
-  currency,
-  onMax,
-  placement,
-  showMaxButton,
-}: SwapLabelProps) {
+export default function SwapLabel({ currency, onMax, placement, showMaxButton }: SwapLabelProps) {
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
   return (
-    <StyledLabelWrapper
-      placement={placement}
-    >
+    <StyledLabelWrapper placement={placement}>
       {account && currency && (
         <StyledLabel>
-          <StyledBalanceLabel>
-            BAL
-          </StyledBalanceLabel>
+          <StyledBalanceLabel>BAL</StyledBalanceLabel>
           <StyledBalance>
-            {selectedCurrencyBalance &&
-              <StyledBalanceAmount>
-                {selectedCurrencyBalance?.toSignificant(6)}
-              </StyledBalanceAmount>
-            }
+            {selectedCurrencyBalance && (
+              <StyledBalanceAmount>{selectedCurrencyBalance?.toSignificant(6)}</StyledBalanceAmount>
+            )}
             &nbsp;{currency.symbol}
           </StyledBalance>
         </StyledLabel>
       )}
-      {account && currency && showMaxButton && (
-        <StyledBalanceMax onClick={onMax}>USE MAX</StyledBalanceMax>
-      )}
+      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>USE MAX</StyledBalanceMax>}
     </StyledLabelWrapper>
-  );
+  )
 }

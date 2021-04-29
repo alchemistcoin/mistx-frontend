@@ -21,9 +21,9 @@ const InputRow = styled.div<{
 }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  flex: ${({ value }) => value.length > 0 ? 20 : 6};
+  flex: ${({ value }) => (value.length > 0 ? 20 : 6)};
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
-  transition: flex .3s;
+  transition: flex 0.3s;
 `
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
@@ -103,7 +103,7 @@ const Container = styled.div<{ hideInput: boolean }>`
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   background-color: inherit;
   display: flex;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
 `
 
 const StyledTokenName = styled.span<{
@@ -113,7 +113,7 @@ const StyledTokenName = styled.span<{
   margin: 0 0.25rem;
   font-size:  ${({ active }) => (active ? '18px' : '16px')};
   right: 4.25rem;
-  opacity: ${({ value }) => value.length > 0 ? 0 : 1}
+  opacity: ${({ value }) => (value.length > 0 ? 0 : 1)}
   position: absolute;
   transition: opacity .3s, transform .3s;
   ${({ value }) => value.length > 0 && 'transform: translateX(100%);'}
@@ -129,7 +129,7 @@ const StyledBalanceMax = styled.button`
   font-weight: 500;
   height: 28px;
   margin-right: 0.5rem;
-  
+
   :hover,
   :focus {
     border: 1px solid ${({ theme }) => theme.primary1};
@@ -196,7 +196,7 @@ export default function CurrencyInputPanel({
             <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
               {label}
             </TYPE.body>
-            {account &&
+            {account && (
               <span>
                 {currency && showMaxButton && label !== 'To' && (
                   <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
@@ -213,7 +213,7 @@ export default function CurrencyInputPanel({
                     : ' -'}
                 </TYPE.body>
               </span>
-            }
+            )}
           </RowBetween>
         </LabelRow>
       )}
@@ -228,40 +228,33 @@ export default function CurrencyInputPanel({
           }}
         >
           <Aligner>
-            {pair
-              ? (
-                <StyledTokenName className="pair-name-container" value={value}>
-                  {pair?.token0.symbol}:{pair?.token1.symbol}
-                </StyledTokenName>
-              )
-              : (
-                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)} value={value}>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? currency.symbol.slice(0, 4) +
-                      '...' +
-                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                    : currency?.symbol) || t('selectToken')}
-                </StyledTokenName>
-              )
-            }
-            {pair
-              ? (
-                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
-              )
-              : currency
-                ? (
-                  <CurrencyLogo currency={currency} size={'36px'} />
-                )
-                : null
-            }
+            {pair ? (
+              <StyledTokenName className="pair-name-container" value={value}>
+                {pair?.token0.symbol}:{pair?.token1.symbol}
+              </StyledTokenName>
+            ) : (
+              <StyledTokenName
+                className="token-symbol-container"
+                active={Boolean(currency && currency.symbol)}
+                value={value}
+              >
+                {(currency && currency.symbol && currency.symbol.length > 20
+                  ? currency.symbol.slice(0, 4) +
+                    '...' +
+                    currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                  : currency?.symbol) || t('selectToken')}
+              </StyledTokenName>
+            )}
+            {pair ? (
+              <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+            ) : currency ? (
+              <CurrencyLogo currency={currency} size={'36px'} />
+            ) : null}
             {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
           </Aligner>
         </CurrencySelect>
         <InputDivider />
-        <InputRow
-          style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect}
-          value={value}
-        >
+        <InputRow style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect} value={value}>
           {!hideInput && (
             <>
               <NumericalInput

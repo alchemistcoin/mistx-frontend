@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { darken } from 'polished'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 
-import tokenHandSvg from '../../assets/svg/token_hand.svg';
+import tokenHandSvg from '../../assets/svg/token_hand.svg'
 
 const TokenSelectButton = styled.button`
   align-items: center;
@@ -20,7 +20,7 @@ const TokenSelectButton = styled.button`
   width: 100%;
 
   :hover {
-    background-color: ${({ theme }) => darken(.05, theme.yellow1)};
+    background-color: ${({ theme }) => darken(0.05, theme.yellow1)};
   }
 `
 
@@ -42,7 +42,7 @@ export default function CurrencySelect({
   currency,
   disableCurrencySelect = false,
   otherCurrency,
-  showCommonBases,
+  showCommonBases
 }: CurrencySelectProps) {
   const [modalOpen, setModalOpen] = useState(false)
 
