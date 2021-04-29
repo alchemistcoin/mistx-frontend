@@ -107,9 +107,12 @@ export function useSwapCallback(
             .then(signedApproval => {
               return contract.populateTransaction[methodName](...args, {
                 //modify nonce if we also have an approval
-                nonce: signedApproval === undefined ? contract.signer.getTransactionCount() : contract.signer.getTransactionCount().then(nonce => {
-                  return nonce + 1
-                }),
+                nonce:
+                  signedApproval === undefined
+                    ? contract.signer.getTransactionCount()
+                    : contract.signer.getTransactionCount().then(nonce => {
+                        return nonce + 1
+                      }),
                 gasLimit: calculateGasMargin(gasEstimate), //needed?
                 ...(value && !isZero(value) ? { value } : {})
               })
@@ -143,19 +146,20 @@ export function useSwapCallback(
                       const withRecipient =
                         recipient === account
                           ? base
-                          : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
-                            ? shortenAddress(recipientAddressOrName)
-                            : recipientAddressOrName
-                          }`
+                          : `${base} to ${
+                              recipientAddressOrName && isAddress(recipientAddressOrName)
+                                ? shortenAddress(recipientAddressOrName)
+                                : recipientAddressOrName
+                            }`
                       //  + (relayDeadline ? 'mistX' : '')
 
                       const relay = relayDeadline
                         ? {
-                          serializedApprove: signedApproval,
-                          serializedSwap: signedTx,
-                          deadline: Math.floor(relayDeadline + new Date().getTime() / 1000),
-                          nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber()
-                        }
+                            serializedApprove: signedApproval,
+                            serializedSwap: signedTx,
+                            deadline: Math.floor(relayDeadline + new Date().getTime() / 1000),
+                            nonce: ethers.BigNumber.from(populatedTx.nonce).toNumber()
+                          }
                         : undefined
 
                       //we can't have TransactionResponse here
