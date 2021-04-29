@@ -100,6 +100,10 @@ export function useSwapCallArguments(
 
     const contract: Contract | null =
       tradeVersion === Version.v2 ? getRouterContract(chainId, library, account) : v1Exchange
+
+    // recipient should be replaced here in order to use a
+    // wallet/address under our control which we can ensure
+    // allways has a small amount of ETH
     const modifiedContract: Contract | null =
       tradeVersion === Version.v2 ? getRouterContract(chainId, library, recipient) : v1Exchange
     if (!contract) {
