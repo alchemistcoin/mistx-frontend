@@ -7,15 +7,7 @@ import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoLight } from '../../assets/svg/logo_light.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
-import {
-  GithubIcon,
-  DiscordIcon,
-  UniswapIcon,
-  EtherscanIcon,
-  CoingeckoIcon,
-  EllipseIcon,
-  CoingeckoLightIcon
-} from '../Icons'
+import NavExternalLinks from '../NavExternalLinks'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const HeaderFrame = styled.div`
@@ -240,7 +232,7 @@ export default function Header() {
       </HideLarge>
       <HeaderRow align="start">
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/Swap'}>
+          <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
           </StyledNavLink>
           <StyledExternalLink id={`stake-nav-link`} href={'https://alchemist.farm'}>
@@ -257,52 +249,7 @@ export default function Header() {
       </HideSmall>
       <HeaderRow align="end" justify="flex-end">
         <HideSmall>
-          <SocialLinkWrapper>
-            <SocialLink href="http://discord.alchemist.wtf" title={t('discord')}>
-              <StyledEllipseWapper>
-                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-              </StyledEllipseWapper>
-              <DiscordIcon fill={darkMode ? '#FFF' : '#1a0434'} />
-            </SocialLink>
-          </SocialLinkWrapper>
-          <SocialLinkWrapper>
-            <SocialLink href="https://github.com/alchemistcoin" title={t('github')}>
-              <StyledEllipseWapper>
-                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-              </StyledEllipseWapper>
-              <GithubIcon fill={darkMode ? '#FFF' : '#1a0434'} />
-            </SocialLink>
-          </SocialLinkWrapper>
-          <SocialLinkWrapper>
-            <SocialLink
-              href="https://etherscan.io/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
-              title={t('etherscan')}
-            >
-              <StyledEllipseWapper>
-                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-              </StyledEllipseWapper>
-              <EtherscanIcon fill={darkMode ? '#FFF' : '#1a0434'} />
-            </SocialLink>
-          </SocialLinkWrapper>
-          <SocialLinkWrapper>
-            <SocialLink
-              href="https://info.uniswap.org/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
-              title={t('uniswap')}
-            >
-              <StyledEllipseWapper>
-                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-              </StyledEllipseWapper>
-              <UniswapIcon fill={darkMode ? '#FFF' : '#1a0434'} />
-            </SocialLink>
-          </SocialLinkWrapper>
-          <SocialLinkWrapper>
-            <SocialLink href="https://www.coingecko.com/en/coins/alchemist" title={t('coingecko')}>
-              <StyledEllipseWapper>
-                <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-              </StyledEllipseWapper>
-              {darkMode ? <CoingeckoIcon /> : <CoingeckoLightIcon />}
-            </SocialLink>
-          </SocialLinkWrapper>
+          <NavExternalLinks header={true} />
         </HideSmall>
       </HeaderRow>
     </HeaderFrame>

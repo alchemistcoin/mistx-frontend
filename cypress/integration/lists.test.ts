@@ -1,6 +1,6 @@
 describe('Lists', () => {
   beforeEach(() => {
-    cy.visit('/swap')
+    cy.visit('/exchange')
   })
 
   // @TODO check if default lists are active when we have them

@@ -19,6 +19,7 @@ export interface Colors {
   bg3: Color
   bg4: Color
   bg5: Color
+  bg6: Color
 
   // borders
   border1: Color
@@ -45,6 +46,7 @@ export interface Colors {
   secondary1: Color
   secondary2: Color
   secondary3: Color
+  secondary4: Color
 
   // other
   red1: Color
@@ -54,6 +56,8 @@ export interface Colors {
   yellow1: Color
   yellow2: Color
   blue1: Color
+  blue2: Color
+  blue3: Color
 
   // buttons
   btnPrimaryBg: Color

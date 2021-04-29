@@ -22,6 +22,7 @@ import Toggle from '../Toggle'
 import TransactionSettings from '../TransactionSettings'
 
 const StyledMenuIcon = styled(Settings)`
+  font-size: 1.25rem;
   height: 20px;
   width: 20px;
 
@@ -47,11 +48,14 @@ const StyledCloseIcon = styled(X)`
 `
 
 const StyledMenuButton = styled.button`
+  align-items: center;
   position: relative;
   width: 100%;
   height: 100%;
   border: none;
   background-color: transparent;
+  display: flex;
+  justify-content: center;
   margin: 0;
   padding: 0;
   height: 35px;
@@ -63,10 +67,6 @@ const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-  }
-
-  svg {
-    margin-top: 2px;
   }
 `
 const EmojiWrapper = styled.div`
