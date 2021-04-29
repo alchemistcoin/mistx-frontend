@@ -10,6 +10,7 @@ import { ManageLists } from './ManageLists'
 import ManageTokens from './ManageTokens'
 import { TokenList } from '@uniswap/token-lists'
 import { CurrencyModalView } from './CurrencySearchModal'
+import { darken } from 'polished'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
 `
 
 const ToggleWrapper = styled(RowBetween)`
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => darken(0.05, theme.secondary1)};
   border-radius: 12px;
   padding: 6px;
 `
@@ -31,7 +32,7 @@ const ToggleOption = styled.div<{ active?: boolean }>`
   justify-content: center;
   border-radius: 12px;
   font-weight: 600;
-  background-color: ${({ theme, active }) => (active ? theme.bg1 : theme.bg3)};
+  background-color: ${({ theme, active }) => (active ? theme.secondary1 : darken(0.05, theme.secondary1))};
   color: ${({ theme, active }) => (active ? theme.text1 : theme.text2)};
   user-select: none;
 
