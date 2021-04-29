@@ -53,7 +53,12 @@ import {
   useSwapState
 } from '../../state/swap/hooks'
 import useMinerBribe from '../../hooks/useMinerBribe'
-import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
+import {
+  useExpertModeManager,
+  useUserSlippageTolerance,
+  useUserTransactionTTL,
+  useUserSingleHopOnly
+} from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
@@ -136,6 +141,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
+
+  // get user transaction deadline TTL, in minutes
+  const [transactionTTL] = useUserTransactionTTL()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -246,7 +254,12 @@ export default function Swap({ history }: RouteComponentProps) {
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
-  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
+  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
+    trade,
+    allowedSlippage,
+    recipient,
+    transactionTTL
+  )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
 
