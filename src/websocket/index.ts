@@ -47,7 +47,7 @@ interface QuoteEventsMap {
 
 const tokenKey = `SESSION_TOKEN`
 const token = localStorage.getItem(tokenKey)
-const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:4000'
+const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:7070'
 
 console.log('server url', serverUrl)
 const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
@@ -91,7 +91,6 @@ export default function Sockets(): null {
   return null
 }
 
-// export function emitTransactionRequest(transaction){
-//   socket.emit(Event.TRANSACTION_REQUEST, transaction)
-
-// }
+export function emitTransactionRequest(transaction: TransactionReq){
+  socket.emit(Event.TRANSACTION_REQUEST, transaction)
+}

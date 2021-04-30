@@ -9,10 +9,22 @@ import { TransactionDetails } from './reducer'
 export interface TransactionResponseUnsent {
   hash: string
 }
+
+interface TransactionResponseUnsentData {
+  summary?: string;
+  approval?: {
+    tokenAddress: string;
+    spender: string
+  };
+  claim?: {
+    recipient: string
+  }
+}
+
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
   response: TransactionResponseUnsent,
-  customData?: { summary?: string; approval?: { tokenAddress: string; spender: string }; claim?: { recipient: string } }
+  customData?: TransactionResponseUnsentData,
 ) => void {
   const { chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
@@ -38,6 +50,17 @@ export function useTransactionAdder(): (
     [dispatch, chainId, account]
   )
 }
+
+// export function useTransactionUpdater(): (
+//   response: TransactionResponseUnsent,
+//   customData?: TransactionResponseUnsentData
+// ) => void {
+//   const { chainId, account } = useActiveWeb3React()
+//   const dispatch = useDispatch<AppDispatch>()
+//   return useCallback(
+
+//   )
+// }
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {

@@ -31,3 +31,13 @@ export const checkedTransaction = createAction<{
   hash: string
   blockNumber: number
 }>('transactions/checkedTransaction')
+
+// todo: update transaction action
+export const updateTransaction = createAction<{
+  chainId: ChainId
+  hash: string
+  from: string
+  approval?: { tokenAddress: string; spender: string }
+  claim?: { recipient: string }
+  summary?: string
+}>('transactions/updateTransaction')
