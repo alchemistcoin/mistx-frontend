@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@alchemistcoin/default-token-list@git+https://github.com/alchemistcoin/default-token-list.git#main":
+  version "1.0.0"
+  resolved "git+https://github.com/alchemistcoin/default-token-list.git#464bd3bc08089c95a73a37e907870e416cdffe07"
+
 "@alchemistcoin/sdk@git+https://github.com/alchemistcoin/alchemist-sdk.git#dev":
   version "3.0.3"
   resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#50e0413f9aa6cb12819034364f8fa525b0381179"
