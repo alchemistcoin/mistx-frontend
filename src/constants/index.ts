@@ -5,14 +5,14 @@ import { fortmatic, injected, portis, walletconnect, walletlink } from '../conne
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: '0x', //TODO add address
-  [ChainId.GÖRLI]: '0x' //TODO add address
+  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d' //TODO add address
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: 'https://mistX' //TODO change to socket
 }
 
-export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+export const UNI_ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 

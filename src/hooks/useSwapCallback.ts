@@ -6,7 +6,7 @@ import { calculateGasMargin /*, isAddress, shortenAddress*/ } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { /*MISTX_RELAY_URI, */ INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
+import { /*MISTX_RELAY_URI, */ INITIAL_ALLOWED_SLIPPAGE, UNI_ROUTER_ADDRESS } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -163,7 +163,7 @@ export function useSwapCallback(
                         serializedSwap: signedTx,
                         swap: swapReq,
                         bribe: '0', // need to use calculated bribe
-                        routerAddress: ROUTER_ADDRESS,
+                        routerAddress: UNI_ROUTER_ADDRESS,
                         ttl: Math.floor(transactionTTL * 60 * 1000) // convert to milliseconds
                       }
 

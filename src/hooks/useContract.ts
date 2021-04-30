@@ -75,6 +75,7 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   if (chainId) {
     switch (chainId) {
       case ChainId.MAINNET:
+      case ChainId.HARDHAT:
       case ChainId.GÖRLI:
       case ChainId.ROPSTEN:
       case ChainId.RINKEBY:
