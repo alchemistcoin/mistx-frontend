@@ -16,35 +16,33 @@ export function useEstimationCallback(
     return async function estimateCallback(): Promise<SuccessfulCall | undefined> {
       const estimatedCalls: EstimatedSwapCall[] = await Promise.all(
         swapCalls.map(pendingCall => {
-          const { call, modifiedCall } = pendingCall
+          const { call } = pendingCall
           const {
             parameters: { methodName, args, value },
             contract
-          } = modifiedCall
+          } = call
           const options = !value || isZero(value) ? {} : { value }
 
           return contract.estimateGas[methodName](...args, options)
             .then(gasEstimate => {
               return {
                 call,
-                modifiedCall,
                 gasEstimate
               }
             })
             .catch(gasError => {
-              console.debug('Gas estimate failed, trying eth_call to extract error', modifiedCall)
+              console.debug('Gas estimate failed, trying eth_call to extract error', call)
 
               return contract.callStatic[methodName](...args, options)
                 .then(result => {
-                  console.debug('Unexpected successful call after failed estimate gas', modifiedCall, gasError, result)
+                  console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
                   return {
                     call,
-                    modifiedCall,
                     error: new Error('Unexpected issue with estimating the gas. Please try again.')
                   }
                 })
                 .catch(callError => {
-                  console.debug('Call threw error', modifiedCall, callError)
+                  console.debug('Call threw error', callError)
                   let errorMessage: string
                   switch (callError.reason) {
                     case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
@@ -55,7 +53,7 @@ export function useEstimationCallback(
                     default:
                       errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
                   }
-                  return { call, modifiedCall, error: new Error(errorMessage) }
+                  return { call, error: new Error(errorMessage) }
                 })
             })
         })
