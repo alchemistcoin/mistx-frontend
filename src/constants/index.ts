@@ -15,7 +15,7 @@ export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
 export const ROUTER: { [exchange in Exchange]: string } = {
   [Exchange.UNI]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   [Exchange.SUSHI]: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9',
-  [Exchange.UNDEFINED]: '0x0',
+  [Exchange.UNDEFINED]: '0x0'
 }
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

@@ -112,8 +112,8 @@ export function useSwapCallback(
                   signedApproval === undefined
                     ? contract.signer.getTransactionCount()
                     : contract.signer.getTransactionCount().then(nonce => {
-                      return nonce + 1
-                    }),
+                        return nonce + 1
+                      }),
                 gasLimit: calculateGasMargin(gasEstimate), //needed?
                 ...(value && !isZero(value) ? { value } : {})
               })
