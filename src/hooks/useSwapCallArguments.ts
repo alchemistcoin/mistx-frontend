@@ -61,7 +61,7 @@ function useModifiedTrade(
     currencyOut = trade.outputAmount.currency
     currencyAmountOut = new TokenAmount(currencyOut as Token, JSBI.BigInt(1))
   }
-  const exchange =  trade ? trade.exchange : Exchange.UNDEFINED
+  const exchange = trade ? trade.exchange : Exchange.UNDEFINED
   const modifiedExactInTrade = useTradeExactIn(exchange, currencyAmountIn, currencyOut)
   const modifiedExactOutTrade = useTradeExactOut(exchange, currencyInEth, currencyAmountOut)
   if (trade?.tradeType === TradeType.EXACT_INPUT) {
