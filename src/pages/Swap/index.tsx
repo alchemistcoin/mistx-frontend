@@ -392,13 +392,15 @@ export default function Swap({ history }: RouteComponentProps) {
             <RelativeWrapper>
               {currencies[Field.INPUT] ? (
                 <>
-                  <SwapLabel
-                    currency={currencies[Field.INPUT]}
-                    id="from-label"
-                    onMax={handleMaxInput}
-                    placement="left"
-                    showMaxButton={!atMaxAmountInput}
-                  />
+                  {account && (
+                    <SwapLabel
+                      currency={currencies[Field.INPUT]}
+                      id="from-label"
+                      onMax={handleMaxInput}
+                      placement="left"
+                      showMaxButton={!atMaxAmountInput}
+                    />
+                  )}
                   <CurrencyInputPanel
                     label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
                     value={formattedAmounts[Field.INPUT]}
@@ -446,7 +448,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   otherCurrency={currencies[Field.INPUT]}
                   id="swap-currency-output"
                 />
-                {currencies[Field.OUTPUT] && (
+                {account && (
                   <SwapLabel
                     currency={currencies[Field.OUTPUT]}
                     id="to-label"
