@@ -139,24 +139,24 @@ export function useDerivedSwapInfo(): {
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
-
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, Exchange.UNI)
-  const bestTradeExactInSushi = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, Exchange.SUSHI)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, Exchange.UNI)
-  const bestTradeExactOutSushi = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, Exchange.SUSHI)
+  const bestTradeExactIn = useTradeExactIn(Exchange.UNI, isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
+  const bestTradeExactInSushi = useTradeExactIn(Exchange.SUSHI, isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
+  const bestTradeExactOut = useTradeExactOut(Exchange.UNI, inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  const bestTradeExactOutSushi = useTradeExactOut(Exchange.SUSHI, inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
   //compare quotes
   let v2Trade
   if (isExactIn) {
     //simpler?
     if (bestTradeExactIn && !bestTradeExactInSushi) v2Trade = bestTradeExactIn
     if (!bestTradeExactIn && bestTradeExactInSushi) v2Trade = bestTradeExactInSushi
-    if (bestTradeExactIn && bestTradeExactInSushi) v2Trade = bestTradeExactIn.executionPrice < bestTradeExactInSushi.executionPrice ? bestTradeExactIn : bestTradeExactInSushi
+    if (bestTradeExactIn && bestTradeExactInSushi) v2Trade = bestTradeExactIn.outputAmount.toExact() > bestTradeExactInSushi.outputAmount.toExact() ? bestTradeExactIn : bestTradeExactInSushi
   } else {
     if (bestTradeExactOut && !bestTradeExactOutSushi) v2Trade = bestTradeExactOut
     if (!bestTradeExactOut && bestTradeExactOutSushi) v2Trade = bestTradeExactOutSushi
-    if (bestTradeExactOut && bestTradeExactOutSushi) v2Trade = bestTradeExactOut.executionPrice < bestTradeExactOutSushi.executionPrice ? bestTradeExactOut : bestTradeExactOutSushi
+    if (bestTradeExactOut && bestTradeExactOutSushi) v2Trade = bestTradeExactOut.inputAmount.toExact() < bestTradeExactOutSushi.inputAmount.toExact() ? bestTradeExactOut : bestTradeExactOutSushi
   }
-  //TODO implement sushiswap router after we established what is the better quote here
+  //from here on we already set the right exchange for the trade - just need to set the router contract
+
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
     [Field.OUTPUT]: relevantTokenBalances[1]

@@ -16,7 +16,7 @@ import { useActiveWeb3React } from './index'
 import { useUnsupportedTokens } from './Tokens'
 import { useUserSingleHopOnly } from 'state/user/hooks'
 
-function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency, exchange?: Exchange): Pair[] {
+function useAllCommonPairs(exchange: Exchange, currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
 
   const [tokenA, tokenB] = chainId
@@ -95,8 +95,8 @@ const MAX_HOPS = 3
 /**
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency, exchange?: Exchange): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut, exchange)
+export function useTradeExactIn(exchange: Exchange, currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
+  const allowedPairs = useAllCommonPairs(exchange, currencyAmountIn?.currency, currencyOut)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -104,7 +104,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
       if (singleHopOnly) {
         return (
-          Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ??
+          Trade.bestTradeExactIn(allowedPairs, exchange, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ??
           null
         )
       }
@@ -112,8 +112,9 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
       let bestTradeSoFar: Trade | null = null
       for (let i = 1; i <= MAX_HOPS; i++) {
         const currentTrade: Trade | null =
-          Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
+          Trade.bestTradeExactIn(allowedPairs, exchange, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
           null
+
         // if current trade is best yet, save it
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
           bestTradeSoFar = currentTrade
@@ -123,14 +124,14 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
     }
 
     return null
-  }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly])
+  }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly, exchange])
 }
 
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
-export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount, exchange?: Exchange): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency, exchange)
+export function useTradeExactOut(exchange: Exchange, currencyIn?: Currency, currencyAmountOut?: CurrencyAmount,): Trade | null {
+  const allowedPairs = useAllCommonPairs(exchange, currencyIn, currencyAmountOut?.currency,)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -138,7 +139,7 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
       if (singleHopOnly) {
         return (
-          Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ??
+          Trade.bestTradeExactOut(allowedPairs, exchange, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ??
           null
         )
       }
@@ -146,7 +147,7 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
       let bestTradeSoFar: Trade | null = null
       for (let i = 1; i <= MAX_HOPS; i++) {
         const currentTrade =
-          Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: i, maxNumResults: 1 })[0] ??
+          Trade.bestTradeExactOut(allowedPairs, exchange, currencyIn, currencyAmountOut, { maxHops: i, maxNumResults: 1 })[0] ??
           null
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
           bestTradeSoFar = currentTrade
@@ -155,7 +156,7 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
       return bestTradeSoFar
     }
     return null
-  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly])
+  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly, exchange])
 }
 
 export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?: Currency): boolean {
