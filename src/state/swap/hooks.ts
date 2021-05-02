@@ -139,6 +139,28 @@ export function useDerivedSwapInfo(): {
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
+
+  //iterate so we can compare universally - fails because of react hooks inside loop
+  //let bestTradeExactInEx: { [exchange: number]: { trade: Trade | null } } = {}, bestTradeExactOutEx: { [exchange: number]: { trade: Trade | null } } = {}
+  // for (let exchange in Exchange) {
+  //   if (isNaN(Number(exchange))) {
+  //     const exObj: Exchange = Exchange[exchange as keyof typeof Exchange];
+  //     const num = Number(exchange)
+  //     const tradeIn = useTradeExactIn(
+  //       exObj,
+  //       isExactIn ? parsedAmount : undefined,
+  //       outputCurrency ?? undefined
+  //     )
+  //     const tradeOut = useTradeExactOut(
+  //       exObj,
+  //       inputCurrency ?? undefined,
+  //       !isExactIn ? parsedAmount : undefined
+  //     )
+  //     if (tradeIn) bestTradeExactInEx = { [num]: { trade: tradeIn } }
+  //     if (tradeOut) bestTradeExactOutEx = { [num]: { trade: tradeOut } }
+  //   }
+  // }
+
   const bestTradeExactIn = useTradeExactIn(
     Exchange.UNI,
     isExactIn ? parsedAmount : undefined,
@@ -235,8 +257,8 @@ export function useDerivedSwapInfo(): {
         ? slippageAdjustedAmountsV1[Field.INPUT]
         : null
       : slippageAdjustedAmounts
-      ? slippageAdjustedAmounts[Field.INPUT]
-      : null
+        ? slippageAdjustedAmounts[Field.INPUT]
+        : null
   ]
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
