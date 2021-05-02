@@ -221,7 +221,7 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
  * @param tokenB the other token
  * @param exchange the dex
  */
- export function toV2LiquidityTokenGeneral([tokenA, tokenB]: [Token, Token], exchange : Exchange): Token {
+export function toV2LiquidityTokenGeneral([tokenA, tokenB]: [Token, Token], exchange: Exchange): Token {
   return new Token(tokenA.chainId, Pair.getAddress(tokenA, tokenB, exchange), 18, 'UNI-V2', 'Uniswap V2')
 }
 
