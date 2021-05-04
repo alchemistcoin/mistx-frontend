@@ -1,5 +1,5 @@
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Pair, Token, Trade } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, Exchange, Pair, Token, Trade } from '@alchemistcoin/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
@@ -17,7 +17,7 @@ import { useUnsupportedTokens } from './Tokens'
 import { useUserSingleHopOnly } from 'state/user/hooks'
 import { BigNumber } from '@ethersproject/bignumber'
 
-function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
+function useAllCommonPairs(exchange: Exchange, currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
 
   const [tokenA, tokenB] = chainId
@@ -72,7 +72,7 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
     [tokenA, tokenB, bases, basePairs, chainId]
   )
 
-  const allPairs = usePairs(allPairCombinations)
+  const allPairs = usePairs(allPairCombinations, exchange)
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
@@ -97,12 +97,13 @@ const MAX_HOPS = 3
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
 export function useTradeExactIn(
+  exchange: Exchange,
   currencyAmountIn?: CurrencyAmount,
   currencyOut?: Currency,
   gasPriceToBeat?: BigNumber,
   minerBribeMargin?: BigNumber
 ): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+  const allowedPairs = useAllCommonPairs(exchange, currencyAmountIn?.currency, currencyOut)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -112,11 +113,15 @@ export function useTradeExactIn(
         return (
           Trade.bestTradeExactIn(
             allowedPairs,
+            exchange,
             currencyAmountIn,
             currencyOut,
             gasPriceToBeat.toString(),
             minerBribeMargin.toString(),
-            { maxHops: 1, maxNumResults: 1 }
+            {
+              maxHops: 1,
+              maxNumResults: 1
+            }
           )[0] ?? null
         )
       }
@@ -126,12 +131,17 @@ export function useTradeExactIn(
         const currentTrade: Trade | null =
           Trade.bestTradeExactIn(
             allowedPairs,
+            exchange,
             currencyAmountIn,
             currencyOut,
             gasPriceToBeat.toString(),
             minerBribeMargin.toString(),
-            { maxHops: i, maxNumResults: 1 }
+            {
+              maxHops: i,
+              maxNumResults: 1
+            }
           )[0] ?? null
+
         // if current trade is best yet, save it
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
           bestTradeSoFar = currentTrade
@@ -141,19 +151,20 @@ export function useTradeExactIn(
     }
 
     return null
-  }, [allowedPairs, currencyAmountIn, currencyOut, gasPriceToBeat, minerBribeMargin, singleHopOnly])
+  }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly, exchange, gasPriceToBeat, minerBribeMargin])
 }
 
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
 export function useTradeExactOut(
+  exchange: Exchange,
   currencyIn?: Currency,
   currencyAmountOut?: CurrencyAmount,
   gasPriceToBeat?: BigNumber,
   minerBribeMargin?: BigNumber
 ): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+  const allowedPairs = useAllCommonPairs(exchange, currencyIn, currencyAmountOut?.currency)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -163,11 +174,15 @@ export function useTradeExactOut(
         return (
           Trade.bestTradeExactOut(
             allowedPairs,
+            exchange,
             currencyIn,
             currencyAmountOut,
             gasPriceToBeat.toString(),
             minerBribeMargin.toString(),
-            { maxHops: 1, maxNumResults: 1 }
+            {
+              maxHops: 1,
+              maxNumResults: 1
+            }
           )[0] ?? null
         )
       }
@@ -177,11 +192,15 @@ export function useTradeExactOut(
         const currentTrade =
           Trade.bestTradeExactOut(
             allowedPairs,
+            exchange,
             currencyIn,
             currencyAmountOut,
             gasPriceToBeat.toString(),
             minerBribeMargin.toString(),
-            { maxHops: i, maxNumResults: 1 }
+            {
+              maxHops: i,
+              maxNumResults: 1
+            }
           )[0] ?? null
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
           bestTradeSoFar = currentTrade
@@ -190,7 +209,7 @@ export function useTradeExactOut(
       return bestTradeSoFar
     }
     return null
-  }, [currencyIn, currencyAmountOut, gasPriceToBeat, minerBribeMargin, allowedPairs, singleHopOnly])
+  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly, exchange, gasPriceToBeat, minerBribeMargin])
 }
 
 export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?: Currency): boolean {

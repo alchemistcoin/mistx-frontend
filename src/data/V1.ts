@@ -4,6 +4,7 @@ import {
   Currency,
   CurrencyAmount,
   ETHER,
+  Exchange,
   JSBI,
   Pair,
   Route,
@@ -31,7 +32,7 @@ export function useV1ExchangeAddress(tokenAddress?: string): string | undefined 
 
 export class MockV1Pair extends Pair {
   constructor(etherAmount: BigintIsh, tokenAmount: TokenAmount) {
-    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount))
+    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount), Exchange.UNI)
   }
 }
 
@@ -133,6 +134,7 @@ export function useV1Trade(
             route,
             exactAmount,
             isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
+            Exchange.UNI,
             gasPriceToBeat.toString(),
             minerBribeMargin.toString()
           )
