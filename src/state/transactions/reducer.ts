@@ -4,6 +4,8 @@ import {
   checkedTransaction,
   clearAllTransactions,
   finalizeTransaction,
+  removeTransaction,
+  updateTransaction,
   SerializableTransactionReceipt
 } from './actions'
 
@@ -31,12 +33,32 @@ export const initialState: TransactionState = {}
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, approval, summary, claim } }) => {
+    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim } }) => {
       if (transactions[chainId]?.[hash]) {
         throw Error('Attempted to add existing transaction.')
       }
       const txs = transactions[chainId] ?? {}
-      txs[hash] = { hash, approval, summary, claim, from, addedTime: now() }
+      txs[hash] = { hash, summary, claim, from, addedTime: now() }
+      transactions[chainId] = txs
+    })
+    .addCase(removeTransaction, (transactions, { payload: { chainId, hash } }) => {
+      const tx = transactions[chainId]?.[hash]
+      if (!tx) {
+        return
+      }
+      const txs = transactions[chainId] ?? {}
+      delete txs[hash];
+      transactions[chainId] = txs
+    })
+    .addCase(updateTransaction, (transactions, { payload: { chainId, hash } }) => {
+      const tx = transactions[chainId]?.[hash]
+      if (!tx) {
+        return
+      }
+      const txs = transactions[chainId] ?? {}
+
+      // todo: update the transaction
+
       transactions[chainId] = txs
     })
     .addCase(clearAllTransactions, (transactions, { payload: { chainId } }) => {

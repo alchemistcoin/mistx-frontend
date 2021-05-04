@@ -1,8 +1,8 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { Trade, Token } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
-// import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin /*, isAddress, shortenAddress*/ } from '../utils'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
@@ -13,7 +13,7 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useEstimationCallback } from './useEstimationCallback'
-import { TransactionReq, SwapReq } from '../websocket'
+import { TransactionReq, SwapReq, emitTransactionRequest } from '../websocket'
 
 export enum SwapCallbackState {
   INVALID,
@@ -30,7 +30,7 @@ export function useSwapCallback(
   transactionTTL: number // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-  // const addTransaction = useTransactionAdder()
+  const addTransaction = useTransactionAdder()
   const useApprove = useApproveCallbackFromTrade(trade, allowedSlippage)
   const approve = useApprove[1]
   const estimationCall = useEstimationCallback(trade, allowedSlippage, recipientAddressOrName)
@@ -138,26 +138,28 @@ export function useSwapCallback(
                     })
                     .then(({ signedTx, populatedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
                       const hash = keccak256(signedTx)
-                      // const inputSymbol = trade.inputAmount.currency.symbol
-                      // const outputSymbol = trade.outputAmount.currency.symbol
-                      // const inputAmount = trade.inputAmount.toSignificant(3)
-                      // const outputAmount = trade.outputAmount.toSignificant(3)
+                      const inputSymbol = trade.inputAmount.currency.symbol
+                      const outputSymbol = trade.outputAmount.currency.symbol
+                      const inputAmount = trade.inputAmount.toSignificant(3)
+                      const outputAmount = trade.outputAmount.toSignificant(3)
 
-                      // const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-                      // const withRecipient =
-                      //   recipient === account
-                      //     ? base
-                      //     : `${base} to ${
-                      //         recipientAddressOrName && isAddress(recipientAddressOrName)
-                      //           ? shortenAddress(recipientAddressOrName)
-                      //           : recipientAddressOrName
-                      //       }`
+                      const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                      const withRecipient =
+                        recipient === account
+                          ? base
+                          : `${base} to ${
+                              recipientAddressOrName && isAddress(recipientAddressOrName)
+                                ? shortenAddress(recipientAddressOrName)
+                                : recipientAddressOrName
+                            }`
                       const swapReq: SwapReq = {
-                        amount0: trade.inputAmount.toExact(),
-                        amount1: trade.outputAmount.toExact(),
+                        amount0: trade.inputAmount.toString(),
+                        amount1: trade.outputAmount.toString(),
                         path: trade.route.path.map((token: Token): string => token.address),
                         to: recipient
                       }
+
+                      console.log('swapReq', swapReq);
                       const transactionReq: TransactionReq = {
                         serializedApprove: signedApproval ? signedApproval : undefined,
                         serializedSwap: signedTx,
@@ -172,18 +174,20 @@ export function useSwapCallback(
 
                       // we can't have TransactionResponse here
                       // This can be handled by the socket method
-                      // addTransaction(
-                      //   { hash },
-                      //   {
-                      //     summary: withRecipient
-                      //     //relay
-                      //   }
-                      // )
+                      addTransaction(
+                        { hash },
+                        {
+                          summary: withRecipient
+                          //relay
+                        }
+                      )
 
                       //
                       //
                       //
                       // if (relay) sendToRelay(relay.serializedApprove, relay.serializedSwap, relay.deadline)
+
+                      emitTransactionRequest(transactionReq)
 
                       return hash
                     })

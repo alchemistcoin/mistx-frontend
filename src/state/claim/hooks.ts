@@ -1,12 +1,10 @@
 import { UNI } from './../../constants/index'
 import { TokenAmount, JSBI, ChainId } from '@alchemistcoin/sdk'
-import { TransactionResponse } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useMerkleDistributorContract } from '../../hooks/useContract'
 import { useSingleCallResult } from '../multicall/hooks'
-import { calculateGasMargin, isAddress } from '../../utils'
-import { useTransactionAdder } from '../transactions/hooks'
+import { isAddress } from '../../utils'
 
 interface UserClaimData {
   index: number
@@ -84,39 +82,4 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Toke
     return new TokenAmount(uni, JSBI.BigInt(0))
   }
   return new TokenAmount(uni, JSBI.BigInt(userClaimData.amount))
-}
-
-export function useClaimCallback(
-  account: string | null | undefined
-): {
-  claimCallback: () => Promise<string>
-} {
-  // get claim data for this account
-  const { library, chainId } = useActiveWeb3React()
-  const claimData = useUserClaimData(account)
-
-  // used for popup summary
-  const unClaimedAmount: TokenAmount | undefined = useUserUnclaimedAmount(account)
-  const addTransaction = useTransactionAdder()
-  const distributorContract = useMerkleDistributorContract()
-
-  const claimCallback = async function() {
-    if (!claimData || !account || !library || !chainId || !distributorContract) return
-
-    const args = [claimData.index, account, claimData.amount, claimData.proof]
-
-    return distributorContract.estimateGas['claim'](...args, {}).then(estimatedGasLimit => {
-      return distributorContract
-        .claim(...args, { value: null, gasLimit: calculateGasMargin(estimatedGasLimit) })
-        .then((response: TransactionResponse) => {
-          addTransaction(response, {
-            summary: `Claimed ${unClaimedAmount?.toSignificant(4)} UNI`,
-            claim: { recipient: account }
-          })
-          return response.hash
-        })
-    })
-  }
-
-  return { claimCallback }
 }
