@@ -8,8 +8,16 @@ describe('prices', () => {
 
   const exchange = Exchange.UNI
 
-  const pair12 = new Pair(new TokenAmount(token1, JSBI.BigInt(10000)), new TokenAmount(token2, JSBI.BigInt(20000)), exchange)
-  const pair23 = new Pair(new TokenAmount(token2, JSBI.BigInt(20000)), new TokenAmount(token3, JSBI.BigInt(30000)), exchange)
+  const pair12 = new Pair(
+    new TokenAmount(token1, JSBI.BigInt(10000)),
+    new TokenAmount(token2, JSBI.BigInt(20000)),
+    exchange
+  )
+  const pair23 = new Pair(
+    new TokenAmount(token2, JSBI.BigInt(20000)),
+    new TokenAmount(token3, JSBI.BigInt(30000)),
+    exchange
+  )
 
   describe('computeTradePriceBreakdown', () => {
     it('returns undefined for undefined', () => {
@@ -22,7 +30,12 @@ describe('prices', () => {
     it('correct realized lp fee for single hop', () => {
       expect(
         computeTradePriceBreakdown(
-          new Trade(new Route([pair12], token1), new TokenAmount(token1, JSBI.BigInt(1000)), TradeType.EXACT_INPUT, exchange)
+          new Trade(
+            new Route([pair12], token1),
+            new TokenAmount(token1, JSBI.BigInt(1000)),
+            TradeType.EXACT_INPUT,
+            exchange
+          )
         ).realizedLPFee
       ).toEqual(new TokenAmount(token1, JSBI.BigInt(3)))
     })
@@ -33,7 +46,8 @@ describe('prices', () => {
           new Trade(
             new Route([pair12, pair23], token1),
             new TokenAmount(token1, JSBI.BigInt(1000)),
-            TradeType.EXACT_INPUT, exchange
+            TradeType.EXACT_INPUT,
+            exchange
           )
         ).realizedLPFee
       ).toEqual(new TokenAmount(token1, JSBI.BigInt(5)))
