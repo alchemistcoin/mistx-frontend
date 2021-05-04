@@ -153,8 +153,8 @@ export function useSwapCallback(
                                 : recipientAddressOrName
                             }`
                       const swapReq: SwapReq = {
-                        amount0: trade.inputAmount.multiply('100000000').toSignificant(8),
-                        amount1: trade.outputAmount.multiply('100000000').toSignificant(8),
+                        amount0: trade.inputAmount.toString(),
+                        amount1: trade.outputAmount.toString(),
                         path: trade.route.path.map((token: Token): string => token.address),
                         to: recipient
                       }
