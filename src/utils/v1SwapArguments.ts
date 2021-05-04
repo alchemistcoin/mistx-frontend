@@ -1,4 +1,4 @@
-import { MaxUint256 } from '@ethersproject/constants'
+// import { MaxUint256 } from '@ethersproject/constants'
 import {
   CurrencyAmount,
   ETHER,
@@ -6,7 +6,8 @@ import {
   Token,
   Trade,
   TradeOptionsDeadline,
-  TradeType
+  TradeType,
+  SwapDataArr
 } from '@alchemistcoin/sdk'
 import { getTradeVersion } from '../data/V1'
 import { Version } from '../hooks/useToggledVersion'
@@ -41,13 +42,13 @@ export default function v1SwapArguments(
     if (inputETH) {
       return {
         methodName: 'ethToTokenTransferInput',
-        args: [minimumAmountOut, deadline, options.recipient],
+        args: [(minimumAmountOut as unknown) as SwapDataArr, deadline, options.recipient],
         value: maximumAmountIn
       }
     } else if (outputETH) {
       return {
         methodName: 'tokenToEthTransferInput',
-        args: [maximumAmountIn, minimumAmountOut, deadline, options.recipient],
+        args: [(maximumAmountIn as unknown) as SwapDataArr, deadline, options.recipient],
         value: '0x0'
       }
     } else {
@@ -58,7 +59,7 @@ export default function v1SwapArguments(
       }
       return {
         methodName: 'tokenToTokenTransferInput',
-        args: [maximumAmountIn, minimumAmountOut, '0x1', deadline, options.recipient, outputToken.address],
+        args: [(maximumAmountIn as unknown) as SwapDataArr, minimumAmountOut, '0x1'],
         value: '0x0'
       }
     }
@@ -66,13 +67,13 @@ export default function v1SwapArguments(
     if (inputETH) {
       return {
         methodName: 'ethToTokenTransferOutput',
-        args: [minimumAmountOut, deadline, options.recipient],
+        args: [(minimumAmountOut as unknown) as SwapDataArr, deadline, options.recipient],
         value: maximumAmountIn
       }
     } else if (outputETH) {
       return {
         methodName: 'tokenToEthTransferOutput',
-        args: [minimumAmountOut, maximumAmountIn, deadline, options.recipient],
+        args: [(minimumAmountOut as unknown) as SwapDataArr, deadline, options.recipient],
         value: '0x0'
       }
     } else {
@@ -83,14 +84,7 @@ export default function v1SwapArguments(
 
       return {
         methodName: 'tokenToTokenTransferOutput',
-        args: [
-          minimumAmountOut,
-          maximumAmountIn,
-          MaxUint256.toHexString(),
-          deadline,
-          options.recipient,
-          output.address
-        ],
+        args: [(minimumAmountOut as unknown) as SwapDataArr, deadline, options.recipient],
         value: '0x0'
       }
     }

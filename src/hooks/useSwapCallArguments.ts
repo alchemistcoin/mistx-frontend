@@ -2,14 +2,11 @@ import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
-import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
+import { getTradeVersion } from '../data/V1'
 import { getRouterContract } from '../utils'
-import v1SwapArguments from '../utils/v1SwapArguments'
 import { useActiveWeb3React } from './index'
-import { useV1ExchangeContract } from './useContract'
 import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
-import { Version } from './useToggledVersion'
 import { BigNumber } from '@ethersproject/bignumber'
 
 export interface SwapCall {
@@ -38,65 +35,88 @@ export function useSwapCallArguments(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
-): PendingCall[] {
+): PendingCall | undefined {
   const { account, chainId, library } = useActiveWeb3React()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const deadline = useTransactionDeadline()
 
-  const v1Exchange = useV1ExchangeContract(useV1TradeExchangeAddress(trade), true)
-
-  return useMemo(() => {
+  return useMemo((): PendingCall | undefined => {
+    let pendingCall: PendingCall
     const tradeVersion = getTradeVersion(trade)
-    if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return []
+    if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return undefined
 
-    const contract: Contract | null =
-      tradeVersion === Version.v2 ? getRouterContract(chainId, library, account) : v1Exchange
+    const contract: Contract = getRouterContract(chainId, library, account)
 
-    const swapMethods: PendingCall[] = []
-
-    switch (tradeVersion) {
-      case Version.v2:
-        swapMethods.push({
-          call: {
-            contract,
-            parameters: Router.swapCallParameters(trade, {
-              feeOnTransfer: false,
-              allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-              recipient,
-              deadline: deadline.toNumber()
-            })
-          }
-        } as PendingCall)
-
-        if (trade.tradeType === TradeType.EXACT_INPUT) {
-          swapMethods.push({
-            call: {
-              contract,
-              parameters: Router.swapCallParameters(trade, {
-                feeOnTransfer: true,
-                allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-                recipient,
-                deadline: deadline.toNumber()
-              })
-            }
-          } as PendingCall)
+    if (trade.tradeType === TradeType.EXACT_INPUT) {
+      pendingCall = {
+        call: {
+          contract: contract as Contract,
+          parameters: Router.swapCallParameters(trade, {
+            feeOnTransfer: true,
+            allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+            recipient,
+            deadline: deadline.toNumber()
+          })
         }
-        break
-      case Version.v1:
-        swapMethods.push({
-          call: {
-            contract,
-            parameters: v1SwapArguments(trade, {
-              allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-              recipient,
-              deadline: deadline.toNumber()
-            })
-          }
-        } as PendingCall)
-        break
+      }
+    } else {
+      pendingCall = {
+        call: {
+          contract: contract as Contract,
+          parameters: Router.swapCallParameters(trade, {
+            feeOnTransfer: false,
+            allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+            recipient,
+            deadline: deadline.toNumber()
+          })
+        }
+      }
     }
-    return swapMethods
-  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade, v1Exchange])
+
+    return pendingCall
+    // switch (tradeVersion) {
+    //   case Version.v2:
+    //     swapMethods.push({
+    //       call: {
+    //         contract,
+    //         parameters: Router.swapCallParameters(trade, {
+    //           feeOnTransfer: false,
+    //           allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+    //           recipient,
+    //           deadline: deadline.toNumber()
+    //         })
+    //       }
+    //     } as PendingCall)
+
+    //     if (trade.tradeType === TradeType.EXACT_INPUT) {
+    //       swapMethods.push({
+    //         call: {
+    //           contract,
+    //           parameters: Router.swapCallParameters(trade, {
+    //             feeOnTransfer: true,
+    //             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+    //             recipient,
+    //             deadline: deadline.toNumber()
+    //           })
+    //         }
+    //       } as PendingCall)
+    //     }
+    //     break
+    //   case Version.v1:
+    //     swapMethods.push({
+    //       call: {
+    //         contract,
+    //         parameters: v1SwapArguments(trade, {
+    //           allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+    //           recipient,
+    //           deadline: deadline.toNumber()
+    //         })
+    //       }
+    //     } as PendingCall)
+    //     break
+    // }
+    // return swapMethods
+  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
 }

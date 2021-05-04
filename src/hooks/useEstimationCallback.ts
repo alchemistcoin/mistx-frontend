@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useSwapCallArguments, SuccessfulCall, FailedCall } from './useSwapCallArguments'
+import { useSwapCallArguments, SuccessfulCall, FailedCall, PendingCall } from './useSwapCallArguments'
 import { Trade } from '@alchemistcoin/sdk'
 import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import isZero from '../utils/isZero'
@@ -11,9 +11,11 @@ export function useEstimationCallback(
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE,
   recipientAddressOrName: string | null
 ): () => Promise<SuccessfulCall | undefined> {
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
+  const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   return useMemo(() => {
     return async function estimateCallback(): Promise<SuccessfulCall | undefined> {
+      if (!swapCall) return undefined
+      const swapCalls: PendingCall[] = [swapCall]
       const estimatedCalls: EstimatedSwapCall[] = await Promise.all(
         swapCalls.map(pendingCall => {
           const { call } = pendingCall
@@ -73,5 +75,5 @@ export function useEstimationCallback(
 
       return successfulEstimation
     }
-  }, [swapCalls])
+  }, [swapCall])
 }
