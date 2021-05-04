@@ -1,8 +1,8 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
-import { Trade, Token } from '@alchemistcoin/sdk'
+import { Trade } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
-import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
+// import { useTransactionAdder } from '../state/transactions/hooks'
+import { calculateGasMargin /*, isAddress, shortenAddress*/ } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
@@ -26,11 +26,11 @@ export enum SwapCallbackState {
 export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
-  transactionTTL: number // deadline to use for relay -- set to undefined for no relay
+  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  // transactionTTL: number // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-  const addTransaction = useTransactionAdder()
+  // const addTransaction = useTransactionAdder()
   const useApprove = useApproveCallbackFromTrade(trade, allowedSlippage)
   const approve = useApprove[1]
   const estimationCall = useEstimationCallback(trade, allowedSlippage, recipientAddressOrName)
@@ -136,37 +136,37 @@ export function useSwapCallback(
                         web3Provider.provider.isMetaMask = isMetamask
                       }
                     })
-                    .then(({ signedTx, populatedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
+                    .then(({ signedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
                       const hash = keccak256(signedTx)
-                      const inputSymbol = trade.inputAmount.currency.symbol
-                      const outputSymbol = trade.outputAmount.currency.symbol
-                      const inputAmount = trade.inputAmount.toSignificant(3)
-                      const outputAmount = trade.outputAmount.toSignificant(3)
+                      // const inputSymbol = trade.inputAmount.currency.symbol
+                      // const outputSymbol = trade.outputAmount.currency.symbol
+                      // const inputAmount = trade.inputAmount.toSignificant(3)
+                      // const outputAmount = trade.outputAmount.toSignificant(3)
 
-                      const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-                      const withRecipient =
-                        recipient === account
-                          ? base
-                          : `${base} to ${
-                              recipientAddressOrName && isAddress(recipientAddressOrName)
-                                ? shortenAddress(recipientAddressOrName)
-                                : recipientAddressOrName
-                            }`
+                      // const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                      // const withRecipient =
+                      //   recipient === account
+                      //     ? base
+                      //     : `${base} to ${
+                      //         recipientAddressOrName && isAddress(recipientAddressOrName)
+                      //           ? shortenAddress(recipientAddressOrName)
+                      //           : recipientAddressOrName
+                      //       }`
                       const swapReq: SwapReq = {
-                        amount0: trade.inputAmount.toString(),
-                        amount1: trade.outputAmount.toString(),
-                        path: trade.route.path.map((token: Token): string => token.address),
-                        to: recipient
+                        amount0: args[0][0] as string,
+                        amount1: args[0][1] as string,
+                        path: args[0][2] as string[],
+                        to: args[0][3] as string,
+                        deadline: args[0][4]
                       }
 
-                      console.log('swapReq', swapReq);
+                      console.log('swapReq', swapReq)
                       const transactionReq: TransactionReq = {
                         serializedApprove: signedApproval ? signedApproval : undefined,
                         serializedSwap: signedTx,
                         swap: swapReq,
                         bribe: '0', // need to use calculated bribe
-                        routerAddress: ROUTER[trade.exchange],
-                        ttl: Math.floor(transactionTTL * 60 * 1000) // convert to milliseconds
+                        routerAddress: ROUTER[trade.exchange]
                       }
 
                       console.log('emit transaction', transactionReq)
@@ -174,13 +174,13 @@ export function useSwapCallback(
 
                       // we can't have TransactionResponse here
                       // This can be handled by the socket method
-                      addTransaction(
-                        { hash },
-                        {
-                          summary: withRecipient
-                          //relay
-                        }
-                      )
+                      // addTransaction(
+                      //   { hash },
+                      //   {
+                      //     summary: withRecipient
+                      //     //relay
+                      //   }
+                      // )
 
                       //
                       //
@@ -211,5 +211,5 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, estimationCall, transactionTTL, approve])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, estimationCall, approve])
 }

@@ -254,8 +254,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
     trade,
     allowedSlippage,
-    recipient,
-    transactionTTL
+    recipient
+    //transactionTTL
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
