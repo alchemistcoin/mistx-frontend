@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { ChainId } from '@alchemistcoin/sdk'
+import { SwapReq } from '../../websocket/index'
 
 export interface SerializableTransactionReceipt {
   to: string
@@ -16,9 +17,9 @@ export const addTransaction = createAction<{
   chainId: ChainId
   hash: string
   from: string
-  approval?: { tokenAddress: string; spender: string }
   claim?: { recipient: string }
   summary?: string
+  swap?: SwapReq
 }>('transactions/addTransaction')
 export const clearAllTransactions = createAction<{ chainId: ChainId }>('transactions/clearAllTransactions')
 export const finalizeTransaction = createAction<{
@@ -31,3 +32,22 @@ export const checkedTransaction = createAction<{
   hash: string
   blockNumber: number
 }>('transactions/checkedTransaction')
+
+export const removeTransaction = createAction<{
+  chainId: ChainId
+  hash: string
+}>('transactions/removeTransaction')
+
+export const updateTransaction = createAction<{
+  chainId: ChainId
+  hash: string
+  serializedSwap?: string
+  serializedApprove?: string
+  status: string
+  message: string
+}>('transactions/updateTransaction')
+
+export const transactionError = createAction<{
+  event: string
+  message?: string
+}>('transactions/transactionError')
