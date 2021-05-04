@@ -76,47 +76,5 @@ export function useSwapCallArguments(
     }
 
     return pendingCall
-    // switch (tradeVersion) {
-    //   case Version.v2:
-    //     swapMethods.push({
-    //       call: {
-    //         contract,
-    //         parameters: Router.swapCallParameters(trade, {
-    //           feeOnTransfer: false,
-    //           allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-    //           recipient,
-    //           deadline: deadline.toNumber()
-    //         })
-    //       }
-    //     } as PendingCall)
-
-    //     if (trade.tradeType === TradeType.EXACT_INPUT) {
-    //       swapMethods.push({
-    //         call: {
-    //           contract,
-    //           parameters: Router.swapCallParameters(trade, {
-    //             feeOnTransfer: true,
-    //             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-    //             recipient,
-    //             deadline: deadline.toNumber()
-    //           })
-    //         }
-    //       } as PendingCall)
-    //     }
-    //     break
-    //   case Version.v1:
-    //     swapMethods.push({
-    //       call: {
-    //         contract,
-    //         parameters: v1SwapArguments(trade, {
-    //           allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-    //           recipient,
-    //           deadline: deadline.toNumber()
-    //         })
-    //       }
-    //     } as PendingCall)
-    //     break
-    // }
-    // return swapMethods
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
 }
