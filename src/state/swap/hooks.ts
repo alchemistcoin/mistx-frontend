@@ -1,7 +1,7 @@
 import useENS from '../../hooks/useENS'
 import { Version } from '../../hooks/useToggledVersion'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, ETHER, Exchange, JSBI, Token, TokenAmount, Trade } from '@alchemistcoin/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -140,10 +140,68 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  //iterate so we can compare universally - fails because of react hooks inside loop
+  //let bestTradeExactInEx: { [exchange: number]: { trade: Trade | null } } = {}, bestTradeExactOutEx: { [exchange: number]: { trade: Trade | null } } = {}
+  // for (let exchange in Exchange) {
+  //   if (isNaN(Number(exchange))) {
+  //     const exObj: Exchange = Exchange[exchange as keyof typeof Exchange];
+  //     const num = Number(exchange)
+  //     const tradeIn = useTradeExactIn(
+  //       exObj,
+  //       isExactIn ? parsedAmount : undefined,
+  //       outputCurrency ?? undefined
+  //     )
+  //     const tradeOut = useTradeExactOut(
+  //       exObj,
+  //       inputCurrency ?? undefined,
+  //       !isExactIn ? parsedAmount : undefined
+  //     )
+  //     if (tradeIn) bestTradeExactInEx = { [num]: { trade: tradeIn } }
+  //     if (tradeOut) bestTradeExactOutEx = { [num]: { trade: tradeOut } }
+  //   }
+  // }
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const bestTradeExactIn = useTradeExactIn(
+    Exchange.UNI,
+    isExactIn ? parsedAmount : undefined,
+    outputCurrency ?? undefined
+  )
+  const bestTradeExactInSushi = useTradeExactIn(
+    Exchange.SUSHI,
+    isExactIn ? parsedAmount : undefined,
+    outputCurrency ?? undefined
+  )
+  const bestTradeExactOut = useTradeExactOut(
+    Exchange.UNI,
+    inputCurrency ?? undefined,
+    !isExactIn ? parsedAmount : undefined
+  )
+  const bestTradeExactOutSushi = useTradeExactOut(
+    Exchange.SUSHI,
+    inputCurrency ?? undefined,
+    !isExactIn ? parsedAmount : undefined
+  )
+  //compare quotes
+  let v2Trade
+  if (isExactIn) {
+    //simpler?
+    if (bestTradeExactIn && !bestTradeExactInSushi) v2Trade = bestTradeExactIn
+    if (!bestTradeExactIn && bestTradeExactInSushi) v2Trade = bestTradeExactInSushi
+    if (bestTradeExactIn && bestTradeExactInSushi)
+      v2Trade =
+        bestTradeExactIn.outputAmount.toExact() > bestTradeExactInSushi.outputAmount.toExact()
+          ? bestTradeExactIn
+          : bestTradeExactInSushi
+  } else {
+    if (bestTradeExactOut && !bestTradeExactOutSushi) v2Trade = bestTradeExactOut
+    if (!bestTradeExactOut && bestTradeExactOutSushi) v2Trade = bestTradeExactOutSushi
+    if (bestTradeExactOut && bestTradeExactOutSushi)
+      v2Trade =
+        bestTradeExactOut.inputAmount.toExact() < bestTradeExactOutSushi.inputAmount.toExact()
+          ? bestTradeExactOut
+          : bestTradeExactOutSushi
+  }
+  //from here on we already set the right exchange for the trade - just need to set the router contract
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
