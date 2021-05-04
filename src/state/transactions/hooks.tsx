@@ -34,7 +34,6 @@ export function useTransactionAdder(): (
       response: TransactionResponseUnsent,
       {
         summary,
-        approval,
         claim
       }: { summary?: string; claim?: { recipient: string }; approval?: { tokenAddress: string; spender: string } } = {}
     ) => {
@@ -45,7 +44,7 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({ hash, from: account, chainId, approval, summary, claim }))
+      dispatch(addTransaction({ hash, from: account, chainId, summary, claim }))
     },
     [dispatch, chainId, account]
   )

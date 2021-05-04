@@ -153,11 +153,13 @@ export function useSwapCallback(
                                 : recipientAddressOrName
                             }`
                       const swapReq: SwapReq = {
-                        amount0: trade.inputAmount.toExact(),
-                        amount1: trade.outputAmount.toExact(),
+                        amount0: trade.inputAmount.multiply('100000000').toSignificant(8),
+                        amount1: trade.outputAmount.multiply('100000000').toSignificant(8),
                         path: trade.route.path.map((token: Token): string => token.address),
                         to: recipient
                       }
+
+                      console.log('swapReq', swapReq);
                       const transactionReq: TransactionReq = {
                         serializedApprove: signedApproval ? signedApproval : undefined,
                         serializedSwap: signedTx,
