@@ -85,7 +85,7 @@ export const StyledExternalWrapper = styled.div`
   display: flex;
   width: 100%;
   padding-left: 0.15rem;
-  margin: 0.5rem 0 0 0;
+  margin: 0.85rem 0 0 0;
   color: ${({ theme }) => theme.text1};
 `
 

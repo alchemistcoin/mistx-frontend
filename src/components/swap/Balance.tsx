@@ -15,7 +15,7 @@ const StyledLabelWrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
   position: relative;
-  top: -1.3rem;
+  top: -1.65rem;
 `
 
 const StyledLabel = styled.div`
