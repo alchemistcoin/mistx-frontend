@@ -41,7 +41,7 @@ const Footer = styled.div`
 `
 
 const StyledIconWrapper = styled(IconWrapper)`
-  svg path { 
+  svg path {
     stroke: ${({ theme }) => theme.text1};
   }
 `

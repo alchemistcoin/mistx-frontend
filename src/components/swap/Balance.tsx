@@ -56,7 +56,7 @@ const StyledBalanceMax = styled.button`
 const StyledBalanceLabel = styled.div`
   font-weight: 500;
   margin-right: 0.25rem;
-  color: ${({ theme }) => theme.text4}
+  color: ${({ theme }) => theme.text4};
 `
 
 const StyledBalance = styled.div`
@@ -87,7 +87,7 @@ interface SwapLabelProps {
 
 export default function Balance({ currency, onMax, showMaxButton }: SwapLabelProps) {
   const { account } = useActiveWeb3React()
-  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
+  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
   return (
     <StyledLabelWrapper>
@@ -97,7 +97,7 @@ export default function Balance({ currency, onMax, showMaxButton }: SwapLabelPro
           <StyledBalance>
             {selectedCurrencyBalance ? (
               <StyledBalanceAmount>{selectedCurrencyBalance?.toSignificant(6)}</StyledBalanceAmount>
-            ): (
+            ) : (
               <StyledBalanceAmount>0</StyledBalanceAmount>
             )}
           </StyledBalance>

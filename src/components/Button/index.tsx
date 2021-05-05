@@ -248,7 +248,6 @@ export const ButtonPrimary2Outlined = styled(Base)`
   }
 `
 
-
 export const ButtonEmpty = styled(Base)`
   background-color: transparent;
   color: ${({ theme }) => theme.primary1};

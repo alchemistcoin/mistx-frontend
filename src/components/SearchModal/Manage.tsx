@@ -42,7 +42,7 @@ const ToggleOption = styled.div<{ active?: boolean }>`
   }
 `
 const StyledText = styled(Text)`
-  color: ${({theme}) => theme.text1};
+  color: ${({ theme }) => theme.text1};
 `
 
 export default function Manage({

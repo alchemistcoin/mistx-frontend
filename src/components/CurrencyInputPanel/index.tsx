@@ -31,11 +31,11 @@ const CurrencySelectWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin: 1.5rem 0 0 0;
-`;
+`
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
   align-items: center;
-  background-color: ${({ selected, theme }) => (selected ? lighten(0.1, theme.bg6) : lighten(0.1, theme.bg6))};;
+  background-color: ${({ selected, theme }) => (selected ? lighten(0.1, theme.bg6) : lighten(0.1, theme.bg6))};
   border: none;
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text1)};
   cursor: pointer;
@@ -49,7 +49,7 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
 
   :focus,
   :hover {
-    background-color: ${({ selected, theme }) => (selected ? lighten(0.15, theme.bg6): lighten(0.15, theme.bg6))};
+    background-color: ${({ selected, theme }) => (selected ? lighten(0.15, theme.bg6) : lighten(0.15, theme.bg6))};
   }
 `
 
@@ -57,8 +57,8 @@ const CurrencyDisplay = styled.div`
   display: flex;
   width: 100%;
   flex-grow: 1;
-  color: ${({ theme }) =>  theme.text1};
-`;
+  color: ${({ theme }) => theme.text1};
+`
 
 const StyledExternalLink = styled(ExternalLink)`
   display: flex;
@@ -86,8 +86,7 @@ export const StyledExternalWrapper = styled.div`
   padding-left: 0.15rem;
   margin: 0.25rem 0 0 0;
   color: ${({ theme }) => theme.text1};
-
-`;
+`
 
 export const StyledExternalLinkEl = styled.span`
   display: flex;
@@ -99,7 +98,7 @@ export const StyledExternalLinkEl = styled.span`
       stroke: ${({ theme }) => (theme.darkMode ? theme.white : theme.text1)};
     }
   }
-` 
+`
 
 const LabelRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -189,9 +188,8 @@ const StyledBalanceMax = styled.button`
 `
 
 interface CurrencyExtended extends Currency {
-  address?: string | null; 
+  address?: string | null
 }
-
 
 interface CurrencyInputPanelProps {
   value: string
@@ -246,22 +244,22 @@ export default function CurrencyInputPanel({
       {!hideInput && account && (
         <LabelRow>
           <RowBetween>
-              <span>
-                {currency && showMaxButton && type === Field.INPUT && (
-                  <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
-                )}
-                <TYPE.body
-                  onClick={onMax}
-                  color={theme.text2}
-                  fontWeight={500}
-                  fontSize={14}
-                  style={{ display: 'inline', cursor: 'pointer' }}
-                >
-                  {!hideBalance && !!currency && selectedCurrencyBalance
-                    ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
-                    : ' -'}
-                </TYPE.body>
-              </span>
+            <span>
+              {currency && showMaxButton && type === Field.INPUT && (
+                <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+              )}
+              <TYPE.body
+                onClick={onMax}
+                color={theme.text2}
+                fontWeight={500}
+                fontSize={14}
+                style={{ display: 'inline', cursor: 'pointer' }}
+              >
+                {!hideBalance && !!currency && selectedCurrencyBalance
+                  ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
+                  : ' -'}
+              </TYPE.body>
+            </span>
           </RowBetween>
         </LabelRow>
       )}
@@ -294,21 +292,25 @@ export default function CurrencyInputPanel({
             {currency && currency.address ? (
               <StyledExternalLink id={`stake-nav-link`} href={`https://etherscan.io/address/${currency.address}`}>
                 <StyledExternalWrapper>
-                  {(currency && currency.symbol && currency.symbol.length > 20 ? currency.symbol.slice(0, 4) +
-                        '...' +
-                        currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                      : currency?.symbol) || t('selectToken')} <StyledExternalLinkEl><ArrowIcon /></StyledExternalLinkEl>
-                </StyledExternalWrapper>
-              </StyledExternalLink>
-            ): (
-              <StyledExternalWrapper>
-                {(currency && currency.symbol && currency.symbol.length > 20 ? currency.symbol.slice(0, 4) +
+                  {(currency && currency.symbol && currency.symbol.length > 20
+                    ? currency.symbol.slice(0, 4) +
                       '...' +
                       currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                    : currency?.symbol) || t('selectToken')}
+                    : currency?.symbol) || t('selectToken')}{' '}
+                  <StyledExternalLinkEl>
+                    <ArrowIcon />
+                  </StyledExternalLinkEl>
+                </StyledExternalWrapper>
+              </StyledExternalLink>
+            ) : (
+              <StyledExternalWrapper>
+                {(currency && currency.symbol && currency.symbol.length > 20
+                  ? currency.symbol.slice(0, 4) +
+                    '...' +
+                    currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                  : currency?.symbol) || t('selectToken')}
               </StyledExternalWrapper>
             )}
-        
           </CurrencyDisplay>
         </CurrencySelectWrapper>
         <InputRow style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect} value={value}>

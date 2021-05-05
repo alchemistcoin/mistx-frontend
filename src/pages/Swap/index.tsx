@@ -74,7 +74,7 @@ import CurrencySelect from 'components/CurrencySelect'
 const SwapWrapper = styled.div`
   background: ${({ theme }) => theme.bg6};
   border-radius: 20px;
-`;
+`
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -101,15 +101,15 @@ const HeaderFrame = styled.div`
 
 const InputWrapper = styled.div`
   padding: 0 1em 0;
-`;
+`
 
 const OutputWrapper = styled.div`
   padding: 0 1rem 0;
-`;
+`
 
 const SelectWrapper = styled.div`
   padding: 1rem 1rem;
-`;
+`
 
 const StyledPageTitle = styled.h1`
   grid-column-start: 4;
@@ -124,7 +124,7 @@ const StyledAutoRow = styled(AutoRow)`
   position: relative;
 
   &:before {
-    content: "";
+    content: '';
     z-index: 2;
     position: absolute;
     top: 50%;
@@ -139,9 +139,9 @@ const StyledAutoRow = styled(AutoRow)`
     z-index: 3;
   }
 
-  svg  path {
+  svg path {
     fill: ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.bg6)};
-  }  
+  }
 `
 
 export default function Swap({ history }: RouteComponentProps) {
@@ -450,35 +450,38 @@ export default function Swap({ history }: RouteComponentProps) {
                       id="swap-currency-input"
                     />
                     {account && (
-                      <Balance 
+                      <Balance
                         currency={currencies[Field.INPUT]}
                         id="from-label"
                         onMax={handleMaxInput}
-                        showMaxButton={!atMaxAmountInput} 
+                        showMaxButton={!atMaxAmountInput}
                       />
                     )}
                   </>
                 ) : (
                   <CurrencySelect onCurrencySelect={handleInputSelect} />
                 )}
-                </InputWrapper>
-                <StyledAutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ margin: '1rem 0 0', padding: '0 1rem' }}>
-                  <ArrowWrapper
-                    clickable
-                    color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
-                    onClick={() => {
-                      //setApprovalSubmitted(false) // reset 2 step UI for approvals
-                      onSwitchTokens()
-                    }}
-                  >
-                    <ArrowDownCircled data-test="arrow-down" />
-                  </ArrowWrapper>
-                  {recipient === null && !showWrap && isExpertMode ? (
-                    <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
-                      + Add a send (optional)
-                    </LinkStyledButton>
-                  ) : null}
-                </StyledAutoRow>
+              </InputWrapper>
+              <StyledAutoRow
+                justify={isExpertMode ? 'space-between' : 'center'}
+                style={{ margin: '1rem 0 0', padding: '0 1rem' }}
+              >
+                <ArrowWrapper
+                  clickable
+                  color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
+                  onClick={() => {
+                    //setApprovalSubmitted(false) // reset 2 step UI for approvals
+                    onSwitchTokens()
+                  }}
+                >
+                  <ArrowDownCircled data-test="arrow-down" />
+                </ArrowWrapper>
+                {recipient === null && !showWrap && isExpertMode ? (
+                  <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
+                    + Add a send (optional)
+                  </LinkStyledButton>
+                ) : null}
+              </StyledAutoRow>
               {currencies[Field.OUTPUT] ? (
                 <OutputWrapper>
                   <RelativeWrapper>
@@ -493,20 +496,21 @@ export default function Swap({ history }: RouteComponentProps) {
                       id="swap-currency-output"
                     />
                     {account && (
-                      <Balance 
+                      <Balance
                         currency={currencies[Field.OUTPUT]}
                         id="to-label"
                         onMax={handleMaxInput}
-                        showMaxButton={false} />
+                        showMaxButton={false}
+                      />
                     )}
                   </RelativeWrapper>
-                  </OutputWrapper>
-                ) : (
-                  <SelectWrapper>
-                    <CurrencySelect onCurrencySelect={handleOutputSelect} />
-                  </SelectWrapper>
-                )}
-              
+                </OutputWrapper>
+              ) : (
+                <SelectWrapper>
+                  <CurrencySelect onCurrencySelect={handleOutputSelect} />
+                </SelectWrapper>
+              )}
+
               {recipient !== null && !showWrap ? (
                 <>
                   <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
