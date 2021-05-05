@@ -172,7 +172,7 @@ export function useDerivedSwapInfo(): {
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactInSushi = useTradeExactIn(
-    Exchange.UNI,
+    Exchange.SUSHI,
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined,
     gasPriceToBeat,
@@ -186,7 +186,7 @@ export function useDerivedSwapInfo(): {
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactOutSushi = useTradeExactOut(
-    Exchange.UNI,
+    Exchange.SUSHI,
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined,
     gasPriceToBeat,
@@ -200,7 +200,7 @@ export function useDerivedSwapInfo(): {
     if (!bestTradeExactIn && bestTradeExactInSushi) v2Trade = bestTradeExactInSushi
     if (bestTradeExactIn && bestTradeExactInSushi)
       v2Trade =
-        bestTradeExactIn.outputAmount.toExact() > bestTradeExactInSushi.outputAmount.toExact()
+        Number(bestTradeExactIn.outputAmount.toExact()) >= Number(bestTradeExactInSushi.outputAmount.toExact())
           ? bestTradeExactIn
           : bestTradeExactInSushi
   } else {
@@ -208,7 +208,7 @@ export function useDerivedSwapInfo(): {
     if (!bestTradeExactOut && bestTradeExactOutSushi) v2Trade = bestTradeExactOutSushi
     if (bestTradeExactOut && bestTradeExactOutSushi)
       v2Trade =
-        bestTradeExactOut.inputAmount.toExact() < bestTradeExactOutSushi.inputAmount.toExact()
+        Number(bestTradeExactOut.inputAmount.toExact()) <= Number(bestTradeExactOutSushi.inputAmount.toExact())
           ? bestTradeExactOut
           : bestTradeExactOutSushi
   }
