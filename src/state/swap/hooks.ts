@@ -38,7 +38,7 @@ export function useSwapActionHandlers(): {
         selectCurrency({
           field,
           currencyId: currency instanceof Token ? currency.address : currency === ETHER ? 'ETH' : '',
-          address: currency instanceof Token ? currency.address : currency === ETHER ? 'ETH' : null
+          address: currency instanceof Token ? currency.address : null
         })
       )
     },
