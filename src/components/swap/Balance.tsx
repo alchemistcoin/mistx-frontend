@@ -16,10 +16,6 @@ const StyledLabelWrapper = styled.div`
   justify-content: space-between;
   margin: 0.5rem 0 0;
   width: 100%;
-
-  /* ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `}; */
 `
 
 const StyledLabel = styled.div`

@@ -1,4 +1,4 @@
-import { Currency, Pair } from '@alchemistcoin/sdk'
+import { Currency, Pair, Token } from '@alchemistcoin/sdk'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken, lighten } from 'polished'
@@ -187,17 +187,13 @@ const StyledBalanceMax = styled.button`
   `};
 `
 
-interface CurrencyExtended extends Currency {
-  address?: string | null
-}
-
 interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
   onMax?: () => void
   showMaxButton: boolean
   onCurrencySelect?: (currency: Currency) => void
-  currency?: CurrencyExtended | null
+  currency?: Currency | null
   disableCurrencySelect?: boolean
   hideBalance?: boolean
   pair?: Pair | null
@@ -287,7 +283,7 @@ export default function CurrencyInputPanel({
             </Aligner>
           </CurrencySelect>
           <CurrencyDisplay>
-            {currency && currency.address ? (
+            {currency && currency instanceof Token ? (
               <StyledExternalLink id={`stake-nav-link`} href={`https://etherscan.io/address/${currency.address}`}>
                 <StyledExternalWrapper>
                   {(currency && currency.symbol && currency.symbol.length > 20
