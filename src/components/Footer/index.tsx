@@ -17,7 +17,7 @@ const FooterFrame = styled.div`
   top: 0;
   position: relative;
   padding: 1rem 1rem;
-  z-index: 2;
+  z-index: 0;
 `
 
 const FooterRow = styled.div`

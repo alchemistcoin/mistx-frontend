@@ -187,7 +187,6 @@ export default function CurrencyList({
       const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
       const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
       const handleSelect = () => onCurrencySelect(currency)
-
       const token = wrappedCurrency(currency, chainId)
 
       const showImport = inactiveTokens && token && Object.keys(inactiveTokens).includes(token.address)

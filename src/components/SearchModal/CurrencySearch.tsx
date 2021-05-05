@@ -36,10 +36,15 @@ const Footer = styled.div`
   padding: 20px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  background-color: ${({ theme }) => theme.secondary1};
+  background-color: ${({ theme }) => theme.bg5};
   border-top: 1px solid ${({ theme }) => theme.bg2};
 `
 
+const StyledIconWrapper = styled(IconWrapper)`
+  svg path { 
+    stroke: ${({ theme }) => theme.text1};
+  }
+`
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
@@ -219,12 +224,12 @@ export function CurrencySearch({
       )}
       <Footer>
         <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.blue2} className="list-token-manage-button">
+          <ButtonText onClick={showManageView} color={theme.text1} className="list-token-manage-button">
             <RowFixed>
-              <IconWrapper size="16px" marginRight="6px">
+              <StyledIconWrapper size="16px" marginRight="6px">
                 <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.blue2}>Manage</TYPE.main>
+              </StyledIconWrapper>
+              <TYPE.main color={theme.text1}>Manage</TYPE.main>
             </RowFixed>
           </ButtonText>
         </Row>

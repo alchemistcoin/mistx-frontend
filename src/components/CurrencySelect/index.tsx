@@ -14,8 +14,8 @@ const TokenSelectButton = styled.button`
   cursor: pointer;
   display: flex;
   font-weight: 700;
-  font-size: 1.25rem;
-  height: 110px;
+  font-size: 1.1rem;
+  height: 4.5rem;
   justify-content: center;
   width: 100%;
 
@@ -25,7 +25,7 @@ const TokenSelectButton = styled.button`
 `
 
 const TokenHandImage = styled.img`
-  height: 1.875rem;
+  height: 1.5rem;
   margin-right: 1rem;
 `
 

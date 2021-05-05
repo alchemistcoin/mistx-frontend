@@ -45,7 +45,7 @@ const ErrorButton = styled(ButtonSecondary)`
   border-radius: 8px;
   font-size: 12px;
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.btnSecondaryBg};
+  background-color: ${({ theme }) => theme.red1};
   margin-left: 1rem;
   padding: 0.5rem;
   font-weight: 600;
