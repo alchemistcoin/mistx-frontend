@@ -4,8 +4,8 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0x', //TODO add address
-  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d' //TODO add address
+  [ChainId.MAINNET]: '0xAd3442B69c450Cb657e3D46308a017DAbe604951',
+  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d'
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
@@ -212,7 +212,7 @@ export const INITIAL_ALLOWED_SLIPPAGE = 50
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 // default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 5
+export const INITIAL_BRIBE_MARGIN = 25
 
 // used for rewards deadlines
 export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7)

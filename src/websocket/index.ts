@@ -27,6 +27,7 @@ export interface SwapReq {
   amount1: BigNumberish
   path: Array<string>
   to: string
+  deadline: string | string[]
 }
 
 export interface TransactionReq {
@@ -35,7 +36,6 @@ export interface TransactionReq {
   swap: SwapReq
   bribe: BigNumberish
   routerAddress: string
-  ttl: number // in milliseconds
 }
 
 export interface TransactionRes {
@@ -56,7 +56,7 @@ interface QuoteEventsMap {
 
 const tokenKey = `SESSION_TOKEN`
 const token = localStorage.getItem(tokenKey)
-const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:7070'
+const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:4000'
 
 console.log('server url', serverUrl)
 const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
@@ -66,7 +66,7 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
 
 export default function Sockets(): null {
   const dispatch = useDispatch()
-  const { chainId } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -79,7 +79,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.SOCKET_ERR, err => {
-      console.log('err', err);
+      console.log('err', err)
       if (err.event === Event.TRANSACTION_REQUEST) {
         dispatch(transactionError(err))
       }
@@ -104,14 +104,16 @@ export default function Sockets(): null {
       if (!chainId) return
 
       const hash = keccak256(transaction.serializedSwap)
-      dispatch(updateTransaction({
-        chainId,
-        hash,
-        serializedSwap: transaction.serializedSwap,
-        serializedApprove: transaction.serializedApprove,
-        message: transaction.message,
-        status: transaction.status,
-      }))
+      dispatch(
+        updateTransaction({
+          chainId,
+          hash,
+          serializedSwap: transaction.serializedSwap,
+          serializedApprove: transaction.serializedApprove,
+          message: transaction.message,
+          status: transaction.status
+        })
+      )
     })
 
     return () => {
@@ -125,7 +127,7 @@ export default function Sockets(): null {
   return null
 }
 
-export function emitTransactionRequest(transaction: TransactionReq){
+export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
   console.log('transaction sent', transaction)
 }

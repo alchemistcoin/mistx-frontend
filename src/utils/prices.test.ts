@@ -8,6 +8,9 @@ describe('prices', () => {
 
   const exchange = Exchange.UNI
 
+  const gasPriceToBeat = '0'
+  const minerBribeMargin = '5'
+
   const pair12 = new Pair(
     new TokenAmount(token1, JSBI.BigInt(10000)),
     new TokenAmount(token2, JSBI.BigInt(20000)),
@@ -34,7 +37,9 @@ describe('prices', () => {
             new Route([pair12], token1),
             new TokenAmount(token1, JSBI.BigInt(1000)),
             TradeType.EXACT_INPUT,
-            exchange
+            exchange,
+            gasPriceToBeat,
+            minerBribeMargin
           )
         ).realizedLPFee
       ).toEqual(new TokenAmount(token1, JSBI.BigInt(3)))
@@ -47,7 +52,9 @@ describe('prices', () => {
             new Route([pair12, pair23], token1),
             new TokenAmount(token1, JSBI.BigInt(1000)),
             TradeType.EXACT_INPUT,
-            exchange
+            exchange,
+            gasPriceToBeat,
+            minerBribeMargin
           )
         ).realizedLPFee
       ).toEqual(new TokenAmount(token1, JSBI.BigInt(5)))

@@ -47,7 +47,7 @@ export default createReducer(initialState, builder =>
         return
       }
       const txs = transactions[chainId] ?? {}
-      delete txs[hash];
+      delete txs[hash]
       transactions[chainId] = txs
     })
     .addCase(updateTransaction, (transactions, { payload: { chainId, hash } }) => {

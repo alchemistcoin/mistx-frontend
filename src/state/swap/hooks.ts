@@ -10,14 +10,16 @@ import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
+import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
 import useToggledVersion from '../../hooks/useToggledVersion'
-import { useUserSlippageTolerance } from '../user/hooks'
+import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
+import { BigNumber } from '@ethersproject/bignumber'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -126,7 +128,8 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
-
+  const [userBribeMargin] = useUserBribeMargin()
+  const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
@@ -164,22 +167,30 @@ export function useDerivedSwapInfo(): {
   const bestTradeExactIn = useTradeExactIn(
     Exchange.UNI,
     isExactIn ? parsedAmount : undefined,
-    outputCurrency ?? undefined
+    outputCurrency ?? undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
   )
   const bestTradeExactInSushi = useTradeExactIn(
-    Exchange.SUSHI,
+    Exchange.UNI,
     isExactIn ? parsedAmount : undefined,
-    outputCurrency ?? undefined
+    outputCurrency ?? undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
   )
   const bestTradeExactOut = useTradeExactOut(
     Exchange.UNI,
     inputCurrency ?? undefined,
-    !isExactIn ? parsedAmount : undefined
+    !isExactIn ? parsedAmount : undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
   )
   const bestTradeExactOutSushi = useTradeExactOut(
-    Exchange.SUSHI,
+    Exchange.UNI,
     inputCurrency ?? undefined,
-    !isExactIn ? parsedAmount : undefined
+    !isExactIn ? parsedAmount : undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
   )
   //compare quotes
   let v2Trade

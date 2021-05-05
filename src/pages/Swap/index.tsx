@@ -55,7 +55,7 @@ import {
 import {
   useExpertModeManager,
   useUserSlippageTolerance,
-  useUserTransactionTTL,
+  // useUserTransactionTTL,
   useUserSingleHopOnly
 } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
@@ -142,7 +142,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [allowedSlippage] = useUserSlippageTolerance()
 
   // get user transaction deadline TTL, in minutes
-  const [transactionTTL] = useUserTransactionTTL()
+  // const [transactionTTL] = useUserTransactionTTL()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -254,8 +254,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
     trade,
     allowedSlippage,
-    recipient,
-    transactionTTL
+    recipient
+    //transactionTTL
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
@@ -360,6 +360,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
+  console.log('the trade', trade)
+  console.log('priceImpact', trade?.priceImpact.toSignificant(6))
+  console.log('minerBribe', trade?.minerBribe.toSignificant(6))
   return (
     <>
       <HeaderFrame>

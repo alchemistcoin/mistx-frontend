@@ -11,11 +11,11 @@ export interface TransactionResponseUnsent {
 }
 
 interface TransactionResponseUnsentData {
-  summary?: string;
+  summary?: string
   approval?: {
-    tokenAddress: string;
+    tokenAddress: string
     spender: string
-  };
+  }
   claim?: {
     recipient: string
   }
@@ -24,7 +24,7 @@ interface TransactionResponseUnsentData {
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
   response: TransactionResponseUnsent,
-  customData?: TransactionResponseUnsentData,
+  customData?: TransactionResponseUnsentData
 ) => void {
   const { chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
