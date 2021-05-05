@@ -172,7 +172,7 @@ export function useDerivedSwapInfo(): {
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactInSushi = useTradeExactIn(
-    Exchange.UNI,
+    Exchange.SUSHI,
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined,
     gasPriceToBeat,
@@ -186,7 +186,7 @@ export function useDerivedSwapInfo(): {
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactOutSushi = useTradeExactOut(
-    Exchange.UNI,
+    Exchange.SUSHI,
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined,
     gasPriceToBeat,
