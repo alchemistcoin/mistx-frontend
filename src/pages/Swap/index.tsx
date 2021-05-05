@@ -169,8 +169,6 @@ export default function Swap({ history }: RouteComponentProps) {
       return !Boolean(token.address in defaultTokens)
     })
 
-  console.log('-------------- defaultTokens', defaultTokens)
-
   const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 

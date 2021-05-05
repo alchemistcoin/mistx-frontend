@@ -237,8 +237,6 @@ export default function CurrencyInputPanel({
     setModalOpen(false)
   }, [setModalOpen])
 
-  console.log('----- currency', currency)
-
   return (
     <InputPanel id={id}>
       {!hideInput && account && (
