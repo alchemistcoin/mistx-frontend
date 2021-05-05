@@ -5,7 +5,7 @@ export enum Field {
   OUTPUT = 'OUTPUT'
 }
 
-export const selectCurrency = createAction<{ field: Field; currencyId: string; address: string | null }>(
+export const selectCurrency = createAction<{ field: Field; currencyId: string; }>(
   'swap/selectCurrency'
 )
 export const switchCurrencies = createAction<void>('swap/switchCurrencies')
