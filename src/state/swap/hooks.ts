@@ -268,8 +268,8 @@ export function useDerivedSwapInfo(): {
         ? slippageAdjustedAmountsV1[Field.INPUT]
         : null
       : slippageAdjustedAmounts
-        ? slippageAdjustedAmounts[Field.INPUT]
-        : null
+      ? slippageAdjustedAmounts[Field.INPUT]
+      : null
   ]
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
