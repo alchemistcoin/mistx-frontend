@@ -1,5 +1,14 @@
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Exchange, Pair, Token, Trade } from '@alchemistcoin/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  TokenAmount,
+  Exchange,
+  Pair,
+  Token,
+  Trade,
+  BribeEstimation
+} from '@alchemistcoin/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
@@ -101,7 +110,8 @@ export function useTradeExactIn(
   currencyAmountIn?: CurrencyAmount,
   currencyOut?: Currency,
   gasPriceToBeat?: BigNumber,
-  minerBribeMargin?: BigNumber
+  minerBribeMargin?: BigNumber,
+  minTradeAmount?: CurrencyAmount | TokenAmount
 ): Trade | null {
   const allowedPairs = useAllCommonPairs(exchange, currencyAmountIn?.currency, currencyOut)
 
@@ -109,6 +119,7 @@ export function useTradeExactIn(
 
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && gasPriceToBeat && minerBribeMargin && allowedPairs.length > 0) {
+      if (minTradeAmount && Number(minTradeAmount.toExact()) > Number(currencyAmountIn.toExact())) return null
       if (singleHopOnly) {
         return (
           Trade.bestTradeExactIn(
@@ -151,7 +162,16 @@ export function useTradeExactIn(
     }
 
     return null
-  }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly, exchange, gasPriceToBeat, minerBribeMargin])
+  }, [
+    allowedPairs,
+    currencyAmountIn,
+    currencyOut,
+    singleHopOnly,
+    exchange,
+    gasPriceToBeat,
+    minerBribeMargin,
+    minTradeAmount
+  ])
 }
 
 /**
@@ -162,7 +182,8 @@ export function useTradeExactOut(
   currencyIn?: Currency,
   currencyAmountOut?: CurrencyAmount,
   gasPriceToBeat?: BigNumber,
-  minerBribeMargin?: BigNumber
+  minerBribeMargin?: BigNumber,
+  minTradeAmount?: CurrencyAmount | TokenAmount
 ): Trade | null {
   const allowedPairs = useAllCommonPairs(exchange, currencyIn, currencyAmountOut?.currency)
 
@@ -170,6 +191,7 @@ export function useTradeExactOut(
 
   return useMemo(() => {
     if (currencyIn && currencyAmountOut && gasPriceToBeat && minerBribeMargin && allowedPairs.length > 0) {
+      if (minTradeAmount && Number(minTradeAmount.toExact()) > Number(currencyAmountOut.toExact())) return null
       if (singleHopOnly) {
         return (
           Trade.bestTradeExactOut(
@@ -209,7 +231,16 @@ export function useTradeExactOut(
       return bestTradeSoFar
     }
     return null
-  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly, exchange, gasPriceToBeat, minerBribeMargin])
+  }, [
+    currencyIn,
+    currencyAmountOut,
+    allowedPairs,
+    singleHopOnly,
+    exchange,
+    gasPriceToBeat,
+    minerBribeMargin,
+    minTradeAmount
+  ])
 }
 
 export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?: Currency): boolean {
@@ -230,4 +261,30 @@ export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?:
   }
 
   return false
+}
+
+export function useMinTradeAmount(
+  exchange: Exchange,
+  currencyIn?: Currency,
+  currencyOut?: Currency,
+  gasPriceToBeat?: BigNumber,
+  minerBribeMargin?: BigNumber
+): BribeEstimation | null {
+  const inOutPairs = useAllCommonPairs(exchange, currencyIn, currencyOut)
+  const allPairs: Pair[] = useMemo(() => {
+    if (inOutPairs.length) return [inOutPairs[0]]
+    return []
+  }, [inOutPairs])
+  console.log('allPairs', allPairs)
+  return useMemo(() => {
+    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin) return null
+
+    return Trade.estimateBribes(
+      allPairs,
+      currencyIn,
+      currencyOut,
+      gasPriceToBeat.toString(),
+      minerBribeMargin.toString()
+    )
+  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, allPairs])
 }

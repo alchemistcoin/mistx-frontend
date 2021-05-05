@@ -152,7 +152,8 @@ export default function Swap({ history }: RouteComponentProps) {
     currencyBalances,
     parsedAmount,
     currencies,
-    inputError: swapInputError
+    inputError: swapInputError,
+    minAmountError: swapMinAmountError
   } = useDerivedSwapInfo()
 
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
@@ -523,7 +524,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   {wrapInputError ??
                     (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
                 </ButtonYellow>
-              ) : noRoute && userHasSpecifiedInputOutput ? (
+              ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
                 <GreyCard style={{ textAlign: 'center' }}>
                   <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                   {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}

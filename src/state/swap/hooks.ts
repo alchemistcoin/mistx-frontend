@@ -1,14 +1,14 @@
 import useENS from '../../hooks/useENS'
 import { Version } from '../../hooks/useToggledVersion'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, Exchange, JSBI, Token, TokenAmount, Trade } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, ETHER, Exchange, JSBI, Token, TokenAmount, Trade, TradeType } from '@alchemistcoin/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useV1Trade } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
-import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
+import { useTradeExactIn, useTradeExactOut, useMinTradeAmount } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import { isAddress } from '../../utils'
@@ -115,6 +115,7 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
   inputError?: string
+  minAmountError?: boolean
   v1Trade: Trade | undefined
 } {
   const { account } = useActiveWeb3React()
@@ -143,6 +144,16 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
+  const minTradeAmounts = useMinTradeAmount(
+    Exchange.UNI,
+    inputCurrency as Currency,
+    outputCurrency as Currency,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
+  )
+  const minTradeAmount = minTradeAmounts
+    ? minTradeAmounts[isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT]
+    : undefined
   //iterate so we can compare universally - fails because of react hooks inside loop
   //let bestTradeExactInEx: { [exchange: number]: { trade: Trade | null } } = {}, bestTradeExactOutEx: { [exchange: number]: { trade: Trade | null } } = {}
   // for (let exchange in Exchange) {
@@ -169,28 +180,32 @@ export function useDerivedSwapInfo(): {
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined,
     gasPriceToBeat,
-    BigNumber.from(userBribeMargin)
+    BigNumber.from(userBribeMargin),
+    minTradeAmount
   )
   const bestTradeExactInSushi = useTradeExactIn(
     Exchange.SUSHI,
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined,
     gasPriceToBeat,
-    BigNumber.from(userBribeMargin)
+    BigNumber.from(userBribeMargin),
+    minTradeAmount
   )
   const bestTradeExactOut = useTradeExactOut(
     Exchange.UNI,
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined,
     gasPriceToBeat,
-    BigNumber.from(userBribeMargin)
+    BigNumber.from(userBribeMargin),
+    minTradeAmount
   )
   const bestTradeExactOutSushi = useTradeExactOut(
     Exchange.SUSHI,
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined,
     gasPriceToBeat,
-    BigNumber.from(userBribeMargin)
+    BigNumber.from(userBribeMargin),
+    minTradeAmount
   )
   //compare quotes
   let v2Trade
@@ -228,6 +243,7 @@ export function useDerivedSwapInfo(): {
   const v1Trade = useV1Trade(isExactIn, currencies[Field.INPUT], currencies[Field.OUTPUT], parsedAmount)
 
   let inputError: string | undefined
+  let minAmountError = false
   if (!account) {
     inputError = 'Connect Wallet'
   }
@@ -276,12 +292,18 @@ export function useDerivedSwapInfo(): {
     inputError = 'Insufficient ' + amountIn.currency.symbol + ' balance'
   }
 
+  if (minTradeAmount && parsedAmount && Number(minTradeAmount.toExact()) > Number(parsedAmount.toExact())) {
+    inputError = 'Minimum trade amount not met'
+    minAmountError = true
+  }
+
   return {
     currencies,
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
     inputError,
+    minAmountError,
     v1Trade
   }
 }
