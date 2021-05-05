@@ -1,7 +1,7 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { Trade } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
-// import { useTransactionAdder } from '../state/transactions/hooks'
+import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin /*, isAddress, shortenAddress*/ } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
@@ -32,7 +32,7 @@ export function useSwapCallback(
   // transactionTTL: number // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-  // const addTransaction = useTransactionAdder()
+  const addTransaction = useTransactionAdder()
   const useApprove = useApproveCallbackFromTrade(trade, allowedSlippage)
   const approve = useApprove[1]
   // const estimationCall = useEstimationCallback(trade, allowedSlippage, recipientAddressOrName)
@@ -172,13 +172,13 @@ export function useSwapCallback(
 
                     // we can't have TransactionResponse here
                     // This can be handled by the socket method
-                    // addTransaction(
-                    //   { hash },
-                    //   {
-                    //     summary: withRecipient
-                    //     //relay
-                    //   }
-                    // )
+                    addTransaction(
+                      { hash },
+                      {
+                        // summary: withRecipient
+                        //relay
+                      }
+                    )
 
                     //
                     //

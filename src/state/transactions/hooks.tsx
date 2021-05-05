@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
-import { addTransaction } from './actions'
+import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 
-export interface TransactionResponseUnsent {
+interface TransactionResponseIdentifier {
   hash: string
+  serializedApprove?: string
+  serializedSwap?: string
 }
 
 interface TransactionResponseUnsentData {
@@ -23,7 +25,7 @@ interface TransactionResponseUnsentData {
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
-  response: TransactionResponseUnsent,
+  response: TransactionResponseIdentifier,
   customData?: TransactionResponseUnsentData
 ) => void {
   const { chainId, account } = useActiveWeb3React()
@@ -31,11 +33,15 @@ export function useTransactionAdder(): (
 
   return useCallback(
     (
-      response: TransactionResponseUnsent,
+      response: TransactionResponseIdentifier,
       {
         summary,
         claim
-      }: { summary?: string; claim?: { recipient: string }; approval?: { tokenAddress: string; spender: string } } = {}
+      }: {
+        summary?: string
+        claim?: { recipient: string }
+        approval?: { tokenAddress: string; spender: string }
+      } = {}
     ) => {
       if (!account) return
       if (!chainId) return
@@ -50,16 +56,74 @@ export function useTransactionAdder(): (
   )
 }
 
-// export function useTransactionUpdater(): (
-//   response: TransactionResponseUnsent,
-//   customData?: TransactionResponseUnsentData
-// ) => void {
-//   const { chainId, account } = useActiveWeb3React()
-//   const dispatch = useDispatch<AppDispatch>()
-//   return useCallback(
+export function useTransactionUpdater(): (
+  response: TransactionResponseIdentifier,
+  customData?: {
+    status: string
+    message: string
+  }
+) => void {
+  const { chainId, account } = useActiveWeb3React()
+  const dispatch = useDispatch<AppDispatch>()
 
-//   )
-// }
+  return useCallback(
+    (
+      response: TransactionResponseIdentifier,
+      {
+        message,
+        status
+      }: {
+        message?: string
+        status?: string
+      } = {}
+    ) => {
+      if (!chainId) return
+      if (!account) return
+
+      dispatch(
+        updateTransaction({
+          chainId,
+          from: account,
+          hash: response.hash,
+          serializedSwap: response.serializedSwap,
+          serializedApprove: response.serializedApprove,
+          status,
+          message,
+        })
+      )
+    },
+    [dispatch, chainId, account]
+  )
+}
+
+export function useTransactionRemover(): (
+  response: {
+    hash: string
+  }
+) => void {
+  const { chainId } = useActiveWeb3React()
+  const dispatch = useDispatch<AppDispatch>()
+  
+  return useCallback(
+    (
+      response: {
+        hash: string
+      }
+    ) => {
+      console.log('chain id', chainId);
+      if (!chainId) return
+
+      console.log('remove transaction', response.hash);
+      dispatch(
+        removeTransaction({
+          chainId,
+          hash: response.hash,
+        })
+      )
+    },
+    [dispatch, chainId]
+  )
+}
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
@@ -106,23 +170,4 @@ export function useHasPendingApproval(tokenAddress: string | undefined, spender:
       }),
     [allTransactions, spender, tokenAddress]
   )
-}
-
-// watch for submissions to claim
-// return null if not done loading, return undefined if not found
-export function useUserHasSubmittedClaim(
-  account?: string
-): { claimSubmitted: boolean; claimTxn: TransactionDetails | undefined } {
-  const allTransactions = useAllTransactions()
-
-  // get the txn if it has been submitted
-  const claimTxn = useMemo(() => {
-    const txnIndex = Object.keys(allTransactions).find(hash => {
-      const tx = allTransactions[hash]
-      return tx.claim && tx.claim.recipient === account
-    })
-    return txnIndex && allTransactions[txnIndex] ? allTransactions[txnIndex] : undefined
-  }, [account, allTransactions])
-
-  return { claimSubmitted: Boolean(claimTxn), claimTxn }
 }

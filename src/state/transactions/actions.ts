@@ -40,11 +40,12 @@ export const removeTransaction = createAction<{
 
 export const updateTransaction = createAction<{
   chainId: ChainId
+  from: string
   hash: string
   serializedSwap?: string
   serializedApprove?: string
-  status: string
-  message: string
+  status?: string
+  message?: string
 }>('transactions/updateTransaction')
 
 export const transactionError = createAction<{

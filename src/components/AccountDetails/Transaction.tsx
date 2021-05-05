@@ -8,6 +8,7 @@ import { ExternalLink } from '../../theme'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
+import { Status } from '../../websocket/index';
 
 const TransactionWrapper = styled.div``
 
@@ -42,8 +43,8 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
-  const pending = !tx?.receipt
-  const success = !pending && tx && (tx.receipt?.status === 1 || typeof tx.receipt?.status === 'undefined')
+  const pending = tx?.status === Status.PENDING_TRANSACTION;
+  const success = !pending && tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || typeof tx.receipt?.status === 'undefined')
 
   if (!chainId) return null
 

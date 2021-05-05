@@ -21,6 +21,8 @@ export interface TransactionDetails {
   addedTime: number
   confirmedTime?: number
   from: string
+  message?: string
+  status?: string
 }
 
 export interface TransactionState {
@@ -46,18 +48,21 @@ export default createReducer(initialState, builder =>
       if (!tx) {
         return
       }
+      console.log('remove transaction', hash);
       const txs = transactions[chainId] ?? {}
       delete txs[hash]
       transactions[chainId] = txs
     })
-    .addCase(updateTransaction, (transactions, { payload: { chainId, hash } }) => {
+    .addCase(updateTransaction, (transactions, { payload: { chainId, hash, status } }) => {
       const tx = transactions[chainId]?.[hash]
       if (!tx) {
         return
       }
-      const txs = transactions[chainId] ?? {}
-
       // todo: update the transaction
+      tx.status = status;
+
+      const txs = transactions[chainId] ?? {}
+      txs[hash] = tx;
 
       transactions[chainId] = txs
     })

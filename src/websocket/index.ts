@@ -1,22 +1,27 @@
 import { useEffect } from 'react'
-import { updateGas } from '../state/application/actions'
-import { updateTransaction, transactionError } from '../state/transactions/actions'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
-import { Gas } from '../state/application/reducer'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
-import { useActiveWeb3React } from 'hooks'
+// state
+import { updateGas } from '../state/application/actions'
+import { transactionError } from '../state/transactions/actions'
+import { Gas } from '../state/application/reducer'
+import { useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
-  FAILED_TRANSACTION = 'FAILED_TRANSACTION',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
   TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
+}
+
+export enum Status {
+  PENDING_TRANSACTION = 'PENDING_TRANSACTION',
+  FAILED_TRANSACTION = 'FAILED_TRANSACTION',
+  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
 }
 
 export interface SocketSession {
@@ -66,7 +71,8 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
 
 export default function Sockets(): null {
   const dispatch = useDispatch()
-  const { chainId } = useActiveWeb3React()
+  const updateTransaction = useTransactionUpdater();
+  const removeTransaction = useTransactionRemover();
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -94,26 +100,45 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.PENDING_TRANSACTION, transaction => {
-      console.log('new transaction response', transaction)
+      console.log('pending transaction response', transaction)
+      const hash = keccak256(transaction.serializedSwap)
+
+      updateTransaction(
+        {
+          hash,
+          serializedSwap: transaction.serializedSwap,
+          serializedApprove: transaction.serializedApprove,
+        },
+        {
+          message: transaction.message,
+          status: transaction.status
+        }
+      )
     })
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
       console.log('transaction response', transaction)
-      console.log('chain id', chainId)
-
-      if (!chainId) return
-
       const hash = keccak256(transaction.serializedSwap)
-      dispatch(
-        updateTransaction({
-          chainId,
-          hash,
-          serializedSwap: transaction.serializedSwap,
-          serializedApprove: transaction.serializedApprove,
-          message: transaction.message,
-          status: transaction.status
+
+      if (transaction.status === Status.FAILED_TRANSACTION) {
+        console.log('remove transaction');
+        removeTransaction({
+          hash
         })
-      )
+      } else {
+        console.log('update transaction');
+        updateTransaction(
+          {
+            hash,
+            serializedSwap: transaction.serializedSwap,
+            serializedApprove: transaction.serializedApprove,
+          },
+          {
+            message: transaction.message,
+            status: transaction.status
+          }
+        )
+      }
     })
 
     return () => {
@@ -122,7 +147,7 @@ export default function Sockets(): null {
       socket.off(Event.SOCKET_SESSION_RESPONSE)
       socket.off(Event.GAS_CHANGE)
     }
-  }, [chainId, dispatch])
+  }, [dispatch])
 
   return null
 }
