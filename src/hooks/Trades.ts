@@ -7,7 +7,7 @@ import {
   Pair,
   Token,
   Trade,
-  BribeEstimation
+  MinTradeEstimate
 } from '@alchemistcoin/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
@@ -268,23 +268,25 @@ export function useMinTradeAmount(
   currencyIn?: Currency,
   currencyOut?: Currency,
   gasPriceToBeat?: BigNumber,
-  minerBribeMargin?: BigNumber
-): BribeEstimation | null {
+  minerBribeMargin?: BigNumber,
+  minTradeMargin?: BigNumber
+): MinTradeEstimate | null {
   const inOutPairs = useAllCommonPairs(exchange, currencyIn, currencyOut)
   const allPairs: Pair[] = useMemo(() => {
     if (inOutPairs.length) return [inOutPairs[0]]
     return []
   }, [inOutPairs])
-  console.log('allPairs', allPairs)
-  return useMemo(() => {
-    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin) return null
 
-    return Trade.estimateBribes(
+  return useMemo(() => {
+    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin) return null
+
+    return Trade.estimateMinTradeAmounts(
       allPairs,
       currencyIn,
       currencyOut,
       gasPriceToBeat.toString(),
-      minerBribeMargin.toString()
+      minerBribeMargin.toString(),
+      minTradeMargin.toString()
     )
-  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, allPairs])
+  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, allPairs])
 }

@@ -1,7 +1,17 @@
 import useENS from '../../hooks/useENS'
 import { Version } from '../../hooks/useToggledVersion'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, Exchange, JSBI, Token, TokenAmount, Trade, TradeType } from '@alchemistcoin/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  ETHER,
+  Exchange,
+  JSBI,
+  Token,
+  TokenAmount,
+  Trade,
+  TradeType
+} from '@alchemistcoin/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,6 +30,7 @@ import useToggledVersion from '../../hooks/useToggledVersion'
 import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
+import { MIN_TRADE_MARGIN } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -149,11 +160,16 @@ export function useDerivedSwapInfo(): {
     inputCurrency as Currency,
     outputCurrency as Currency,
     gasPriceToBeat,
-    BigNumber.from(userBribeMargin)
+    BigNumber.from(userBribeMargin),
+    BigNumber.from(MIN_TRADE_MARGIN)
   )
   const minTradeAmount = minTradeAmounts
     ? minTradeAmounts[isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT]
     : undefined
+
+  if (minTradeAmount) {
+    console.log('minTradeAmount', minTradeAmount.toExact())
+  }
   //iterate so we can compare universally - fails because of react hooks inside loop
   //let bestTradeExactInEx: { [exchange: number]: { trade: Trade | null } } = {}, bestTradeExactOutEx: { [exchange: number]: { trade: Trade | null } } = {}
   // for (let exchange in Exchange) {
