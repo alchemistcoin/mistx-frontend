@@ -324,13 +324,7 @@ export default function CurrencyInputPanel({
           )}
         </InputRow>
       </Container>
-      {account && (
-        <Balance
-          currency={currency}
-          onMax={onMax}
-          showMaxButton={type === Field.INPUT}
-        />
-      )}
+      {account && <Balance currency={currency} onMax={onMax} showMaxButton={type === Field.INPUT} />}
       {!disableCurrencySelect && onCurrencySelect && (
         <CurrencySearchModal
           isOpen={modalOpen}

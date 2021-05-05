@@ -41,7 +41,6 @@ const StyledBalanceMax = styled.button`
   justify-content: center;
   margin-left: 0.75rem;
 
-
   :hover,
   :focus {
     border: 1px solid ${({ theme }) => darken(0.1, theme.yellow1)};
