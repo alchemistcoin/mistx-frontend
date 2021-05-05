@@ -53,7 +53,6 @@ export default function CurrencySelect({
   return (
     <>
       <TokenSelectButton
-        // selected={!!currency}
         className="open-currency-select-button"
         onClick={() => {
           if (!disableCurrencySelect) {

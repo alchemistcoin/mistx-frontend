@@ -9,13 +9,13 @@ const StyledLabelWrapper = styled.div`
   color: ${({ theme }) => theme.text1}
   display: flex;
   flex-direction: row;
-  font-size: 1rem;
+  font-size: 0.875rem;
   width: auto;
   position: relative;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin: 0.5rem 0 0;
-  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  top: -1.3rem;
 `
 
 const StyledLabel = styled.div`
@@ -23,13 +23,12 @@ const StyledLabel = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   line-height: 1.4em;
-  margin-bottom: 0.75rem;
   color: ${({ theme }) => theme.text4};
 `
 
 const StyledBalanceMax = styled.button`
   display: flex;
-  width: 5rem;
+  width: 3rem;
   height: 28px;
   background-color: transparent;
   border: 1px solid ${({ theme }) => theme.yellow1};
@@ -40,6 +39,8 @@ const StyledBalanceMax = styled.button`
   line-height: 2;
   font-weight: 500;
   justify-content: center;
+  margin-left: 0.75rem;
+
 
   :hover,
   :focus {
@@ -76,7 +77,6 @@ interface SwapLabelProps {
   hideBalance?: boolean
   hideInput?: boolean
   otherCurrency?: Currency | null
-  id: string
   showCommonBases?: boolean
   customBalanceText?: string
 }
@@ -84,7 +84,6 @@ interface SwapLabelProps {
 export default function Balance({ currency, onMax, showMaxButton }: SwapLabelProps) {
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-
   return (
     <StyledLabelWrapper>
       {account && currency && (
@@ -99,7 +98,7 @@ export default function Balance({ currency, onMax, showMaxButton }: SwapLabelPro
           </StyledBalance>
         </StyledLabel>
       )}
-      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>USE MAX</StyledBalanceMax>}
+      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>}
     </StyledLabelWrapper>
   )
 }

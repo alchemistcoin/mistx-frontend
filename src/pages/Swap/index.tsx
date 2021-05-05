@@ -63,8 +63,6 @@ import AppBody from '../AppBody'
 // import { ClickableText } from './styleds'
 // import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
-// import SwapLabel from 'components/swap/SwapLabel'
-import Balance from 'components/swap/Balance'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
 import { RouteComponentProps } from 'react-router-dom'
@@ -74,6 +72,7 @@ import CurrencySelect from 'components/CurrencySelect'
 const SwapWrapper = styled.div`
   background: ${({ theme }) => theme.bg6};
   border-radius: 20px;
+  padding: 1rem 0;
 `
 
 const HeaderFrame = styled.div`
@@ -108,7 +107,7 @@ const OutputWrapper = styled.div`
 `
 
 const SelectWrapper = styled.div`
-  padding: 1rem 1rem;
+  padding: 1rem 1rem 0;
 `
 
 const StyledPageTitle = styled.h1`
@@ -435,34 +434,24 @@ export default function Swap({ history }: RouteComponentProps) {
             <AutoColumn>
               <InputWrapper>
                 {currencies[Field.INPUT] ? (
-                  <>
-                    <CurrencyInputPanel
-                      value={formattedAmounts[Field.INPUT]}
-                      showMaxButton={!atMaxAmountInput}
-                      currency={currencies[Field.INPUT]}
-                      onUserInput={handleTypeInput}
-                      onMax={handleMaxInput}
-                      onCurrencySelect={handleInputSelect}
-                      otherCurrency={currencies[Field.OUTPUT]}
-                      type={Field.INPUT}
-                      id="swap-currency-input"
-                    />
-                    {account && (
-                      <Balance
-                        currency={currencies[Field.INPUT]}
-                        id="from-label"
-                        onMax={handleMaxInput}
-                        showMaxButton={!atMaxAmountInput}
-                      />
-                    )}
-                  </>
+                  <CurrencyInputPanel
+                    value={formattedAmounts[Field.INPUT]}
+                    showMaxButton={!atMaxAmountInput}
+                    currency={currencies[Field.INPUT]}
+                    onUserInput={handleTypeInput}
+                    onMax={handleMaxInput}
+                    onCurrencySelect={handleInputSelect}
+                    otherCurrency={currencies[Field.OUTPUT]}
+                    type={Field.INPUT}
+                    id="swap-currency-input"
+                  />
                 ) : (
                   <CurrencySelect onCurrencySelect={handleInputSelect} />
                 )}
               </InputWrapper>
               <StyledAutoRow
                 justify={isExpertMode ? 'space-between' : 'center'}
-                style={{ margin: '1rem 0 0', padding: '0 1rem' }}
+                style={{ margin: '0.5rem 0 1rem', padding: '0 1rem' }}
               >
                 <ArrowWrapper
                   clickable
@@ -490,17 +479,9 @@ export default function Swap({ history }: RouteComponentProps) {
                       currency={currencies[Field.OUTPUT]}
                       onCurrencySelect={handleOutputSelect}
                       otherCurrency={currencies[Field.INPUT]}
-                      type={Field.INPUT}
+                      type={Field.OUTPUT}
                       id="swap-currency-output"
                     />
-                    {account && (
-                      <Balance
-                        currency={currencies[Field.OUTPUT]}
-                        id="to-label"
-                        onMax={handleMaxInput}
-                        showMaxButton={false}
-                      />
-                    )}
                   </RelativeWrapper>
                 </OutputWrapper>
               ) : (

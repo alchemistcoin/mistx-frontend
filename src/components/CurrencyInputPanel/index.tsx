@@ -12,6 +12,7 @@ import { Input as NumericalInput } from '../NumericalInput'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { ArrowIcon } from '../Icons'
+import Balance from 'components/swap/Balance'
 import { Field } from '../../state/swap/actions'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
@@ -23,14 +24,14 @@ const InputRow = styled.div<{
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   flex: ${({ value }) => (value.length > 0 ? 20 : 6)};
-  padding: ${({ selected }) => (selected ? '0 0 0s 1rem' : '0 0 0 1rem')};
-  transition: flex 0.3s;
 `
 
 const CurrencySelectWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 1.5rem 0 0 0;
+  // margin: 1.5rem 0 0 0;
+  position: relative;
+  z-index: 1;
 `
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
@@ -84,7 +85,7 @@ export const StyledExternalWrapper = styled.div`
   display: flex;
   width: 100%;
   padding-left: 0.15rem;
-  margin: 0.25rem 0 0 0;
+  margin: 0.5rem 0 0 0;
   color: ${({ theme }) => theme.text1};
 `
 
@@ -113,10 +114,6 @@ const LabelRow = styled.div`
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
   }
-
-  /* ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: block;
-  `}; */
 `
 
 const Aligner = styled.span`
@@ -145,8 +142,8 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
-  align-items: center;
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  align-items: baseline;
+  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   background-color: inherit;
   display: flex;
 `
@@ -187,6 +184,10 @@ const StyledBalanceMax = styled.button`
   `};
 `
 
+const StyledNumericalInput = styled(NumericalInput)`
+  height: 2.2rem;
+  padding-left: 0.25rem;
+`
 interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
@@ -310,9 +311,9 @@ export default function CurrencyInputPanel({
         <InputRow style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect} value={value}>
           {!hideInput && (
             <>
-              <NumericalInput
+              <StyledNumericalInput
                 className="token-amount-input"
-                fontSize="2.8rem"
+                fontSize="2.2rem"
                 value={value}
                 onUserInput={val => {
                   onUserInput(val)
@@ -323,6 +324,13 @@ export default function CurrencyInputPanel({
           )}
         </InputRow>
       </Container>
+      {account && (
+        <Balance
+          currency={currency}
+          onMax={onMax}
+          showMaxButton={type === Field.INPUT}
+        />
+      )}
       {!disableCurrencySelect && onCurrencySelect && (
         <CurrencySearchModal
           isOpen={modalOpen}
