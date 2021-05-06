@@ -228,6 +228,26 @@ export const ButtonOutlined = styled(Base)`
   }
 `
 
+export const ButtonPrimary2Outlined = styled(Base)`
+  border: 1px solid ${({ theme }) => theme.primary2};
+  background-color: transparent;
+  color: ${({ theme }) => theme.primary2};
+
+  &:focus {
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary2};
+  }
+  &:hover {
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary2};
+  }
+  &:active {
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary2};
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
+
 export const ButtonEmpty = styled(Base)`
   background-color: transparent;
   color: ${({ theme }) => theme.primary1};

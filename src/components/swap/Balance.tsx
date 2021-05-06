@@ -1,67 +1,62 @@
 import { Currency } from '@alchemistcoin/sdk'
 import React from 'react'
+import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import styled from 'styled-components'
 
-const StyledLabelWrapper = styled.div<{
-  placement: 'left' | 'right'
-}>`
-  background-color: ${({ theme }) => theme.bg6}
-  border-radius: 1rem;
-  color: ${({ theme }) => theme.text2}
+const StyledLabelWrapper = styled.div`
+  color: ${({ theme }) => theme.text1}
   display: flex;
-  flex-direction: column;
-  font-size: .9375rem;
-  justify-content: center;
-  height: 100%;
-  left: ${({ placement }) => placement === 'left' && 0};
-  padding: 1rem;
-  position: absolute;
-  right: ${({ placement }) => placement === 'right' && 0};
-  top: 0;
-  transform: translateX(${({ placement }) => (placement === 'right' ? '100%' : '-100%')});
-  width: 140px;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
+  flex-direction: row;
+  font-size: 0.875rem;
+  width: auto;
+  position: relative;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  top: -1.2rem;
 `
 
 const StyledLabel = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
   line-height: 1.4em;
-  margin-bottom: 0.75rem;
-  text-align: right;
+  color: ${({ theme }) => theme.text4};
 `
 
 const StyledBalanceMax = styled.button`
-  height: 28px;
-  background-color: ${({ theme }) => theme.bg1};
+  display: flex;
+  padding: 0.13rem 0.4rem 0.16rem 0.4rem;
+  background-color: transparent;
   border: 1px solid ${({ theme }) => theme.yellow1};
   border-radius: 14px;
   color: ${({ theme }) => theme.yellow1};
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  line-height: 0.75rem;
   font-weight: 500;
-
+  justify-content: center;
+  margin-right: 0.65rem;
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    color: ${({ theme }) => theme.primary1};
+    border: 1px solid ${({ theme }) => darken(0.1, theme.yellow1)};
+    color: ${({ theme }) => darken(0.1, theme.yellow1)};
     outline: none;
   }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall``};
 `
 
 const StyledBalanceLabel = styled.div`
-  font-weight: 300;
+  font-weight: 500;
+  margin-right: 0.25rem;
+  color: ${({ theme }) => theme.text4};
 `
 
 const StyledBalance = styled.div`
-  color: ${({ theme }) => theme.text1}
+  color: ${({ theme }) => theme.text4}
   display: flex;
-  font-weight: 700;
+  font-weight: 500;
   justify-content: flex-end;
 `
 
@@ -79,30 +74,28 @@ interface SwapLabelProps {
   hideBalance?: boolean
   hideInput?: boolean
   otherCurrency?: Currency | null
-  placement: 'right' | 'left'
-  id: string
   showCommonBases?: boolean
   customBalanceText?: string
 }
 
-export default function SwapLabel({ currency, onMax, placement, showMaxButton }: SwapLabelProps) {
+export default function Balance({ currency, onMax, showMaxButton }: SwapLabelProps) {
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-
   return (
-    <StyledLabelWrapper placement={placement}>
+    <StyledLabelWrapper>
+      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>max</StyledBalanceMax>}
       {account && currency && (
         <StyledLabel>
-          <StyledBalanceLabel>BAL</StyledBalanceLabel>
+          <StyledBalanceLabel>Balance</StyledBalanceLabel>
           <StyledBalance>
-            {selectedCurrencyBalance && (
+            {selectedCurrencyBalance ? (
               <StyledBalanceAmount>{selectedCurrencyBalance?.toSignificant(6)}</StyledBalanceAmount>
+            ) : (
+              <StyledBalanceAmount>0</StyledBalanceAmount>
             )}
-            &nbsp;{currency.symbol}
           </StyledBalance>
         </StyledLabel>
       )}
-      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>USE MAX</StyledBalanceMax>}
     </StyledLabelWrapper>
   )
 }

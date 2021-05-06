@@ -23,15 +23,15 @@ export interface Colors {
 
   // borders
   border1: Color
+  border2: Color
 
-  //specialty colors
+  // specialty colors
   modalBG: Color
   advancedBG: Color
   headerBg: Color
   btnBorder: Color
-  dialogBg: Color
 
-  //blues
+  // primary
   primary1: Color
   primary2: Color
   primary3: Color
@@ -42,7 +42,7 @@ export interface Colors {
   primaryText1: Color
   secondaryText1: Color
 
-  // pinks
+  // secondary
   secondary1: Color
   secondary2: Color
   secondary3: Color
