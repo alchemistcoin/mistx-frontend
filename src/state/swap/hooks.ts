@@ -125,6 +125,7 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  minTradeAmount: CurrencyAmount | undefined
   inputError?: string
   minAmountError?: boolean
   v1Trade: Trade | undefined
@@ -309,7 +310,7 @@ export function useDerivedSwapInfo(): {
   }
 
   if (minTradeAmount && parsedAmount && Number(minTradeAmount.toExact()) > Number(parsedAmount.toExact())) {
-    inputError = 'Minimum trade amount not met'
+    inputError = 'Min trade amount not met'
     minAmountError = true
   }
 
@@ -318,6 +319,7 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
+    minTradeAmount,
     inputError,
     minAmountError,
     v1Trade
