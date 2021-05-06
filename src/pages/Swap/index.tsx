@@ -191,12 +191,12 @@ export default function Swap({ history }: RouteComponentProps) {
     v2Trade,
     currencyBalances,
     parsedAmount,
-    minTradeAmount,
+    minTradeAmounts,
     currencies,
     inputError: swapInputError,
     minAmountError: swapMinAmountError
   } = useDerivedSwapInfo()
-  console.log('min trade amount', minTradeAmount?.currency.symbol, minTradeAmount?.toSignificant(6))
+  console.log('min trade amounts', minTradeAmounts)
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -403,9 +403,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
-  console.log('the trade', trade)
-  console.log('priceImpact', trade?.priceImpact.toSignificant(6))
-  console.log('minerBribe', trade?.minerBribe.toSignificant(6))
   return (
     <>
       <HeaderFrame>
