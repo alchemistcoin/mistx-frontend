@@ -11,7 +11,7 @@ import {
   useExpertModeManager,
   useUserTransactionTTL,
   useUserSlippageTolerance,
-  useUserSingleHopOnly
+  useUserSingleHopOnly,
 } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
@@ -20,6 +20,7 @@ import Modal from '../Modal'
 import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
+import MinerBribeSlider from './MinerBribeSlider';
 import TransactionSettings from '../TransactionSettings'
 import { Cog } from '../Icons'
 
@@ -91,9 +92,9 @@ const StyledMenu = styled.div`
 
 const MenuFlyout = styled.span`
   min-width: 20.125rem;
-  background-color: ${({ theme }) => theme.bg2};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
+  background-color: ${({ theme }) => theme.bg5};
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.10), 0px 4px 8px rgba(0, 0, 0, 0.10), 0px 16px 24px rgba(0, 0, 0, 0.10),
+    0px 24px 32px rgba(0, 0, 0, 0.10);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -197,7 +198,14 @@ export default function SettingsTab() {
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
-            <Text fontWeight={600} fontSize={14}>
+            <RowFixed>
+              <Text fontWeight={600} fontSize={14}>
+                Miner Bribe Margin
+              </Text>
+              <QuestionHelper text="Lorem ipsum" />
+            </RowFixed>
+            <MinerBribeSlider />
+            <Text fontWeight={600} fontSize={14} >
               Transaction Settings
             </Text>
             <TransactionSettings
@@ -209,29 +217,6 @@ export default function SettingsTab() {
             <Text fontWeight={600} fontSize={14}>
               Interface Settings
             </Text>
-            <RowBetween>
-              <RowFixed>
-                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                  Toggle Expert Mode
-                </TYPE.black>
-                <QuestionHelper text="Bypasses confirmation modals and allows high slippage trades. Use at your own risk." />
-              </RowFixed>
-              <Toggle
-                id="toggle-expert-mode-button"
-                isActive={expertMode}
-                toggle={
-                  expertMode
-                    ? () => {
-                        toggleExpertMode()
-                        setShowConfirmation(false)
-                      }
-                    : () => {
-                        toggle()
-                        setShowConfirmation(true)
-                      }
-                }
-              />
-            </RowBetween>
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>

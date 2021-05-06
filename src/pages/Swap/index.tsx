@@ -105,16 +105,6 @@ const OutputWrapper = styled.div`
 const SelectWrapper = styled.div`
   padding: 1rem 1rem 0;
 `
-
-// const StyledPageTitle = styled.h1`
-//   grid-column-start: 4;
-//   font-weight: 400;
-//   font-size: ${rem(38)};
-//   line-height: 1;
-//   margin: 0;
-//   padding: 0;
-// `
-
 const StyledAutoRow = styled(AutoRow)`
   position: relative;
 
