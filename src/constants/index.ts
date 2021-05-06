@@ -213,7 +213,7 @@ export const INITIAL_ALLOWED_SLIPPAGE = 50
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 // default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 25
+export const INITIAL_BRIBE_MARGIN = 120
 
 // used for rewards deadlines
 export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7)
