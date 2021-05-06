@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react'
 import { X } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { lighten } from 'polished'
+import { lighten, rem } from 'polished'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
@@ -46,8 +46,8 @@ const StyledMenuButton = styled.button`
   justify-content: center;
   margin: 0;
   padding: 0;
-  height: 40px;
-  width: 40px;
+  width: ${rem(40)};
+  height: ${rem(40)};
   padding: 0.15rem 0.5rem;
   border-radius: 100%;
 
