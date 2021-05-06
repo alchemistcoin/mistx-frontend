@@ -248,5 +248,5 @@ export const BLOCKED_ADDRESSES: string[] = [
 ]
 
 // Miner Bribe Margin
-export const MINER_BRIBE_MIN = 5; 
-export const MINER_BRIBE_MAX = 200;
+export const MINER_BRIBE_MIN = 5
+export const MINER_BRIBE_MAX = 200

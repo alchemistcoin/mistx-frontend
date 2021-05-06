@@ -11,7 +11,7 @@ import {
   useExpertModeManager,
   useUserTransactionTTL,
   useUserSlippageTolerance,
-  useUserSingleHopOnly,
+  useUserSingleHopOnly
 } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
@@ -20,14 +20,14 @@ import Modal from '../Modal'
 import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
-import MinerBribeSlider from './MinerBribeSlider';
+import MinerBribeSlider from './MinerBribeSlider'
 import TransactionSettings from '../TransactionSettings'
 import { Cog } from '../Icons'
 
 const StyledCloseIcon = styled(X)`
   height: 20px;
   width: 20px;
-  
+
   :hover {
     cursor: pointer;
   }
@@ -66,7 +66,7 @@ const StyledMenuIcon = styled.div`
   svg {
     width: 100%;
     height: 100%;
-    
+
     > * {
       stroke: ${({ theme }) => theme.primary2};
     }
@@ -93,8 +93,8 @@ const StyledMenu = styled.div`
 const MenuFlyout = styled.span`
   min-width: 20.125rem;
   background-color: ${({ theme }) => theme.bg5};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.10), 0px 4px 8px rgba(0, 0, 0, 0.10), 0px 16px 24px rgba(0, 0, 0, 0.10),
-    0px 24px 32px rgba(0, 0, 0, 0.10);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 16px 24px rgba(0, 0, 0, 0.1),
+    0px 24px 32px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -205,7 +205,7 @@ export default function SettingsTab() {
               <QuestionHelper text="Lorem ipsum" />
             </RowFixed>
             <MinerBribeSlider />
-            <Text fontWeight={600} fontSize={14} >
+            <Text fontWeight={600} fontSize={14}>
               Transaction Settings
             </Text>
             <TransactionSettings
