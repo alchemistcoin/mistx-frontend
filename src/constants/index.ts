@@ -5,7 +5,8 @@ import { fortmatic, injected, portis, walletconnect, walletlink } from '../conne
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: '0xAd3442B69c450Cb657e3D46308a017DAbe604951',
-  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d'
+  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
+  [ChainId.GÖRLI]: '0x7c4EB67602083f579E60f18afEF2E40fdF9aE88A'
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
