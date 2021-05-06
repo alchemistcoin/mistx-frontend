@@ -1,7 +1,8 @@
 import React, { useContext, useRef, useState } from 'react'
-import { Settings, X } from 'react-feather'
+import { X } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
+import { lighten } from 'polished'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
@@ -20,24 +21,12 @@ import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
 import TransactionSettings from '../TransactionSettings'
-
-const StyledMenuIcon = styled(Settings)`
-  font-size: 1.25rem;
-  height: 20px;
-  width: 20px;
-
-  > * {
-    stroke: ${({ theme }) => theme.text2};
-  }
-
-  :hover {
-    opacity: 0.7;
-  }
-`
+import { Cog } from '../Icons'
 
 const StyledCloseIcon = styled(X)`
   height: 20px;
   width: 20px;
+  
   :hover {
     cursor: pointer;
   }
@@ -50,25 +39,39 @@ const StyledCloseIcon = styled(X)`
 const StyledMenuButton = styled.button`
   align-items: center;
   position: relative;
-  width: 100%;
-  height: 100%;
   border: none;
-  background-color: transparent;
+  background-color: ${({ theme }) => theme.bg6};
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
-  height: 35px;
-
+  height: 40px;
+  width: 40px;
   padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 100%;
 
   :hover,
   :focus {
     cursor: pointer;
     outline: none;
+    background-color: ${({ theme }) => lighten(0.05, theme.bg6)};
   }
 `
+
+const StyledMenuIcon = styled.div`
+  height: 32px;
+  width: 32px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    
+    > * {
+      stroke: ${({ theme }) => theme.primary2};
+    }
+  }
+`
+
 const EmojiWrapper = styled.div`
   position: absolute;
   bottom: -6px;
@@ -180,7 +183,9 @@ export default function SettingsTab() {
         </ModalContentWrapper>
       </Modal>
       <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
-        <StyledMenuIcon />
+        <StyledMenuIcon>
+          <Cog />
+        </StyledMenuIcon>
         {expertMode ? (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">

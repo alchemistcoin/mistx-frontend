@@ -9,17 +9,13 @@ const StyledSwapHeader = styled.div`
   color: ${({ theme }) => theme.text2};
   font-size: 2.25rem;
   display: flex;
-  justify-content: center;
-  height: 120px;
-  margin-bottom: 3rem;
-  max-width: 420px;
-  padding: 0 1rem;
+  justify-content: space-between;
+  padding: 0 1rem 0 1.15rem;
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 1.5rem;
-    height: 60px;
-    margin-bottom: 2rem;
+    padding: 0 0.25rem 0 0.5rem;
   `}
 `
 
@@ -27,7 +23,7 @@ export default function SwapHeader() {
   const { t } = useTranslation()
   return (
     <StyledSwapHeader>
-      <TYPE.black fontWeight="400">{t('Swap Tokens')}</TYPE.black>
+      <TYPE.black fontWeight="700">{t('Swap')}</TYPE.black>
       <Settings />
     </StyledSwapHeader>
   )

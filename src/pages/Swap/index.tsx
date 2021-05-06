@@ -1,11 +1,8 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@alchemistcoin/sdk'
 import React, { useCallback, useContext, useMemo, useState } from 'react'
-// import { ArrowDownCircle } from 'react-feather'
-
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { rem } from 'polished'
 import AddressInputPanel from '../../components/AddressInputPanel'
 
 import { ButtonError, ButtonYellow } from '../../components/Button'
@@ -29,7 +26,7 @@ import {
 import TokenWarningModal from '../../components/TokenWarningModal'
 
 // import ProgressSteps from '../../components/ProgressSteps'
-// import SwapHeader from '../../components/swap/SwapHeader'
+import SwapHeader from '../../components/swap/SwapHeader'
 import WalletConnect from '../../components/WalletConnect'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
@@ -76,10 +73,9 @@ const SwapWrapper = styled.div`
 `
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr repeat(3, auto) 1fr;
+  display: flex;
   align-items: center;
-  flex-direction: row;
+  justify-content: flex-end
   width: 100%;
   top: 0;
   position: relative;
@@ -110,14 +106,14 @@ const SelectWrapper = styled.div`
   padding: 1rem 1rem 0;
 `
 
-const StyledPageTitle = styled.h1`
-  grid-column-start: 4;
-  font-weight: 400;
-  font-size: ${rem(38)};
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-`
+// const StyledPageTitle = styled.h1`
+//   grid-column-start: 4;
+//   font-weight: 400;
+//   font-size: ${rem(38)};
+//   line-height: 1;
+//   margin: 0;
+//   padding: 0;
+// `
 
 const StyledAutoRow = styled(AutoRow)`
   position: relative;
@@ -406,7 +402,6 @@ export default function Swap({ history }: RouteComponentProps) {
   return (
     <>
       <HeaderFrame>
-        <StyledPageTitle>Swap Tokens</StyledPageTitle>
         <WalletConnect />
       </HeaderFrame>
       <TokenWarningModal
@@ -416,6 +411,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
       <AppBody>
+        <SwapHeader />
         <Wrapper id="swap-page">
           <ConfirmSwapModal
             isOpen={showConfirm}
