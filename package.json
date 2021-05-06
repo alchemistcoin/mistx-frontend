@@ -124,6 +124,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@alchemistcoin/default-token-list": "git+https://github.com/alchemistcoin/default-token-list.git#main",
+    "react-toastify": "^7.0.4",
     "socket.io-client": "^4.0.1"
   }
 }
