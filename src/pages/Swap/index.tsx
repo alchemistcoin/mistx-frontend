@@ -451,7 +451,7 @@ export default function Swap({ history }: RouteComponentProps) {
               </InputWrapper>
               <StyledAutoRow
                 justify={isExpertMode ? 'space-between' : 'center'}
-                style={{ margin: '0.5rem 0 1rem', padding: '0 1rem' }}
+                style={{ margin: '0.5rem 0 0.5rem', padding: '0 1rem' }}
               >
                 <ArrowWrapper
                   clickable

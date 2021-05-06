@@ -15,7 +15,7 @@ const StyledLabelWrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
   position: relative;
-  top: -1.65rem;
+  top: -1.2rem;
 `
 
 const StyledLabel = styled.div`
@@ -28,19 +28,17 @@ const StyledLabel = styled.div`
 
 const StyledBalanceMax = styled.button`
   display: flex;
-  width: 3rem;
-  height: 28px;
+  padding: 0.13rem 0.4rem 0.16rem 0.4rem;
   background-color: transparent;
   border: 1px solid ${({ theme }) => theme.yellow1};
   border-radius: 14px;
   color: ${({ theme }) => theme.yellow1};
   cursor: pointer;
   font-size: 0.75rem;
-  line-height: 2;
+  line-height: 0.75rem;
   font-weight: 500;
   justify-content: center;
-  margin-left: 0.75rem;
-
+  margin-right: 0.65rem;
   :hover,
   :focus {
     border: 1px solid ${({ theme }) => darken(0.1, theme.yellow1)};
@@ -85,6 +83,7 @@ export default function Balance({ currency, onMax, showMaxButton }: SwapLabelPro
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   return (
     <StyledLabelWrapper>
+      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>max</StyledBalanceMax>}
       {account && currency && (
         <StyledLabel>
           <StyledBalanceLabel>Balance</StyledBalanceLabel>
@@ -97,7 +96,6 @@ export default function Balance({ currency, onMax, showMaxButton }: SwapLabelPro
           </StyledBalance>
         </StyledLabel>
       )}
-      {account && currency && showMaxButton && <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>}
     </StyledLabelWrapper>
   )
 }
