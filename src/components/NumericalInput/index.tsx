@@ -11,18 +11,20 @@ const StyledInput = styled.input<{
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   width: 0;
   position: relative;
-  font-weight: 500;
+  font-weight: 600;
   outline: none;
   border: none;
   flex: 1 1 auto;
   background-color: inherit;
-  font-size: ${({ fontSize }) => fontSize ?? '24px'};
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0px;
   -webkit-appearance: textfield;
+  font: inherit;
+  font-size: ${({ fontSize }) => fontSize ?? '24px'};
+  font-weight: 700;
 
   ::-webkit-search-decoration {
     -webkit-appearance: none;
@@ -38,8 +40,8 @@ const StyledInput = styled.input<{
   }
 
   ::placeholder {
-    color: ${({ theme }) => theme.text4};
-    font-weight: 200;
+    color: ${({ theme }) => theme.text1};
+    font-weight: 600;
   }
 `
 
@@ -75,12 +77,13 @@ export const Input = React.memo(function InnerInput({
       // universal input options
       inputMode="decimal"
       title="Token Amount"
+      fontSize={'2.8rem'}
       autoComplete="off"
       autoCorrect="off"
       // text-specific options
       type="text"
       pattern="^[0-9]*[.,]?[0-9]*$"
-      placeholder={placeholder || '0.0'}
+      placeholder={placeholder || '0'}
       minLength={1}
       maxLength={79}
       spellCheck="false"

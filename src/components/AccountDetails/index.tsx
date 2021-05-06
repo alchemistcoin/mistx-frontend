@@ -18,7 +18,7 @@ import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import PortisIcon from '../../assets/images/portisIcon.png'
 import Identicon from '../Identicon'
-import { ButtonPrimary } from '../Button'
+import { ButtonPrimary2Outlined } from '../Button'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import { ExternalLink, LinkStyledButton, TYPE } from '../../theme'
 
@@ -54,7 +54,7 @@ const UpperSection = styled.div`
 
 const InfoCard = styled.div`
   padding: 1rem;
-  border: 1px solid ${({ theme }) => theme.primary6};
+  border: 1px solid ${({ theme }) => theme.bg3};
   border-radius: 20px;
   position: relative;
   display: grid;
@@ -182,7 +182,7 @@ const TransactionListWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
 `
 
-const WalletAction = styled(ButtonPrimary)`
+const WalletAction = styled(ButtonPrimary2Outlined)`
   width: fit-content;
   font-weight: 400;
   margin-left: 8px;

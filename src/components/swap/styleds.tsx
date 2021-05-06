@@ -17,20 +17,13 @@ export const RelativeWrapper = styled.div`
   position: relative;
 `
 
-export const ArrowPosition = styled.div`
-  position: absolute;
-  top: 100%;
-  transform: translateY(-50%);
-  width: 100%;
-`
-
 export const ArrowWrapper = styled.div<{
   color?: string
   clickable: boolean
 }>`
   align-items: center;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.bg2}
+  background-color: ${({ theme }) => theme.bg6}
   height: 2.5rem;
   display: flex;
   justify-content: center;
@@ -54,7 +47,7 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div`
-  margin-top: 1rem;
+  padding: 1rem 1rem 0 1rem;
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
@@ -179,7 +172,7 @@ export const TokenSelectButton = styled.button`
   align-items: center;
   background-color: ${({ theme }) => theme.yellow1};
   border: 1px solid ${({ theme }) => theme.bg2};
-  border-radius: 20px;
+  border-radius: 0;
   cursor: pointer;
   display: flex;
   font-weight: 700;

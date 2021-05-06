@@ -41,7 +41,7 @@ export function colors(darkMode: boolean): Colors {
     black,
 
     // text
-    text1: darkMode ? '#FCFCFC' : '#190134',
+    text1: darkMode ? '#FFFFFF' : '#190134',
     text2: darkMode ? '#C3C5CB' : '#565A69',
     text3: darkMode ? '#6C7284' : '#888D9B',
     text4: darkMode ? '#565A69' : '#C3C5CB',
@@ -56,11 +56,12 @@ export function colors(darkMode: boolean): Colors {
     bg6: darkMode ? '#0E0F1E' : '#FFFFFF',
 
     // borders
-    border1: darkMode ? '#1F2E3C' : '#FFFFFF',
+    border1: darkMode ? '#1F2E3C' : '#e9eaec',
+    border2: darkMode ? '#354350' : '#c2c7cb',
 
     //primary colors
-    primary1: '#0e0913',
-    primary2: '#CC59FF',
+    primary1: '#131a22',
+    primary2: '#FFBF00',
     primary3: '#FEA6F6',
     primary4: darkMode ? '#376bad70' : '#F6DDE8',
     primary5: darkMode ? '#153d6f70' : '#FDEAF1',
@@ -94,7 +95,6 @@ export function colors(darkMode: boolean): Colors {
       ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
       : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
     btnBorder: darkMode ? '#FFBF00' : '#1a0434',
-    dialogBg: darkMode ? '#34314B' : '#FCFCFC',
 
     // buttons
     btnPrimaryBg: darkMode ? '#190134' : '#190134',
