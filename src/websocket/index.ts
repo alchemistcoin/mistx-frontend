@@ -164,14 +164,11 @@ export default function Sockets(): null {
         hash
       }
 
-      updateTransaction(
-        transactionId,
-        {
-          transaction: transaction.transaction,
-          message: transaction.message,
-          status: transaction.status
-        }
-      )
+      updateTransaction(transactionId, {
+        transaction: transaction.transaction,
+        message: transaction.message,
+        status: transaction.status
+      })
 
       const tx = allTransactions?.[hash]
       const summary = tx?.summary

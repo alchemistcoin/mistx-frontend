@@ -38,8 +38,8 @@ export const initialState: TransactionState = {}
 export default createReducer(initialState, builder =>
   builder
     .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim } }) => {
-      const tx = transactions[chainId]?.[hash];
-      if (tx && (tx.status === Status.PENDING_TRANSACTION) ) {
+      const tx = transactions[chainId]?.[hash]
+      if (tx && tx.status === Status.PENDING_TRANSACTION) {
         throw Error('Attempted to add existing transaction.')
       }
 
