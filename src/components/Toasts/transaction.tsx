@@ -12,11 +12,10 @@ const TransactionState = styled.div`
   align-items: center;
   padding: 1rem 0rem;
   font-weight: 500;
-  font-size: 0.825rem;
+  font-size: 0.875rem;
 `
 
 const TransactionStatus = styled.div`
-  font-size: 0.875rem;
   font-weight: 600;
 `
 
@@ -25,7 +24,7 @@ const TransactionLink = styled(ExternalLink)`
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: ${({ theme }) => theme.text3};
+  color: ${({ theme }) => theme.text2};
 
   :hover {
     color: ${({ theme }) => theme.text1};
@@ -71,11 +70,15 @@ export const transactionToast = ({
 
   const options = {
     autoClose: 5000,
+<<<<<<< HEAD
     closeOnClick: true,
     onClose: (props: any): void => {
       toast.dismiss(props.uid)
     }
   }
+=======
+  };
+>>>>>>> d244c1f... font size
 
   switch (true) {
     case error:
