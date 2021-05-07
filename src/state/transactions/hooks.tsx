@@ -67,7 +67,6 @@ export function useTransactionUpdater(): (
     message?: string
   }
 ) => void {
-  let { account } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
@@ -93,7 +92,7 @@ export function useTransactionUpdater(): (
         })
       )
     },
-    [dispatch, account]
+    [dispatch]
   )
 }
 

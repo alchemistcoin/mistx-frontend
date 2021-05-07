@@ -209,5 +209,5 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve, addTransaction])
 }
