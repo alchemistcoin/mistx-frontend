@@ -80,6 +80,45 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   auth: { token }
 })
 
+function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
+  switch (transaction.status) {
+    case Status.FAILED_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Failed',
+        summary,
+        error: true
+      })
+      break
+    case Status.PENDING_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Pending',
+        summary
+      })
+      break
+    case Status.SUCCESSFUL_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Completed!',
+        summary,
+        success: true
+      })
+      break
+    default:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Updated',
+        summary
+      })
+      break
+  }
+}
+
 export default function Sockets(): null {
   const dispatch = useDispatch()
   const allTransactions = useAllTransactions()
@@ -162,43 +201,4 @@ export default function Sockets(): null {
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
   console.log('transaction sent', transaction)
-}
-
-function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
-  switch (transaction.status) {
-    case Status.FAILED_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Failed',
-        summary,
-        error: true
-      })
-      break
-    case Status.PENDING_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Pending',
-        summary
-      })
-      break
-    case Status.SUCCESSFUL_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Completed!',
-        summary,
-        success: true
-      })
-      break
-    default:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Updated',
-        summary
-      })
-      break
-  }
 }
