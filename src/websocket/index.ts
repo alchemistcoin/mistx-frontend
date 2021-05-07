@@ -8,7 +8,7 @@ import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
 import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
 import { ChainId } from '@alchemistcoin/sdk'
-import { transactionToast, TransactionToastType } from 'components/Toasts/transaction'
+import { transactionToast } from 'components/Toasts/transaction'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
@@ -179,7 +179,7 @@ function handleTransactionResponseToast(
         hash,
         status: 'Failed',
         summary,
-        type: TransactionToastType.ERROR,
+        error: true,
       })
       break;
     case Status.PENDING_TRANSACTION:
@@ -196,7 +196,7 @@ function handleTransactionResponseToast(
         hash,
         status: 'Completed!',
         summary,
-        type: TransactionToastType.SUCCESS
+        success: true,
       })
       break;
     default:

@@ -6,11 +6,6 @@ import { truncateStringMiddle } from 'utils/truncateString'
 import { getEtherscanLink } from 'utils'
 import { ChainId } from '@alchemistcoin/sdk'
 
-export enum TransactionToastType {
-  ERROR = 'ERROR',
-  SUCCESS = 'SUCCESS'
-}
-
 const TransactionState = styled.div`
   display: flex;
   justify-content: space-between;
@@ -62,15 +57,17 @@ const Toast = ({
 export const transactionToast = ({
   chainId,
   hash,
+  error,
   status,
   summary,
-  type,
+  success,
 }: {
   chainId: ChainId
   hash: string
+  error?: boolean,
   status: string
   summary?: string
-  type?: TransactionToastType
+  success?: boolean,
 }) => {
   const component = (
     <Toast
@@ -84,16 +81,19 @@ export const transactionToast = ({
   const options = {
     autoClose: 5000,
     closeOnClick: true,
+    onClose: (props: any): void => {
+      toast.dismiss(props.uid)
+    },
   };
 
-  switch (type) {
-    case TransactionToastType.ERROR:
+  switch (true) {
+    case error:
       toast.error(
         component,
         options
       );
       break;
-    case TransactionToastType.SUCCESS:
+    case success:
       toast.success(
         component,
         options

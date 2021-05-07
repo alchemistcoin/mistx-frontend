@@ -53,7 +53,7 @@ export default function Transaction({ hash }: { hash: string }) {
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
   const pending = tx?.status === Status.PENDING_TRANSACTION || typeof tx?.status === 'undefined';
-  const success = !pending && tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
+  const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
 
   if (!chainId) return null
 
@@ -66,7 +66,7 @@ export default function Transaction({ hash }: { hash: string }) {
           </TransactionStatusText>
         </RowFixed>
         <IconWrapper pending={pending} success={success}>
-          {pending ? <Loader /> : success ? <CheckCircle size="16" /> : <Triangle size="16" />}
+          {success ? <CheckCircle size="16" /> : pending ? <Loader /> : <Triangle size="16" />}
         </IconWrapper>
       </TransactionState>
     </TransactionWrapper>

@@ -109,6 +109,7 @@ export default function App() {
       <StyledToastContainer
         autoClose={3000}
         closeOnClick
+        draggablePercent={20}
         position="bottom-right"
         hideProgressBar
       />
