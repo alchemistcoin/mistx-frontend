@@ -70,15 +70,7 @@ export const transactionToast = ({
 
   const options = {
     autoClose: 5000,
-<<<<<<< HEAD
-    closeOnClick: true,
-    onClose: (props: any): void => {
-      toast.dismiss(props.uid)
-    }
-  }
-=======
   };
->>>>>>> d244c1f... font size
 
   switch (true) {
     case error:
