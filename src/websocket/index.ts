@@ -21,7 +21,7 @@ export enum Event {
 export enum Status {
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   FAILED_TRANSACTION = 'FAILED_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
+  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION'
 }
 
 export interface SocketSession {
@@ -51,15 +51,15 @@ export interface TransactionRes {
 }
 
 export interface TransactionProcessed {
-  serializedSwap: string;
-  serializedApprove: string | undefined;
-  swap: SwapReq;
-  bribe: BigNumberish;
-  routerAddress: string;
-  timestamp: number; // EPOCH
-  sessionToken: string;
-  chainId: number;
-  simulateOnly: boolean;
+  serializedSwap: string
+  serializedApprove: string | undefined
+  swap: SwapReq
+  bribe: BigNumberish
+  routerAddress: string
+  timestamp: number // EPOCH
+  sessionToken: string
+  chainId: number
+  simulateOnly: boolean
 }
 
 interface QuoteEventsMap {
@@ -99,7 +99,7 @@ export default function Sockets(): null {
     socket.on(Event.SOCKET_ERR, err => {
       console.log('err', err)
       if (err.event === Event.TRANSACTION_REQUEST) {
-        const transactionReq = err.data as TransactionReq;
+        const transactionReq = err.data as TransactionReq
         const hash = keccak256(transactionReq.serializedSwap)
         removeTransaction({
           chainId: transactionReq.chainId,
@@ -122,26 +122,23 @@ export default function Sockets(): null {
 
       const transactionId = {
         chainId: transaction.transaction.chainId,
-        hash,
-      };
+        hash
+      }
 
-      switch(transaction.status) {
+      switch (transaction.status) {
         case Status.FAILED_TRANSACTION:
           removeTransaction({
             chainId: transaction.transaction.chainId,
             hash
-          });
-          break;
+          })
+          break
         default:
-          updateTransaction(
-            transactionId,
-            {
-              transaction: transaction.transaction,
-              message: transaction.message,
-              status: transaction.status
-            }
-          )
-          break;
+          updateTransaction(transactionId, {
+            transaction: transaction.transaction,
+            message: transaction.message,
+            status: transaction.status
+          })
+          break
       }
 
       const tx = allTransactions?.[hash]
@@ -167,45 +164,41 @@ export function emitTransactionRequest(transaction: TransactionReq) {
   console.log('transaction sent', transaction)
 }
 
-function handleTransactionResponseToast(
-  transaction: TransactionRes,
-  hash: string,
-  summary?: string
-) {
-  switch(transaction.status) {
+function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
+  switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
       transactionToast({
         chainId: transaction.transaction.chainId,
         hash,
         status: 'Failed',
         summary,
-        error: true,
+        error: true
       })
-      break;
+      break
     case Status.PENDING_TRANSACTION:
       transactionToast({
         chainId: transaction.transaction.chainId,
         hash,
         status: 'Pending',
-        summary,
+        summary
       })
-      break;
+      break
     case Status.SUCCESSFUL_TRANSACTION:
       transactionToast({
         chainId: transaction.transaction.chainId,
         hash,
         status: 'Completed!',
         summary,
-        success: true,
+        success: true
       })
-      break;
+      break
     default:
       transactionToast({
         chainId: transaction.transaction.chainId,
         hash,
         status: 'Updated',
-        summary,
+        summary
       })
-      break;
+      break
   }
 }

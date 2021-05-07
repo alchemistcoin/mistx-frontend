@@ -88,7 +88,7 @@ export function useTransactionUpdater(): (
           chainId: response.chainId,
           transaction,
           status,
-          message,
+          message
         })
       )
     },
@@ -96,27 +96,17 @@ export function useTransactionUpdater(): (
   )
 }
 
-export function useTransactionRemover(): (
-  response: {
-    chainId: ChainId
-    hash: string
-  }
-) => void {
+export function useTransactionRemover(): (response: { chainId: ChainId; hash: string }) => void {
   const dispatch = useDispatch<AppDispatch>()
-  
+
   return useCallback(
-    (
-      response: {
-        chainId: ChainId
-        hash: string
-      }
-    ) => {
-      console.log('remove transaction', response.chainId, response.hash);
+    (response: { chainId: ChainId; hash: string }) => {
+      console.log('remove transaction', response.chainId, response.hash)
 
       dispatch(
         removeTransaction({
           chainId: response.chainId,
-          hash: response.hash,
+          hash: response.hash
         })
       )
     },

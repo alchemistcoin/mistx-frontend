@@ -79,7 +79,7 @@ const StyledToastContainer = styled(ToastContainer).attrs({
   }
   .Toastify__toast-body {}
   .Toastify__progress-bar {}
-`;
+`
 
 export default function App() {
   return (

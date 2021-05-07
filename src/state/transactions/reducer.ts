@@ -50,11 +50,8 @@ export default createReducer(initialState, builder =>
       if (!tx) {
         return
       }
-      console.log('remove transaction hash', transactions[chainId], hash);
-      const {
-        [hash]: any,
-        ...txs
-      } = transactions[chainId] ?? {}
+      console.log('remove transaction hash', transactions[chainId], hash)
+      const { [hash]: any, ...txs } = transactions[chainId] ?? {}
       console.log('transactions', transactions[chainId])
 
       transactions[chainId] = txs
@@ -65,10 +62,10 @@ export default createReducer(initialState, builder =>
         return
       }
       // todo: update the transaction
-      tx.status = status;
+      tx.status = status
 
       const txs = transactions[chainId] ?? {}
-      txs[hash] = tx;
+      txs[hash] = tx
 
       transactions[chainId] = txs
     })

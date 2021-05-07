@@ -50,7 +50,7 @@ export default function Updater(): null {
           .getTransactionReceipt(hash)
           .then(receipt => {
             if (receipt) {
-              console.log('has receipt', receipt);
+              console.log('has receipt', receipt)
               dispatch(
                 finalizeTransaction({
                   chainId,

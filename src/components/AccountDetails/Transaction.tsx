@@ -8,8 +8,8 @@ import { ExternalLink } from '../../theme'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
-import { Status } from '../../websocket/index';
-import { truncateStringMiddle } from '../../utils/truncateString';
+import { Status } from '../../websocket/index'
+import { truncateStringMiddle } from '../../utils/truncateString'
 
 const TransactionWrapper = styled.div``
 
@@ -52,7 +52,7 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
-  const pending = tx?.status === Status.PENDING_TRANSACTION || typeof tx?.status === 'undefined';
+  const pending = tx?.status === Status.PENDING_TRANSACTION || typeof tx?.status === 'undefined'
   const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
 
   if (!chainId) return null
@@ -61,9 +61,7 @@ export default function Transaction({ hash }: { hash: string }) {
     <TransactionWrapper>
       <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
         <RowFixed>
-          <TransactionStatusText>
-            {summary ?? truncateStringMiddle(hash, 6, 7)} ↗
-          </TransactionStatusText>
+          <TransactionStatusText>{summary ?? truncateStringMiddle(hash, 6, 7)} ↗</TransactionStatusText>
         </RowFixed>
         <IconWrapper pending={pending} success={success}>
           {success ? <CheckCircle size="16" /> : pending ? <Loader /> : <Triangle size="16" />}

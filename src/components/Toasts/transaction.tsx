@@ -16,7 +16,7 @@ const TransactionState = styled.div`
 `
 
 const TransactionStatus = styled.div`
-  font-size: .875rem;
+  font-size: 0.875rem;
   font-weight: 600;
 `
 
@@ -37,7 +37,7 @@ const Toast = ({
   chainId,
   hash,
   status,
-  summary,
+  summary
 }: {
   chainId: ChainId
   hash: string
@@ -48,11 +48,9 @@ const Toast = ({
     <TransactionLink href={getEtherscanLink(chainId, hash, 'transaction')}>
       {summary ?? truncateStringMiddle(hash, 6, 7)} ↗
     </TransactionLink>
-    <TransactionStatus>
-      {status}
-    </TransactionStatus>
+    <TransactionStatus>{status}</TransactionStatus>
   </TransactionState>
-);
+)
 
 export const transactionToast = ({
   chainId,
@@ -60,50 +58,34 @@ export const transactionToast = ({
   error,
   status,
   summary,
-  success,
+  success
 }: {
   chainId: ChainId
   hash: string
-  error?: boolean,
+  error?: boolean
   status: string
   summary?: string
-  success?: boolean,
+  success?: boolean
 }) => {
-  const component = (
-    <Toast
-      chainId={chainId}
-      hash={hash}
-      status={status}
-      summary={summary}
-    />
-  )
+  const component = <Toast chainId={chainId} hash={hash} status={status} summary={summary} />
 
   const options = {
     autoClose: 5000,
     closeOnClick: true,
     onClose: (props: any): void => {
       toast.dismiss(props.uid)
-    },
-  };
+    }
+  }
 
   switch (true) {
     case error:
-      toast.error(
-        component,
-        options
-      );
-      break;
+      toast.error(component, options)
+      break
     case success:
-      toast.success(
-        component,
-        options
-      );
-      break;
+      toast.success(component, options)
+      break
     default:
-      toast(
-        component,
-        options
-      );
-      break;
+      toast(component, options)
+      break
   }
-};
+}

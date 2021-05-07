@@ -4,7 +4,7 @@ import styled, { ThemeContext } from 'styled-components'
 import Modal from '../Modal'
 import { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
-import { CloseIcon, /*CustomLightSpinner*/ } from '../../theme/components'
+import { CloseIcon /*CustomLightSpinner*/ } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
 import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
 import { ButtonOutlined, ButtonYellow } from '../Button'
@@ -39,13 +39,7 @@ const StyledLogo = styled.img`
   margin-left: 6px;
 `
 
-function ConfirmationPendingContent({
-  onDismiss,
-  pendingText
-}: {
-  onDismiss: () => void;
-  pendingText: string
-}) {
+function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
   const theme = useContext(ThemeContext)
 
   return (
