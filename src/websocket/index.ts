@@ -46,7 +46,7 @@ export interface TransactionReq {
 
 export interface TransactionRes {
   transaction: TransactionProcessed
-  status: string
+  status: Status
   message: string
 }
 
@@ -164,21 +164,14 @@ export default function Sockets(): null {
         hash
       }
 
-      switch (transaction.status) {
-        case Status.FAILED_TRANSACTION:
-          removeTransaction({
-            chainId: transaction.transaction.chainId,
-            hash
-          })
-          break
-        default:
-          updateTransaction(transactionId, {
-            transaction: transaction.transaction,
-            message: transaction.message,
-            status: transaction.status
-          })
-          break
-      }
+      updateTransaction(
+        transactionId,
+        {
+          transaction: transaction.transaction,
+          message: transaction.message,
+          status: transaction.status
+        }
+      )
 
       const tx = allTransactions?.[hash]
       const summary = tx?.summary
