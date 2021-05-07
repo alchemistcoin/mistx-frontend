@@ -1,5 +1,5 @@
 import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from './../constants/index'
-import { Trade, Percent, currencyEquals, ETHER } from '@alchemistcoin/sdk'
+import { Trade, Percent, currencyEquals, ETHER, WETH } from '@alchemistcoin/sdk'
 
 // returns whether tradeB is better than tradeA by at least a threshold percentage amount
 export function isTradeBetter(
@@ -30,7 +30,10 @@ export function isTradeBetter(
 export function isETHTrade(trade: Trade | undefined | null): boolean | undefined {
   if (!trade) {
     return undefined
-  } else if (trade.route.input.name !== ETHER.name && trade.route.output.name !== ETHER.name) {
+  } else if (
+    (!currencyEquals(trade.route.input, ETHER) || !currencyEquals(trade.route.input, WETH[trade.route.chainId])) &&
+    (!currencyEquals(trade.route.output, ETHER) || !currencyEquals(trade.route.output, WETH[trade.route.chainId]))
+  ) {
     return false
   }
   return true

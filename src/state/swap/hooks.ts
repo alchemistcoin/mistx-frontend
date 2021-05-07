@@ -303,7 +303,7 @@ export function useDerivedSwapInfo(): {
   // what do we display if we have multiple inputErrors? (order)
   const ethTrade = isETHTrade(v2Trade)
   if (ethTrade !== undefined && !ethTrade && JSBI.LT(ethBalance?.raw, v2Trade?.minerBribe.raw)) {
-    inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance'
+    inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (bribe)'
   }
 
   return {
