@@ -217,7 +217,6 @@ export const INITIAL_BRIBE_MARGIN = 120
 // default min trade margin, in bips
 export const MIN_TRADE_MARGIN = 0
 
-
 // used for rewards deadlines
 export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7)
 
