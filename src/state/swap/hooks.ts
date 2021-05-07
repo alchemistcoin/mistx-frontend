@@ -22,9 +22,9 @@ import { useTradeExactIn, useTradeExactOut, useMinTradeAmount, MinTradeEstimates
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import { isAddress } from '../../utils'
-import { isTradeBetter } from '../../utils/trades'
+import { isETHTrade, isTradeBetter } from '../../utils/trades'
 import { AppDispatch, AppState } from '../index'
-import { useCurrencyBalances } from '../wallet/hooks'
+import { useCurrencyBalance, useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
 import useToggledVersion from '../../hooks/useToggledVersion'
@@ -154,6 +154,10 @@ export function useDerivedSwapInfo(): {
     outputCurrency ?? undefined
   ])
 
+  const ethBalance = useCurrencyBalance(account ?? undefined,
+    Currency.ETHER
+  )
+
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
@@ -269,8 +273,8 @@ export function useDerivedSwapInfo(): {
         ? slippageAdjustedAmountsV1[Field.INPUT]
         : null
       : slippageAdjustedAmounts
-      ? slippageAdjustedAmounts[Field.INPUT]
-      : null
+        ? slippageAdjustedAmounts[Field.INPUT]
+        : null
   ]
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
@@ -295,6 +299,12 @@ export function useDerivedSwapInfo(): {
 
   if (minAmountError) {
     inputError = 'Min trade amount not met'
+  }
+
+  // check if the user has ETH to pay the bribe for token -> token swap
+  // what do we display if we have multiple inputErrors? (order)
+  if (!isETHTrade(v2Trade) && JSBI.LT(ethBalance?.raw, v2Trade?.minerBribe.raw)) {
+    inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance'
   }
 
   return {
