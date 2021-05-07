@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { SwapReq } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -21,6 +22,7 @@ export interface TransactionDetails {
   addedTime: number
   confirmedTime?: number
   from: string
+  swap?: SwapReq
   message?: string
   status?: string
 }

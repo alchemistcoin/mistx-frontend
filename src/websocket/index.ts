@@ -5,18 +5,15 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 // state
 import { updateGas } from '../state/application/actions'
-import { transactionError } from '../state/transactions/actions'
 import { Gas } from '../state/application/reducer'
-import { useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
-import { useActiveWeb3React } from 'hooks'
+import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
 import { ChainId } from '@alchemistcoin/sdk'
-import { toast } from 'react-toastify';
+import { transactionToast, TransactionToastType } from 'components/Toasts/transaction'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
-  PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
   TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
 }
@@ -48,7 +45,7 @@ export interface TransactionReq {
 }
 
 export interface TransactionRes {
-  transaction: TransactionReq
+  transaction: TransactionProcessed
   status: string
   message: string
 }
@@ -66,7 +63,6 @@ export interface TransactionProcessed {
 }
 
 interface QuoteEventsMap {
-  [Event.PENDING_TRANSACTION]: (response: TransactionRes) => void
   [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
@@ -86,9 +82,9 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
 
 export default function Sockets(): null {
   const dispatch = useDispatch()
-  const { chainId } = useActiveWeb3React();
-  const updateTransaction = useTransactionUpdater();
-  const removeTransaction = useTransactionRemover();
+  const allTransactions = useAllTransactions()
+  const updateTransaction = useTransactionUpdater()
+  const removeTransaction = useTransactionRemover()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -109,7 +105,6 @@ export default function Sockets(): null {
           chainId: transactionReq.chainId,
           hash
         })
-        dispatch(transactionError(err))
       }
     })
 
@@ -121,61 +116,48 @@ export default function Sockets(): null {
       dispatch(updateGas(gas))
     })
 
-    socket.on(Event.PENDING_TRANSACTION, transaction => {
-      console.log('pending transaction response', transaction)
-      const hash = keccak256(transaction.transaction.serializedSwap)
-
-      updateTransaction(
-        {
-          chainId: transaction.transaction.chainId,
-          hash,
-          serializedSwap: transaction.transaction.serializedSwap,
-          serializedApprove: transaction.transaction.serializedApprove,
-        },
-        {
-          message: transaction.message,
-          status: transaction.status
-        }
-      )
-    })
-
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
       console.log('transaction response', transaction)
       const hash = keccak256(transaction.transaction.serializedSwap)
 
-      if (transaction.status === Status.FAILED_TRANSACTION) {
-        toast.error(`Transaction Removed`, {
-          closeOnClick: true,
-        });
-        console.log('remove transaction', chainId);
-        removeTransaction({
-          chainId: transaction.transaction.chainId,
-          hash
-        })
-      } else {
-        console.log('update transaction', chainId);
-        updateTransaction(
-          {
+      const transactionId = {
+        chainId: transaction.transaction.chainId,
+        hash,
+      };
+
+      switch(transaction.status) {
+        case Status.FAILED_TRANSACTION:
+          removeTransaction({
             chainId: transaction.transaction.chainId,
-            hash,
-            serializedSwap: transaction.transaction.serializedSwap,
-            serializedApprove: transaction.transaction.serializedApprove,
-          },
-          {
-            message: transaction.message,
-            status: transaction.status
-          }
-        )
+            hash
+          });
+          break;
+        default:
+          updateTransaction(
+            transactionId,
+            {
+              transaction: transaction.transaction,
+              message: transaction.message,
+              status: transaction.status
+            }
+          )
+          break;
       }
+
+      const tx = allTransactions?.[hash]
+      const summary = tx?.summary
+      handleTransactionResponseToast(transaction, hash, summary)
     })
 
     return () => {
       socket.off('connect')
       socket.off('connect_error')
+      socket.off(Event.SOCKET_ERR)
       socket.off(Event.SOCKET_SESSION_RESPONSE)
       socket.off(Event.GAS_CHANGE)
+      socket.off(Event.TRANSACTION_RESPONSE)
     }
-  }, [dispatch, chainId])
+  }, [dispatch, allTransactions, removeTransaction, updateTransaction])
 
   return null
 }
@@ -183,4 +165,47 @@ export default function Sockets(): null {
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
   console.log('transaction sent', transaction)
+}
+
+function handleTransactionResponseToast(
+  transaction: TransactionRes,
+  hash: string,
+  summary?: string
+) {
+  switch(transaction.status) {
+    case Status.FAILED_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Failed',
+        summary,
+        type: TransactionToastType.ERROR,
+      })
+      break;
+    case Status.PENDING_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Pending',
+        summary,
+      })
+      break;
+    case Status.SUCCESSFUL_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Completed!',
+        summary,
+        type: TransactionToastType.SUCCESS
+      })
+      break;
+    default:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Updated',
+        summary,
+      })
+      break;
+  }
 }

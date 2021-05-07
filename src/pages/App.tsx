@@ -64,7 +64,7 @@ const StyledToastContainer = styled(ToastContainer).attrs({
     border-top: 2px solid ${({ theme }) => theme.primary2};
     border-radius: 0 0 .5rem .5rem;
 
-    &:not(:first-child) {
+    &:not(:last-child) {
       opacity: .5;
     }
   }
@@ -107,11 +107,10 @@ export default function App() {
         </BodyWrapper>
       </AppWrapper>
       <StyledToastContainer
-        autoClose={6000}
+        autoClose={3000}
         closeOnClick
         position="bottom-right"
         hideProgressBar
-        newestOnTop
       />
     </Suspense>
   )

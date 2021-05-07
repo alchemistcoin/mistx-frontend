@@ -7,7 +7,7 @@ import { Text } from 'rebass'
 import { CloseIcon, /*CustomLightSpinner*/ } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
 import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
-import { ButtonOutlined } from '../Button'
+import { ButtonOutlined, ButtonYellow } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
 // import Circle from '../../assets/images/blue-loader.svg'
 import Loader from '../Loader'
@@ -116,7 +116,7 @@ function TransactionSubmittedContent({
             </ExternalLink>
           )}
           {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonOutlined mt="12px" padding="6px 1rem" width="fit-content" onClick={addToken}>
+            <ButtonYellow mt="12px" padding="6px 1rem" width="fit-content" onClick={addToken}>
               {!success ? (
                 <RowFixed>
                   Add {currencyToAdd.symbol} to Metamask <StyledLogo src={MetaMaskLogo} />
@@ -127,10 +127,10 @@ function TransactionSubmittedContent({
                   <CheckCircle size={'16px'} stroke={theme.green1} style={{ marginLeft: '6px' }} />
                 </RowFixed>
               )}
-            </ButtonOutlined>
+            </ButtonYellow>
           )}
           <ButtonOutlined onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
-            <Text fontWeight={700} fontSize="20px">
+            <Text fontWeight={600} fontSize="20px">
               Close
             </Text>
           </ButtonOutlined>

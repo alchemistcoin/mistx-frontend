@@ -1,13 +1,12 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
 
 import { ChainId } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
-import { Status } from 'websocket'
+import { TransactionProcessed } from 'websocket'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -63,46 +62,38 @@ export function useTransactionAdder(): (
 export function useTransactionUpdater(): (
   response: TransactionResponseIdentifier,
   customData?: {
-    status: string
-    message: string
+    transaction?: TransactionProcessed
+    status?: string
+    message?: string
   }
 ) => void {
-  let { connector, chainId, account } = useActiveWeb3React()
+  let { account } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
     async (
       response: TransactionResponseIdentifier,
       {
+        transaction,
         message,
         status
       }: {
+        transaction?: TransactionProcessed
         message?: string
         status?: string
       } = {}
     ) => {
-      console.log('chain id', chainId);
-
-      if (!chainId) {
-        chainId = await connector?.getChainId() as ChainId
-      }
-      if (!account) return
-
-      toast(`Transaction ${status === Status.PENDING_TRANSACTION ? 'Pending' : 'Updated'}`);
-
       dispatch(
         updateTransaction({
-          chainId,
-          from: account,
           hash: response.hash,
-          serializedSwap: response.serializedSwap,
-          serializedApprove: response.serializedApprove,
+          chainId: response.chainId,
+          transaction,
           status,
           message,
         })
       )
     },
-    [dispatch, chainId, account]
+    [dispatch, account]
   )
 }
 
