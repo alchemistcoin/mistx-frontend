@@ -2,7 +2,7 @@ import { PopulatedTransaction } from '@ethersproject/contracts'
 import { Trade } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin /*, isAddress, shortenAddress*/ } from '../utils'
+import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
@@ -136,20 +136,20 @@ export function useSwapCallback(
                   })
                   .then(({ signedTx }: { signedTx: string; populatedTx: PopulatedTransaction }) => {
                     const hash = keccak256(signedTx)
-                    // const inputSymbol = trade.inputAmount.currency.symbol
-                    // const outputSymbol = trade.outputAmount.currency.symbol
-                    // const inputAmount = trade.inputAmount.toSignificant(3)
-                    // const outputAmount = trade.outputAmount.toSignificant(3)
+                    const inputSymbol = trade.inputAmount.currency.symbol
+                    const outputSymbol = trade.outputAmount.currency.symbol
+                    const inputAmount = trade.inputAmount.toSignificant(3)
+                    const outputAmount = trade.outputAmount.toSignificant(3)
 
-                    // const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-                    // const withRecipient =
-                    //   recipient === account
-                    //     ? base
-                    //     : `${base} to ${
-                    //         recipientAddressOrName && isAddress(recipientAddressOrName)
-                    //           ? shortenAddress(recipientAddressOrName)
-                    //           : recipientAddressOrName
-                    //       }`
+                    const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                    const withRecipient =
+                      recipient === account
+                        ? base
+                        : `${base} to ${
+                            recipientAddressOrName && isAddress(recipientAddressOrName)
+                              ? shortenAddress(recipientAddressOrName)
+                              : recipientAddressOrName
+                          }`
                     const swapReq: SwapReq = {
                       amount0: args[0][0] as string,
                       amount1: args[0][1] as string,
@@ -160,6 +160,7 @@ export function useSwapCallback(
 
                     console.log('swapReq', swapReq)
                     const transactionReq: TransactionReq = {
+                      chainId,
                       serializedApprove: signedApproval ? signedApproval : undefined,
                       serializedSwap: signedTx,
                       swap: swapReq,
@@ -173,9 +174,9 @@ export function useSwapCallback(
                     // we can't have TransactionResponse here
                     // This can be handled by the socket method
                     addTransaction(
-                      { hash },
+                      { chainId, hash },
                       {
-                        // summary: withRecipient
+                        summary: withRecipient
                         //relay
                       }
                     )

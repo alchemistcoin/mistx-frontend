@@ -30,11 +30,19 @@ const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: bool
   padding: 0.25rem 0rem;
   font-weight: 500;
   font-size: 0.825rem;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.text3};
+
+  :hover {
+    color: ${({ theme }) => theme.text1};
+  }
 `
 
 const IconWrapper = styled.div<{ pending: boolean; success?: boolean }>`
-  color: ${({ pending, success, theme }) => (pending ? theme.primary1 : success ? theme.green1 : theme.red1)};
+  color: ${({ pending, success, theme }) => (pending ? theme.primary2 : success ? theme.green1 : theme.red1)};
+
+  path {
+    stroke: ${({ pending, success, theme }) => (pending ? theme.primary2 : success ? theme.green1 : theme.red1)};
+  }
 `
 
 export default function Transaction({ hash }: { hash: string }) {
@@ -43,8 +51,8 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
-  const pending = tx?.status === Status.PENDING_TRANSACTION;
-  const success = !pending && tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || typeof tx.receipt?.status === 'undefined')
+  const pending = tx?.status === Status.PENDING_TRANSACTION || typeof tx?.status === 'undefined';
+  const success = !pending && tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
 
   if (!chainId) return null
 
@@ -52,7 +60,9 @@ export default function Transaction({ hash }: { hash: string }) {
     <TransactionWrapper>
       <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
         <RowFixed>
-          <TransactionStatusText>{summary ?? hash} ↗</TransactionStatusText>
+          <TransactionStatusText>
+            {summary ?? hash.slice(0, 6) + '...' + hash.slice(hash.length - 7, hash.length)} ↗
+          </TransactionStatusText>
         </RowFixed>
         <IconWrapper pending={pending} success={success}>
           {pending ? <Loader /> : success ? <CheckCircle size="16" /> : <Triangle size="16" />}

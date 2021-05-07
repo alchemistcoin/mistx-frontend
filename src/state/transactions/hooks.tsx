@@ -1,12 +1,16 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 
+import { ChainId } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
+import { Status } from 'websocket'
 
 interface TransactionResponseIdentifier {
+  chainId: ChainId
   hash: string
   serializedApprove?: string
   serializedSwap?: string
@@ -50,7 +54,7 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({ hash, from: account, chainId, summary, claim }))
+      dispatch(addTransaction({ hash, from: account, chainId: chainId ?? response.chainId, summary, claim }))
     },
     [dispatch, chainId, account]
   )
@@ -63,11 +67,11 @@ export function useTransactionUpdater(): (
     message: string
   }
 ) => void {
-  const { chainId, account } = useActiveWeb3React()
+  let { connector, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
-    (
+    async (
       response: TransactionResponseIdentifier,
       {
         message,
@@ -77,8 +81,14 @@ export function useTransactionUpdater(): (
         status?: string
       } = {}
     ) => {
-      if (!chainId) return
+      console.log('chain id', chainId);
+
+      if (!chainId) {
+        chainId = await connector?.getChainId() as ChainId
+      }
       if (!account) return
+
+      toast(`Transaction ${status === Status.PENDING_TRANSACTION ? 'Pending' : 'Updated'}`);
 
       dispatch(
         updateTransaction({
@@ -98,30 +108,29 @@ export function useTransactionUpdater(): (
 
 export function useTransactionRemover(): (
   response: {
+    chainId: ChainId
     hash: string
   }
 ) => void {
-  const { chainId } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
   
   return useCallback(
     (
       response: {
+        chainId: ChainId
         hash: string
       }
     ) => {
-      console.log('chain id', chainId);
-      if (!chainId) return
+      console.log('remove transaction', response.chainId, response.hash);
 
-      console.log('remove transaction', response.hash);
       dispatch(
         removeTransaction({
-          chainId,
+          chainId: response.chainId,
           hash: response.hash,
         })
       )
     },
-    [dispatch, chainId]
+    [dispatch]
   )
 }
 

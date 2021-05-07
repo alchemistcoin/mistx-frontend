@@ -76,6 +76,7 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "^3.4.1",
     "react-spring": "^8.0.27",
+    "react-toastify": "^7.0.4",
     "react-use-gesture": "^6.0.14",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
@@ -124,7 +125,6 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@alchemistcoin/default-token-list": "git+https://github.com/alchemistcoin/default-token-list.git#main",
-    "react-toastify": "^7.0.4",
     "socket.io-client": "^4.0.1"
   }
 }

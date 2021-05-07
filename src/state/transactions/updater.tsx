@@ -42,7 +42,6 @@ export default function Updater(): null {
   useEffect(() => {
     if (!chainId || !library || !lastBlockNumber) return
 
-    console.log('finalize transactions');
     Object.keys(transactions)
       .filter(hash => shouldCheck(lastBlockNumber, transactions[hash]))
       .forEach(hash => {
