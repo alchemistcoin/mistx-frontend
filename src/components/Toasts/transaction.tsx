@@ -69,8 +69,8 @@ export const transactionToast = ({
   const component = <Toast chainId={chainId} hash={hash} status={status} summary={summary} />
 
   const options = {
-    autoClose: 5000,
-  };
+    autoClose: 5000
+  }
 
   switch (true) {
     case error:
