@@ -33,7 +33,6 @@ export function useApproveCallback(
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
 
-  console.log('currency to approve', amountToApprove?.currency, ETHER, amountToApprove?.currency === ETHER)
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN

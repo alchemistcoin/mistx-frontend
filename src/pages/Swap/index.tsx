@@ -177,10 +177,12 @@ export default function Swap({ history }: RouteComponentProps) {
     v2Trade,
     currencyBalances,
     parsedAmount,
+    minTradeAmounts,
     currencies,
-    inputError: swapInputError
+    inputError: swapInputError,
+    minAmountError: swapMinAmountError
   } = useDerivedSwapInfo()
-
+  console.log('min trade amounts', minTradeAmounts)
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -193,6 +195,7 @@ export default function Swap({ history }: RouteComponentProps) {
     [Version.v1]: v1Trade,
     [Version.v2]: v2Trade
   }
+
   const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
   const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
 
@@ -386,9 +389,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
-  console.log('the trade', trade)
-  console.log('priceImpact', trade?.priceImpact.toSignificant(6))
-  console.log('minerBribe', trade?.minerBribe.toSignificant(6))
   return (
     <>
       <HeaderFrame>
@@ -535,7 +535,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     {wrapInputError ??
                       (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
                   </ButtonYellow>
-                ) : noRoute && userHasSpecifiedInputOutput ? (
+                ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
                   <GreyCard style={{ textAlign: 'center' }}>
                     <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                     {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
