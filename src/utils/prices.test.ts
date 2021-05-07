@@ -37,7 +37,6 @@ describe('prices', () => {
             new Route([pair12], token1),
             new TokenAmount(token1, JSBI.BigInt(1000)),
             TradeType.EXACT_INPUT,
-            exchange,
             gasPriceToBeat,
             minerBribeMargin
           )
@@ -52,7 +51,6 @@ describe('prices', () => {
             new Route([pair12, pair23], token1),
             new TokenAmount(token1, JSBI.BigInt(1000)),
             TradeType.EXACT_INPUT,
-            exchange,
             gasPriceToBeat,
             minerBribeMargin
           )
