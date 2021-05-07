@@ -154,9 +154,7 @@ export function useDerivedSwapInfo(): {
     outputCurrency ?? undefined
   ])
 
-  const ethBalance = useCurrencyBalance(account ?? undefined,
-    Currency.ETHER
-  )
+  const ethBalance = useCurrencyBalance(account ?? undefined, Currency.ETHER)
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
@@ -273,8 +271,8 @@ export function useDerivedSwapInfo(): {
         ? slippageAdjustedAmountsV1[Field.INPUT]
         : null
       : slippageAdjustedAmounts
-        ? slippageAdjustedAmounts[Field.INPUT]
-        : null
+      ? slippageAdjustedAmounts[Field.INPUT]
+      : null
   ]
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
@@ -303,7 +301,8 @@ export function useDerivedSwapInfo(): {
 
   // check if the user has ETH to pay the bribe for token -> token swap
   // what do we display if we have multiple inputErrors? (order)
-  if (!isETHTrade(v2Trade) && JSBI.LT(ethBalance?.raw, v2Trade?.minerBribe.raw)) {
+  const ethTrade = isETHTrade(v2Trade)
+  if (ethTrade !== undefined && !ethTrade && JSBI.LT(ethBalance?.raw, v2Trade?.minerBribe.raw)) {
     inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance'
   }
 

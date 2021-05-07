@@ -27,8 +27,10 @@ export function isTradeBetter(
 }
 
 //returns whether the given trade involves ETH as a Pair
-export function isETHTrade(trade: Trade | undefined | null): boolean {
-  if (trade?.route.input.name !== ETHER.name && trade?.route.output.name !== ETHER.name) {
+export function isETHTrade(trade: Trade | undefined | null): boolean | undefined {
+  if (!trade) {
+    return undefined
+  } else if (trade.route.input.name !== ETHER.name && trade.route.output.name !== ETHER.name) {
     return false
   }
   return true
