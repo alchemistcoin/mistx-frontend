@@ -1,7 +1,8 @@
 import React, { useContext, useRef, useState } from 'react'
-import { Settings, X } from 'react-feather'
+import { X } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
+import { lighten, rem } from 'polished'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
@@ -19,25 +20,14 @@ import Modal from '../Modal'
 import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
+import MinerBribeSlider from './MinerBribeSlider'
 import TransactionSettings from '../TransactionSettings'
-
-const StyledMenuIcon = styled(Settings)`
-  font-size: 1.25rem;
-  height: 20px;
-  width: 20px;
-
-  > * {
-    stroke: ${({ theme }) => theme.text2};
-  }
-
-  :hover {
-    opacity: 0.7;
-  }
-`
+import { Cog } from '../Icons'
 
 const StyledCloseIcon = styled(X)`
   height: 20px;
   width: 20px;
+
   :hover {
     cursor: pointer;
   }
@@ -50,25 +40,39 @@ const StyledCloseIcon = styled(X)`
 const StyledMenuButton = styled.button`
   align-items: center;
   position: relative;
-  width: 100%;
-  height: 100%;
   border: none;
-  background-color: transparent;
+  background-color: ${({ theme }) => theme.bg6};
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
-  height: 35px;
-
+  width: ${rem(40)};
+  height: ${rem(40)};
   padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 100%;
 
   :hover,
   :focus {
     cursor: pointer;
     outline: none;
+    background-color: ${({ theme }) => lighten(0.05, theme.bg6)};
   }
 `
+
+const StyledMenuIcon = styled.div`
+  height: 32px;
+  width: 32px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+
+    > * {
+      stroke: ${({ theme }) => theme.primary2};
+    }
+  }
+`
+
 const EmojiWrapper = styled.div`
   position: absolute;
   bottom: -6px;
@@ -88,9 +92,9 @@ const StyledMenu = styled.div`
 
 const MenuFlyout = styled.span`
   min-width: 20.125rem;
-  background-color: ${({ theme }) => theme.bg2};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
+  background-color: ${({ theme }) => theme.bg5};
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 16px 24px rgba(0, 0, 0, 0.1),
+    0px 24px 32px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -180,7 +184,9 @@ export default function SettingsTab() {
         </ModalContentWrapper>
       </Modal>
       <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
-        <StyledMenuIcon />
+        <StyledMenuIcon>
+          <Cog />
+        </StyledMenuIcon>
         {expertMode ? (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">
@@ -192,6 +198,13 @@ export default function SettingsTab() {
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
+            <RowFixed>
+              <Text fontWeight={600} fontSize={14}>
+                Miner Bribe Margin
+              </Text>
+              <QuestionHelper text="Lorem ipsum" />
+            </RowFixed>
+            <MinerBribeSlider />
             <Text fontWeight={600} fontSize={14}>
               Transaction Settings
             </Text>
@@ -204,29 +217,6 @@ export default function SettingsTab() {
             <Text fontWeight={600} fontSize={14}>
               Interface Settings
             </Text>
-            <RowBetween>
-              <RowFixed>
-                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                  Toggle Expert Mode
-                </TYPE.black>
-                <QuestionHelper text="Bypasses confirmation modals and allows high slippage trades. Use at your own risk." />
-              </RowFixed>
-              <Toggle
-                id="toggle-expert-mode-button"
-                isActive={expertMode}
-                toggle={
-                  expertMode
-                    ? () => {
-                        toggleExpertMode()
-                        setShowConfirmation(false)
-                      }
-                    : () => {
-                        toggle()
-                        setShowConfirmation(true)
-                      }
-                }
-              />
-            </RowBetween>
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>

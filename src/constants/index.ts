@@ -5,7 +5,8 @@ import { fortmatic, injected, portis, walletconnect, walletlink } from '../conne
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: '0xAd3442B69c450Cb657e3D46308a017DAbe604951',
-  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d'
+  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
+  [ChainId.GÖRLI]: '0x7c4EB67602083f579E60f18afEF2E40fdF9aE88A'
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
@@ -212,7 +213,9 @@ export const INITIAL_ALLOWED_SLIPPAGE = 50
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 // default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 25
+export const INITIAL_BRIBE_MARGIN = 120
+// default min trade margin, in bips
+export const MIN_TRADE_MARGIN = 0
 
 // used for rewards deadlines
 export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7)
@@ -246,3 +249,7 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008',
   '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C'
 ]
+
+// Miner Bribe Margin
+export const MINER_BRIBE_MIN = 5
+export const MINER_BRIBE_MAX = 200

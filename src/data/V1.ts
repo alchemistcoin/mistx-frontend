@@ -134,7 +134,6 @@ export function useV1Trade(
             route,
             exactAmount,
             isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
-            Exchange.UNI,
             gasPriceToBeat.toString(),
             minerBribeMargin.toString()
           )

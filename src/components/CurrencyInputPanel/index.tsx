@@ -186,7 +186,6 @@ const StyledBalanceMax = styled.button`
 `
 
 const StyledNumericalInput = styled(NumericalInput)`
-  height: 2.2rem;
   padding-left: 0.25rem;
 `
 interface CurrencyInputPanelProps {

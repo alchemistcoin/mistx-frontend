@@ -1,11 +1,8 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@alchemistcoin/sdk'
 import React, { useCallback, useContext, useMemo, useState } from 'react'
-// import { ArrowDownCircle } from 'react-feather'
-
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { rem } from 'polished'
 import AddressInputPanel from '../../components/AddressInputPanel'
 
 import { ButtonError, ButtonYellow } from '../../components/Button'
@@ -29,7 +26,7 @@ import {
 import TokenWarningModal from '../../components/TokenWarningModal'
 
 // import ProgressSteps from '../../components/ProgressSteps'
-// import SwapHeader from '../../components/swap/SwapHeader'
+import SwapHeader from '../../components/swap/SwapHeader'
 import WalletConnect from '../../components/WalletConnect'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
@@ -76,10 +73,9 @@ const SwapWrapper = styled.div`
 `
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr repeat(3, auto) 1fr;
+  display: flex;
   align-items: center;
-  flex-direction: row;
+  justify-content: flex-end
   width: 100%;
   top: 0;
   position: relative;
@@ -109,16 +105,6 @@ const OutputWrapper = styled.div`
 const SelectWrapper = styled.div`
   padding: 1rem 1rem 0;
 `
-
-const StyledPageTitle = styled.h1`
-  grid-column-start: 4;
-  font-weight: 400;
-  font-size: ${rem(38)};
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-`
-
 const StyledAutoRow = styled(AutoRow)`
   position: relative;
 
@@ -191,10 +177,12 @@ export default function Swap({ history }: RouteComponentProps) {
     v2Trade,
     currencyBalances,
     parsedAmount,
+    minTradeAmounts,
     currencies,
-    inputError: swapInputError
+    inputError: swapInputError,
+    minAmountError: swapMinAmountError
   } = useDerivedSwapInfo()
-
+  console.log('min trade amounts', minTradeAmounts)
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -207,6 +195,7 @@ export default function Swap({ history }: RouteComponentProps) {
     [Version.v1]: v1Trade,
     [Version.v2]: v2Trade
   }
+
   const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
   const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
 
@@ -400,13 +389,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
-  console.log('the trade', trade)
-  console.log('priceImpact', trade?.priceImpact.toSignificant(6))
-  console.log('minerBribe', trade?.minerBribe.toSignificant(6))
   return (
     <>
       <HeaderFrame>
-        <StyledPageTitle>Swap Tokens</StyledPageTitle>
         <WalletConnect />
       </HeaderFrame>
       <TokenWarningModal
@@ -416,6 +401,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
       <AppBody>
+        <SwapHeader />
         <Wrapper id="swap-page">
           <ConfirmSwapModal
             isOpen={showConfirm}
@@ -549,7 +535,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     {wrapInputError ??
                       (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
                   </ButtonYellow>
-                ) : noRoute && userHasSpecifiedInputOutput ? (
+                ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
                   <GreyCard style={{ textAlign: 'center' }}>
                     <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                     {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
