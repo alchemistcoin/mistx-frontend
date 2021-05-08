@@ -6,7 +6,8 @@ import {
   updateBlockNumber,
   updateGas,
   ApplicationModal,
-  setOpenModal
+  setOpenModal,
+  updateSocketStatus
 } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
@@ -23,13 +24,15 @@ export interface ApplicationState {
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
   readonly gas: Gas | undefined
+  readonly socketStatus: boolean
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
   popupList: [],
   openModal: null,
-  gas: undefined
+  gas: undefined,
+  socketStatus: true,
 }
 
 export default createReducer(initialState, builder =>
@@ -65,5 +68,8 @@ export default createReducer(initialState, builder =>
           p.show = false
         }
       })
+    })
+    .addCase(updateSocketStatus, (state, action) => {
+      state.socketStatus = action.payload;
     })
 )

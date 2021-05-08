@@ -7,6 +7,7 @@ import { Gas } from '../state/application/reducer'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { useActiveWeb3React } from 'hooks'
+import { updateSocketStatus } from '../state/application/actions'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
@@ -61,7 +62,10 @@ const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:4000'
 console.log('server url', serverUrl)
 const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   transports: ['websocket'],
-  auth: { token }
+  auth: { token },
+  reconnection: true,
+  reconnectionDelay: 5000,
+  autoConnect: true,
 })
 
 export default function Sockets(): null {
@@ -71,15 +75,21 @@ export default function Sockets(): null {
   useEffect(() => {
     socket.on('connect', () => {
       console.log('websocket connected')
+      dispatch(updateSocketStatus(true));
     })
 
     socket.on('connect_error', err => {
-      socket.disconnect()
       console.log('websocket connect error', err)
+      dispatch(updateSocketStatus(false));
     })
 
+    socket.on('disconnect', (err) => {
+      console.log('websocket disconnect', err);
+      dispatch(updateSocketStatus(false));
+    });
+
     socket.on(Event.SOCKET_ERR, err => {
-      console.log('err', err)
+      console.log('websocket err', err)
       if (err.event === Event.TRANSACTION_REQUEST) {
         dispatch(transactionError(err))
       }
@@ -94,12 +104,12 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.PENDING_TRANSACTION, transaction => {
-      console.log('new transaction response', transaction)
+      console.log('websocket new transaction response', transaction)
     })
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
-      console.log('transaction response', transaction)
-      console.log('chain id', chainId)
+      console.log('websocket transaction response', transaction)
+      console.log('websocket chain id', chainId)
 
       if (!chainId) return
 
@@ -129,5 +139,5 @@ export default function Sockets(): null {
 
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
-  console.log('transaction sent', transaction)
+  console.log('websocket transaction sent', transaction)
 }
