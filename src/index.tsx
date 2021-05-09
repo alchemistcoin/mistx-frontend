@@ -27,7 +27,7 @@ if (!!window.ethereum) {
   window.ethereum.autoRefreshOnNetworkChange = false
 }
 
-initAnalytics();
+initAnalytics()
 
 function Updaters() {
   return (
@@ -79,7 +79,7 @@ function initFathom(): void {
     fathomScript.type = 'text/javascript'
     fathomScript.src = 'https://cdn.usefathom.com/script.js'
     fathomScript.dataset.site = FATHOM_ID
-    head.appendChild(fathomScript);
+    head.appendChild(fathomScript)
   }
 }
 
@@ -94,7 +94,11 @@ function initGA(): void {
     })
     ReactGA.set({
       anonymizeIp: true,
-      customBrowserType: !isMobile ? 'desktop' : 'web3' in window || 'ethereum' in window ? 'mobileWeb3' : 'mobileRegular'
+      customBrowserType: !isMobile
+        ? 'desktop'
+        : 'web3' in window || 'ethereum' in window
+        ? 'mobileWeb3'
+        : 'mobileRegular'
     })
   } else {
     ReactGA.initialize('test', { testMode: true, debug: true })
