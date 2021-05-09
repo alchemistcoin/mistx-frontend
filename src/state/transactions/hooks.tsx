@@ -109,6 +109,36 @@ export function useTransactionUpdater(): (
   )
 }
 
+export function useTransactionCanceller() {
+  const dispatch = useDispatch<AppDispatch>()
+
+  return useCallback(
+    async (
+      response: TransactionResponseIdentifier,
+      {
+        transaction,
+        message,
+        status
+      }: {
+        transaction?: TransactionProcessed
+        message?: string
+        status?: string
+      } = {}
+    ) => {
+      dispatch(
+        updateTransaction({
+          hash: response.hash,
+          chainId: response.chainId,
+          transaction,
+          status,
+          message
+        })
+      )
+    },
+    [dispatch]
+  )
+}
+
 export function useTransactionRemover(): (response: { chainId: ChainId; hash: string }) => void {
   const dispatch = useDispatch<AppDispatch>()
 

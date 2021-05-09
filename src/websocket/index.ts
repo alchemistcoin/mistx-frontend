@@ -17,13 +17,17 @@ export enum Event {
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
-  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
+  TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
+  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
 }
 
 export enum Status {
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   FAILED_TRANSACTION = 'FAILED_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION'
+  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
+  CANCEL_TRANSACTION_PENDING = 'CANCEL_TRANSACTION_PENDING',
+  CANCEL_TRANSACTION_FAILED = 'CANCEL_TRANSACTION_FAILED',
+  CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL',
 }
 
 export interface SocketSession {
@@ -69,6 +73,7 @@ interface QuoteEventsMap {
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
   [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
+  [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
 }
 
@@ -196,4 +201,8 @@ export default function Sockets(): null {
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
   console.log('websocket transaction sent', transaction)
+}
+
+export function emitTransactionCancellation(transaction: TransactionReq) {
+  socket.emit(Event.TRANSACTION_CANCEL_REQUEST, transaction)
 }
