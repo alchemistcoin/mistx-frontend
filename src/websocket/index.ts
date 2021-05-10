@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
+import { updateSocketStatus } from '../state/application/actions'
+
 // state
 import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
@@ -77,7 +79,10 @@ const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:4000'
 console.log('server url', serverUrl)
 const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   transports: ['websocket'],
-  auth: { token }
+  auth: { token },
+  reconnection: true,
+  reconnectionDelay: 5000,
+  autoConnect: true
 })
 
 function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
@@ -128,15 +133,21 @@ export default function Sockets(): null {
   useEffect(() => {
     socket.on('connect', () => {
       console.log('websocket connected')
+      dispatch(updateSocketStatus(true))
     })
 
     socket.on('connect_error', err => {
-      socket.disconnect()
       console.log('websocket connect error', err)
+      dispatch(updateSocketStatus(false))
+    })
+
+    socket.on('disconnect', err => {
+      console.log('websocket disconnect', err)
+      dispatch(updateSocketStatus(false))
     })
 
     socket.on(Event.SOCKET_ERR, err => {
-      console.log('err', err)
+      console.log('websocket err', err)
       if (err.event === Event.TRANSACTION_REQUEST) {
         const transactionReq = err.data as TransactionReq
         const hash = keccak256(transactionReq.serializedSwap)
@@ -190,5 +201,5 @@ export default function Sockets(): null {
 
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
-  console.log('transaction sent', transaction)
+  console.log('websocket transaction sent', transaction)
 }
