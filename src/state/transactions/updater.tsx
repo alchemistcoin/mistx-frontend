@@ -1,3 +1,4 @@
+import { transactionToast } from 'components/Toasts/transaction'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
@@ -49,6 +50,7 @@ export default function Updater(): null {
           .getTransactionReceipt(hash)
           .then(receipt => {
             if (receipt) {
+              console.log('has receipt', receipt)
               dispatch(
                 finalizeTransaction({
                   chainId,
@@ -66,16 +68,13 @@ export default function Updater(): null {
                 })
               )
 
-              addPopup(
-                {
-                  txn: {
-                    hash,
-                    success: receipt.status === 1,
-                    summary: transactions[hash]?.summary
-                  }
-                },
-                hash
-              )
+              transactionToast({
+                chainId,
+                hash,
+                summary: transactions[hash]?.summary,
+                status: 'Completed!',
+                success: receipt.status === 1
+              })
             } else {
               dispatch(checkedTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
             }

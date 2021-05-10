@@ -4,12 +4,13 @@ import styled, { ThemeContext } from 'styled-components'
 import Modal from '../Modal'
 import { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
-import { CloseIcon, CustomLightSpinner } from '../../theme/components'
+import { CloseIcon /*CustomLightSpinner*/ } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
 import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
-import { ButtonPrimary, ButtonLight } from '../Button'
+import { ButtonOutlined, ButtonYellow } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
-import Circle from '../../assets/images/blue-loader.svg'
+// import Circle from '../../assets/images/blue-loader.svg'
+import Loader from '../Loader'
 import MetaMaskLogo from '../../assets/images/metamask.png'
 import { getEtherscanLink } from '../../utils'
 import { useActiveWeb3React } from '../../hooks'
@@ -23,7 +24,7 @@ const Section = styled(AutoColumn)`
 `
 
 const BottomSection = styled(Section)`
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg1};
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 `
@@ -39,6 +40,8 @@ const StyledLogo = styled.img`
 `
 
 function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
+  const theme = useContext(ThemeContext)
+
   return (
     <Wrapper>
       <Section>
@@ -47,7 +50,8 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
         <ConfirmedIcon>
-          <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
+          <Loader stroke={theme.text3} size="80px" />
+          {/* <CustomLightSpinner src={Circle} alt="loader" size={'90px'} /> */}
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
           <Text fontWeight={500} fontSize={20}>
@@ -58,7 +62,7 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
               {pendingText}
             </Text>
           </AutoColumn>
-          <Text fontSize={12} color="#565A69" textAlign="center">
+          <Text fontSize={12} color={theme.text2} textAlign="center">
             Confirm this transaction in your wallet
           </Text>
         </AutoColumn>
@@ -106,7 +110,7 @@ function TransactionSubmittedContent({
             </ExternalLink>
           )}
           {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonLight mt="12px" padding="6px 12px" width="fit-content" onClick={addToken}>
+            <ButtonYellow mt="12px" padding="6px 1rem" width="fit-content" onClick={addToken}>
               {!success ? (
                 <RowFixed>
                   Add {currencyToAdd.symbol} to Metamask <StyledLogo src={MetaMaskLogo} />
@@ -117,13 +121,13 @@ function TransactionSubmittedContent({
                   <CheckCircle size={'16px'} stroke={theme.green1} style={{ marginLeft: '6px' }} />
                 </RowFixed>
               )}
-            </ButtonLight>
+            </ButtonYellow>
           )}
-          <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
-            <Text fontWeight={500} fontSize={20}>
+          <ButtonOutlined onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
+            <Text fontWeight={600} fontSize="20px">
               Close
             </Text>
-          </ButtonPrimary>
+          </ButtonOutlined>
         </AutoColumn>
       </Section>
     </Wrapper>
@@ -176,7 +180,11 @@ export function TransactionErrorContent({ message, onDismiss }: { message: strin
         </AutoColumn>
       </Section>
       <BottomSection gap="12px">
-        <ButtonPrimary onClick={onDismiss}>Dismiss</ButtonPrimary>
+        <ButtonOutlined onClick={onDismiss}>
+          <Text fontWeight="500" fontSize={20}>
+            Dismiss
+          </Text>
+        </ButtonOutlined>
       </BottomSection>
     </Wrapper>
   )

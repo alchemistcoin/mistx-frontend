@@ -1,22 +1,27 @@
 import { useEffect } from 'react'
-import { updateGas } from '../state/application/actions'
-import { updateTransaction, transactionError } from '../state/transactions/actions'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
-import { Gas } from '../state/application/reducer'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
-import { useActiveWeb3React } from 'hooks'
+// state
+import { updateGas } from '../state/application/actions'
+import { Gas } from '../state/application/reducer'
+import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
+import { ChainId } from '@alchemistcoin/sdk'
+import { transactionToast } from 'components/Toasts/transaction'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
-  PENDING_TRANSACTION = 'PENDING_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
-  FAILED_TRANSACTION = 'FAILED_TRANSACTION',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
   TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
+}
+
+export enum Status {
+  PENDING_TRANSACTION = 'PENDING_TRANSACTION',
+  FAILED_TRANSACTION = 'FAILED_TRANSACTION',
+  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION'
 }
 
 export interface SocketSession {
@@ -31,6 +36,7 @@ export interface SwapReq {
 }
 
 export interface TransactionReq {
+  chainId: ChainId
   serializedSwap: string
   serializedApprove: string | undefined
   swap: SwapReq
@@ -39,14 +45,24 @@ export interface TransactionReq {
 }
 
 export interface TransactionRes {
-  serializedSwap: string
-  serializedApprove: string | undefined
-  status: string
+  transaction: TransactionProcessed
+  status: Status
   message: string
 }
 
+export interface TransactionProcessed {
+  serializedSwap: string
+  serializedApprove: string | undefined
+  swap: SwapReq
+  bribe: BigNumberish
+  routerAddress: string
+  timestamp: number // EPOCH
+  sessionToken: string
+  chainId: number
+  simulateOnly: boolean
+}
+
 interface QuoteEventsMap {
-  [Event.PENDING_TRANSACTION]: (response: TransactionRes) => void
   [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
@@ -64,9 +80,50 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   auth: { token }
 })
 
+function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
+  switch (transaction.status) {
+    case Status.FAILED_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Failed',
+        summary,
+        error: true
+      })
+      break
+    case Status.PENDING_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Pending',
+        summary
+      })
+      break
+    case Status.SUCCESSFUL_TRANSACTION:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Completed!',
+        summary,
+        success: true
+      })
+      break
+    default:
+      transactionToast({
+        chainId: transaction.transaction.chainId,
+        hash,
+        status: 'Updated',
+        summary
+      })
+      break
+  }
+}
+
 export default function Sockets(): null {
   const dispatch = useDispatch()
-  const { chainId } = useActiveWeb3React()
+  const allTransactions = useAllTransactions()
+  const updateTransaction = useTransactionUpdater()
+  const removeTransaction = useTransactionRemover()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -81,7 +138,12 @@ export default function Sockets(): null {
     socket.on(Event.SOCKET_ERR, err => {
       console.log('err', err)
       if (err.event === Event.TRANSACTION_REQUEST) {
-        dispatch(transactionError(err))
+        const transactionReq = err.data as TransactionReq
+        const hash = keccak256(transactionReq.serializedSwap)
+        removeTransaction({
+          chainId: transactionReq.chainId,
+          hash
+        })
       }
     })
 
@@ -93,36 +155,35 @@ export default function Sockets(): null {
       dispatch(updateGas(gas))
     })
 
-    socket.on(Event.PENDING_TRANSACTION, transaction => {
-      console.log('new transaction response', transaction)
-    })
-
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
       console.log('transaction response', transaction)
-      console.log('chain id', chainId)
+      const hash = keccak256(transaction.transaction.serializedSwap)
 
-      if (!chainId) return
+      const transactionId = {
+        chainId: transaction.transaction.chainId,
+        hash
+      }
 
-      const hash = keccak256(transaction.serializedSwap)
-      dispatch(
-        updateTransaction({
-          chainId,
-          hash,
-          serializedSwap: transaction.serializedSwap,
-          serializedApprove: transaction.serializedApprove,
-          message: transaction.message,
-          status: transaction.status
-        })
-      )
+      updateTransaction(transactionId, {
+        transaction: transaction.transaction,
+        message: transaction.message,
+        status: transaction.status
+      })
+
+      const tx = allTransactions?.[hash]
+      const summary = tx?.summary
+      handleTransactionResponseToast(transaction, hash, summary)
     })
 
     return () => {
       socket.off('connect')
       socket.off('connect_error')
+      socket.off(Event.SOCKET_ERR)
       socket.off(Event.SOCKET_SESSION_RESPONSE)
       socket.off(Event.GAS_CHANGE)
+      socket.off(Event.TRANSACTION_RESPONSE)
     }
-  }, [chainId, dispatch])
+  }, [dispatch, allTransactions, removeTransaction, updateTransaction])
 
   return null
 }

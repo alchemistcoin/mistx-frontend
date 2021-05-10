@@ -1,13 +1,18 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { ChainId } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
-import { addTransaction } from './actions'
+import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
+import { TransactionProcessed } from 'websocket'
 
-export interface TransactionResponseUnsent {
+interface TransactionResponseIdentifier {
+  chainId: ChainId
   hash: string
+  serializedApprove?: string
+  serializedSwap?: string
 }
 
 interface TransactionResponseUnsentData {
@@ -23,7 +28,7 @@ interface TransactionResponseUnsentData {
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
-  response: TransactionResponseUnsent,
+  response: TransactionResponseIdentifier,
   customData?: TransactionResponseUnsentData
 ) => void {
   const { chainId, account } = useActiveWeb3React()
@@ -31,11 +36,15 @@ export function useTransactionAdder(): (
 
   return useCallback(
     (
-      response: TransactionResponseUnsent,
+      response: TransactionResponseIdentifier,
       {
         summary,
         claim
-      }: { summary?: string; claim?: { recipient: string }; approval?: { tokenAddress: string; spender: string } } = {}
+      }: {
+        summary?: string
+        claim?: { recipient: string }
+        approval?: { tokenAddress: string; spender: string }
+      } = {}
     ) => {
       if (!account) return
       if (!chainId) return
@@ -44,22 +53,66 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({ hash, from: account, chainId, summary, claim }))
+      dispatch(addTransaction({ hash, from: account, chainId: chainId ?? response.chainId, summary, claim }))
     },
     [dispatch, chainId, account]
   )
 }
 
-// export function useTransactionUpdater(): (
-//   response: TransactionResponseUnsent,
-//   customData?: TransactionResponseUnsentData
-// ) => void {
-//   const { chainId, account } = useActiveWeb3React()
-//   const dispatch = useDispatch<AppDispatch>()
-//   return useCallback(
+export function useTransactionUpdater(): (
+  response: TransactionResponseIdentifier,
+  customData?: {
+    transaction?: TransactionProcessed
+    status?: string
+    message?: string
+  }
+) => void {
+  const dispatch = useDispatch<AppDispatch>()
 
-//   )
-// }
+  return useCallback(
+    async (
+      response: TransactionResponseIdentifier,
+      {
+        transaction,
+        message,
+        status
+      }: {
+        transaction?: TransactionProcessed
+        message?: string
+        status?: string
+      } = {}
+    ) => {
+      dispatch(
+        updateTransaction({
+          hash: response.hash,
+          chainId: response.chainId,
+          transaction,
+          status,
+          message
+        })
+      )
+    },
+    [dispatch]
+  )
+}
+
+export function useTransactionRemover(): (response: { chainId: ChainId; hash: string }) => void {
+  const dispatch = useDispatch<AppDispatch>()
+
+  return useCallback(
+    (response: { chainId: ChainId; hash: string }) => {
+      console.log('remove transaction', response.chainId, response.hash)
+
+      dispatch(
+        removeTransaction({
+          chainId: response.chainId,
+          hash: response.hash
+        })
+      )
+    },
+    [dispatch]
+  )
+}
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
@@ -106,23 +159,4 @@ export function useHasPendingApproval(tokenAddress: string | undefined, spender:
       }),
     [allTransactions, spender, tokenAddress]
   )
-}
-
-// watch for submissions to claim
-// return null if not done loading, return undefined if not found
-export function useUserHasSubmittedClaim(
-  account?: string
-): { claimSubmitted: boolean; claimTxn: TransactionDetails | undefined } {
-  const allTransactions = useAllTransactions()
-
-  // get the txn if it has been submitted
-  const claimTxn = useMemo(() => {
-    const txnIndex = Object.keys(allTransactions).find(hash => {
-      const tx = allTransactions[hash]
-      return tx.claim && tx.claim.recipient === account
-    })
-    return txnIndex && allTransactions[txnIndex] ? allTransactions[txnIndex] : undefined
-  }, [account, allTransactions])
-
-  return { claimSubmitted: Boolean(claimTxn), claimTxn }
 }
