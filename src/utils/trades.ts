@@ -1,5 +1,5 @@
 import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from './../constants/index'
-import { Trade, Percent, currencyEquals } from '@alchemistcoin/sdk'
+import { Trade, Percent, currencyEquals, ETHER, WETH } from '@alchemistcoin/sdk'
 
 // returns whether tradeB is better than tradeA by at least a threshold percentage amount
 export function isTradeBetter(
@@ -24,4 +24,17 @@ export function isTradeBetter(
   } else {
     return tradeA.executionPrice.raw.multiply(minimumDelta.add(ONE_HUNDRED_PERCENT)).lessThan(tradeB.executionPrice)
   }
+}
+
+//returns whether the given trade involves ETH as a Pair
+export function isETHTrade(trade: Trade | undefined | null): boolean | undefined {
+  if (!trade) {
+    return undefined
+  } else if (
+    (!currencyEquals(trade.route.input, ETHER) || !currencyEquals(trade.route.input, WETH[trade.route.chainId])) &&
+    (!currencyEquals(trade.route.output, ETHER) || !currencyEquals(trade.route.output, WETH[trade.route.chainId]))
+  ) {
+    return false
+  }
+  return true
 }
