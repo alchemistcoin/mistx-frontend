@@ -9,7 +9,7 @@ import { useActiveWeb3React } from '../../hooks'
 const StyledPolling = styled.div`
   position: fixed;
   display: flex;
-  right: 0;
+  right: 115px;
   bottom: 0;
   padding: 1rem;
   color: white;
@@ -20,6 +20,11 @@ const StyledPolling = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
+    bottom: 100px;
+    right: 0;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `}
 `
@@ -72,7 +77,6 @@ export default function Polling() {
   useEffect(
     () => {
       const timer1 = setTimeout(() => setIsMounted(true), 1000)
-
       // this will clear Timeout when component unmount like in willComponentUnmount
       return () => {
         setIsMounted(false)
@@ -86,7 +90,9 @@ export default function Polling() {
   return (
     <ExternalLink href={chainId && blockNumber ? getEtherscanLink(chainId, blockNumber.toString(), 'block') : ''}>
       <StyledPolling>
-        <TYPE.small style={{ opacity: isMounted ? '0.2' : '0.6' }}>{blockNumber}</TYPE.small>
+        <TYPE.small>
+          {blockNumber && 'Block'} {blockNumber}
+        </TYPE.small>
         <StyledPollingDot>{!isMounted && <Spinner />}</StyledPollingDot>
       </StyledPolling>
     </ExternalLink>
