@@ -6,7 +6,7 @@ import { transparentize } from 'polished'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-// import Polling from '../components/Header/Polling'
+import Polling from '../components/Header/Polling'
 import ConnectionStatus from '../components/ConnectionStatus'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
@@ -94,7 +94,7 @@ export default function App() {
         </HeaderWrapper>
         <BodyWrapper>
           <Popups />
-          {/* <Polling /> */}
+          <Polling />
           <ConnectionStatus />
           <Web3ReactManager>
             <Switch>
