@@ -5,11 +5,12 @@ import { CheckCircle, Triangle } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks'
 import { getEtherscanLink } from '../../utils'
 import { ExternalLink } from '../../theme'
-import { useAllTransactions } from '../../state/transactions/hooks'
+import { useAllTransactions, useTransactionCanceller } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
 import { Status } from '../../websocket/index'
 import { truncateStringMiddle } from '../../utils/truncateString'
+import { ButtonOutlined } from 'components/Button'
 
 const TransactionWrapper = styled.div``
 
@@ -38,6 +39,11 @@ const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: bool
   }
 `
 
+const CancelButton = styled(ButtonOutlined)`
+  border-radius: 1rem;
+  height: 2rem;
+`
+
 const IconWrapper = styled.div<{ pending: boolean; success?: boolean }>`
   color: ${({ pending, success, theme }) => (pending ? theme.primary2 : success ? theme.green1 : theme.red1)};
 
@@ -46,7 +52,11 @@ const IconWrapper = styled.div<{ pending: boolean; success?: boolean }>`
   }
 `
 
-export default function Transaction({ hash }: { hash: string }) {
+export default function Transaction({
+  hash
+}: {
+  hash: string
+}) {
   const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
 
@@ -54,6 +64,22 @@ export default function Transaction({ hash }: { hash: string }) {
   const summary = tx?.summary
   const pending = tx?.status === Status.PENDING_TRANSACTION || typeof tx?.status === 'undefined'
   const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
+  const cancelTransaction = useTransactionCanceller();
+
+  function handleCancelClick() {
+    if (!chainId) return
+    if (!tx?.processed) return
+
+    cancelTransaction(
+      {
+        chainId,
+        hash,
+      },
+      {
+        transaction: tx.processed
+      }
+    )
+  }
 
   if (!chainId) return null
 
@@ -63,6 +89,11 @@ export default function Transaction({ hash }: { hash: string }) {
         <RowFixed>
           <TransactionStatusText>{summary ?? truncateStringMiddle(hash, 6, 7)} ↗</TransactionStatusText>
         </RowFixed>
+        <CancelButton
+          onClick={handleCancelClick}
+        >
+
+        </CancelButton>
         <IconWrapper pending={pending} success={success}>
           {success ? <CheckCircle size="16" /> : pending ? <Loader /> : <Triangle size="16" />}
         </IconWrapper>

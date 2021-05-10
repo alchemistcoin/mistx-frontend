@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ChainId } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
-import { addTransaction, removeTransaction, updateTransaction } from './actions'
+import { addTransaction, cancelTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
-import { TransactionProcessed } from 'websocket'
 import { useAddPopup } from 'state/application/hooks'
+import { emitTransactionCancellation, TransactionProcessed } from 'websocket'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -120,13 +120,23 @@ export function useTransactionCanceller() {
         message,
         status
       }: {
-        transaction?: TransactionProcessed
+        transaction: TransactionProcessed
         message?: string
         status?: string
-      } = {}
+      }
     ) => {
+
+      emitTransactionCancellation({
+        chainId: transaction.chainId,
+        serializedSwap: transaction.serializedSwap,
+        serializedApprove: transaction.serializedApprove,
+        swap: transaction.swap,
+        bribe: transaction.bribe,
+        routerAddress: transaction.routerAddress
+      })
+
       dispatch(
-        updateTransaction({
+        cancelTransaction({
           hash: response.hash,
           chainId: response.chainId,
           transaction,
@@ -144,8 +154,6 @@ export function useTransactionRemover(): (response: { chainId: ChainId; hash: st
 
   return useCallback(
     (response: { chainId: ChainId; hash: string }) => {
-      console.log('remove transaction', response.chainId, response.hash)
-
       dispatch(
         removeTransaction({
           chainId: response.chainId,

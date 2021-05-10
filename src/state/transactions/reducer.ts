@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Status, SwapReq } from 'websocket'
+import { Status, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -18,11 +18,11 @@ export interface TransactionDetails {
   summary?: string
   claim?: { recipient: string }
   receipt?: SerializableTransactionReceipt
+  processed?: TransactionProcessed
   lastCheckedBlockNumber?: number
   addedTime: number
   confirmedTime?: number
   from: string
-  swap?: SwapReq
   message?: string
   status?: string
 }
@@ -56,12 +56,13 @@ export default createReducer(initialState, builder =>
 
       transactions[chainId] = txs
     })
-    .addCase(updateTransaction, (transactions, { payload: { chainId, hash, status } }) => {
+    .addCase(updateTransaction, (transactions, { payload: { chainId, transaction, hash, status } }) => {
       const tx = transactions[chainId]?.[hash]
       if (!tx) {
         return
       }
       // todo: update the transaction
+      tx.processed = transaction;
       tx.status = status
 
       const txs = transactions[chainId] ?? {}

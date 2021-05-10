@@ -157,7 +157,6 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
-      console.log('transaction response', transaction)
       const hash = keccak256(transaction.transaction.serializedSwap)
 
       const transactionId = {
