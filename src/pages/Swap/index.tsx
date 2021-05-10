@@ -532,8 +532,10 @@ export default function Swap({ history }: RouteComponentProps) {
                   <ButtonYellow onClick={toggleWalletModal}>Connect Wallet</ButtonYellow>
                 ) : showWrap ? (
                   <ButtonYellow disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                    {wrapInputError ??
-                      (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
+                    <Text fontSize={20} fontWeight={700}>
+                      {wrapInputError ??
+                        (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
+                    </Text>
                   </ButtonYellow>
                 ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
                   <GreyCard style={{ textAlign: 'center' }}>
