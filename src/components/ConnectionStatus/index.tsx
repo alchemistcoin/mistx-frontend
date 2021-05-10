@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import styled, { keyframes } from 'styled-components'
-import { TYPE  } from '../../theme'
+import { TYPE } from '../../theme'
 import { AppState } from '../../state'
 
 const StyledPolling = styled.div<{ connected: boolean }>`
@@ -12,7 +12,7 @@ const StyledPolling = styled.div<{ connected: boolean }>`
   padding: 1rem;
   color: white;
   transition: opacity 0.25s ease;
-  color: ${({ theme, connected }) => connected ? theme.green1: theme.red3};
+  color: ${({ theme, connected }) => (connected ? theme.green1 : theme.red3)};
 
   :hover {
     opacity: 1;
@@ -31,7 +31,7 @@ const StyledPollingDot = styled.div<{ connected: boolean }>`
   margin-top: 3px;
   border-radius: 50%;
   position: relative;
-  background-color: ${({ theme, connected }) => connected ? theme.green1 : theme.red3};
+  background-color: ${({ theme, connected }) => (connected ? theme.green1 : theme.red3)};
 `
 
 const rotate360 = keyframes`
@@ -49,7 +49,7 @@ const Spinner = styled.div<{ connected: boolean }>`
   border-top: 1px solid transparent;
   border-right: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  border-left: 2px solid ${({ theme, connected }) => connected ? theme.green1: theme.red3};
+  border-left: 2px solid ${({ theme, connected }) => (connected ? theme.green1 : theme.red3)};
   background: transparent;
   width: 14px;
   height: 14px;
@@ -60,12 +60,13 @@ const Spinner = styled.div<{ connected: boolean }>`
 `
 
 export default function ConnectionStatus() {
-    
-  const webSocketsConnected = useSelector<AppState, AppState['application']['socketStatus']>(state => state.application.socketStatus);
+  const webSocketsConnected = useSelector<AppState, AppState['application']['socketStatus']>(
+    state => state.application.socketStatus
+  )
 
   return (
     <StyledPolling connected={webSocketsConnected}>
-      <TYPE.small>{webSocketsConnected ? "Connected" : "Reconnecting"}</TYPE.small>
+      <TYPE.small>{webSocketsConnected ? 'Connected' : 'Reconnecting'}</TYPE.small>
       <StyledPollingDot connected={webSocketsConnected}>
         {!webSocketsConnected && <Spinner connected={webSocketsConnected} />}
       </StyledPollingDot>

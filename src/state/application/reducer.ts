@@ -32,7 +32,7 @@ const initialState: ApplicationState = {
   popupList: [],
   openModal: null,
   gas: undefined,
-  socketStatus: true,
+  socketStatus: true
 }
 
 export default createReducer(initialState, builder =>
@@ -70,6 +70,6 @@ export default createReducer(initialState, builder =>
       })
     })
     .addCase(updateSocketStatus, (state, action) => {
-      state.socketStatus = action.payload;
+      state.socketStatus = action.payload
     })
 )
