@@ -62,7 +62,7 @@ export default createReducer(initialState, builder =>
         return
       }
       // todo: update the transaction
-      tx.processed = transaction;
+      tx.processed = transaction
       tx.status = status
 
       const txs = transactions[chainId] ?? {}

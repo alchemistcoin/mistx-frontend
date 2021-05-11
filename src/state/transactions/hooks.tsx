@@ -125,7 +125,6 @@ export function useTransactionCanceller() {
         status?: string
       }
     ) => {
-
       emitTransactionCancellation({
         chainId: transaction.chainId,
         serializedSwap: transaction.serializedSwap,

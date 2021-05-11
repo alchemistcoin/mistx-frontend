@@ -44,14 +44,14 @@ const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: bool
 
 const CancelButton = styled.button`
   background-color: transparent;
-  border:  1px solid ${({ theme }) => theme.primary2};
+  border: 1px solid ${({ theme }) => theme.primary2};
   border-radius: 1rem;
   color: ${({ theme }) => theme.primary2};
   cursor: pointer;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  margin: 0 .5rem;
-  padding: .125rem .25rem;
+  margin: 0 0.5rem;
+  padding: 0.125rem 0.25rem;
   width: auto;
 
   &:hover {
@@ -69,12 +69,8 @@ const IconWrapper = styled.div<{ pending: boolean; success?: boolean }>`
   }
 `
 
-export default function Transaction({
-  hash
-}: {
-  hash: string
-}) {
-  const { t } = useTranslation();
+export default function Transaction({ hash }: { hash: string }) {
+  const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
 
@@ -82,7 +78,7 @@ export default function Transaction({
   const summary = tx?.summary
   const pending = tx?.status === Status.PENDING_TRANSACTION || (!tx?.receipt && typeof tx?.status === 'undefined')
   const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
-  const cancelTransaction = useTransactionCanceller();
+  const cancelTransaction = useTransactionCanceller()
 
   function handleCancelClick() {
     if (!chainId) return
@@ -91,7 +87,7 @@ export default function Transaction({
     cancelTransaction(
       {
         chainId,
-        hash,
+        hash
       },
       {
         transaction: tx.processed
@@ -108,13 +104,7 @@ export default function Transaction({
           <TransactionStatusText>{summary ?? truncateStringMiddle(hash, 6, 7)} ↗</TransactionStatusText>
         </RowFixed>
       </TransactionState>
-      {pending && (
-        <CancelButton
-          onClick={handleCancelClick}
-        >
-          {t('Cancel')}
-        </CancelButton>
-      )}
+      {pending && <CancelButton onClick={handleCancelClick}>{t('Cancel')}</CancelButton>}
       <IconWrapper pending={pending} success={success}>
         {success ? <CheckCircle size="16" /> : pending ? <Loader /> : <Triangle size="16" />}
       </IconWrapper>
