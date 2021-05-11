@@ -112,7 +112,8 @@ export function useSwapCallback(
                   : contract.signer.getTransactionCount().then(nonce => {
                       return nonce + 1
                     }),
-              gasLimit: calculateGasMargin(BigNumber.from(trade.estimatedGas)), //needed?
+              gasLimit: calculateGasMargin(BigNumber.from(500000)), //needed?
+              //gasLimit: calculateGasMargin(BigNumber.from(trade.estimatedGas)), //needed?
               ...(value && !isZero(value) ? { value } : {})
             })
               .then(populatedTx => {
