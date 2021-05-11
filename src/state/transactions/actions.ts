@@ -46,14 +46,6 @@ export const updateTransaction = createAction<{
   message?: string
 }>('transactions/updateTransaction')
 
-export const cancelTransaction = createAction<{
-  chainId: ChainId
-  hash: string
-  transaction?: TransactionProcessed
-  status?: string
-  message?: string
-}>('transactions/cancelTransaction')
-
 export const transactionError = createAction<{
   event: string
   message?: string
