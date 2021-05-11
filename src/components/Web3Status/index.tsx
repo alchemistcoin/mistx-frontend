@@ -146,7 +146,10 @@ function Web3StatusInner() {
   }, [allTransactions])
 
   const pending = sortedRecentTransactions
-    .filter(tx => !tx.receipt && tx.status !== Status.SUCCESSFUL_TRANSACTION && tx.status !== Status.FAILED_TRANSACTION)
+    .filter(tx => (
+      (typeof tx.status === 'undefined' && !tx.receipt)
+        || (tx.status === Status.PENDING_TRANSACTION || tx.status === Status.CANCEL_TRANSACTION_PENDING)
+    ))
     .map(tx => tx.hash)
 
   const hasPendingTransactions = !!pending.length
