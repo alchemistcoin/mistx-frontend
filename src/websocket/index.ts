@@ -74,9 +74,8 @@ interface QuoteEventsMap {
 
 const tokenKey = `SESSION_TOKEN`
 const token = localStorage.getItem(tokenKey)
-const serverUrl = (process.env.SERVER_URL as string) || 'http://localhost:4000'
+const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
 
-console.log('server url', serverUrl)
 const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   transports: ['websocket'],
   auth: { token },
