@@ -18,7 +18,7 @@ const InfoCard = styled.button<{ active?: boolean }>`
 
   &:hover,
   &:active {
-    color: ${({ active, theme }) => (active && theme.primary2)};
+    color: ${({ active, theme }) => active && theme.primary2};
   }
 
 `
