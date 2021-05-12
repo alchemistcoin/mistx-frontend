@@ -10,6 +10,7 @@ import { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
+import ConfirmInfoModal from '../../components/swap/ConfirmInfoModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { AutoRow } from '../../components/Row'
 // import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
@@ -235,19 +236,39 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [history])
 
   // modal and loading
-  const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
-    showConfirm: boolean
+  const [{ tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
+    //showConfirm: boolean
     tradeToConfirm: Trade | undefined
-    attemptingTxn: boolean
     swapErrorMessage: string | undefined
+    attemptingTxn: boolean
     txHash: string | undefined
   }>({
-    showConfirm: false,
+    //showConfirm: false,
     tradeToConfirm: undefined,
-    attemptingTxn: false,
     swapErrorMessage: undefined,
+    attemptingTxn: false,
     txHash: undefined
   })
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
+
+  // info modal
+  const [showInfoModal, setShowInfoModal] = useState(false)
+  const handleInfoModalDismiss = () => setShowInfoModal(false);
+  const openShowInfoModal = () => {
+    setShowConfirmModal(false);
+    setShowInfoModal(true);
+  }
+
+  // const handleInfoModalContinue = () => {
+  //   setShowInfoModal(false);
+  //   setSwapState({
+  //     tradeToConfirm: trade,
+  //     attemptingTxn: false,
+  //     swapErrorMessage: undefined,
+  //     showConfirm: true,
+  //     txHash: undefined
+  //   })
+  // };
 
   const formattedAmounts = {
     [independentField]: typedValue,
@@ -297,10 +318,11 @@ export default function Swap({ history }: RouteComponentProps) {
     if (!swapCallback) {
       return
     }
-    setSwapState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined })
+    setSwapState({ tradeToConfirm, swapErrorMessage: undefined, attemptingTxn: true, txHash: undefined })
     swapCallback()
       .then(hash => {
-        setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
+        setShowInfoModal(false);
+        setSwapState({ tradeToConfirm, swapErrorMessage: undefined, attemptingTxn: false, txHash: hash })
 
         ReactGA.event({
           category: 'Swap',
@@ -323,11 +345,11 @@ export default function Swap({ history }: RouteComponentProps) {
         })
       })
       .catch(error => {
+        setShowInfoModal(false);
         setSwapState({
-          attemptingTxn: false,
           tradeToConfirm,
-          showConfirm,
           swapErrorMessage: error.message,
+          attemptingTxn: false,
           txHash: undefined
         })
       })
@@ -335,7 +357,7 @@ export default function Swap({ history }: RouteComponentProps) {
     priceImpactWithoutFee,
     swapCallback,
     tradeToConfirm,
-    showConfirm,
+    showConfirmModal,
     recipient,
     recipientAddress,
     account,
@@ -359,7 +381,8 @@ export default function Swap({ history }: RouteComponentProps) {
   //   !(priceImpactSeverity > 3 && !isExpertMode)
 
   const handleConfirmDismiss = useCallback(() => {
-    setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
+    setShowConfirmModal(false);
+    setSwapState({ tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onUserInput(Field.INPUT, '')
@@ -367,9 +390,9 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [attemptingTxn, onUserInput, swapErrorMessage, tradeToConfirm, txHash])
 
   const handleAcceptChanges = useCallback(() => {
-    setSwapState({ tradeToConfirm: trade, swapErrorMessage, txHash, attemptingTxn, showConfirm })
-  }, [attemptingTxn, showConfirm, swapErrorMessage, trade, txHash])
-
+    setSwapState({ tradeToConfirm: trade, swapErrorMessage, attemptingTxn, txHash })
+  }, [attemptingTxn, showConfirmModal, swapErrorMessage, trade, txHash])
+ 
   const handleInputSelect = useCallback(
     inputCurrency => {
       //setApprovalSubmitted(false) // reset 2 step UI for approvals
@@ -412,8 +435,9 @@ export default function Swap({ history }: RouteComponentProps) {
       <AppBody>
         <SwapHeader />
         <Wrapper id="swap-page">
+          <ConfirmInfoModal isOpen={showInfoModal} onDismiss={handleInfoModalDismiss} onConfirm={handleSwap} trade={trade} attemptingTxn={attemptingTxn}  />
           <ConfirmSwapModal
-            isOpen={showConfirm}
+            isOpen={showConfirmModal}
             trade={trade}
             originalTrade={tradeToConfirm}
             onAcceptChanges={handleAcceptChanges}
@@ -421,7 +445,7 @@ export default function Swap({ history }: RouteComponentProps) {
             txHash={txHash}
             recipient={recipient}
             allowedSlippage={allowedSlippage}
-            onConfirm={handleSwap}
+            onConfirm={openShowInfoModal}
             swapErrorMessage={swapErrorMessage}
             onDismiss={handleConfirmDismiss}
           />
@@ -559,11 +583,11 @@ export default function Swap({ history }: RouteComponentProps) {
                       } else {
                         setSwapState({
                           tradeToConfirm: trade,
-                          attemptingTxn: false,
                           swapErrorMessage: undefined,
-                          showConfirm: true,
+                          attemptingTxn: false,
                           txHash: undefined
                         })
+                        setShowConfirmModal(true);
                       }
                     }}
                     id="swap-button"
