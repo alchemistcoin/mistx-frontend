@@ -6,7 +6,6 @@ import { AutoColumn, ColumnCenter } from '../Column'
 import { CloseIcon } from '../../theme/components'
 import Loader from '../Loader'
 
-
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
 `
@@ -50,4 +49,4 @@ const ConfirmationPendingContent = ({ onDismiss, pendingText }: { onDismiss: () 
   )
 }
 
-export default ConfirmationPendingContent;
+export default ConfirmationPendingContent

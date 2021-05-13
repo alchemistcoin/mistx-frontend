@@ -253,14 +253,14 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // info modal
   const [showInfoModal, setShowInfoModal] = useState(true)
-  const handleInfoModalDismiss = () => setShowInfoModal(false);
+  const handleInfoModalDismiss = () => setShowInfoModal(false)
   const openShowInfoModal = () => {
-    setShowConfirmModal(false);
-    setShowInfoModal(true);
+    setShowConfirmModal(false)
+    setShowInfoModal(true)
   }
-  
-  const hideWarningModalPerference = localStorage.getItem('hideWarningModal');
-  
+
+  const hideWarningModalPerference = localStorage.getItem('hideWarningModal')
+
   // const handleInfoModalContinue = () => {
   //   setShowInfoModal(false);
   //   setSwapState({
@@ -323,7 +323,7 @@ export default function Swap({ history }: RouteComponentProps) {
     setSwapState({ tradeToConfirm, swapErrorMessage: undefined, attemptingTxn: true, txHash: undefined })
     swapCallback()
       .then(hash => {
-        setShowInfoModal(false);
+        setShowInfoModal(false)
         setSwapState({ tradeToConfirm, swapErrorMessage: undefined, attemptingTxn: false, txHash: hash })
 
         ReactGA.event({
@@ -347,7 +347,7 @@ export default function Swap({ history }: RouteComponentProps) {
         })
       })
       .catch(error => {
-        setShowInfoModal(false);
+        setShowInfoModal(false)
         setSwapState({
           tradeToConfirm,
           swapErrorMessage: error.message,
@@ -383,7 +383,7 @@ export default function Swap({ history }: RouteComponentProps) {
   //   !(priceImpactSeverity > 3 && !isExpertMode)
 
   const handleConfirmDismiss = useCallback(() => {
-    setShowConfirmModal(false);
+    setShowConfirmModal(false)
     setSwapState({ tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
     if (txHash) {
@@ -394,7 +394,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const handleAcceptChanges = useCallback(() => {
     setSwapState({ tradeToConfirm: trade, swapErrorMessage, attemptingTxn, txHash })
   }, [attemptingTxn, showConfirmModal, swapErrorMessage, trade, txHash])
- 
+
   const handleInputSelect = useCallback(
     inputCurrency => {
       //setApprovalSubmitted(false) // reset 2 step UI for approvals
@@ -418,7 +418,7 @@ export default function Swap({ history }: RouteComponentProps) {
       handleSwap()
     } else {
       if (hideWarningModalPerference) {
-        setShowConfirmModal(true);
+        setShowConfirmModal(true)
       } else {
         setSwapState({
           tradeToConfirm: trade,
@@ -426,7 +426,7 @@ export default function Swap({ history }: RouteComponentProps) {
           attemptingTxn: false,
           txHash: undefined
         })
-        setShowConfirmModal(true);
+        setShowConfirmModal(true)
       }
     }
   }
@@ -456,7 +456,13 @@ export default function Swap({ history }: RouteComponentProps) {
       <AppBody>
         <SwapHeader />
         <Wrapper id="swap-page">
-          <ConfirmInfoModal isOpen={showInfoModal} onDismiss={handleInfoModalDismiss} onConfirm={handleSwap} trade={trade} attemptingTxn={attemptingTxn}  />
+          <ConfirmInfoModal
+            isOpen={showInfoModal}
+            onDismiss={handleInfoModalDismiss}
+            onConfirm={handleSwap}
+            trade={trade}
+            attemptingTxn={attemptingTxn}
+          />
           <ConfirmSwapModal
             isOpen={showConfirmModal}
             trade={trade}

@@ -9,21 +9,19 @@ export default function ConfirmSwapModal({
   onDismiss,
   isOpen,
   attemptingTxn,
-  trade,
-} : {
+  trade
+}: {
   isOpen: boolean
   onConfirm: () => void
   onDismiss: () => void
-  attemptingTxn: boolean,
-  trade: Trade | undefined,
+  attemptingTxn: boolean
+  trade: Trade | undefined
 }) {
-  
   // text to show while loading
   const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
     trade?.inputAmount?.currency?.symbol
   } for ${trade?.outputAmount?.toSignificant(6)} ${trade?.outputAmount?.currency?.symbol}`
 
-  
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
       {attemptingTxn ? (
