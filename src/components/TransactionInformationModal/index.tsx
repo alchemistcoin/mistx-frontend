@@ -26,6 +26,14 @@ const Button = styled(ButtonYellow)`
   font-weight: 700;
 `
 
+const StyledLabel = styled.label`
+  cursor: pointer;
+`
+
+const StyledInput = styled.input`
+  cursor: pointer;
+`
+
 interface ConfirmationModalProps {
   onDismiss: () => void,
   onContinue: () => void,
@@ -35,6 +43,15 @@ export default function TransactionInformationModal({
   onDismiss,
   onContinue,
 }: ConfirmationModalProps) {
+
+  const toggleModalPerference = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      localStorage.setItem('hideWarningModal', "true");
+    } else {
+      localStorage.removeItem('hideWarningModal');
+    }
+  }
+
   return (
     <>
       <Wrapper>
@@ -50,9 +67,12 @@ export default function TransactionInformationModal({
               Due to a limitation with MetaMask you will see a red warning message before signing your transaction. This is nothing to worry about your funds are safe.
             </Text>
           </RowBetween>
-          <RowBetween margin='1rem 0 0'>
+          <RowBetween margin='1.5rem 0 0'>
             <Text fontWeight={300} fontSize={16}>
               <ExternalLink href="https://github.com/MetaMask/metamask-extension/issues/10914">Find out more</ExternalLink>
+            </Text>
+            <Text fontWeight={300} fontSize={16}>
+              <StyledLabel htmlFor="hideWarningModal">Hide this next time</StyledLabel> <StyledInput type="checkbox" id="hideWarningModal" name="hideWarningModal" onChange={toggleModalPerference} />
             </Text>
           </RowBetween>
         </Section>

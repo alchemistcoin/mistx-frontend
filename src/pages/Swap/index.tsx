@@ -258,7 +258,9 @@ export default function Swap({ history }: RouteComponentProps) {
     setShowConfirmModal(false);
     setShowInfoModal(true);
   }
-
+  
+  const hideWarningModalPerference = localStorage.getItem('hideWarningModal');
+  
   // const handleInfoModalContinue = () => {
   //   setShowInfoModal(false);
   //   setSwapState({
@@ -410,6 +412,25 @@ export default function Swap({ history }: RouteComponentProps) {
   ])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
+
+  const swapButtonAction = () => {
+    if (isExpertMode) {
+      handleSwap()
+    } else {
+      if (hideWarningModalPerference) {
+        setShowConfirmModal(true);
+      } else {
+        setSwapState({
+          tradeToConfirm: trade,
+          swapErrorMessage: undefined,
+          attemptingTxn: false,
+          txHash: undefined
+        })
+        setShowConfirmModal(true);
+      }
+    }
+  }
+
   console.log('------------------')
   console.log('price impact', trade?.priceImpact.toSignificant(6))
   console.log('miner bribe', trade?.minerBribe.toSignificant(6))
@@ -445,7 +466,7 @@ export default function Swap({ history }: RouteComponentProps) {
             txHash={txHash}
             recipient={recipient}
             allowedSlippage={allowedSlippage}
-            onConfirm={openShowInfoModal}
+            onConfirm={hideWarningModalPerference ? handleSwap : openShowInfoModal}
             swapErrorMessage={swapErrorMessage}
             onDismiss={handleConfirmDismiss}
           />
@@ -577,19 +598,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   </GreyCard>
                 ) : (
                   <ButtonError
-                    onClick={() => {
-                      if (isExpertMode) {
-                        handleSwap()
-                      } else {
-                        setSwapState({
-                          tradeToConfirm: trade,
-                          swapErrorMessage: undefined,
-                          attemptingTxn: false,
-                          txHash: undefined
-                        })
-                        setShowConfirmModal(true);
-                      }
-                    }}
+                    onClick={swapButtonAction}
                     id="swap-button"
                     disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                     error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
