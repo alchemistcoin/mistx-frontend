@@ -92,7 +92,7 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
 function transactionResToastStatus(transaction: TransactionRes) {
   let pending = false
   let success = false
-  let message = '';
+  let message = ''
 
   switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
@@ -122,7 +122,7 @@ function transactionResToastStatus(transaction: TransactionRes) {
   return {
     pending,
     success,
-    message,
+    message
   }
 }
 
