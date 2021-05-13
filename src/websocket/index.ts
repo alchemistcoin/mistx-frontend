@@ -10,7 +10,7 @@ import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
 import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
 import { ChainId } from '@alchemistcoin/sdk'
-import { transactionToast } from 'components/Toasts/transaction'
+import { useAddPopup } from 'state/application/hooks'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
@@ -84,47 +84,33 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   autoConnect: true
 })
 
-function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
+function transactionResToastStatus(transaction: TransactionRes) {
+  let pending = false
+  let success = false
+
   switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Failed',
-        summary,
-        error: true
-      })
       break
     case Status.PENDING_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Pending',
-        summary
-      })
+      pending = true
       break
     case Status.SUCCESSFUL_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Completed!',
-        summary,
-        success: true
-      })
+      success = true
       break
     default:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Updated',
-        summary
-      })
+      pending = true
       break
+  }
+
+  return {
+    pending,
+    success
   }
 }
 
 export default function Sockets(): null {
   const dispatch = useDispatch()
+  const addPopup = useAddPopup()
   const allTransactions = useAllTransactions()
   const updateTransaction = useTransactionUpdater()
   const removeTransaction = useTransactionRemover()
@@ -182,7 +168,16 @@ export default function Sockets(): null {
 
       const tx = allTransactions?.[hash]
       const summary = tx?.summary
-      handleTransactionResponseToast(transaction, hash, summary)
+      addPopup(
+        {
+          txn: {
+            hash,
+            summary,
+            ...transactionResToastStatus(transaction)
+          }
+        },
+        hash
+      )
     })
 
     return () => {
@@ -193,7 +188,7 @@ export default function Sockets(): null {
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.TRANSACTION_RESPONSE)
     }
-  }, [dispatch, allTransactions, removeTransaction, updateTransaction])
+  }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
 
   return null
 }

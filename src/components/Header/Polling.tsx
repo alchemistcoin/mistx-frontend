@@ -20,7 +20,7 @@ const StyledPolling = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    bottom: 100px;
+    bottom: 68px;
     right: 0;
   `}
 
@@ -34,7 +34,7 @@ const StyledPollingDot = styled.div`
   min-height: 8px;
   min-width: 8px;
   margin-left: 0.5rem;
-  margin-top: 3px;
+  margin-top: 4px;
   border-radius: 50%;
   position: relative;
   background-color: ${({ theme }) => theme.green1};
