@@ -18,9 +18,8 @@ export default function ConfirmSwapModal({
   trade: Trade | undefined,
 }) {
   
-  
   // text to show while loading
-   const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
+  const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
     trade?.inputAmount?.currency?.symbol
   } for ${trade?.outputAmount?.toSignificant(6)} ${trade?.outputAmount?.currency?.symbol}`
 
@@ -35,4 +34,3 @@ export default function ConfirmSwapModal({
     </Modal>
   )
 }
-

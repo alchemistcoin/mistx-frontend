@@ -5,7 +5,7 @@ import { CloseIcon } from '../../theme/components'
 import { RowBetween } from '../Row'
 import { AutoColumn } from '../Column'
 import { ButtonYellow } from '../../components/Button'
-import { useActiveWeb3React } from '../../hooks'
+import { ExternalLink } from '../../theme'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -20,6 +20,12 @@ const BottomSection = styled(Section)`
   border-bottom-right-radius: 20px;
 `
 
+const Button = styled(ButtonYellow)`
+  font-size: 1.25rem;
+  color: ${({ theme }) => theme.text4};
+  font-weight: 700;
+`
+
 interface ConfirmationModalProps {
   onDismiss: () => void,
   onContinue: () => void,
@@ -29,11 +35,6 @@ export default function TransactionInformationModal({
   onDismiss,
   onContinue,
 }: ConfirmationModalProps) {
-  const { chainId } = useActiveWeb3React()
-
-  if (!chainId) return null
-
-  // confirmation screen
   return (
     <>
       <Wrapper>
@@ -44,9 +45,19 @@ export default function TransactionInformationModal({
             </Text>
             <CloseIcon onClick={onDismiss} />
           </RowBetween>
+          <RowBetween margin='2rem 0 0'>
+            <Text fontWeight={300} fontSize={16}>
+              Due to a limitation with MetaMask you will see a red warning message before signing your transaction. This is nothing to worry about your funds are safe.
+            </Text>
+          </RowBetween>
+          <RowBetween margin='1rem 0 0'>
+            <Text fontWeight={300} fontSize={16}>
+              <ExternalLink href="https://github.com/MetaMask/metamask-extension/issues/10914">Find out more</ExternalLink>
+            </Text>
+          </RowBetween>
         </Section>
         <BottomSection gap="12px">
-          <ButtonYellow onClick={onContinue}>Continue</ButtonYellow>
+          <Button onClick={onContinue}>Continue</Button>
         </BottomSection>
       </Wrapper>
     </>
