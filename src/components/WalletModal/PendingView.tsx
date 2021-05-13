@@ -1,11 +1,12 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import React from 'react'
 import styled from 'styled-components'
+import { lighten } from 'polished'
 import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { injected } from '../../connectors'
 import Loader from '../Loader'
-import { ButtonSecondary } from 'components/Button'
+import { ButtonYellow } from 'components/Button'
 
 const PendingSection = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -19,6 +20,10 @@ const PendingSection = styled.div`
 
 const StyledLoader = styled(Loader)`
   margin-right: 1rem;
+
+  svg {
+    stroke: ${({ theme }) => theme.text1};
+  }
 `
 
 const LoadingMessage = styled.div<{ error?: boolean }>`
@@ -27,8 +32,9 @@ const LoadingMessage = styled.div<{ error?: boolean }>`
   justify-content: flex-start;
   border-radius: 12px;
   margin-bottom: 20px;
-  color: ${({ theme, error }) => (error ? theme.red1 : 'inherit')};
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text4)};
+  color: ${({ theme, error }) => (error ? lighten(0.1, theme.red3) : 'inherit')};
+  border: 1px solid ${({ theme, error }) => (error ? lighten(0.1, theme.red3) : theme.text3)};
+  width: 100%;
 
   & > * {
     padding: 1rem;
@@ -38,18 +44,20 @@ const LoadingMessage = styled.div<{ error?: boolean }>`
 const ErrorGroup = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  width: 100%;
 `
 
-const ErrorButton = styled(ButtonSecondary)`
+const ErrorButton = styled(ButtonYellow)`
   border-radius: 8px;
   font-size: 12px;
-  color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.red1};
+  //color: ${({ theme }) => theme.text1};
+  // background-color: ${({ theme }) => theme.red1};
   margin-left: 1rem;
   padding: 0.5rem;
   font-weight: 600;
   user-select: none;
+  width: auto;
 
   &:hover {
     cursor: pointer;
@@ -59,7 +67,12 @@ const ErrorButton = styled(ButtonSecondary)`
 const LoadingWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  width: 100%;
+
+  svg path {
+    stroke: ${({ theme }) => theme.text1};
+  }
 `
 
 export default function PendingView({
