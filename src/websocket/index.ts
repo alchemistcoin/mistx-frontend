@@ -85,8 +85,8 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
 })
 
 function transactionResToastStatus(transaction: TransactionRes) {
-  let pending = false;
-  let success = false;
+  let pending = false
+  let success = false
 
   switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
@@ -98,13 +98,13 @@ function transactionResToastStatus(transaction: TransactionRes) {
       success = true
       break
     default:
-      pending = true;
+      pending = true
       break
   }
 
   return {
     pending,
-    success,
+    success
   }
 }
 
@@ -174,9 +174,9 @@ export default function Sockets(): null {
             hash,
             summary,
             ...transactionResToastStatus(transaction)
-          },
-        }, 
-        hash,
+          }
+        },
+        hash
       )
     })
 

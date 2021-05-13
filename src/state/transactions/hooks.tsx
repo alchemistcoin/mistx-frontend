@@ -33,7 +33,7 @@ export function useTransactionAdder(): (
   customData?: TransactionResponseUnsentData
 ) => void {
   const { chainId, account } = useActiveWeb3React()
-  const addPopup = useAddPopup();
+  const addPopup = useAddPopup()
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
@@ -62,10 +62,10 @@ export function useTransactionAdder(): (
             hash,
             pending: true,
             success: false,
-            summary,
+            summary
           }
         },
-        hash,
+        hash
       )
     },
     [addPopup, dispatch, chainId, account]
