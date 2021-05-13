@@ -10,11 +10,7 @@ import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
 import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
 import { ChainId } from '@alchemistcoin/sdk'
-<<<<<<< HEAD
 import { useAddPopup } from 'state/application/hooks'
-=======
-import { TransactionToastOptions, transactionToast } from 'components/Toast/transaction'
->>>>>>> 3f982b7... cancel transaction toast messages
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',

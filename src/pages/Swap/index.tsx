@@ -177,7 +177,7 @@ export default function Swap({ history }: RouteComponentProps) {
     v2Trade,
     currencyBalances,
     parsedAmount,
-    // minTradeAmounts,
+    minTradeAmounts,
     currencies,
     inputError: swapInputError,
     minAmountError: swapMinAmountError
