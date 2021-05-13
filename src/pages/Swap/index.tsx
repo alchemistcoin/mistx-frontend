@@ -237,13 +237,11 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // modal and loading
   const [{ tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
-    //showConfirm: boolean
     tradeToConfirm: Trade | undefined
     swapErrorMessage: string | undefined
     attemptingTxn: boolean
     txHash: string | undefined
   }>({
-    //showConfirm: false,
     tradeToConfirm: undefined,
     swapErrorMessage: undefined,
     attemptingTxn: false,
@@ -267,7 +265,6 @@ export default function Swap({ history }: RouteComponentProps) {
   //     tradeToConfirm: trade,
   //     attemptingTxn: false,
   //     swapErrorMessage: undefined,
-  //     showConfirm: true,
   //     txHash: undefined
   //   })
   // };
