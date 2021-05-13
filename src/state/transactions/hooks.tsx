@@ -7,6 +7,7 @@ import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { TransactionProcessed } from 'websocket'
+import { useAddPopup } from 'state/application/hooks'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -32,6 +33,7 @@ export function useTransactionAdder(): (
   customData?: TransactionResponseUnsentData
 ) => void {
   const { chainId, account } = useActiveWeb3React()
+  const addPopup = useAddPopup();
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
@@ -54,8 +56,19 @@ export function useTransactionAdder(): (
         throw Error('No transaction hash found.')
       }
       dispatch(addTransaction({ hash, from: account, chainId: chainId ?? response.chainId, summary, claim }))
+      addPopup(
+        {
+          txn: {
+            hash,
+            pending: true,
+            success: false,
+            summary,
+          }
+        },
+        hash,
+      )
     },
-    [dispatch, chainId, account]
+    [addPopup, dispatch, chainId, account]
   )
 }
 

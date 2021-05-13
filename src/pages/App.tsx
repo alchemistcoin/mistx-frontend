@@ -93,7 +93,6 @@ export default function App() {
           <Header />
         </HeaderWrapper>
         <BodyWrapper>
-          <Popups />
           <Polling />
           <ConnectionStatus />
           <Web3ReactManager>
@@ -108,6 +107,7 @@ export default function App() {
           <Footer />
         </BodyWrapper>
       </AppWrapper>
+      <Popups />
       <StyledToastContainer
         autoClose={3000}
         closeOnClick
