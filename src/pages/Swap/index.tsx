@@ -352,16 +352,7 @@ export default function Swap({ history }: RouteComponentProps) {
           txHash: undefined
         })
       })
-  }, [
-    priceImpactWithoutFee,
-    swapCallback,
-    tradeToConfirm,
-    recipient,
-    recipientAddress,
-    account,
-    trade,
-    singleHopOnly
-  ])
+  }, [priceImpactWithoutFee, swapCallback, tradeToConfirm, recipient, recipientAddress, account, trade, singleHopOnly])
 
   // errors
   // const [showInverted, setShowInverted] = useState<boolean>(false)
