@@ -86,7 +86,5 @@ export function useActivePopups(): AppState['application']['popupList'] {
 }
 
 export function useSocketStatus(): AppState['application']['socketStatus'] {
-  return useSelector<AppState, AppState['application']['socketStatus']>(
-    state => state.application.socketStatus
-  )
+  return useSelector<AppState, AppState['application']['socketStatus']>(state => state.application.socketStatus)
 }
