@@ -76,7 +76,9 @@ export default function PopupItem({
     const {
       txn: { hash, pending, message, success, summary }
     } = content
-    popupContent = <TransactionPopup hash={hash} message={message} pending={pending} success={success} summary={summary} />
+    popupContent = (
+      <TransactionPopup hash={hash} message={message} pending={pending} success={success} summary={summary} />
+    )
   } else if ('listUpdate' in content) {
     const {
       listUpdate: { listUrl, oldList, newList, auto }

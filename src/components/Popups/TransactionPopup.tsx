@@ -18,7 +18,7 @@ export default function TransactionPopup({
   pending,
   message,
   success,
-  summary,
+  summary
 }: {
   hash: string
   pending?: boolean
