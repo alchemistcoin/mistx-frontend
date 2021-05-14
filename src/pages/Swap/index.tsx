@@ -428,7 +428,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }
 
-  console.log('------------------')
+  console.log('-------------------')
   console.log('price impact', trade?.priceImpact.toSignificant(6))
   console.log('miner bribe', trade?.minerBribe.toSignificant(6))
   console.log('input amount', trade?.inputAmount.toSignificant(6))
