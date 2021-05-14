@@ -171,20 +171,23 @@ export default function Sockets(): null {
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
       const hash = keccak256(transaction.transaction.serializedSwap)
+      const tx = allTransactions?.[hash]
+      const summary = tx?.summary
+      const completed = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt;
 
       const transactionId = {
         chainId: transaction.transaction.chainId,
         hash
       }
 
-      updateTransaction(transactionId, {
-        transaction: transaction.transaction,
-        message: transaction.message,
-        status: transaction.status
-      })
+      if (!completed) {
+        updateTransaction(transactionId, {
+          transaction: transaction.transaction,
+          message: transaction.message,
+          status: transaction.status,
+        })
+      }
 
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
       addPopup(
         {
           txn: {

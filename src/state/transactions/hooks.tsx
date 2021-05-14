@@ -7,7 +7,7 @@ import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from 'state/application/hooks'
-import { emitTransactionCancellation, TransactionProcessed } from 'websocket'
+import { emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -76,7 +76,7 @@ export function useTransactionUpdater(): (
   response: TransactionResponseIdentifier,
   customData?: {
     transaction?: TransactionProcessed
-    status?: string
+    status?: Status
     message?: string
   }
 ) => void {
@@ -92,18 +92,33 @@ export function useTransactionUpdater(): (
       }: {
         transaction?: TransactionProcessed
         message?: string
-        status?: string
+        status?: Status
       } = {}
     ) => {
-      dispatch(
-        updateTransaction({
-          hash: response.hash,
-          chainId: response.chainId,
-          transaction,
-          status,
-          message
-        })
-      )
+      // update state differently for Transaction Cancellation
+      if (status?.includes('CANCEL')) {
+        dispatch(
+          updateTransaction({
+            hash: response.hash,
+            chainId: response.chainId,
+            transaction,
+            cancel: status,
+            status: status === Status.CANCEL_TRANSACTION_SUCCESSFUL ? Status.FAILED_TRANSACTION : undefined,
+            message
+          })
+        )
+      } else {
+        // normal state update for transaction changes
+        dispatch(
+          updateTransaction({
+            hash: response.hash,
+            chainId: response.chainId,
+            transaction,
+            status,
+            message
+          })
+        )
+      }
     },
     [dispatch]
   )
