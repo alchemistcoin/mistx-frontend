@@ -35,7 +35,7 @@ const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
   position: fixed;
   bottom: ${({ extraPadding }) => (extraPadding ? '88px' : '52px')};
   right: 1rem;
-  max-width: 355px !important;
+  max-width: 380px !important;
   width: 100%;
   z-index: 100;
 
