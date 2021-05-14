@@ -356,7 +356,6 @@ export default function Swap({ history }: RouteComponentProps) {
     priceImpactWithoutFee,
     swapCallback,
     tradeToConfirm,
-    showConfirmModal,
     recipient,
     recipientAddress,
     account,
@@ -390,7 +389,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleAcceptChanges = useCallback(() => {
     setSwapState({ tradeToConfirm: trade, swapErrorMessage, attemptingTxn, txHash })
-  }, [attemptingTxn, showConfirmModal, swapErrorMessage, trade, txHash])
+  }, [attemptingTxn, swapErrorMessage, trade, txHash])
 
   const handleInputSelect = useCallback(
     inputCurrency => {
