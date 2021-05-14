@@ -1,8 +1,7 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import styled, { keyframes } from 'styled-components'
 import { TYPE } from '../../theme'
-import { AppState } from '../../state'
+import { useSocketStatus } from 'state/application/hooks'
 
 const StyledPolling = styled.div<{ connected: boolean }>`
   position: fixed;
@@ -60,9 +59,7 @@ const Spinner = styled.div<{ connected: boolean }>`
 `
 
 export default function ConnectionStatus() {
-  const webSocketsConnected = useSelector<AppState, AppState['application']['socketStatus']>(
-    state => state.application.socketStatus
-  )
+  const webSocketsConnected = useSocketStatus()
 
   return (
     <StyledPolling connected={webSocketsConnected}>

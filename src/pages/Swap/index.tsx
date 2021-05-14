@@ -39,7 +39,7 @@ import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 // import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
-import { useWalletModalToggle } from '../../state/application/hooks'
+import { useSocketStatus, useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import {
   useDefaultsFromURLSearch,
@@ -156,6 +156,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
+
+  // Server Connection Status
+  const webSocketConnected = useSocketStatus()
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
@@ -533,7 +536,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
             {currencies[Field.INPUT] && currencies[Field.OUTPUT] && (
               <BottomGrouping>
-                {swapIsUnsupported ? (
+                {!webSocketConnected ? (
+                  <GreyCard style={{ textAlign: 'center' }}>
+                    <TYPE.main fontSize={20} fontWeight={700}>
+                      Server Disconnected
+                    </TYPE.main>
+                  </GreyCard>
+                ) : swapIsUnsupported ? (
                   <ButtonYellow disabled={true}>
                     <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
                   </ButtonYellow>
