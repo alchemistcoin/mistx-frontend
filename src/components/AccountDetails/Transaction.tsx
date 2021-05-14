@@ -65,6 +65,12 @@ const CancelButton = styled.button`
     border-color: ${({ theme }) => darken(0.05, theme.primary2)};
     color: ${({ theme }) => darken(0.05, theme.primary2)};
   }
+
+  &:disabled {
+    border-color: ${({ theme }) => theme.bg1};
+    color: ${({ theme }) => theme.bg1};
+    cursor: default;
+  }
 `
 
 const IconWrapper = styled.div<{ pending: boolean; success?: boolean }>`
@@ -83,10 +89,11 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
-  const cancelled = tx?.cancel === Status.CANCEL_TRANSACTION_SUCCESSFUL;
-  const pending = !cancelled && (
+  const isCancelled = tx?.cancel === Status.CANCEL_TRANSACTION_SUCCESSFUL;
+  const pending = !isCancelled && (
     tx?.status === Status.PENDING_TRANSACTION || (!tx?.receipt && typeof tx?.status === 'undefined')
   )
+  const canCancel = pending && typeof tx?.status !== 'undefined'
   const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
   const cancelTransaction = useTransactionCanceller()
 
@@ -114,8 +121,15 @@ export default function Transaction({ hash }: { hash: string }) {
           <TransactionStatusText>{summary ?? truncateStringMiddle(hash, 6, 7)} ↗</TransactionStatusText>
         </RowFixed>
       </TransactionState>
-      {pending && <CancelButton onClick={handleCancelClick}>{t('Cancel')}</CancelButton>}
-      {cancelled && <StatusText>Cancelled</StatusText>}
+      {canCancel && (
+        <CancelButton 
+          disabled={tx?.cancel === Status.CANCEL_TRANSACTION_PENDING}
+          onClick={handleCancelClick}
+        >
+          {t('Cancel')}
+        </CancelButton>
+      )}
+      {isCancelled && <StatusText>Cancelled</StatusText>}
       <IconWrapper pending={pending} success={success}>
         {success ? <CheckCircle size="16" /> : pending ? <Loader /> : <Triangle size="16" />}
       </IconWrapper>

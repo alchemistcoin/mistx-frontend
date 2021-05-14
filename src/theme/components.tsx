@@ -73,13 +73,13 @@ export const IconWrapper = styled.div<{ stroke?: string; size?: string; marginRi
 
 // A button that triggers some onClick result, but looks like a link.
 export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
-  border: none;
-  text-decoration: none;
   background: none;
-
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  border: none;
   color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.primary2)};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  font-size: .75rem;
   font-weight: 500;
+  text-decoration: none;
 
   :hover {
     text-decoration: ${({ disabled }) => (disabled ? null : 'underline')};
