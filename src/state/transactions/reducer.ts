@@ -58,41 +58,47 @@ export default createReducer(initialState, builder =>
 
       transactions[chainId] = txs
     })
-    .addCase(updateTransaction, (transactions, { payload: { chainId, transaction, hash, status, message, cancel } }) => {
-      const tx = transactions[chainId]?.[hash]
-      if (!tx) {
-        return
+    .addCase(
+      updateTransaction,
+      (transactions, { payload: { chainId, transaction, hash, status, message, cancel } }) => {
+        const tx = transactions[chainId]?.[hash]
+        if (!tx) {
+          return
+        }
+        // todo: update the transaction
+        if (transaction) tx.processed = transaction
+        if (status) tx.status = status
+        tx.cancel = cancel
+        tx.message = message
+
+        const txs = transactions[chainId] ?? {}
+        txs[hash] = tx
+
+        transactions[chainId] = txs
       }
-      // todo: update the transaction
-      if (transaction) tx.processed = transaction
-      if (status) tx.status = status
-      tx.cancel = cancel
-      tx.message = message
-
-      const txs = transactions[chainId] ?? {}
-      txs[hash] = tx
-
-      transactions[chainId] = txs
-    })
+    )
     .addCase(clearCompletedTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return
 
-      let currentTransaction;
-      transactions[chainId] = Object
-        .keys(transactions[chainId])
-        .reduce((
-          newTransactions: { [txHash: string]: TransactionDetails; },
+      let currentTransaction
+      transactions[chainId] = Object.keys(transactions[chainId]).reduce(
+        (
+          newTransactions: { [txHash: string]: TransactionDetails },
           currentHash: string
-        ): { [txHash: string]: TransactionDetails; } => {
-          currentTransaction = transactions[chainId][currentHash];
-          if ((currentTransaction.status === Status.PENDING_TRANSACTION) // socket transaction
-            || (typeof currentTransaction.status === 'undefined' && !currentTransaction.receipt)) { // wrapped/unwrapped
-            newTransactions[currentHash] = currentTransaction;
+        ): { [txHash: string]: TransactionDetails } => {
+          currentTransaction = transactions[chainId][currentHash]
+          if (
+            currentTransaction.status === Status.PENDING_TRANSACTION || // socket transaction
+            (typeof currentTransaction.status === 'undefined' && !currentTransaction.receipt)
+          ) {
+            // wrapped/unwrapped
+            newTransactions[currentHash] = currentTransaction
           }
 
-          return newTransactions;
-        }, 
-        {});
+          return newTransactions
+        },
+        {}
+      )
     })
     .addCase(clearAllTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return

@@ -77,7 +77,7 @@ export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
   border: none;
   color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.primary2)};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 500;
   text-decoration: none;
 

@@ -89,10 +89,9 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
-  const isCancelled = tx?.cancel === Status.CANCEL_TRANSACTION_SUCCESSFUL;
-  const pending = !isCancelled && (
-    tx?.status === Status.PENDING_TRANSACTION || (!tx?.receipt && typeof tx?.status === 'undefined')
-  )
+  const isCancelled = tx?.cancel === Status.CANCEL_TRANSACTION_SUCCESSFUL
+  const pending =
+    !isCancelled && (tx?.status === Status.PENDING_TRANSACTION || (!tx?.receipt && typeof tx?.status === 'undefined'))
   const canCancel = pending && typeof tx?.status !== 'undefined'
   const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
   const cancelTransaction = useTransactionCanceller()
@@ -122,10 +121,7 @@ export default function Transaction({ hash }: { hash: string }) {
         </RowFixed>
       </TransactionState>
       {canCancel && (
-        <CancelButton 
-          disabled={tx?.cancel === Status.CANCEL_TRANSACTION_PENDING}
-          onClick={handleCancelClick}
-        >
+        <CancelButton disabled={tx?.cancel === Status.CANCEL_TRANSACTION_PENDING} onClick={handleCancelClick}>
           {t('Cancel')}
         </CancelButton>
       )}

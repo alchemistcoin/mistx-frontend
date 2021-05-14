@@ -150,7 +150,7 @@ function Web3StatusInner() {
       tx =>
         (typeof tx.status === 'undefined' && !tx.receipt) ||
         (tx.status === Status.PENDING_TRANSACTION && !tx.cancel) ||
-        (tx.cancel === Status.CANCEL_TRANSACTION_PENDING)
+        tx.cancel === Status.CANCEL_TRANSACTION_PENDING
     )
     .map(tx => tx.hash)
 
@@ -158,7 +158,7 @@ function Web3StatusInner() {
   const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
 
-  console.log('pending transactions', sortedRecentTransactions);
+  console.log('pending transactions', sortedRecentTransactions)
 
   if (account) {
     return (
