@@ -23,7 +23,8 @@ export const ArrowWrapper = styled.div<{
 }>`
   align-items: center;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.bg6}
+  //background-color: ${({ theme }) => theme.bg6}
+  background: #2a3645;
   height: 2.5rem;
   display: flex;
   justify-content: center;
@@ -47,7 +48,8 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div`
-  padding: 1rem 1rem 0 1rem;
+  margin: 2rem 0 0 0;
+  padding: 0;
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`

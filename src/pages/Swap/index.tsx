@@ -67,9 +67,10 @@ import { ArrowDownCircled } from 'components/Icons'
 import CurrencySelect from 'components/CurrencySelect'
 
 const SwapWrapper = styled.div`
-  background: ${({ theme }) => theme.bg6};
+  // background: ${({ theme }) => theme.bg6};
+  background: #2a3645;
   border-radius: 20px;
-  padding: 1rem 0;
+  // padding: 1rem 0 0;
 `
 
 const HeaderFrame = styled.div`
@@ -95,15 +96,15 @@ const HeaderFrame = styled.div`
 `
 
 const InputWrapper = styled.div`
-  padding: 0 1em 0;
+  padding: 1rem;
 `
 
 const OutputWrapper = styled.div`
-  padding: 0 1rem 0;
+  padding: 1rem;
 `
 
 const SelectWrapper = styled.div`
-  padding: 1rem 1rem 0;
+  padding: 1rem;
 `
 const StyledAutoRow = styled(AutoRow)`
   position: relative;
@@ -128,6 +129,12 @@ const StyledAutoRow = styled(AutoRow)`
     fill: ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.bg6)};
   }
 `
+
+const StyledButtonError = styled(ButtonError)<{disabled: boolean}>`
+  border-radius: 0 0 20px 20px;
+  padding: 1.5rem 0;
+  background: ${({disabled, theme}) => disabled ? '#485462' : theme.primary2};
+`;
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -446,7 +453,7 @@ export default function Swap({ history }: RouteComponentProps) {
               </InputWrapper>
               <StyledAutoRow
                 justify={isExpertMode ? 'space-between' : 'center'}
-                style={{ margin: '0.5rem 0 0.5rem', padding: '0 1rem' }}
+                style={{ margin: '1rem 0', padding: '0 1rem' }}
               >
                 <ArrowWrapper
                   clickable
@@ -552,7 +559,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
                   </GreyCard>
                 ) : (
-                  <ButtonError
+                  <StyledButtonError
                     onClick={() => {
                       if (isExpertMode) {
                         handleSwap()
@@ -577,7 +584,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         ? `Price Impact Too High`
                         : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
                     </Text>
-                  </ButtonError>
+                  </StyledButtonError>
                 )}
                 {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
                 {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
