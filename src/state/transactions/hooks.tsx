@@ -7,7 +7,7 @@ import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from 'state/application/hooks'
-import { emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
+import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -78,6 +78,9 @@ export function useTransactionUpdater(): (
     transaction?: TransactionProcessed
     status?: Status
     message?: string
+    blockNumber?: number
+    flashbotsResolution?: string
+    mistxDiagnosis?: Diagnosis
   }
 ) => void {
   const dispatch = useDispatch<AppDispatch>()
@@ -88,11 +91,17 @@ export function useTransactionUpdater(): (
       {
         transaction,
         message,
-        status
+        status,
+        blockNumber,
+        flashbotsResolution,
+        mistxDiagnosis
       }: {
         transaction?: TransactionProcessed
         message?: string
         status?: Status
+        blockNumber?: number
+        flashbotsResolution?: string
+        mistxDiagnosis?: Diagnosis
       } = {}
     ) => {
       // update state differently for Transaction Cancellation
@@ -115,7 +124,10 @@ export function useTransactionUpdater(): (
             chainId: response.chainId,
             transaction,
             status,
-            message
+            message,
+            blockNumber,
+            flashbotsResolution,
+            mistxDiagnosis
           })
         )
       }
