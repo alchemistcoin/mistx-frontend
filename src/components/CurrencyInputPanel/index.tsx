@@ -179,7 +179,7 @@ const InputPanelWapper = styled.div<{ hideInput?: boolean }>`
 ` 
 const InputPanelContainer = styled.div<{ hideInput?: boolean }>`
   width: 100%; 
-  padding: 14px;
+  padding: 0.5rem 0.75rem;
   ${({ theme }) => theme.flexColumnNoWrap}
   border-radius: 10px;
   background: #242d3d;

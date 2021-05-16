@@ -67,10 +67,8 @@ import { ArrowDownCircled } from 'components/Icons'
 import CurrencySelect from 'components/CurrencySelect'
 
 const SwapWrapper = styled.div`
-  // background: ${({ theme }) => theme.bg6};
   background: #2a3645;
   border-radius: 20px;
-  // padding: 1rem 0 0;
 `
 
 const HeaderFrame = styled.div`
@@ -96,7 +94,7 @@ const HeaderFrame = styled.div`
 `
 
 const InputWrapper = styled.div`
-  padding: 1rem;
+  padding: 1.5rem 1rem;
 `
 
 const OutputWrapper = styled.div`
@@ -133,7 +131,11 @@ const StyledAutoRow = styled(AutoRow)`
 const StyledButtonError = styled(ButtonError)<{disabled: boolean}>`
   border-radius: 0 0 20px 20px;
   padding: 1.5rem 0;
-  background: ${({disabled, theme}) => disabled ? '#485462' : theme.primary2};
+  background-color: ${({ theme }) => theme.primary2};
+
+  &:disabled {
+    background-color: #485361;
+  }
 `;
 
 export default function Swap({ history }: RouteComponentProps) {
@@ -453,7 +455,7 @@ export default function Swap({ history }: RouteComponentProps) {
               </InputWrapper>
               <StyledAutoRow
                 justify={isExpertMode ? 'space-between' : 'center'}
-                style={{ margin: '1rem 0', padding: '0 1rem' }}
+                style={{ margin: '0.5rem 0', padding: '0 1rem' }}
               >
                 <ArrowWrapper
                   clickable
@@ -538,7 +540,7 @@ export default function Swap({ history }: RouteComponentProps) {
               )*/}
             </AutoColumn>
 
-            {currencies[Field.INPUT] && currencies[Field.OUTPUT] && (
+            {/* {currencies[Field.INPUT] && currencies[Field.OUTPUT] && ( */}
               <BottomGrouping>
                 {swapIsUnsupported ? (
                   <ButtonYellow disabled={true}>
@@ -593,7 +595,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   <DefaultVersionLink />
                 ) : null}
               </BottomGrouping>
-            )}
+            {/* )} */}
           </SwapWrapper>
         </Wrapper>
       </AppBody>

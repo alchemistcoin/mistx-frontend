@@ -48,7 +48,7 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div`
-  margin: 2rem 0 0 0;
+  margin: 1rem 0 0 0;
   padding: 0;
 `
 
