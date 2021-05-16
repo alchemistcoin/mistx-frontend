@@ -97,11 +97,15 @@ function TokenTags({ currency }: { currency: Currency }) {
   )
 }
 
-const mistFirst = (currencies: Currency[]) => (
-  [
-    ...currencies.filter((c) => c.symbol === 'MIST'),
-    ...currencies.filter((c) => c.symbol !== 'MIST'),
-  ]
+const mistFirst = (currencies: Currency[]): Currency[] => (
+  currencies.reduce((arr: Currency[], currency: Currency) => {
+    if (currency.symbol === 'MIST') {
+      arr.unshift(currency)
+      return arr
+    }
+    arr.push(currency)
+    return arr
+  }, [])
 )
 
 function CurrencyRow({
