@@ -97,9 +97,12 @@ export function CurrencySearch({
     }
   }, [isAddressSearch])
 
-  const showETH: boolean = useMemo(() => {
+  const [showETH, showMIST] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()
-    return s === '' || s === 'e' || s === 'et' || s === 'eth'
+    return [
+      s === '' || s === 'e' || s === 'et' || s === 'eth',
+      s === '' || s === 'm' || s === 'mi' || s === 'mis' || s === 'mist'
+    ]
   }, [debouncedQuery])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
@@ -201,6 +204,7 @@ export function CurrencySearch({
               <CurrencyList
                 height={height}
                 showETH={showETH}
+                showMIST={showMIST}
                 currencies={
                   filteredInactiveTokens ? filteredSortedTokens.concat(filteredInactiveTokens) : filteredSortedTokens
                 }

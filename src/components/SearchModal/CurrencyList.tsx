@@ -97,6 +97,13 @@ function TokenTags({ currency }: { currency: Currency }) {
   )
 }
 
+const mistFirst = (currencies: Currency[]) => (
+  [
+    ...currencies.filter((c) => c.symbol === 'MIST'),
+    ...currencies.filter((c) => c.symbol !== 'MIST'),
+  ]
+)
+
 function CurrencyRow({
   currency,
   onSelect,
@@ -151,6 +158,7 @@ export default function CurrencyList({
   otherCurrency,
   fixedListRef,
   showETH,
+  showMIST,
   showImportView,
   setImportToken,
   breakIndex
@@ -162,17 +170,25 @@ export default function CurrencyList({
   otherCurrency?: Currency | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showETH: boolean
+  showMIST: boolean
   showImportView: () => void
   setImportToken: (token: Token) => void
   breakIndex: number | undefined
 }) {
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
+    console.log('showmist', showMIST, mistFirst)
+    let formatted: (Currency | undefined)[] = showETH ? (
+      [
+        Currency.ETHER,
+        ...(showMIST ? mistFirst(currencies) : currencies)
+      ]
+    ) : showMIST ? mistFirst(currencies) : currencies
+
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
     return formatted
-  }, [breakIndex, currencies, showETH])
+  }, [breakIndex, currencies, showETH, showMIST])
 
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
