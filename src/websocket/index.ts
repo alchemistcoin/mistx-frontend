@@ -44,6 +44,7 @@ export interface TransactionReq {
   swap: SwapReq
   bribe: BigNumberish
   routerAddress: string
+  estimatedEffectiveGasPrice: number
 }
 
 export interface TransactionRes {

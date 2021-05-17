@@ -1,7 +1,10 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
+import { BigNumber } from '@ethersproject/bignumber'
 import { Trade } from '@alchemistcoin/sdk'
+import { parseEther } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
+// import { useUserBribeMargin } from '../state/user/hooks'
 import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
@@ -15,7 +18,6 @@ import { useApproveCallbackFromTrade } from './useApproveCallback'
 // import { useEstimationCallback } from './useEstimationCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import { TransactionReq, SwapReq, emitTransactionRequest } from '../websocket'
-import { BigNumber } from '@ethersproject/bignumber'
 
 export enum SwapCallbackState {
   INVALID,
@@ -39,6 +41,11 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  //const [userBribeMargin] = useUserBribeMargin()
+
+  // const getEstimation = async () => {
+  //   return await estimationCall();
+  // };
 
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
@@ -158,15 +165,19 @@ export function useSwapCallback(
                       to: args[0][3] as string,
                       deadline: args[0][4]
                     }
+                    
+                    const minerBribeInGwiBigNumber = parseEther(trade.minerBribe.toSignificant(6));
+                    const minerBribeInGwiNumber = minerBribeInGwiBigNumber.toNumber();
+                    const estimatedEffectiveGasPrice = minerBribeInGwiNumber / Number(trade.estimatedGas);
 
-                    console.log('swapReq', swapReq)
                     const transactionReq: TransactionReq = {
                       chainId,
                       serializedApprove: signedApproval ? signedApproval : undefined,
                       serializedSwap: signedTx,
                       swap: swapReq,
                       bribe: args[2], // need to use calculated bribe
-                      routerAddress: ROUTER[trade.exchange]
+                      routerAddress: ROUTER[trade.exchange],
+                      estimatedEffectiveGasPrice,
                     }
 
                     console.log('emit transaction', transactionReq)
