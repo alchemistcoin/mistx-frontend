@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Status, TransactionProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -24,9 +24,13 @@ export interface TransactionDetails {
   addedTime: number
   confirmedTime?: number
   from: string
-  message?: string
+  swap?: SwapReq
+  blockNumber?: number
   status?: Status
+  message?: string
   cancel?: Status
+  flashbotsResolution?: string
+  mistxDiagnosis?: Diagnosis
 }
 
 export interface TransactionState {
@@ -58,18 +62,35 @@ export default createReducer(initialState, builder =>
 
       transactions[chainId] = txs
     })
-    .addCase(
-      updateTransaction,
-      (transactions, { payload: { chainId, transaction, hash, status, message, cancel } }) => {
-        const tx = transactions[chainId]?.[hash]
-        if (!tx) {
-          return
+    .addCase(updateTransaction, (
+      transactions,
+      { 
+        payload: { 
+          chainId,
+          transaction,
+          hash,
+          blockNumber,
+          flashbotsResolution,
+          mistxDiagnosis,
+          status,
+          message,
+          cancel
         }
-        // todo: update the transaction
-        if (transaction) tx.processed = transaction
-        if (status) tx.status = status
-        tx.cancel = cancel
-        tx.message = message
+      },
+    ) => {
+      const tx = transactions[chainId]?.[hash]
+      if (!tx) {
+        return
+      }
+      // todo: update the transaction
+      if (transaction) tx.processed = transaction
+      if (status) tx.status = status
+      if (blockNumber) tx.blockNumber = blockNumber
+      if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution
+      if (mistxDiagnosis) tx.mistxDiagnosis = mistxDiagnosis
+      
+      tx.cancel = cancel
+      tx.message = message
 
         const txs = transactions[chainId] ?? {}
         txs[hash] = tx
@@ -79,7 +100,6 @@ export default createReducer(initialState, builder =>
     )
     .addCase(clearCompletedTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return
-
       let currentTransaction
       transactions[chainId] = Object.keys(transactions[chainId]).reduce(
         (

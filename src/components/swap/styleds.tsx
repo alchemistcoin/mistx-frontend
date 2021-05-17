@@ -40,6 +40,12 @@ export const ArrowWrapper = styled.div<{
       : null}
 `
 
+export const PendingWrapper = styled.div`
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: .75rem;
+  padding: 1rem;
+`
+
 export const SectionBreak = styled.div`
   height: 1px;
   width: 100%;

@@ -193,7 +193,48 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
 
   if (!transactionHash || !transactions[transactionHash]) return false
 
-  return !transactions[transactionHash].receipt
+  const transaction = transactions[transactionHash]
+
+  return transaction.status === Status.PENDING_TRANSACTION || (
+    typeof transaction.status === 'undefined' && !transaction.receipt
+  ) 
+}
+
+export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
+  const transactions = useAllTransactions()
+
+  return useMemo(() => {
+    let transaction: TransactionDetails
+    return Object.keys(transactions).reduce(
+      (
+        txs: { [txHash: string]: TransactionDetails },
+        hash: string,
+      ) => {
+        transaction = transactions[hash]
+        if (transaction.status === Status.PENDING_TRANSACTION || (
+          typeof transaction.status === 'undefined' && !transaction.receipt
+        )) {
+          txs[hash] = transaction
+        }
+        return txs
+      }, {})
+    },
+    [transactions]
+  )
+}
+
+export function useHasPendingTransactions(): boolean {
+  const transactions = useAllTransactions()
+
+  return useMemo(() => {
+    let transaction: TransactionDetails
+    return Object.keys(transactions).some((hash) => {
+      transaction = transactions[hash]
+      return transaction.status === Status.PENDING_TRANSACTION || (
+        typeof transaction.status === 'undefined' && !transaction.receipt
+      )
+    })
+  }, [transactions])
 }
 
 /**
