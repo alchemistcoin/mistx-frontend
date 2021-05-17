@@ -17,13 +17,17 @@ export enum Event {
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
+  TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
   TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
 }
 
 export enum Status {
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   FAILED_TRANSACTION = 'FAILED_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION'
+  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
+  CANCEL_TRANSACTION_PENDING = 'CANCEL_TRANSACTION_PENDING',
+  CANCEL_TRANSACTION_FAILED = 'CANCEL_TRANSACTION_FAILED',
+  CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL'
 }
 
 export interface SocketSession {
@@ -69,6 +73,7 @@ interface QuoteEventsMap {
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
   [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
+  [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
 }
 
@@ -87,14 +92,24 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
 function transactionResToastStatus(transaction: TransactionRes) {
   let pending = false
   let success = false
+  let message = transaction.message
 
   switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
       break
+    case Status.CANCEL_TRANSACTION_FAILED:
+      break
     case Status.PENDING_TRANSACTION:
       pending = true
       break
+    case Status.CANCEL_TRANSACTION_PENDING:
+      message = 'Cancellation pending'
+      pending = true
+      break
     case Status.SUCCESSFUL_TRANSACTION:
+      success = true
+      break
+    case Status.CANCEL_TRANSACTION_SUCCESSFUL:
       success = true
       break
     default:
@@ -104,7 +119,8 @@ function transactionResToastStatus(transaction: TransactionRes) {
 
   return {
     pending,
-    success
+    success,
+    message
   }
 }
 
@@ -152,22 +168,24 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
-      console.log('transaction response', transaction)
       const hash = keccak256(transaction.transaction.serializedSwap)
+      const tx = allTransactions?.[hash]
+      const summary = tx?.summary
+      const completed = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
 
       const transactionId = {
         chainId: transaction.transaction.chainId,
         hash
       }
 
-      updateTransaction(transactionId, {
-        transaction: transaction.transaction,
-        message: transaction.message,
-        status: transaction.status
-      })
+      if (!completed) {
+        updateTransaction(transactionId, {
+          transaction: transaction.transaction,
+          message: transaction.message,
+          status: transaction.status
+        })
+      }
 
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
       addPopup(
         {
           txn: {
@@ -196,4 +214,8 @@ export default function Sockets(): null {
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
   console.log('websocket transaction sent', transaction)
+}
+
+export function emitTransactionCancellation(transaction: TransactionReq) {
+  socket.emit(Event.TRANSACTION_CANCEL_REQUEST, transaction)
 }

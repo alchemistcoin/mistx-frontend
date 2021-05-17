@@ -16,11 +16,13 @@ const RowNoFlex = styled(AutoRow)`
 export default function TransactionPopup({
   hash,
   pending,
+  message,
   success,
   summary
 }: {
   hash: string
   pending?: boolean
+  message?: string
   success?: boolean
   summary?: string
 }) {
@@ -43,6 +45,11 @@ export default function TransactionPopup({
         <TYPE.body fontWeight={500}>{summary ?? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}</TYPE.body>
         {chainId && (
           <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>View on Etherscan</ExternalLink>
+        )}
+        {message && (
+          <TYPE.body fontSize=".875rem" mt=".5rem">
+            {message}
+          </TYPE.body>
         )}
       </AutoColumn>
     </RowNoFlex>
