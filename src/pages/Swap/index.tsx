@@ -128,7 +128,7 @@ const StyledAutoRow = styled(AutoRow)`
   }
 `
 
-const StyledButtonError = styled(ButtonError)<{disabled: boolean}>`
+const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
   border-radius: 0 0 20px 20px;
   padding: 1.5rem 0;
   background-color: ${({ theme }) => theme.primary2};
@@ -136,7 +136,7 @@ const StyledButtonError = styled(ButtonError)<{disabled: boolean}>`
   &:disabled {
     background-color: #485361;
   }
-`;
+`
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -541,60 +541,60 @@ export default function Swap({ history }: RouteComponentProps) {
             </AutoColumn>
 
             {/* {currencies[Field.INPUT] && currencies[Field.OUTPUT] && ( */}
-              <BottomGrouping>
-                {swapIsUnsupported ? (
-                  <ButtonYellow disabled={true}>
-                    <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
-                  </ButtonYellow>
-                ) : !account ? (
-                  <ButtonYellow onClick={toggleWalletModal}>Connect Wallet</ButtonYellow>
-                ) : showWrap ? (
-                  <ButtonYellow disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                    <Text fontSize={20} fontWeight={700}>
-                      {wrapInputError ??
-                        (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-                    </Text>
-                  </ButtonYellow>
-                ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
-                  <GreyCard style={{ textAlign: 'center' }}>
-                    <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                    {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-                  </GreyCard>
-                ) : (
-                  <StyledButtonError
-                    onClick={() => {
-                      if (isExpertMode) {
-                        handleSwap()
-                      } else {
-                        setSwapState({
-                          tradeToConfirm: trade,
-                          attemptingTxn: false,
-                          swapErrorMessage: undefined,
-                          showConfirm: true,
-                          txHash: undefined
-                        })
-                      }
-                    }}
-                    id="swap-button"
-                    disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                    error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
-                  >
-                    <Text fontSize={20} fontWeight={700}>
-                      {swapInputError
-                        ? swapInputError
-                        : priceImpactSeverity > 3 && !isExpertMode
-                        ? `Price Impact Too High`
-                        : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                    </Text>
-                  </StyledButtonError>
-                )}
-                {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-                {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
-                  <BetterTradeLink version={betterTradeLinkV2} />
-                ) : toggledVersion !== DEFAULT_VERSION && defaultTrade ? (
-                  <DefaultVersionLink />
-                ) : null}
-              </BottomGrouping>
+            <BottomGrouping>
+              {swapIsUnsupported ? (
+                <ButtonYellow disabled={true}>
+                  <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
+                </ButtonYellow>
+              ) : !account ? (
+                <ButtonYellow onClick={toggleWalletModal}>Connect Wallet</ButtonYellow>
+              ) : showWrap ? (
+                <ButtonYellow disabled={Boolean(wrapInputError)} onClick={onWrap}>
+                  <Text fontSize={20} fontWeight={700}>
+                    {wrapInputError ??
+                      (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
+                  </Text>
+                </ButtonYellow>
+              ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
+                <GreyCard style={{ textAlign: 'center' }}>
+                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+                </GreyCard>
+              ) : (
+                <StyledButtonError
+                  onClick={() => {
+                    if (isExpertMode) {
+                      handleSwap()
+                    } else {
+                      setSwapState({
+                        tradeToConfirm: trade,
+                        attemptingTxn: false,
+                        swapErrorMessage: undefined,
+                        showConfirm: true,
+                        txHash: undefined
+                      })
+                    }
+                  }}
+                  id="swap-button"
+                  disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
+                  error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
+                >
+                  <Text fontSize={20} fontWeight={700}>
+                    {swapInputError
+                      ? swapInputError
+                      : priceImpactSeverity > 3 && !isExpertMode
+                      ? `Price Impact Too High`
+                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                  </Text>
+                </StyledButtonError>
+              )}
+              {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
+              {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
+                <BetterTradeLink version={betterTradeLinkV2} />
+              ) : toggledVersion !== DEFAULT_VERSION && defaultTrade ? (
+                <DefaultVersionLink />
+              ) : null}
+            </BottomGrouping>
             {/* )} */}
           </SwapWrapper>
         </Wrapper>

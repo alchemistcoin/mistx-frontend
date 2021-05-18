@@ -45,7 +45,7 @@ const StyledDropDown = styled(DropDown)`
   display: flex;
   width: 10px;
   height: auto;
-  
+
   path {
     stroke: ${({ theme }) => theme.text5};
     stroke-width: 2.5px;
