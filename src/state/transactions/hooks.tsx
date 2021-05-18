@@ -228,6 +228,7 @@ export function useHasPendingTransactions(): boolean {
 
   return useMemo(() => {
     let transaction: TransactionDetails
+    console.log('transactions', transactions)
     return Object.keys(transactions).some((hash) => {
       transaction = transactions[hash]
       return transaction.status === Status.PENDING_TRANSACTION || (

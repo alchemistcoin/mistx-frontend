@@ -3,7 +3,9 @@ import { usePendingTransactions } from "state/transactions/hooks"
 import styled from "styled-components"
 
 const Wrapper = styled.div`
+  background-color: ${({ theme }) => theme.bg1}
   display: flex;
+  padding: 2rem;
 `
 
 const StyledDiagnosticWrapper = styled.div``
@@ -14,17 +16,22 @@ export default function TransactionDiagnosis() {
   return (
     <Wrapper>
       {Object.keys(pendingTransactions).map((hash) => {
-        const transaction = pendingTransactions[hash]
+        const tx = pendingTransactions[hash]
         return (
-          <StyledDiagnosticWrapper>
-            <h4>
-              {transaction.blockNumber}
-            </h4>
+          <StyledDiagnosticWrapper key={hash}>
+            <h6>
+              Status: {tx.status}
+            </h6>
+            <h6>
+              Last block: {tx.blockNumber}
+            </h6>
             <div>
-              {transaction.mistxDiagnosis}
+              {tx.message}
+              <br />
+              Diagnosis: {tx.mistxDiagnosis}
             </div>
             <div>
-              {transaction.flashbotsResolution}
+              Flashbots says... {tx.flashbotsResolution}
             </div>
           </StyledDiagnosticWrapper>
         )

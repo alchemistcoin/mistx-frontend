@@ -132,6 +132,13 @@ const StyledAutoRow = styled(AutoRow)`
   }
 `
 
+const LoaderWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem 0;
+`
+
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -406,6 +413,8 @@ export default function Swap({ history }: RouteComponentProps) {
   console.log('min amounts', minTradeAmounts)
   console.log('min trade amount', minTradeAmounts[0]?.[0].toExact())
   console.log('trade', trade)
+
+  console.log('pending transactions', hasPendingTransactions)
   return (
     <>
       <HeaderFrame>
@@ -417,11 +426,29 @@ export default function Swap({ history }: RouteComponentProps) {
         onConfirm={handleConfirmTokenWarning}
         onDismiss={handleDismissTokenWarning}
       />
+      <ConfirmSwapModal
+        isOpen={showConfirm}
+        trade={trade}
+        originalTrade={tradeToConfirm}
+        onAcceptChanges={handleAcceptChanges}
+        attemptingTxn={attemptingTxn}
+        txHash={txHash}
+        recipient={recipient}
+        allowedSlippage={allowedSlippage}
+        onConfirm={handleSwap}
+        swapErrorMessage={swapErrorMessage}
+        onDismiss={handleConfirmDismiss}
+      />
       {hasPendingTransactions
         ? (
           <AppBody>
             <PendingWrapper>
-              <Loader />
+              <LoaderWrapper>
+                <Loader size="2rem" stroke={theme.text4} />
+                <TYPE.main fontSize="1.5rem" fontWeight={600} ml="1rem">
+                  Transaction Pending
+                </TYPE.main>
+              </LoaderWrapper>
               <TransactionDiagnosis />
             </PendingWrapper>
           </AppBody>
@@ -430,19 +457,6 @@ export default function Swap({ history }: RouteComponentProps) {
           <AppBody>
             <SwapHeader />
             <Wrapper id="swap-page">
-              <ConfirmSwapModal
-                isOpen={showConfirm}
-                trade={trade}
-                originalTrade={tradeToConfirm}
-                onAcceptChanges={handleAcceptChanges}
-                attemptingTxn={attemptingTxn}
-                txHash={txHash}
-                recipient={recipient}
-                allowedSlippage={allowedSlippage}
-                onConfirm={handleSwap}
-                swapErrorMessage={swapErrorMessage}
-                onDismiss={handleConfirmDismiss}
-              />
               <SwapWrapper>
                 <AutoColumn>
                   <InputWrapper>

@@ -43,7 +43,8 @@ export const ArrowWrapper = styled.div<{
 export const PendingWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: .75rem;
-  padding: 1rem;
+  box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
+  overflow: hidden;
 `
 
 export const SectionBreak = styled.div`
