@@ -27,7 +27,6 @@ import TokenWarningModal from '../../components/TokenWarningModal'
 
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
-import WalletConnect from '../../components/WalletConnect'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion } from '../../data/V1'
@@ -71,27 +70,27 @@ const SwapWrapper = styled.div`
   border-radius: 20px;
 `
 
-const HeaderFrame = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end
-  width: 100%;
-  top: 0;
-  position: relative;
-  padding: 0 1rem;
-  margin-bottom: 6rem;
-  z-index: 2;
+// const HeaderFrame = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: flex-end
+//   width: 100%;
+//   top: 0;
+//   position: relative;
+//   padding: 0 1rem;
+//   margin-bottom: 6rem;
+//   z-index: 2;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 0 1rem;
-    width: calc(100%);
-    position: relative;
-  `};
+//   ${({ theme }) => theme.mediaWidth.upToMedium`
+//     padding: 0 1rem;
+//     width: calc(100%);
+//     position: relative;
+//   `};
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 0.5rem 1rem;
-  `}
-`
+//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+//     padding: 0.5rem 1rem;
+//   `}
+// `
 
 const InputWrapper = styled.div`
   padding: 1.5rem 1rem;
@@ -409,9 +408,8 @@ export default function Swap({ history }: RouteComponentProps) {
   console.log('trade', trade)
   return (
     <>
-      <HeaderFrame>
-        <WalletConnect />
-      </HeaderFrame>
+      {/* <HeaderFrame>
+      </HeaderFrame> */}
       <TokenWarningModal
         isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
         tokens={importTokensNotInDefault}

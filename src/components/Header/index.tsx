@@ -7,7 +7,7 @@ import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoLight } from '../../assets/svg/logo_light.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
-import NavExternalLinks from '../NavExternalLinks'
+import WalletConnect from '../../components/WalletConnect'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const HeaderFrame = styled.div`
@@ -248,9 +248,7 @@ export default function Header() {
         </LogoWrapper>
       </HideSmall>
       <HeaderRow align="end" justify="flex-end">
-        <HideSmall>
-          <NavExternalLinks header={true} />
-        </HideSmall>
+        <WalletConnect />
       </HeaderRow>
     </HeaderFrame>
   )

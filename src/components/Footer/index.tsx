@@ -2,13 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import NavExternalLinks from '../NavExternalLinks'
 
-const HideLarge = styled.div`
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: flex;
-  `};
-`
-
 const FooterFrame = styled.div`
   display: flex;
   align-items: center;
@@ -28,9 +21,7 @@ export default function Header() {
   return (
     <FooterFrame>
       <FooterRow>
-        <HideLarge>
-          <NavExternalLinks header={false} />
-        </HideLarge>
+        <NavExternalLinks header={false} />
       </FooterRow>
     </FooterFrame>
   )

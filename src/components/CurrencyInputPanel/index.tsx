@@ -63,12 +63,13 @@ const CurrencyDisplay = styled.div`
 `
 export const IconArrowWrapper = styled.div`
   display: flex;
-  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
   border-radius: 100%;
-  background: #3c4957;
-  height: 22px;
-  width: 22px;
-`
+  border: 1px solid ${({ theme }) => theme.primary2};
+  height: 20px;
+  width: 20px;
+`;
 
 const StyledExternalLink = styled(ExternalLink)`
   display: flex;
@@ -114,10 +115,10 @@ export const StyledExternalLinkEl = styled.span`
 
   svg {
     display: flex;
-    height: 10px;
+    height: 8px;
     width: auto;
     position: relative;
-    top: -2px;
+
     path {
       stroke: ${({ theme }) => (theme.darkMode ? theme.primary2 : theme.text1)};
     }
@@ -148,16 +149,17 @@ const Aligner = styled.span`
 `
 
 const StyledDropDownContainer = styled.div`
-  margin: 0 0 0 1rem;
-  display: flex;
-  padding: 0.5rem;
-  border-radius: 100%;
-  background: #3c4957;
-  height: 22px;
-  width: 22px;
+ margin: 0 0 0 1rem;
+ display: flex;
+ border-radius: 100%;
+ border: 1px solid ${({ theme }) => theme.primary2};
+ height: 20px;
+ width: 20px; 
+ justify-content: center;
 `
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
+  display: flex;
   width: 8px;
   height: auto;
 

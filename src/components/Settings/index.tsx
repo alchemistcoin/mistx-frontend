@@ -40,15 +40,15 @@ const StyledCloseIcon = styled(X)`
 const StyledMenuButton = styled.button`
   align-items: center;
   position: relative;
-  border: none;
-  background-color: ${({ theme }) => theme.bg6};
+  border: 2px solid ${({ theme }) => theme.primary2};
+  background-color: transparent;
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
-  width: ${rem(40)};
-  height: ${rem(40)};
-  padding: 0.15rem 0.5rem;
+  width: ${rem(36)};
+  height: ${rem(36)};
+  padding: 0.3rem;
   border-radius: 100%;
 
   :hover,
@@ -60,8 +60,8 @@ const StyledMenuButton = styled.button`
 `
 
 const StyledMenuIcon = styled.div`
-  height: 32px;
-  width: 32px;
+  width: ${rem(36)};
+  height: ${rem(36)};
 
   svg {
     width: 100%;
