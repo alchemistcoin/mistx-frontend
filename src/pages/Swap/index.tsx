@@ -56,8 +56,6 @@ import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
-// import { ClickableText } from './styleds'
-// import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
@@ -69,28 +67,6 @@ const SwapWrapper = styled.div`
   background: #2a3645;
   border-radius: 20px;
 `
-
-// const HeaderFrame = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: flex-end
-//   width: 100%;
-//   top: 0;
-//   position: relative;
-//   padding: 0 1rem;
-//   margin-bottom: 6rem;
-//   z-index: 2;
-
-//   ${({ theme }) => theme.mediaWidth.upToMedium`
-//     padding: 0 1rem;
-//     width: calc(100%);
-//     position: relative;
-//   `};
-
-//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-//     padding: 0.5rem 1rem;
-//   `}
-// `
 
 const InputWrapper = styled.div`
   padding: 1.5rem 1rem;
@@ -408,8 +384,6 @@ export default function Swap({ history }: RouteComponentProps) {
   console.log('trade', trade)
   return (
     <>
-      {/* <HeaderFrame>
-      </HeaderFrame> */}
       <TokenWarningModal
         isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
         tokens={importTokensNotInDefault}
@@ -538,7 +512,6 @@ export default function Swap({ history }: RouteComponentProps) {
               )*/}
             </AutoColumn>
 
-            {/* {currencies[Field.INPUT] && currencies[Field.OUTPUT] && ( */}
             <BottomGrouping>
               {swapIsUnsupported ? (
                 <ButtonYellow disabled={true}>
@@ -593,7 +566,6 @@ export default function Swap({ history }: RouteComponentProps) {
                 <DefaultVersionLink />
               ) : null}
             </BottomGrouping>
-            {/* )} */}
           </SwapWrapper>
         </Wrapper>
       </AppBody>
