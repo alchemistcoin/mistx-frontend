@@ -69,7 +69,7 @@ export const IconArrowWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.primary2};
   height: 20px;
   width: 20px;
-`;
+`
 
 const StyledExternalLink = styled(ExternalLink)`
   display: flex;
@@ -149,13 +149,13 @@ const Aligner = styled.span`
 `
 
 const StyledDropDownContainer = styled.div`
- margin: 0 0 0 1rem;
- display: flex;
- border-radius: 100%;
- border: 1px solid ${({ theme }) => theme.primary2};
- height: 20px;
- width: 20px; 
- justify-content: center;
+  margin: 0 0 0 1rem;
+  display: flex;
+  border-radius: 100%;
+  border: 1px solid ${({ theme }) => theme.primary2};
+  height: 20px;
+  width: 20px;
+  justify-content: center;
 `
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
