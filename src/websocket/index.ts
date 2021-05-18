@@ -45,6 +45,7 @@ export interface TransactionReq {
   bribe: BigNumberish
   routerAddress: string
   estimatedEffectiveGasPrice: number
+  estimatedGas: number
 }
 
 export interface TransactionRes {

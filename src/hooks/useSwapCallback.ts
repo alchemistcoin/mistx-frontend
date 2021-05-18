@@ -1,7 +1,7 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Trade } from '@alchemistcoin/sdk'
-import { parseEther } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
 // import { useUserBribeMargin } from '../state/user/hooks'
@@ -166,9 +166,9 @@ export function useSwapCallback(
                       deadline: args[0][4]
                     }
                     
-                    const minerBribeInGwiBigNumber = parseEther(trade.minerBribe.toSignificant(6));
-                    const minerBribeInGwiNumber = minerBribeInGwiBigNumber.toNumber();
-                    const estimatedEffectiveGasPrice = minerBribeInGwiNumber / Number(trade.estimatedGas);
+                    const minerBribeBN = BigNumber.from(args[2])
+                    const estimatedEffectiveGasPriceBn = minerBribeBN.div(BigNumber.from(trade.estimatedGas))
+                    const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'));                  
 
                     const transactionReq: TransactionReq = {
                       chainId,
@@ -177,7 +177,8 @@ export function useSwapCallback(
                       swap: swapReq,
                       bribe: args[2], // need to use calculated bribe
                       routerAddress: ROUTER[trade.exchange],
-                      estimatedEffectiveGasPrice,
+                      estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
+                      estimatedGas: Number(trade.estimatedGas),
                     }
 
                     console.log('emit transaction', transactionReq)
