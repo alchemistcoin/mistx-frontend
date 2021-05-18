@@ -13,6 +13,7 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import Loader from 'components/Loader'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -55,7 +56,7 @@ const Marginer = styled.div`
 
 export default function App() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<Loader />}>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
