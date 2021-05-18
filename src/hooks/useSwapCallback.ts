@@ -165,10 +165,10 @@ export function useSwapCallback(
                       to: args[0][3] as string,
                       deadline: args[0][4]
                     }
-                    
+
                     const minerBribeBN = BigNumber.from(args[2])
                     const estimatedEffectiveGasPriceBn = minerBribeBN.div(BigNumber.from(trade.estimatedGas))
-                    const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'));                  
+                    const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'))
 
                     const transactionReq: TransactionReq = {
                       chainId,
@@ -178,7 +178,7 @@ export function useSwapCallback(
                       bribe: args[2], // need to use calculated bribe
                       routerAddress: ROUTER[trade.exchange],
                       estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
-                      estimatedGas: Number(trade.estimatedGas),
+                      estimatedGas: Number(trade.estimatedGas)
                     }
 
                     console.log('emit transaction', transactionReq)
