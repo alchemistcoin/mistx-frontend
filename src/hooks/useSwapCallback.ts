@@ -4,7 +4,6 @@ import { Trade } from '@alchemistcoin/sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
-// import { useUserBribeMargin } from '../state/user/hooks'
 import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
@@ -41,11 +40,6 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-  //const [userBribeMargin] = useUserBribeMargin()
-
-  // const getEstimation = async () => {
-  //   return await estimationCall();
-  // };
 
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
