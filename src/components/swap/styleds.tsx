@@ -42,7 +42,7 @@ export const ArrowWrapper = styled.div<{
 
 export const PendingWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg2};
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
   overflow: hidden;
 `

@@ -5,7 +5,12 @@ import { CheckCircle, Triangle } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks'
 import { getEtherscanLink } from '../../utils'
 import { ExternalLink } from '../../theme'
-import { isPendingTransaction, isSuccessfulTransaction, useAllTransactions, useTransactionCanceller } from '../../state/transactions/hooks'
+import {
+  isPendingTransaction,
+  isSuccessfulTransaction,
+  useAllTransactions,
+  useTransactionCanceller
+} from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
 import { Status } from '../../websocket/index'

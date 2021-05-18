@@ -37,28 +37,18 @@ export default function TransactionDiagnosis() {
 
   return (
     <Wrapper>
-      {Object.keys(pendingTransactions).map((hash) => {
+      {Object.keys(pendingTransactions).map(hash => {
         const tx = pendingTransactions[hash]
         const canCancel = typeof tx?.status !== 'undefined'
 
         return (
           <StyledDiagnosticWrapper key={hash}>
-            <h6>
-              Status: {tx.cancel ?? tx.status}
-            </h6>
-            <h6>
-              Last block: {tx.blockNumber}
-            </h6>
-            <div>
-              Diagnosis: {tx.mistxDiagnosis}
-            </div>
-            <div>
-              Flashbots says... {tx.flashbotsResolution}
-            </div>
+            <h6>Status: {tx.cancel ?? tx.status}</h6>
+            <h6>Last block: {tx.blockNumber}</h6>
+            <div>Diagnosis: {tx.mistxDiagnosis}</div>
+            <div>Flashbots says... {tx.flashbotsResolution}</div>
             {canCancel && (
-              <StyledCancelButton onClick={() => handleCancelClick(hash, tx)}>
-                Cancel Transaction
-              </StyledCancelButton>
+              <StyledCancelButton onClick={() => handleCancelClick(hash, tx)}>Cancel Transaction</StyledCancelButton>
             )}
           </StyledDiagnosticWrapper>
         )

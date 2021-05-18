@@ -222,14 +222,14 @@ export default function Sockets(): null {
 
       const transactionId = {
         chainId: diagnosis.transaction.chainId,
-        hash,
+        hash
       }
 
       updateTransaction(transactionId, {
         blockNumber: diagnosis.blockNumber,
         flashbotsResolution: diagnosis.flashbotsResolution,
         mistxDiagnosis: diagnosis.mistxDiagnosis
-      });
+      })
     })
 
     return () => {

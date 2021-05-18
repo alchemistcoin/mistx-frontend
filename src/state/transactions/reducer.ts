@@ -63,35 +63,37 @@ export default createReducer(initialState, builder =>
 
       transactions[chainId] = txs
     })
-    .addCase(updateTransaction, (
-      transactions,
-      { 
-        payload: { 
-          chainId,
-          transaction,
-          hash,
-          blockNumber,
-          flashbotsResolution,
-          mistxDiagnosis,
-          status,
-          message,
-          cancel
+    .addCase(
+      updateTransaction,
+      (
+        transactions,
+        {
+          payload: {
+            chainId,
+            transaction,
+            hash,
+            blockNumber,
+            flashbotsResolution,
+            mistxDiagnosis,
+            status,
+            message,
+            cancel
+          }
         }
-      },
-    ) => {
-      const tx = transactions[chainId]?.[hash]
-      if (!tx) {
-        return
-      }
-      // todo: update the transaction
-      if (transaction) tx.processed = transaction
-      if (status) tx.status = status
-      if (blockNumber) tx.blockNumber = blockNumber
-      if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution
-      if (mistxDiagnosis) tx.mistxDiagnosis = mistxDiagnosis
-      
-      tx.cancel = cancel
-      tx.message = message
+      ) => {
+        const tx = transactions[chainId]?.[hash]
+        if (!tx) {
+          return
+        }
+        // todo: update the transaction
+        if (transaction) tx.processed = transaction
+        if (status) tx.status = status
+        if (blockNumber) tx.blockNumber = blockNumber
+        if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution
+        if (mistxDiagnosis) tx.mistxDiagnosis = mistxDiagnosis
+
+        tx.cancel = cancel
+        tx.message = message
 
         const txs = transactions[chainId] ?? {}
         txs[hash] = tx

@@ -195,9 +195,10 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
 
   const transaction = transactions[transactionHash]
 
-  return transaction.status === Status.PENDING_TRANSACTION || (
-    typeof transaction.status === 'undefined' && !transaction.receipt
-  ) 
+  return (
+    transaction.status === Status.PENDING_TRANSACTION ||
+    (typeof transaction.status === 'undefined' && !transaction.receipt)
+  )
 }
 
 export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
@@ -205,32 +206,26 @@ export function usePendingTransactions(): { [txHash: string]: TransactionDetails
 
   return useMemo(() => {
     let transaction: TransactionDetails
-    return Object.keys(transactions).reduce(
-      (
-        txs: { [txHash: string]: TransactionDetails },
-        hash: string,
-      ) => {
-        transaction = transactions[hash]
-        if ((transaction.status === Status.PENDING_TRANSACTION && !transaction.receipt)
-          || (transaction.receipt && transaction.receipt.status !== 1)
-        ) {
-          txs[hash] = transaction
-        }
-        return txs
-      }, {})
-    },
-    [transactions]
-  )
+    return Object.keys(transactions).reduce((txs: { [txHash: string]: TransactionDetails }, hash: string) => {
+      transaction = transactions[hash]
+      if (
+        (transaction.status === Status.PENDING_TRANSACTION && !transaction.receipt) ||
+        (transaction.receipt && transaction.receipt.status !== 1)
+      ) {
+        txs[hash] = transaction
+      }
+      return txs
+    }, {})
+  }, [transactions])
 }
 
 export function isPendingTransaction(tx: TransactionDetails): boolean {
   return !!(
     tx.status !== Status.FAILED_TRANSACTION &&
-    tx.status !== Status.SUCCESSFUL_TRANSACTION && (
-      (!tx.status && !tx.receipt) ||
+    tx.status !== Status.SUCCESSFUL_TRANSACTION &&
+    ((!tx.status && !tx.receipt) ||
       tx.cancel === Status.CANCEL_TRANSACTION_PENDING ||
-      (tx.status === Status.PENDING_TRANSACTION && (!tx.receipt || tx.receipt.status !== 1))
-    )
+      (tx.status === Status.PENDING_TRANSACTION && (!tx.receipt || tx.receipt.status !== 1)))
   )
 }
 
@@ -240,7 +235,7 @@ export function useHasPendingTransactions(): boolean {
   return useMemo(() => {
     let transaction: TransactionDetails
     console.log('transactions', transactions)
-    return Object.keys(transactions).some((hash) => {
+    return Object.keys(transactions).some(hash => {
       transaction = transactions[hash]
       return isPendingTransaction(transaction)
     })
@@ -248,9 +243,7 @@ export function useHasPendingTransactions(): boolean {
 }
 
 export function isSuccessfulTransaction(tx: TransactionDetails): boolean {
-  return !!(
-    tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1
-  )
+  return !!(tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
 }
 
 /**

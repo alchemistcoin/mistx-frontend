@@ -144,11 +144,7 @@ function Web3StatusInner() {
     return txs.filter(isTransactionRecent).sort(newTransactionsFirst)
   }, [allTransactions])
 
-  const pending = sortedRecentTransactions
-    .filter(
-      tx => isPendingTransaction(tx)
-    )
-    .map(tx => tx.hash)
+  const pending = sortedRecentTransactions.filter(tx => isPendingTransaction(tx)).map(tx => tx.hash)
 
   const hasPendingTransactions = !!pending.length
   const hasSocks = useHasSocks()
