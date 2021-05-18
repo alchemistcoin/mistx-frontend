@@ -10,6 +10,7 @@ import {
   updateTransaction,
   SerializableTransactionReceipt
 } from './actions'
+import { isPendingTransaction } from './hooks'
 
 const now = () => new Date().getTime()
 
@@ -45,7 +46,7 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim } }) => {
       const tx = transactions[chainId]?.[hash]
-      if (tx && tx.status === Status.PENDING_TRANSACTION) {
+      if (tx && isPendingTransaction(tx)) {
         throw Error('Attempted to add existing transaction.')
       }
 
@@ -108,8 +109,8 @@ export default createReducer(initialState, builder =>
         ): { [txHash: string]: TransactionDetails } => {
           currentTransaction = transactions[chainId][currentHash]
           if (
-            currentTransaction.status === Status.PENDING_TRANSACTION || // socket transaction
-            (typeof currentTransaction.status === 'undefined' && !currentTransaction.receipt)
+            (currentTransaction.status === Status.PENDING_TRANSACTION && !currentTransaction.receipt) || // socket transaction
+            (currentTransaction.receipt && typeof currentTransaction.receipt?.status === 'undefined')
           ) {
             // wrapped/unwrapped
             newTransactions[currentHash] = currentTransaction

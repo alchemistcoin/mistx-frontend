@@ -5,7 +5,7 @@ import { CheckCircle, Triangle } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks'
 import { getEtherscanLink } from '../../utils'
 import { ExternalLink } from '../../theme'
-import { useAllTransactions, useTransactionCanceller } from '../../state/transactions/hooks'
+import { isPendingTransaction, isSuccessfulTransaction, useAllTransactions, useTransactionCanceller } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
 import { Status } from '../../websocket/index'
@@ -90,10 +90,9 @@ export default function Transaction({ hash }: { hash: string }) {
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
   const isCancelled = tx?.cancel === Status.CANCEL_TRANSACTION_SUCCESSFUL
-  const pending =
-    !isCancelled && (tx?.status === Status.PENDING_TRANSACTION || (!tx?.receipt && typeof tx?.status === 'undefined'))
+  const pending = !isCancelled && tx && isPendingTransaction(tx)
   const canCancel = pending && typeof tx?.status !== 'undefined'
-  const success = tx && (tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
+  const success = tx && isSuccessfulTransaction(tx)
   const cancelTransaction = useTransactionCanceller()
 
   function handleCancelClick() {

@@ -10,7 +10,7 @@ import useENSName from '../../hooks/useENSName'
 import { useHasSocks } from '../../hooks/useSocksBalance'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
-import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
+import { isPendingTransaction, isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonSecondary } from '../Button'
@@ -19,7 +19,6 @@ import { colors as ThemeColors } from '../../theme'
 import Loader from '../Loader'
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
-import { Status } from 'websocket'
 
 const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -147,10 +146,7 @@ function Web3StatusInner() {
 
   const pending = sortedRecentTransactions
     .filter(
-      tx =>
-        (typeof tx.status === 'undefined' && !tx.receipt) ||
-        (tx.status === Status.PENDING_TRANSACTION && !tx.cancel) ||
-        tx.cancel === Status.CANCEL_TRANSACTION_PENDING
+      tx => isPendingTransaction(tx)
     )
     .map(tx => tx.hash)
 

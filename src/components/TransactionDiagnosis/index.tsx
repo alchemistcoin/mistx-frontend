@@ -4,7 +4,6 @@ import styled from "styled-components"
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.bg1}
-  display: flex;
   padding: 2rem;
 `
 
@@ -20,14 +19,12 @@ export default function TransactionDiagnosis() {
         return (
           <StyledDiagnosticWrapper key={hash}>
             <h6>
-              Status: {tx.status}
+              Status: {tx.cancel ?? tx.status}
             </h6>
             <h6>
               Last block: {tx.blockNumber}
             </h6>
             <div>
-              {tx.message}
-              <br />
               Diagnosis: {tx.mistxDiagnosis}
             </div>
             <div>
