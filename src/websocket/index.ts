@@ -18,7 +18,8 @@ export enum Event {
   SOCKET_ERR = 'SOCKET_ERR',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
   TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
-  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
+  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
+  TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS'
 }
 
 export enum Status {
@@ -28,6 +29,15 @@ export enum Status {
   CANCEL_TRANSACTION_PENDING = 'CANCEL_TRANSACTION_PENDING',
   CANCEL_TRANSACTION_FAILED = 'CANCEL_TRANSACTION_FAILED',
   CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL'
+}
+
+export enum Diagnosis {
+  LOWER_THAN_TAIL = 'LOWER_THAN_TAIL',
+  NOT_A_FLASHBLOCK = 'NOT_A_FLASHBLOCK',
+  BUNDLE_OUTBID = 'BUNDLE_OUTBID',
+  ERROR_API_BEHIND = 'ERROR_API_BEHIND',
+  MISSING_BLOCK_DATA = 'MISSING_BLOCK_DATA',
+  ERROR_UNKNOWN = 'ERROR_UNKNOWN'
 }
 
 export interface SocketSession {
@@ -70,6 +80,13 @@ export interface TransactionProcessed {
   simulateOnly: boolean
 }
 
+export interface TransactionDiagnosisRes {
+  transaction: TransactionProcessed
+  blockNumber: number
+  flashbotsResolution: string
+  mistxDiagnosis: Diagnosis
+}
+
 interface QuoteEventsMap {
   [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
@@ -77,6 +94,7 @@ interface QuoteEventsMap {
   [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
+  [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -200,6 +218,22 @@ export default function Sockets(): null {
       )
     })
 
+    socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
+      console.log('transaction diagnosis', diagnosis)
+      const hash = keccak256(diagnosis.transaction.serializedSwap)
+
+      const transactionId = {
+        chainId: diagnosis.transaction.chainId,
+        hash
+      }
+
+      updateTransaction(transactionId, {
+        blockNumber: diagnosis.blockNumber,
+        flashbotsResolution: diagnosis.flashbotsResolution,
+        mistxDiagnosis: diagnosis.mistxDiagnosis
+      })
+    })
+
     return () => {
       socket.off('connect')
       socket.off('connect_error')
@@ -207,6 +241,7 @@ export default function Sockets(): null {
       socket.off(Event.SOCKET_SESSION_RESPONSE)
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.TRANSACTION_RESPONSE)
+      socket.off(Event.TRANSACTION_DIAGNOSIS)
     }
   }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
 

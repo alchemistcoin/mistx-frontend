@@ -7,7 +7,7 @@ import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from 'state/application/hooks'
-import { emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
+import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -78,6 +78,9 @@ export function useTransactionUpdater(): (
     transaction?: TransactionProcessed
     status?: Status
     message?: string
+    blockNumber?: number
+    flashbotsResolution?: string
+    mistxDiagnosis?: Diagnosis
   }
 ) => void {
   const dispatch = useDispatch<AppDispatch>()
@@ -88,11 +91,17 @@ export function useTransactionUpdater(): (
       {
         transaction,
         message,
-        status
+        status,
+        blockNumber,
+        flashbotsResolution,
+        mistxDiagnosis
       }: {
         transaction?: TransactionProcessed
         message?: string
         status?: Status
+        blockNumber?: number
+        flashbotsResolution?: string
+        mistxDiagnosis?: Diagnosis
       } = {}
     ) => {
       // update state differently for Transaction Cancellation
@@ -115,7 +124,10 @@ export function useTransactionUpdater(): (
             chainId: response.chainId,
             transaction,
             status,
-            message
+            message,
+            blockNumber,
+            flashbotsResolution,
+            mistxDiagnosis
           })
         )
       }
@@ -181,7 +193,57 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
 
   if (!transactionHash || !transactions[transactionHash]) return false
 
-  return !transactions[transactionHash].receipt
+  const transaction = transactions[transactionHash]
+
+  return (
+    transaction.status === Status.PENDING_TRANSACTION ||
+    (typeof transaction.status === 'undefined' && !transaction.receipt)
+  )
+}
+
+export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
+  const transactions = useAllTransactions()
+
+  return useMemo(() => {
+    let transaction: TransactionDetails
+    return Object.keys(transactions).reduce((txs: { [txHash: string]: TransactionDetails }, hash: string) => {
+      transaction = transactions[hash]
+      if (
+        (transaction.status === Status.PENDING_TRANSACTION && !transaction.receipt) ||
+        (transaction.receipt && transaction.receipt.status !== 1)
+      ) {
+        txs[hash] = transaction
+      }
+      return txs
+    }, {})
+  }, [transactions])
+}
+
+export function isPendingTransaction(tx: TransactionDetails): boolean {
+  return !!(
+    tx.status !== Status.FAILED_TRANSACTION &&
+    tx.status !== Status.SUCCESSFUL_TRANSACTION &&
+    ((!tx.status && !tx.receipt) ||
+      tx.cancel === Status.CANCEL_TRANSACTION_PENDING ||
+      (tx.status === Status.PENDING_TRANSACTION && (!tx.receipt || tx.receipt.status !== 1)))
+  )
+}
+
+export function useHasPendingTransactions(): boolean {
+  const transactions = useAllTransactions()
+
+  return useMemo(() => {
+    let transaction: TransactionDetails
+    console.log('transactions', transactions)
+    return Object.keys(transactions).some(hash => {
+      transaction = transactions[hash]
+      return isPendingTransaction(transaction)
+    })
+  }, [transactions])
+}
+
+export function isSuccessfulTransaction(tx: TransactionDetails): boolean {
+  return !!(tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
 }
 
 /**

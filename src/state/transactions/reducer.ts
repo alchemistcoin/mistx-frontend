@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Status, TransactionProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -10,6 +10,7 @@ import {
   updateTransaction,
   SerializableTransactionReceipt
 } from './actions'
+import { isPendingTransaction } from './hooks'
 
 const now = () => new Date().getTime()
 
@@ -24,9 +25,13 @@ export interface TransactionDetails {
   addedTime: number
   confirmedTime?: number
   from: string
-  message?: string
+  swap?: SwapReq
+  blockNumber?: number
   status?: Status
+  message?: string
   cancel?: Status
+  flashbotsResolution?: string
+  mistxDiagnosis?: Diagnosis
 }
 
 export interface TransactionState {
@@ -41,7 +46,7 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim } }) => {
       const tx = transactions[chainId]?.[hash]
-      if (tx && tx.status === Status.PENDING_TRANSACTION) {
+      if (tx && isPendingTransaction(tx)) {
         throw Error('Attempted to add existing transaction.')
       }
 
@@ -60,7 +65,22 @@ export default createReducer(initialState, builder =>
     })
     .addCase(
       updateTransaction,
-      (transactions, { payload: { chainId, transaction, hash, status, message, cancel } }) => {
+      (
+        transactions,
+        {
+          payload: {
+            chainId,
+            transaction,
+            hash,
+            blockNumber,
+            flashbotsResolution,
+            mistxDiagnosis,
+            status,
+            message,
+            cancel
+          }
+        }
+      ) => {
         const tx = transactions[chainId]?.[hash]
         if (!tx) {
           return
@@ -68,6 +88,10 @@ export default createReducer(initialState, builder =>
         // todo: update the transaction
         if (transaction) tx.processed = transaction
         if (status) tx.status = status
+        if (blockNumber) tx.blockNumber = blockNumber
+        if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution
+        if (mistxDiagnosis) tx.mistxDiagnosis = mistxDiagnosis
+
         tx.cancel = cancel
         tx.message = message
 
@@ -79,7 +103,6 @@ export default createReducer(initialState, builder =>
     )
     .addCase(clearCompletedTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return
-
       let currentTransaction
       transactions[chainId] = Object.keys(transactions[chainId]).reduce(
         (
@@ -88,8 +111,8 @@ export default createReducer(initialState, builder =>
         ): { [txHash: string]: TransactionDetails } => {
           currentTransaction = transactions[chainId][currentHash]
           if (
-            currentTransaction.status === Status.PENDING_TRANSACTION || // socket transaction
-            (typeof currentTransaction.status === 'undefined' && !currentTransaction.receipt)
+            (currentTransaction.status === Status.PENDING_TRANSACTION && !currentTransaction.receipt) || // socket transaction
+            (currentTransaction.receipt && typeof currentTransaction.receipt?.status === 'undefined')
           ) {
             // wrapped/unwrapped
             newTransactions[currentHash] = currentTransaction
