@@ -97,7 +97,7 @@ function TokenTags({ currency }: { currency: Currency }) {
   )
 }
 
-const mistFirst = (currencies: Currency[]): Currency[] => (
+const mistFirst = (currencies: Currency[]): Currency[] =>
   currencies.reduce((arr: Currency[], currency: Currency) => {
     if (currency.symbol === 'MIST') {
       arr.unshift(currency)
@@ -106,7 +106,6 @@ const mistFirst = (currencies: Currency[]): Currency[] => (
     arr.push(currency)
     return arr
   }, [])
-)
 
 function CurrencyRow({
   currency,
@@ -181,12 +180,11 @@ export default function CurrencyList({
 }) {
   const itemData: (Currency | undefined)[] = useMemo(() => {
     console.log('showmist', showMIST, mistFirst)
-    let formatted: (Currency | undefined)[] = showETH ? (
-      [
-        Currency.ETHER,
-        ...(showMIST ? mistFirst(currencies) : currencies)
-      ]
-    ) : showMIST ? mistFirst(currencies) : currencies
+    let formatted: (Currency | undefined)[] = showETH
+      ? [Currency.ETHER, ...(showMIST ? mistFirst(currencies) : currencies)]
+      : showMIST
+      ? mistFirst(currencies)
+      : currencies
 
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]

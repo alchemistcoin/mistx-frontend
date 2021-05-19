@@ -156,7 +156,9 @@ export function useTransactionCanceller() {
         serializedApprove: transaction.serializedApprove,
         swap: transaction.swap,
         bribe: transaction.bribe,
-        routerAddress: transaction.routerAddress
+        routerAddress: transaction.routerAddress,
+        estimatedEffectiveGasPrice: transaction.estimatedEffectiveGasPrice,
+        estimatedGas: transaction.estimatedGas
       })
     },
     []
