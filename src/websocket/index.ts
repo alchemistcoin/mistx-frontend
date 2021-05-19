@@ -74,6 +74,8 @@ export interface TransactionProcessed {
   swap: SwapReq
   bribe: BigNumberish
   routerAddress: string
+  estimatedEffectiveGasPrice: number
+  estimatedGas: number
   timestamp: number // EPOCH
   sessionToken: string
   chainId: number
