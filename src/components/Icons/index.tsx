@@ -214,14 +214,22 @@ const Cog = ({ ...props }: React.SVGProps<SVGAElement>): ReactElement => (
 
 const Info = ({ ...props }: React.SVGProps<SVGAElement>): ReactElement => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="8.25" stroke="#FFFFFF" stroke-width="1.5"/>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 8C12.5523 8 13 8.44772 13 9C13 9.55228 12.5523 10 12 10C11.4477 10 11 9.55228 11 9C11 8.44772 11.4477 8 12 8ZM12 11C11.4477 11 11 11.4477 11 12V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V12C13 11.4477 12.5523 11 12 11Z" fill="#FFFFFF"/>
+    <circle cx="12" cy="12" r="8.25" stroke="#FFFFFF" strokeWidth="1.5" />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12 8C12.5523 8 13 8.44772 13 9C13 9.55228 12.5523 10 12 10C11.4477 10 11 9.55228 11 9C11 8.44772 11.4477 8 12 8ZM12 11C11.4477 11 11 11.4477 11 12V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V12C13 11.4477 12.5523 11 12 11Z"
+      fill="#FFFFFF"
+    />
   </svg>
 )
 
 const Close = ({ ...props }: React.SVGProps<SVGAElement>): ReactElement => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12.5938 13.8915L9.04991 10.3477L5.45615 13.9414L4.04193 12.5272L7.6357 8.93344L4.10848 5.40623L5.3896 4.12511L8.91681 7.65233L12.5272 4.04192L13.9414 5.45614L10.331 9.06654L13.8749 12.6104L12.5938 13.8915Z" fill="#FFFFFF"/>
+    <path
+      d="M12.5938 13.8915L9.04991 10.3477L5.45615 13.9414L4.04193 12.5272L7.6357 8.93344L4.10848 5.40623L5.3896 4.12511L8.91681 7.65233L12.5272 4.04192L13.9414 5.45614L10.331 9.06654L13.8749 12.6104L12.5938 13.8915Z"
+      fill="#FFFFFF"
+    />
   </svg>
 )
 

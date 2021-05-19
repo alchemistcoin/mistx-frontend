@@ -32,7 +32,8 @@ const FancyButton = styled.button`
   min-width: 3.5rem;
   border: 1px solid ${({ theme }) => theme.primary2};
   outline: none;
-  background: ${({ theme }) => theme.bg1};
+  background: transparent;
+
   :hover {
     border: 1px solid ${({ theme }) => darken(0.1, theme.primary2)};
   }
@@ -42,7 +43,7 @@ const FancyButton = styled.button`
 `
 
 const Option = styled(FancyButton)<{ active: boolean }>`
-  margin-right: 1.5rem;
+  margin-right: 1rem;
   :hover {
     cursor: pointer;
   }
@@ -80,6 +81,30 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
     height: 100%;
     border: 0px;
     border-radius: 8px;
+  }
+`
+
+const OptionCustomTime = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
+  height: 2rem;
+  position: relative;
+  flex: 1;
+  border: ${({ theme, active, warning }) => (active ? `1px solid ${warning ? theme.red1 : '#35404E'}` : '#35404E')};
+  background: #35404e;
+  font-weight: 700;
+  margin-right: 0.5rem;
+
+  :hover {
+    border: ${({ theme, active, warning }) =>
+      active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary2)}`};
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+    border: 0px;
+    border-radius: 12px;
+    font-weight: 700;
+    background: #35404e;
   }
 `
 
@@ -234,8 +259,8 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           </TYPE.black>
           <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
         </StyledRowFixed>
-        <RowFixed marginBottom="1rem">
-          <OptionCustom style={{ width: '80px' }} tabIndex={-1}>
+        <RowFixed>
+          <OptionCustomTime style={{ width: '60px' }} tabIndex={-1}>
             <Input
               color={!!deadlineError ? 'red' : undefined}
               onBlur={() => {
@@ -245,7 +270,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
               value={deadlineInput}
               onChange={e => parseCustomDeadline(e.target.value)}
             />
-          </OptionCustom>
+          </OptionCustomTime>
           <TYPE.body style={{ paddingLeft: '8px' }} fontSize={14}>
             minutes
           </TYPE.body>

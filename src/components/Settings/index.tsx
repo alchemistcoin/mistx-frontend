@@ -55,7 +55,7 @@ const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-    background-color: ${({ theme }) => lighten(0.05, theme.bg6)};
+    border: 2px solid ${({ theme }) => lighten(0.1, theme.primary2)};
   }
 `
 
@@ -126,9 +126,9 @@ const ModalContentWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 20px;
 `
-const SettingWrapper = styled.div<{darkBg?: boolean}>`
+const SettingWrapper = styled.div<{ darkBg?: boolean }>`
   padding: 1.5rem 1.5rem;
-  background-color: ${({ theme, darkBg }) => darkBg && "#232E3B"};
+  background-color: ${({ theme, darkBg }) => darkBg && '#232E3B'};
 `
 
 const SettingsHeader = styled.div`
@@ -146,7 +146,7 @@ const SettingsHeader = styled.div`
     top: 3px;
     height: 24px;
     width: 2px;
-    content: "";
+    content: '';
     background-color: ${({ theme }) => theme.primary2};
   }
 `
@@ -214,9 +214,7 @@ export default function SettingsTab() {
         </ModalContentWrapper>
       </Modal>
       <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
-        <StyledMenuIcon>
-          { open ? <Close /> : <Cog />}
-        </StyledMenuIcon>
+        <StyledMenuIcon>{open ? <Close /> : <Cog />}</StyledMenuIcon>
         {expertMode ? (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">
@@ -251,33 +249,35 @@ export default function SettingsTab() {
                 deadline={ttl}
                 setDeadline={setTtl}
               />
-            </SettingWrapper>  
+            </SettingWrapper>
             <SettingWrapper>
               <SettingsHeader>
                 <Text fontWeight={600} fontSize={20}>
                   Interface Settings
                 </Text>
               </SettingsHeader>
-              <RowBetween>
+              <RowBetween flexDirection="column">
                 <StyledRowFixed>
                   <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
                     DISABLE MULTIHOPS
                   </TYPE.black>
                   <QuestionHelper text="Restricts swaps to direct pairs only." />
                 </StyledRowFixed>
-                <Toggle
-                  id="toggle-disable-multihop-button"
-                  isActive={singleHopOnly}
-                  toggle={() => {
-                    ReactGA.event({
-                      category: 'Routing',
-                      action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                    })
-                    setSingleHopOnly(!singleHopOnly)
-                  }}
-                />
+                <StyledRowFixed marginTop="0.5rem">
+                  <Toggle
+                    id="toggle-disable-multihop-button"
+                    isActive={singleHopOnly}
+                    toggle={() => {
+                      ReactGA.event({
+                        category: 'Routing',
+                        action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                      })
+                      setSingleHopOnly(!singleHopOnly)
+                    }}
+                  />
+                </StyledRowFixed>
               </RowBetween>
-            </SettingWrapper>  
+            </SettingWrapper>
           </AutoColumn>
         </MenuFlyout>
       )}

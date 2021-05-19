@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import Tooltip from '../Tooltip'
-import { Info } from '../Icons' 
+import { Info } from '../Icons'
 
 const QuestionWrapper = styled.div`
   display: flex;

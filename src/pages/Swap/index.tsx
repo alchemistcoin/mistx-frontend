@@ -113,6 +113,18 @@ const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
   }
 `
 
+const StyledButtonYellow = styled(ButtonYellow)`
+  border-radius: 0 0 20px 20px;
+  padding: 1.5rem 0;
+  background-color: ${({ theme }) => theme.primary2};
+  font-size: 20px;
+  font-weight: 700;
+
+  &:disabled {
+    background-color: #485361;
+  }
+`
+
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -514,18 +526,18 @@ export default function Swap({ history }: RouteComponentProps) {
 
             <BottomGrouping>
               {swapIsUnsupported ? (
-                <ButtonYellow disabled={true}>
+                <StyledButtonYellow disabled={true}>
                   <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
-                </ButtonYellow>
+                </StyledButtonYellow>
               ) : !account ? (
-                <ButtonYellow onClick={toggleWalletModal}>Connect Wallet</ButtonYellow>
+                <StyledButtonYellow onClick={toggleWalletModal}>Connect Wallet</StyledButtonYellow>
               ) : showWrap ? (
-                <ButtonYellow disabled={Boolean(wrapInputError)} onClick={onWrap}>
+                <StyledButtonYellow disabled={Boolean(wrapInputError)} onClick={onWrap}>
                   <Text fontSize={20} fontWeight={700}>
                     {wrapInputError ??
                       (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
                   </Text>
-                </ButtonYellow>
+                </StyledButtonYellow>
               ) : noRoute && userHasSpecifiedInputOutput && !swapMinAmountError ? (
                 <GreyCard style={{ textAlign: 'center' }}>
                   <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
