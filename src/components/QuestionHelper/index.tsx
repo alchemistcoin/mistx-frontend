@@ -1,24 +1,30 @@
 import React, { useCallback, useState } from 'react'
-import { HelpCircle as Question } from 'react-feather'
 import styled from 'styled-components'
 import Tooltip from '../Tooltip'
+import { Info } from '../Icons' 
 
 const QuestionWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
+  //padding: 0.2rem;
   border: none;
   background: none;
   outline: none;
   cursor: default;
-  border-radius: 36px;
-  background-color: ${({ theme }) => theme.bg5};
+  //border-radius: 36px;
+  //background-color: ${({ theme }) => theme.bg5};
   color: ${({ theme }) => theme.text2};
 
   :hover,
   :focus {
     opacity: 0.7;
+  }
+
+  svg {
+    circle, path {
+      stroke: ${({ theme }) => theme.primary2};
+    }
   }
 `
 
@@ -26,20 +32,26 @@ const LightQuestionWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
+  //padding: 0.2rem;
   border: none;
   background: none;
   outline: none;
   cursor: default;
-  border-radius: 36px;
+  //border-radius: 36px;
   width: 24px;
   height: 24px;
-  background-color: rgba(255, 255, 255, 0.1);
+  //background-color: rgba(255, 255, 255, 0.1);
   color: ${({ theme }) => theme.white};
 
   :hover,
   :focus {
     opacity: 0.7;
+  }
+
+  svg {
+    path {
+      stroke: ${({ theme }) => theme.primary2};
+    }
   }
 `
 
@@ -57,7 +69,7 @@ export default function QuestionHelper({ text }: { text: string }) {
     <span style={{ marginLeft: 4 }}>
       <Tooltip text={text} show={show}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <Question size={16} />
+          <Info />
         </QuestionWrapper>
       </Tooltip>
     </span>

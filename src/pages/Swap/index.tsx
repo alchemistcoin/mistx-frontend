@@ -65,7 +65,7 @@ import CurrencySelect from 'components/CurrencySelect'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
-  border-radius: 20px;
+  border-radius: 24px;
 `
 
 const InputWrapper = styled.div`

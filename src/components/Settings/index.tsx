@@ -22,7 +22,7 @@ import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
 import MinerBribeSlider from './MinerBribeSlider'
 import TransactionSettings from '../TransactionSettings'
-import { Cog } from '../Icons'
+import { Cog, Close } from '../Icons'
 
 const StyledCloseIcon = styled(X)`
   height: 20px;
@@ -70,6 +70,9 @@ const StyledMenuIcon = styled.div`
     > * {
       stroke: ${({ theme }) => theme.primary2};
     }
+    path {
+      fill: ${({ theme }) => theme.primary2};
+    }
   }
 `
 
@@ -91,16 +94,16 @@ const StyledMenu = styled.div`
 `
 
 const MenuFlyout = styled.span`
-  min-width: 20.125rem;
+  min-width: ${rem(428)};
   background-color: ${({ theme }) => theme.bg5};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 16px 24px rgba(0, 0, 0, 0.1),
     0px 24px 32px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
-  top: 3rem;
+  top: 58px;
   right: 0rem;
   z-index: 100;
 
@@ -119,9 +122,37 @@ const ModalContentWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 0;
+  padding: 3rem 0 2rem 0;
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 20px;
+`
+const SettingWrapper = styled.div<{darkBg?: boolean}>`
+  padding: 1.5rem 1.5rem;
+  background-color: ${({ theme, darkBg }) => darkBg && "#232E3B"};
+`
+
+const SettingsHeader = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  margin: 0 0 1.5rem;
+  color: ${({ theme }) => theme.text1};
+  align-items: center;
+  justify-content: space-between;
+
+  &:before {
+    position: absolute;
+    left: -1.5rem;
+    top: 3px;
+    height: 24px;
+    width: 2px;
+    content: "";
+    background-color: ${({ theme }) => theme.primary2};
+  }
+`
+
+const StyledRowFixed = styled(RowFixed)`
+  width: 100%;
 `
 
 export default function SettingsTab() {
@@ -150,8 +181,7 @@ export default function SettingsTab() {
         <ModalContentWrapper>
           <AutoColumn gap="lg">
             <RowBetween style={{ padding: '0 2rem' }}>
-              <div />
-              <Text fontWeight={500} fontSize={20}>
+              <Text fontWeight={500} fontSize={24}>
                 Are you sure?
               </Text>
               <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
@@ -185,7 +215,7 @@ export default function SettingsTab() {
       </Modal>
       <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
         <StyledMenuIcon>
-          <Cog />
+          { open ? <Close /> : <Cog />}
         </StyledMenuIcon>
         {expertMode ? (
           <EmojiWrapper>
@@ -197,45 +227,57 @@ export default function SettingsTab() {
       </StyledMenuButton>
       {open && (
         <MenuFlyout>
-          <AutoColumn gap="md" style={{ padding: '1rem' }}>
-            <RowFixed>
-              <Text fontWeight={600} fontSize={14}>
-                Miner Bribe Margin
-              </Text>
-              <QuestionHelper text="Lorem ipsum" />
-            </RowFixed>
-            <MinerBribeSlider />
-            <Text fontWeight={600} fontSize={14}>
-              Transaction Settings
-            </Text>
-            <TransactionSettings
-              rawSlippage={userSlippageTolerance}
-              setRawSlippage={setUserslippageTolerance}
-              deadline={ttl}
-              setDeadline={setTtl}
-            />
-            <Text fontWeight={600} fontSize={14}>
-              Interface Settings
-            </Text>
-            <RowBetween>
-              <RowFixed>
-                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                  Disable Multihops
-                </TYPE.black>
-                <QuestionHelper text="Restricts swaps to direct pairs only." />
-              </RowFixed>
-              <Toggle
-                id="toggle-disable-multihop-button"
-                isActive={singleHopOnly}
-                toggle={() => {
-                  ReactGA.event({
-                    category: 'Routing',
-                    action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                  })
-                  setSingleHopOnly(!singleHopOnly)
-                }}
+          <AutoColumn gap="md">
+            <SettingWrapper>
+              <StyledRowFixed>
+                <SettingsHeader>
+                  <Text fontWeight={600} fontSize={20}>
+                    Miner Bribe Margin
+                  </Text>
+                  <QuestionHelper text="Lorem ipsum" />
+                </SettingsHeader>
+              </StyledRowFixed>
+              <MinerBribeSlider />
+            </SettingWrapper>
+            <SettingWrapper darkBg>
+              <SettingsHeader>
+                <Text fontWeight={600} fontSize={20}>
+                  Transaction Settings
+                </Text>
+              </SettingsHeader>
+              <TransactionSettings
+                rawSlippage={userSlippageTolerance}
+                setRawSlippage={setUserslippageTolerance}
+                deadline={ttl}
+                setDeadline={setTtl}
               />
-            </RowBetween>
+            </SettingWrapper>  
+            <SettingWrapper>
+              <SettingsHeader>
+                <Text fontWeight={600} fontSize={20}>
+                  Interface Settings
+                </Text>
+              </SettingsHeader>
+              <RowBetween>
+                <StyledRowFixed>
+                  <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
+                    DISABLE MULTIHOPS
+                  </TYPE.black>
+                  <QuestionHelper text="Restricts swaps to direct pairs only." />
+                </StyledRowFixed>
+                <Toggle
+                  id="toggle-disable-multihop-button"
+                  isActive={singleHopOnly}
+                  toggle={() => {
+                    ReactGA.event({
+                      category: 'Routing',
+                      action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                    })
+                    setSingleHopOnly(!singleHopOnly)
+                  }}
+                />
+              </RowBetween>
+            </SettingWrapper>  
           </AutoColumn>
         </MenuFlyout>
       )}
