@@ -70,7 +70,7 @@ import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
 
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
-import { useUSDCValue } from '../../hooks/useUSDCPrice'
+// import { useUSDCValue } from '../../hooks/useUSDCPrice'
 
 const SwapWrapper = styled.div`
   background: ${({ theme }) => theme.bg6};
@@ -425,10 +425,7 @@ export default function Swap({ history }: RouteComponentProps) {
     bribeEstimate?.minBribe.toSignificant(6),
     bribeEstimate?.maxBribe.toSignificant(6)
   )
-  const minBribeUSDC = useUSDCValue(bribeEstimate?.minBribe)
-  // const maxBribeUSDC = useUSDCValue(bribeEstimate?.maxBribe)
 
-  console.log('min usdc bribe', minBribeUSDC?.toSignificant(6))
   return (
     <>
       <HeaderFrame>

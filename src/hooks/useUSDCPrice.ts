@@ -1,4 +1,4 @@
-import { ChainId, Currency, CurrencyAmount, Price, Token, Exchange } from '@alchemistcoin/sdk'
+import { ChainId, Currency, CurrencyAmount, TokenAmount, Price, Token, Exchange } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { useTradeExactOut } from './Trades'
@@ -7,7 +7,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 // USDC amount used when calculating spot price for a given currency.
 // The amount is large enough to filter low liquidity pairs.
-const usdcCurrencyAmount = CurrencyAmount.fromRawAmount(USDC, String(100_000e6))
+const usdcCurrencyAmount = new TokenAmount(USDC, String(100_000e6))
 
 /**
  * Returns the price in USDC of the input currency
@@ -24,11 +24,11 @@ export default function useUSDCPrice(currency?: Currency): Price | undefined {
     BigNumber.from('0'),
     BigNumber.from('0')
   )
+
   return useMemo(() => {
     if (!currency || !chainId) {
       return undefined
     }
-
     // return some fake price data for non-mainnet
     if (chainId !== ChainId.MAINNET) {
       const fakeUSDC = new Token(chainId, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'fUSDC', 'Fake USDC')
