@@ -84,3 +84,7 @@ export function useActivePopups(): AppState['application']['popupList'] {
   const list = useSelector((state: AppState) => state.application.popupList)
   return useMemo(() => list.filter(item => item.show), [list])
 }
+
+export function useSocketStatus(): AppState['application']['socketStatus'] {
+  return useSelector<AppState, AppState['application']['socketStatus']>(state => state.application.socketStatus)
+}

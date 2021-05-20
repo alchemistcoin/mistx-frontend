@@ -10,20 +10,34 @@ import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
 import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
 import { ChainId } from '@alchemistcoin/sdk'
-import { transactionToast } from 'components/Toasts/transaction'
+import { useAddPopup } from 'state/application/hooks'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
-  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE'
+  TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
+  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
+  TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS'
 }
 
 export enum Status {
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   FAILED_TRANSACTION = 'FAILED_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION'
+  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
+  CANCEL_TRANSACTION_PENDING = 'CANCEL_TRANSACTION_PENDING',
+  CANCEL_TRANSACTION_FAILED = 'CANCEL_TRANSACTION_FAILED',
+  CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL'
+}
+
+export enum Diagnosis {
+  LOWER_THAN_TAIL = 'LOWER_THAN_TAIL',
+  NOT_A_FLASHBLOCK = 'NOT_A_FLASHBLOCK',
+  BUNDLE_OUTBID = 'BUNDLE_OUTBID',
+  ERROR_API_BEHIND = 'ERROR_API_BEHIND',
+  MISSING_BLOCK_DATA = 'MISSING_BLOCK_DATA',
+  ERROR_UNKNOWN = 'ERROR_UNKNOWN'
 }
 
 export interface SocketSession {
@@ -44,6 +58,8 @@ export interface TransactionReq {
   swap: SwapReq
   bribe: BigNumberish
   routerAddress: string
+  estimatedEffectiveGasPrice: number
+  estimatedGas: number
 }
 
 export interface TransactionRes {
@@ -58,10 +74,19 @@ export interface TransactionProcessed {
   swap: SwapReq
   bribe: BigNumberish
   routerAddress: string
+  estimatedEffectiveGasPrice: number
+  estimatedGas: number
   timestamp: number // EPOCH
   sessionToken: string
   chainId: number
   simulateOnly: boolean
+}
+
+export interface TransactionDiagnosisRes {
+  transaction: TransactionProcessed
+  blockNumber: number
+  flashbotsResolution: string
+  mistxDiagnosis: Diagnosis
 }
 
 interface QuoteEventsMap {
@@ -69,7 +94,9 @@ interface QuoteEventsMap {
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
   [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
+  [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
+  [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -84,47 +111,44 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   autoConnect: true
 })
 
-function handleTransactionResponseToast(transaction: TransactionRes, hash: string, summary?: string) {
+function transactionResToastStatus(transaction: TransactionRes) {
+  let pending = false
+  let success = false
+  let message = transaction.message
+
   switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Failed',
-        summary,
-        error: true
-      })
+      break
+    case Status.CANCEL_TRANSACTION_FAILED:
       break
     case Status.PENDING_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Pending',
-        summary
-      })
+      pending = true
+      break
+    case Status.CANCEL_TRANSACTION_PENDING:
+      message = 'Cancellation pending'
+      pending = true
       break
     case Status.SUCCESSFUL_TRANSACTION:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Completed!',
-        summary,
-        success: true
-      })
+      success = true
+      break
+    case Status.CANCEL_TRANSACTION_SUCCESSFUL:
+      success = true
       break
     default:
-      transactionToast({
-        chainId: transaction.transaction.chainId,
-        hash,
-        status: 'Updated',
-        summary
-      })
+      pending = true
       break
+  }
+
+  return {
+    pending,
+    success,
+    message
   }
 }
 
 export default function Sockets(): null {
   const dispatch = useDispatch()
+  const addPopup = useAddPopup()
   const allTransactions = useAllTransactions()
   const updateTransaction = useTransactionUpdater()
   const removeTransaction = useTransactionRemover()
@@ -166,23 +190,50 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
-      console.log('transaction response', transaction)
       const hash = keccak256(transaction.transaction.serializedSwap)
+      const tx = allTransactions?.[hash]
+      const summary = tx?.summary
+      const completed = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
 
       const transactionId = {
         chainId: transaction.transaction.chainId,
         hash
       }
 
-      updateTransaction(transactionId, {
-        transaction: transaction.transaction,
-        message: transaction.message,
-        status: transaction.status
-      })
+      if (!completed) {
+        updateTransaction(transactionId, {
+          transaction: transaction.transaction,
+          message: transaction.message,
+          status: transaction.status
+        })
+      }
 
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
-      handleTransactionResponseToast(transaction, hash, summary)
+      addPopup(
+        {
+          txn: {
+            hash,
+            summary,
+            ...transactionResToastStatus(transaction)
+          }
+        },
+        hash
+      )
+    })
+
+    socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
+      console.log('transaction diagnosis', diagnosis)
+      const hash = keccak256(diagnosis.transaction.serializedSwap)
+
+      const transactionId = {
+        chainId: diagnosis.transaction.chainId,
+        hash
+      }
+
+      updateTransaction(transactionId, {
+        blockNumber: diagnosis.blockNumber,
+        flashbotsResolution: diagnosis.flashbotsResolution,
+        mistxDiagnosis: diagnosis.mistxDiagnosis
+      })
     })
 
     return () => {
@@ -192,8 +243,9 @@ export default function Sockets(): null {
       socket.off(Event.SOCKET_SESSION_RESPONSE)
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.TRANSACTION_RESPONSE)
+      socket.off(Event.TRANSACTION_DIAGNOSIS)
     }
-  }, [dispatch, allTransactions, removeTransaction, updateTransaction])
+  }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
 
   return null
 }
@@ -201,4 +253,8 @@ export default function Sockets(): null {
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
   console.log('websocket transaction sent', transaction)
+}
+
+export function emitTransactionCancellation(transaction: TransactionReq) {
+  socket.emit(Event.TRANSACTION_CANCEL_REQUEST, transaction)
 }

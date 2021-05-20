@@ -1,14 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Status, SwapReq } from 'websocket'
+import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
+  clearCompletedTransactions,
   clearAllTransactions,
   finalizeTransaction,
   removeTransaction,
   updateTransaction,
   SerializableTransactionReceipt
 } from './actions'
+import { isPendingTransaction } from './hooks'
 
 const now = () => new Date().getTime()
 
@@ -18,13 +20,18 @@ export interface TransactionDetails {
   summary?: string
   claim?: { recipient: string }
   receipt?: SerializableTransactionReceipt
+  processed?: TransactionProcessed
   lastCheckedBlockNumber?: number
   addedTime: number
   confirmedTime?: number
   from: string
   swap?: SwapReq
+  blockNumber?: number
+  status?: Status
   message?: string
-  status?: string
+  cancel?: Status
+  flashbotsResolution?: string
+  mistxDiagnosis?: Diagnosis
 }
 
 export interface TransactionState {
@@ -39,7 +46,7 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim } }) => {
       const tx = transactions[chainId]?.[hash]
-      if (tx && tx.status === Status.PENDING_TRANSACTION) {
+      if (tx && isPendingTransaction(tx)) {
         throw Error('Attempted to add existing transaction.')
       }
 
@@ -56,18 +63,65 @@ export default createReducer(initialState, builder =>
 
       transactions[chainId] = txs
     })
-    .addCase(updateTransaction, (transactions, { payload: { chainId, hash, status } }) => {
-      const tx = transactions[chainId]?.[hash]
-      if (!tx) {
-        return
+    .addCase(
+      updateTransaction,
+      (
+        transactions,
+        {
+          payload: {
+            chainId,
+            transaction,
+            hash,
+            blockNumber,
+            flashbotsResolution,
+            mistxDiagnosis,
+            status,
+            message,
+            cancel
+          }
+        }
+      ) => {
+        const tx = transactions[chainId]?.[hash]
+        if (!tx) {
+          return
+        }
+        // todo: update the transaction
+        if (transaction) tx.processed = transaction
+        if (status) tx.status = status
+        if (blockNumber) tx.blockNumber = blockNumber
+        if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution
+        if (mistxDiagnosis) tx.mistxDiagnosis = mistxDiagnosis
+
+        tx.cancel = cancel
+        tx.message = message
+
+        const txs = transactions[chainId] ?? {}
+        txs[hash] = tx
+
+        transactions[chainId] = txs
       }
-      // todo: update the transaction
-      tx.status = status
+    )
+    .addCase(clearCompletedTransactions, (transactions, { payload: { chainId } }) => {
+      if (!transactions[chainId]) return
+      let currentTransaction
+      transactions[chainId] = Object.keys(transactions[chainId]).reduce(
+        (
+          newTransactions: { [txHash: string]: TransactionDetails },
+          currentHash: string
+        ): { [txHash: string]: TransactionDetails } => {
+          currentTransaction = transactions[chainId][currentHash]
+          if (
+            (currentTransaction.status === Status.PENDING_TRANSACTION && !currentTransaction.receipt) || // socket transaction
+            (currentTransaction.receipt && typeof currentTransaction.receipt?.status === 'undefined')
+          ) {
+            // wrapped/unwrapped
+            newTransactions[currentHash] = currentTransaction
+          }
 
-      const txs = transactions[chainId] ?? {}
-      txs[hash] = tx
-
-      transactions[chainId] = txs
+          return newTransactions
+        },
+        {}
+      )
     })
     .addCase(clearAllTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return

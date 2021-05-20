@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
+import { Status, TransactionProcessed } from 'websocket'
 import { Gas } from './reducer'
 
 export type PopupContent =
@@ -7,7 +8,11 @@ export type PopupContent =
       txn: {
         hash: string
         success: boolean
+        pending: boolean
         summary?: string
+        status?: Status
+        message?: string
+        transaction?: TransactionProcessed
       }
     }
   | {

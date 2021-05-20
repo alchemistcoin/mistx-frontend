@@ -111,24 +111,24 @@ export const ButtonGray = styled(Base)`
 `
 
 export const ButtonSecondary = styled(Base)`
-  border: 1px solid ${({ theme }) => theme.btnSecondaryBg};
+  border: 1px solid ${({ theme }) => theme.primary2};
   color: ${({ theme }) => theme.primary1};
-  background: ${({ theme }) => theme.btnSecondaryBg};
+  background: ${({ theme }) => theme.primary2};
   background-color: transparent;
   font-size: 16px;
   border-radius: 12px;
   padding: ${({ padding }) => (padding ? padding : '10px')};
 
   &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => theme.btnSecondaryBg};
-    border: 1px solid ${({ theme }) => theme.btnSecondaryBg};
+    box-shadow: 0 0 0 1pt ${({ theme }) => theme.primary2};
+    border: 1px solid ${({ theme }) => theme.primary2};
   }
   &:hover {
-    border: 1px solid ${({ theme }) => theme.btnSecondaryBg};
+    border: 1px solid ${({ theme }) => theme.primary2};
   }
   &:active {
-    box-shadow: 0 0 0 1pt ${({ theme }) => theme.btnSecondaryBg};
-    border: 1px solid ${({ theme }) => theme.btnSecondaryBg};
+    box-shadow: 0 0 0 1pt ${({ theme }) => theme.primary2};
+    border: 1px solid ${({ theme }) => theme.primary2};
   }
   &:disabled {
     opacity: 50%;

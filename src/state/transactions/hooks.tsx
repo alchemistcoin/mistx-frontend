@@ -6,7 +6,8 @@ import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
-import { TransactionProcessed } from 'websocket'
+import { useAddPopup } from 'state/application/hooks'
+import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -32,6 +33,7 @@ export function useTransactionAdder(): (
   customData?: TransactionResponseUnsentData
 ) => void {
   const { chainId, account } = useActiveWeb3React()
+  const addPopup = useAddPopup()
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
@@ -54,8 +56,19 @@ export function useTransactionAdder(): (
         throw Error('No transaction hash found.')
       }
       dispatch(addTransaction({ hash, from: account, chainId: chainId ?? response.chainId, summary, claim }))
+      addPopup(
+        {
+          txn: {
+            hash,
+            pending: true,
+            success: false,
+            summary
+          }
+        },
+        hash
+      )
     },
-    [dispatch, chainId, account]
+    [addPopup, dispatch, chainId, account]
   )
 }
 
@@ -63,8 +76,11 @@ export function useTransactionUpdater(): (
   response: TransactionResponseIdentifier,
   customData?: {
     transaction?: TransactionProcessed
-    status?: string
+    status?: Status
     message?: string
+    blockNumber?: number
+    flashbotsResolution?: string
+    mistxDiagnosis?: Diagnosis
   }
 ) => void {
   const dispatch = useDispatch<AppDispatch>()
@@ -75,24 +91,77 @@ export function useTransactionUpdater(): (
       {
         transaction,
         message,
-        status
+        status,
+        blockNumber,
+        flashbotsResolution,
+        mistxDiagnosis
       }: {
         transaction?: TransactionProcessed
         message?: string
-        status?: string
+        status?: Status
+        blockNumber?: number
+        flashbotsResolution?: string
+        mistxDiagnosis?: Diagnosis
       } = {}
     ) => {
-      dispatch(
-        updateTransaction({
-          hash: response.hash,
-          chainId: response.chainId,
-          transaction,
-          status,
-          message
-        })
-      )
+      // update state differently for Transaction Cancellation
+      if (status?.includes('CANCEL')) {
+        dispatch(
+          updateTransaction({
+            hash: response.hash,
+            chainId: response.chainId,
+            transaction,
+            cancel: status,
+            status: status === Status.CANCEL_TRANSACTION_SUCCESSFUL ? Status.FAILED_TRANSACTION : undefined,
+            message
+          })
+        )
+      } else {
+        // normal state update for transaction changes
+        dispatch(
+          updateTransaction({
+            hash: response.hash,
+            chainId: response.chainId,
+            transaction,
+            status,
+            message,
+            blockNumber,
+            flashbotsResolution,
+            mistxDiagnosis
+          })
+        )
+      }
     },
     [dispatch]
+  )
+}
+
+export function useTransactionCanceller() {
+  return useCallback(
+    async (
+      response: TransactionResponseIdentifier,
+      {
+        transaction,
+        message,
+        status
+      }: {
+        transaction: TransactionProcessed
+        message?: string
+        status?: string
+      }
+    ) => {
+      emitTransactionCancellation({
+        chainId: transaction.chainId,
+        serializedSwap: transaction.serializedSwap,
+        serializedApprove: transaction.serializedApprove,
+        swap: transaction.swap,
+        bribe: transaction.bribe,
+        routerAddress: transaction.routerAddress,
+        estimatedEffectiveGasPrice: transaction.estimatedEffectiveGasPrice,
+        estimatedGas: transaction.estimatedGas
+      })
+    },
+    []
   )
 }
 
@@ -101,8 +170,6 @@ export function useTransactionRemover(): (response: { chainId: ChainId; hash: st
 
   return useCallback(
     (response: { chainId: ChainId; hash: string }) => {
-      console.log('remove transaction', response.chainId, response.hash)
-
       dispatch(
         removeTransaction({
           chainId: response.chainId,
@@ -128,7 +195,57 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
 
   if (!transactionHash || !transactions[transactionHash]) return false
 
-  return !transactions[transactionHash].receipt
+  const transaction = transactions[transactionHash]
+
+  return (
+    transaction.status === Status.PENDING_TRANSACTION ||
+    (typeof transaction.status === 'undefined' && !transaction.receipt)
+  )
+}
+
+export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
+  const transactions = useAllTransactions()
+
+  return useMemo(() => {
+    let transaction: TransactionDetails
+    return Object.keys(transactions).reduce((txs: { [txHash: string]: TransactionDetails }, hash: string) => {
+      transaction = transactions[hash]
+      if (
+        (transaction.status === Status.PENDING_TRANSACTION && !transaction.receipt) ||
+        (transaction.receipt && transaction.receipt.status !== 1)
+      ) {
+        txs[hash] = transaction
+      }
+      return txs
+    }, {})
+  }, [transactions])
+}
+
+export function isPendingTransaction(tx: TransactionDetails): boolean {
+  return !!(
+    tx.status !== Status.FAILED_TRANSACTION &&
+    tx.status !== Status.SUCCESSFUL_TRANSACTION &&
+    ((!tx.status && !tx.receipt) ||
+      tx.cancel === Status.CANCEL_TRANSACTION_PENDING ||
+      (tx.status === Status.PENDING_TRANSACTION && (!tx.receipt || tx.receipt.status !== 1)))
+  )
+}
+
+export function useHasPendingTransactions(): boolean {
+  const transactions = useAllTransactions()
+
+  return useMemo(() => {
+    let transaction: TransactionDetails
+    console.log('transactions', transactions)
+    return Object.keys(transactions).some(hash => {
+      transaction = transactions[hash]
+      return isPendingTransaction(transaction)
+    })
+  }, [transactions])
+}
+
+export function isSuccessfulTransaction(tx: TransactionDetails): boolean {
+  return !!(tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
 }
 
 /**
