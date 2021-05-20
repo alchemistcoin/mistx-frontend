@@ -23,7 +23,7 @@ const QuestionWrapper = styled.div`
 
   svg {
     circle, path {
-      stroke: ${({ theme }) => theme.primary2};
+      fill: ${({ theme }) => theme.primary2};
     }
   }
 `

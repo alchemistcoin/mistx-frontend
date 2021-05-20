@@ -10,6 +10,18 @@ type Props = {
   step: number
 }
 
+type ITrackProps = {
+  props: {
+    style: React.CSSProperties
+    ref: React.RefObject<any>
+    onMouseDown: (e: React.MouseEvent) => void
+    onTouchStart: (e: React.TouchEvent) => void
+  }
+  children: React.ReactNode
+  isDragged: boolean
+  disabled: boolean
+}
+
 const Slider = ({ max, min, onChange, value, step }: Props) => {
   const theme = useContext(ThemeContext)
   const [sliderValue, setSliderValue] = useState<number>(value)
@@ -33,10 +45,10 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
         min={min}
         max={max}
         onChange={values => onSliderChange(values)}
-        renderTrack={({ props, children }) => (
+        renderTrack={(props: ITrackProps) => (
           <div
-            onMouseDown={props.onMouseDown}
-            onTouchStart={props.onTouchStart}
+            onMouseDown={props.props.onMouseDown}
+            onTouchStart={props.props.onTouchStart}
             style={{
               height: '36px',
               display: 'flex',
@@ -44,7 +56,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
             }}
           >
             <div
-              ref={props.ref}
+              ref={props.props.ref}
               style={{
                 height: '5px',
                 width: '100%',
@@ -59,7 +71,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 cursor: 'pointer'
               }}
             >
-              {children}
+              {props.children}
             </div>
           </div>
         )}
@@ -75,7 +87,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             <div
@@ -88,7 +100,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 backgroundColor: '#FFF',
                 color: theme.text5,
                 padding: '0.25rem 0.5rem',
-                cursor: 'pointer',
+                cursor: 'pointer'
               }}
             >
               {value}
@@ -99,7 +111,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 width: '14px',
                 borderRadius: '100%',
                 backgroundColor: isDragged ? '#FFF' : '#FFF',
-                cursor: 'pointer',
+                cursor: 'pointer'
               }}
             />
           </div>
