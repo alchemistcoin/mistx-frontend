@@ -5,7 +5,7 @@ import { injected } from '../connectors'
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: '0xAd3442B69c450Cb657e3D46308a017DAbe604951',
   [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
-  [ChainId.GÖRLI]: '0x7c4EB67602083f579E60f18afEF2E40fdF9aE88A'
+  [ChainId.GÖRLI]: '0xf3f2A6D3FE0a2612571d1dE45aEae751f61f414E'
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
