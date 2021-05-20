@@ -108,15 +108,15 @@ const StyledAutoRow = styled(AutoRow)`
   }
 `
 
-// const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
-//   border-radius: 0 0 20px 20px;
-//   padding: 1.5rem 0;
-//   background-color: ${({ theme }) => theme.primary2};
+const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
+  border-radius: 0 0 20px 20px;
+  padding: 1.5rem 0;
+  background-color: ${({ theme }) => theme.primary2};
 
-//   &:disabled {
-//     background-color: #485361;
-//   }
-// `
+  &:disabled {
+    background-color: #485361;
+  }
+`
 
 const StyledButtonYellow = styled(ButtonYellow)`
   border-radius: 0 0 20px 20px;
@@ -383,7 +383,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleConfirmDismiss = useCallback(() => {
     setShowConfirmModal(false)
-    setSwapState({ tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
+    setSwapState({ tradeToConfirm, attemptingTxn, swapErrorMessage, txHash: undefined })
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onUserInput(Field.INPUT, '')
@@ -620,7 +620,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
                     </GreyCard>
                   ) : (
-                    <ButtonError
+                    <StyledButtonError
                       onClick={swapButtonAction}
                       id="swap-button"
                       disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
@@ -633,7 +633,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           ? `Price Impact Too High`
                           : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
                       </Text>
-                    </ButtonError>
+                    </StyledButtonError>
                   )}
                   {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
                   {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (

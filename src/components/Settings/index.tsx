@@ -107,8 +107,11 @@ const MenuFlyout = styled.span`
   right: 0rem;
   z-index: 100;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    min-width: 18.125rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    top: 52px;
+    right: 0;
+    left: 0;
+    min-width: auto;
   `};
 `
 
@@ -174,8 +177,9 @@ export default function SettingsTab() {
 
   useOnClickOutside(node, open ? toggle : undefined)
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
-    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
+    <>
     <StyledMenu ref={node as any}>
       <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
         <ModalContentWrapper>
@@ -223,64 +227,65 @@ export default function SettingsTab() {
           </EmojiWrapper>
         ) : null}
       </StyledMenuButton>
-      {open && (
-        <MenuFlyout>
-          <AutoColumn gap="md">
-            <SettingWrapper>
-              <StyledRowFixed>
-                <SettingsHeader>
-                  <Text fontWeight={600} fontSize={20}>
-                    Miner Bribe Margin
-                  </Text>
-                  <QuestionHelper text="Lorem ipsum" />
-                </SettingsHeader>
-              </StyledRowFixed>
-              <MinerBribeSlider />
-            </SettingWrapper>
-            <SettingWrapper darkBg>
-              <SettingsHeader>
-                <Text fontWeight={600} fontSize={20}>
-                  Transaction Settings
-                </Text>
-              </SettingsHeader>
-              <TransactionSettings
-                rawSlippage={userSlippageTolerance}
-                setRawSlippage={setUserslippageTolerance}
-                deadline={ttl}
-                setDeadline={setTtl}
-              />
-            </SettingWrapper>
-            <SettingWrapper>
-              <SettingsHeader>
-                <Text fontWeight={600} fontSize={20}>
-                  Interface Settings
-                </Text>
-              </SettingsHeader>
-              <RowBetween flexDirection="column">
-                <StyledRowFixed>
-                  <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
-                    DISABLE MULTIHOPS
-                  </TYPE.black>
-                  <QuestionHelper text="Restricts swaps to direct pairs only." />
-                </StyledRowFixed>
-                <StyledRowFixed marginTop="0.5rem">
-                  <Toggle
-                    id="toggle-disable-multihop-button"
-                    isActive={singleHopOnly}
-                    toggle={() => {
-                      ReactGA.event({
-                        category: 'Routing',
-                        action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                      })
-                      setSingleHopOnly(!singleHopOnly)
-                    }}
-                  />
-                </StyledRowFixed>
-              </RowBetween>
-            </SettingWrapper>
-          </AutoColumn>
-        </MenuFlyout>
-      )}
     </StyledMenu>
+    {open && (
+      <MenuFlyout>
+        <AutoColumn gap="md">
+          <SettingWrapper>
+            <StyledRowFixed>
+              <SettingsHeader>
+                <Text fontWeight={600} fontSize={20}>
+                  Miner Bribe Margin
+                </Text>
+                <QuestionHelper text="Lorem ipsum" />
+              </SettingsHeader>
+            </StyledRowFixed>
+            <MinerBribeSlider />
+          </SettingWrapper>
+          <SettingWrapper darkBg>
+            <SettingsHeader>
+              <Text fontWeight={600} fontSize={20}>
+                Transaction Settings
+              </Text>
+            </SettingsHeader>
+            <TransactionSettings
+              rawSlippage={userSlippageTolerance}
+              setRawSlippage={setUserslippageTolerance}
+              deadline={ttl}
+              setDeadline={setTtl}
+            />
+          </SettingWrapper>
+          <SettingWrapper>
+            <SettingsHeader>
+              <Text fontWeight={600} fontSize={20}>
+                Interface Settings
+              </Text>
+            </SettingsHeader>
+            <RowBetween flexDirection="column">
+              <StyledRowFixed>
+                <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
+                  DISABLE MULTIHOPS
+                </TYPE.black>
+                <QuestionHelper text="Restricts swaps to direct pairs only." />
+              </StyledRowFixed>
+              <StyledRowFixed marginTop="0.5rem">
+                <Toggle
+                  id="toggle-disable-multihop-button"
+                  isActive={singleHopOnly}
+                  toggle={() => {
+                    ReactGA.event({
+                      category: 'Routing',
+                      action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                    })
+                    setSingleHopOnly(!singleHopOnly)
+                  }}
+                />
+              </StyledRowFixed>
+            </RowBetween>
+          </SettingWrapper>
+        </AutoColumn>
+      </MenuFlyout>
+    )}
+  </>
   )
 }
