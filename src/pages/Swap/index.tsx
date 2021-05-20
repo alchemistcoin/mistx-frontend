@@ -262,9 +262,14 @@ export default function Swap({ history }: RouteComponentProps) {
   // info modal
   const [showInfoModal, setShowInfoModal] = useState(false)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
-  const openShowInfoModal = () => {
-    setShowConfirmModal(false)
-    setShowInfoModal(true)
+  // const openShowInfoModal = () => {
+  //   setShowConfirmModal(false)
+  //   setShowInfoModal(true)
+  // }
+
+  const displayConfirmModal = () => {
+    setShowInfoModal(false)
+    setShowConfirmModal(true)
   }
 
   const hideWarningModalPerference = localStorage.getItem('hideWarningModal')
@@ -383,7 +388,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleConfirmDismiss = useCallback(() => {
     setShowConfirmModal(false)
-    setSwapState({ tradeToConfirm, attemptingTxn, swapErrorMessage, txHash: undefined })
+    setSwapState({ tradeToConfirm, attemptingTxn, swapErrorMessage: undefined, txHash: undefined })
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onUserInput(Field.INPUT, '')
@@ -413,21 +418,26 @@ export default function Swap({ history }: RouteComponentProps) {
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
   const swapButtonAction = () => {
-    if (isExpertMode) {
-      handleSwap()
+    if (!hideWarningModalPerference) {
+      setShowInfoModal(true)
     } else {
-      if (hideWarningModalPerference) {
-        setShowConfirmModal(true)
-      } else {
-        setSwapState({
-          tradeToConfirm: trade,
-          swapErrorMessage: undefined,
-          attemptingTxn: false,
-          txHash: undefined
-        })
-        setShowConfirmModal(true)
-      }
+      setShowConfirmModal(true)
     }
+    // if (isExpertMode) {
+    //   handleSwap()
+    // } else {
+    //   if (hideWarningModalPerference) {
+    //     setShowConfirmModal(true)
+    //   } else {
+    //     setSwapState({
+    //       tradeToConfirm: trade,
+    //       swapErrorMessage: undefined,
+    //       attemptingTxn: false,
+    //       txHash: undefined
+    //     })
+    //     setShowConfirmModal(true)
+    //   }
+    // }
   }
 
   console.log('-------------------')
@@ -454,7 +464,7 @@ export default function Swap({ history }: RouteComponentProps) {
       <ConfirmInfoModal
         isOpen={showInfoModal}
         onDismiss={handleInfoModalDismiss}
-        onConfirm={handleSwap}
+        onConfirm={displayConfirmModal}
         trade={trade}
         attemptingTxn={attemptingTxn}
       />
@@ -467,7 +477,7 @@ export default function Swap({ history }: RouteComponentProps) {
         txHash={txHash}
         recipient={recipient}
         allowedSlippage={allowedSlippage}
-        onConfirm={hideWarningModalPerference ? handleSwap : openShowInfoModal}
+        onConfirm={handleSwap}
         swapErrorMessage={swapErrorMessage}
         onDismiss={handleConfirmDismiss}
       />
