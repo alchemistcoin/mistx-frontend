@@ -494,26 +494,25 @@ export default function Swap({ history }: RouteComponentProps) {
           <SwapHeader />
           <Wrapper id="swap-page">
             <SwapWrapper>
-
-            <AutoColumn>
-              <InputWrapper>
-                {currencies[Field.INPUT] ? (
-                  <CurrencyInputPanel
-                    value={formattedAmounts[Field.INPUT]}
-                    showMaxButton={!atMaxAmountInput}
-                    currency={currencies[Field.INPUT]}
-                    onUserInput={handleTypeInput}
-                    onMax={handleMaxInput}
-                    onCurrencySelect={handleInputSelect}
-                    otherCurrency={currencies[Field.OUTPUT]}
-                    type={Field.INPUT}
-                    id="swap-currency-input"
-                  />
-                ) : (
-                  <CurrencySelect onCurrencySelect={handleInputSelect} />
-                )}
-              </InputWrapper>
-              <StyledAutoRow
+              <AutoColumn>
+                <InputWrapper>
+                  {currencies[Field.INPUT] ? (
+                    <CurrencyInputPanel
+                      value={formattedAmounts[Field.INPUT]}
+                      showMaxButton={!atMaxAmountInput}
+                      currency={currencies[Field.INPUT]}
+                      onUserInput={handleTypeInput}
+                      onMax={handleMaxInput}
+                      onCurrencySelect={handleInputSelect}
+                      otherCurrency={currencies[Field.OUTPUT]}
+                      type={Field.INPUT}
+                      id="swap-currency-input"
+                    />
+                  ) : (
+                    <CurrencySelect onCurrencySelect={handleInputSelect} />
+                  )}
+                </InputWrapper>
+                <StyledAutoRow
                   justify={isExpertMode ? 'space-between' : 'center'}
                   style={{ margin: '0.5rem 0 0.5rem', padding: '0 1rem' }}
                 >
@@ -537,38 +536,38 @@ export default function Swap({ history }: RouteComponentProps) {
                   <OutputWrapper>
                     <RelativeWrapper>
                       <CurrencyInputPanel
-                         value={formattedAmounts[Field.OUTPUT]}
-                         onUserInput={handleTypeOutput}
-                         showMaxButton={false}
-                         currency={currencies[Field.OUTPUT]}
-                         onCurrencySelect={handleOutputSelect}
-                         otherCurrency={currencies[Field.INPUT]}
-                         type={Field.OUTPUT}
-                         id="swap-currency-output"
-                       />
-                     </RelativeWrapper>
-                   </OutputWrapper>
-                 ) : (
-                   <SelectWrapper>
-                     <CurrencySelect onCurrencySelect={handleOutputSelect} />
-                   </SelectWrapper>
-                 )}
- 
-                 {recipient !== null && !showWrap ? (
-                   <>
-                     <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                       <ArrowWrapper clickable={false}>
-                         <ArrowDownCircled data-test="arrow-down" />
-                       </ArrowWrapper>
-                       <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
-                         - Remove send
-                       </LinkStyledButton>
-                     </AutoRow>
-                     <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
-                   </>
-                 ) : null}
- 
-                 {/* showWrap
+                        value={formattedAmounts[Field.OUTPUT]}
+                        onUserInput={handleTypeOutput}
+                        showMaxButton={false}
+                        currency={currencies[Field.OUTPUT]}
+                        onCurrencySelect={handleOutputSelect}
+                        otherCurrency={currencies[Field.INPUT]}
+                        type={Field.OUTPUT}
+                        id="swap-currency-output"
+                      />
+                    </RelativeWrapper>
+                  </OutputWrapper>
+                ) : (
+                  <SelectWrapper>
+                    <CurrencySelect onCurrencySelect={handleOutputSelect} />
+                  </SelectWrapper>
+                )}
+
+                {recipient !== null && !showWrap ? (
+                  <>
+                    <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
+                      <ArrowWrapper clickable={false}>
+                        <ArrowDownCircled data-test="arrow-down" />
+                      </ArrowWrapper>
+                      <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
+                        - Remove send
+                      </LinkStyledButton>
+                    </AutoRow>
+                    <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
+                  </>
+                ) : null}
+
+                {/* showWrap
                      ? null
                      : (
                      <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
@@ -650,7 +649,6 @@ export default function Swap({ history }: RouteComponentProps) {
                   ) : null}
                 </BottomGrouping>
               )}
-
             </SwapWrapper>
           </Wrapper>
         </AppBody>
