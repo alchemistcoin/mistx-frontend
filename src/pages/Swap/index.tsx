@@ -128,7 +128,7 @@ const StyledButtonYellow = styled(ButtonYellow)`
   &:disabled {
     background-color: #485361;
   }
-` 
+`
 
 const LoaderWrapper = styled.div`
   align-items: center;

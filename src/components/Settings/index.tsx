@@ -180,112 +180,112 @@ export default function SettingsTab() {
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
     <>
-    <StyledMenu ref={node as any}>
-      <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
-        <ModalContentWrapper>
-          <AutoColumn gap="lg">
-            <RowBetween style={{ padding: '0 2rem' }}>
-              <Text fontWeight={500} fontSize={24}>
-                Are you sure?
-              </Text>
-              <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
-            </RowBetween>
-            <Break />
-            <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
-              <Text fontWeight={500} fontSize={20}>
-                Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
-                in bad rates and lost funds.
-              </Text>
-              <Text fontWeight={600} fontSize={20}>
-                ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.
-              </Text>
-              <ButtonError
-                error={true}
-                padding={'12px'}
-                onClick={() => {
-                  if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
-                    toggleExpertMode()
-                    setShowConfirmation(false)
-                  }
-                }}
-              >
-                <Text fontSize={20} fontWeight={500} id="confirm-expert-mode">
-                  Turn On Expert Mode
+      <StyledMenu ref={node as any}>
+        <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
+          <ModalContentWrapper>
+            <AutoColumn gap="lg">
+              <RowBetween style={{ padding: '0 2rem' }}>
+                <Text fontWeight={500} fontSize={24}>
+                  Are you sure?
                 </Text>
-              </ButtonError>
+                <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
+              </RowBetween>
+              <Break />
+              <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
+                <Text fontWeight={500} fontSize={20}>
+                  Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
+                  in bad rates and lost funds.
+                </Text>
+                <Text fontWeight={600} fontSize={20}>
+                  ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.
+                </Text>
+                <ButtonError
+                  error={true}
+                  padding={'12px'}
+                  onClick={() => {
+                    if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
+                      toggleExpertMode()
+                      setShowConfirmation(false)
+                    }
+                  }}
+                >
+                  <Text fontSize={20} fontWeight={500} id="confirm-expert-mode">
+                    Turn On Expert Mode
+                  </Text>
+                </ButtonError>
+              </AutoColumn>
             </AutoColumn>
-          </AutoColumn>
-        </ModalContentWrapper>
-      </Modal>
-      <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
-        <StyledMenuIcon>{open ? <Close /> : <Cog />}</StyledMenuIcon>
-        {expertMode ? (
-          <EmojiWrapper>
-            <span role="img" aria-label="wizard-icon">
-              🧙
-            </span>
-          </EmojiWrapper>
-        ) : null}
-      </StyledMenuButton>
-    </StyledMenu>
-    {open && (
-      <MenuFlyout>
-        <AutoColumn gap="md">
-          <SettingWrapper>
-            <StyledRowFixed>
+          </ModalContentWrapper>
+        </Modal>
+        <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
+          <StyledMenuIcon>{open ? <Close /> : <Cog />}</StyledMenuIcon>
+          {expertMode ? (
+            <EmojiWrapper>
+              <span role="img" aria-label="wizard-icon">
+                🧙
+              </span>
+            </EmojiWrapper>
+          ) : null}
+        </StyledMenuButton>
+      </StyledMenu>
+      {open && (
+        <MenuFlyout>
+          <AutoColumn gap="md">
+            <SettingWrapper>
+              <StyledRowFixed>
+                <SettingsHeader>
+                  <Text fontWeight={600} fontSize={20}>
+                    Miner Bribe Margin
+                  </Text>
+                  <QuestionHelper text="Lorem ipsum" />
+                </SettingsHeader>
+              </StyledRowFixed>
+              <MinerBribeSlider />
+            </SettingWrapper>
+            <SettingWrapper darkBg>
               <SettingsHeader>
                 <Text fontWeight={600} fontSize={20}>
-                  Miner Bribe Margin
+                  Transaction Settings
                 </Text>
-                <QuestionHelper text="Lorem ipsum" />
               </SettingsHeader>
-            </StyledRowFixed>
-            <MinerBribeSlider />
-          </SettingWrapper>
-          <SettingWrapper darkBg>
-            <SettingsHeader>
-              <Text fontWeight={600} fontSize={20}>
-                Transaction Settings
-              </Text>
-            </SettingsHeader>
-            <TransactionSettings
-              rawSlippage={userSlippageTolerance}
-              setRawSlippage={setUserslippageTolerance}
-              deadline={ttl}
-              setDeadline={setTtl}
-            />
-          </SettingWrapper>
-          <SettingWrapper>
-            <SettingsHeader>
-              <Text fontWeight={600} fontSize={20}>
-                Interface Settings
-              </Text>
-            </SettingsHeader>
-            <RowBetween flexDirection="column">
-              <StyledRowFixed>
-                <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
-                  DISABLE MULTIHOPS
-                </TYPE.black>
-                <QuestionHelper text="Restricts swaps to direct pairs only." />
-              </StyledRowFixed>
-              <StyledRowFixed marginTop="0.5rem">
-                <Toggle
-                  id="toggle-disable-multihop-button"
-                  isActive={singleHopOnly}
-                  toggle={() => {
-                    ReactGA.event({
-                      category: 'Routing',
-                      action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                    })
-                    setSingleHopOnly(!singleHopOnly)
-                  }}
-                />
-              </StyledRowFixed>
-            </RowBetween>
-          </SettingWrapper>
-        </AutoColumn>
-      </MenuFlyout>
-    )}
-  </>
+              <TransactionSettings
+                rawSlippage={userSlippageTolerance}
+                setRawSlippage={setUserslippageTolerance}
+                deadline={ttl}
+                setDeadline={setTtl}
+              />
+            </SettingWrapper>
+            <SettingWrapper>
+              <SettingsHeader>
+                <Text fontWeight={600} fontSize={20}>
+                  Interface Settings
+                </Text>
+              </SettingsHeader>
+              <RowBetween flexDirection="column">
+                <StyledRowFixed>
+                  <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
+                    DISABLE MULTIHOPS
+                  </TYPE.black>
+                  <QuestionHelper text="Restricts swaps to direct pairs only." />
+                </StyledRowFixed>
+                <StyledRowFixed marginTop="0.5rem">
+                  <Toggle
+                    id="toggle-disable-multihop-button"
+                    isActive={singleHopOnly}
+                    toggle={() => {
+                      ReactGA.event({
+                        category: 'Routing',
+                        action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                      })
+                      setSingleHopOnly(!singleHopOnly)
+                    }}
+                  />
+                </StyledRowFixed>
+              </RowBetween>
+            </SettingWrapper>
+          </AutoColumn>
+        </MenuFlyout>
+      )}
+    </>
   )
 }
