@@ -213,7 +213,6 @@ export default function TransactionConfirmationModal({
 
   if (!chainId) return null
 
-  // confirmation screen
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
       {attemptingTxn ? (
