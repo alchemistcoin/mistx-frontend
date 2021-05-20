@@ -96,6 +96,8 @@ export default function ConfirmSwapModal({
     [onDismiss, modalBottom, modalHeader, swapErrorMessage]
   )
 
+  console.log('--- log, attemptingTxn, hash', attemptingTxn, txHash)
+
   return (
     <TransactionConfirmationModal
       isOpen={isOpen}
