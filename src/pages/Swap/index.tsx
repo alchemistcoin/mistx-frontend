@@ -70,7 +70,6 @@ import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
 
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
-// import { useUSDCValue } from '../../hooks/useUSDCPrice'
 
 const SwapWrapper = styled.div`
   background: ${({ theme }) => theme.bg6};
