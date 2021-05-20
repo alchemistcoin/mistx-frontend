@@ -55,7 +55,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                   min: min,
                   max: max
                 }),
-                alignSelf: 'center'
+                alignSelf: 'center',
+                cursor: 'pointer'
               }}
             >
               {children}
@@ -73,7 +74,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
               border: `2px solid ${theme.primary2}`,
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              cursor: 'pointer',
             }}
           >
             <div
@@ -85,7 +87,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 borderRadius: '4px',
                 backgroundColor: '#FFF',
                 color: theme.text5,
-                padding: '0.25rem 0.5rem'
+                padding: '0.25rem 0.5rem',
+                cursor: 'pointer',
               }}
             >
               {value}
@@ -95,7 +98,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 height: '14px',
                 width: '14px',
                 borderRadius: '100%',
-                backgroundColor: isDragged ? '#FFF' : '#FFF'
+                backgroundColor: isDragged ? '#FFF' : '#FFF',
+                cursor: 'pointer',
               }}
             />
           </div>

@@ -180,7 +180,7 @@ export default function SettingsTab() {
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
     <>
-      <StyledMenu ref={node as any}>
+      <StyledMenu>
         <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
           <ModalContentWrapper>
             <AutoColumn gap="lg">
@@ -229,7 +229,7 @@ export default function SettingsTab() {
         </StyledMenuButton>
       </StyledMenu>
       {open && (
-        <MenuFlyout>
+        <MenuFlyout ref={node as any}>
           <AutoColumn gap="md">
             <SettingWrapper>
               <StyledRowFixed>
