@@ -49,7 +49,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
     setSliderThumbLabel(SLIDER_VALUE_TO_THUMB_LABEL_MAP[values[0]])
     setSliderValue(values)
     onChange(values[0])
-  } 
+  }
 
   const minerBribeContent = (index: any) => {
     if (bribeEstimate) {
@@ -95,36 +95,40 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 ...props.props.style,
                 position: 'absolute',
                 bottom: '-50px'
-              }}>
+              }}
+            >
+              <div
+                style={{
+                  ...props.props.style,
+                  position: 'relative',
+                  width: '70px',
+                  left: '-35px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center'
+                }}
+              >
                 <div
                   style={{
-                    ...props.props.style,
-                    position: 'relative',
-                    width: '70px',
-                    left: '-35px',
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                  }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      textAlign: 'center',
-                      alignItems: 'center',
-                      fontSize: '14px'
-                  }}>
-                    {SLIDER_VALUE_TO_LABEL_MAP[props.index]}
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      textAlign: 'center',
-                      alignItems: 'center',
-                      fontSize: '14px'
-                  }}>
-                    {minerBribeContent(props.index)}
-                  </div>
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    fontSize: '14px'
+                  }}
+                >
+                  {SLIDER_VALUE_TO_LABEL_MAP[props.index]}
                 </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    fontSize: '14px'
+                  }}
+                >
+                  {minerBribeContent(props.index)}
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -202,7 +206,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 cursor: 'pointer',
                 width: '120px',
                 textAlign: 'center',
-                zIndex: 3,
+                zIndex: 3
               }}
             >
               {sliderThumbLabel}
