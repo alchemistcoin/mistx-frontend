@@ -25,6 +25,7 @@ const StyledInput = styled.input<{
   font: inherit;
   font-size: ${({ fontSize }) => fontSize ?? '24px'};
   font-weight: 700;
+  margin: 0 0 0.5rem 0;
 
   ::-webkit-search-decoration {
     -webkit-appearance: none;
@@ -77,7 +78,7 @@ export const Input = React.memo(function InnerInput({
       // universal input options
       inputMode="decimal"
       title="Token Amount"
-      fontSize={'2.8rem'}
+      fontSize={'2.2rem'}
       autoComplete="off"
       autoCorrect="off"
       // text-specific options

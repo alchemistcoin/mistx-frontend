@@ -45,13 +45,14 @@ const BodyWrapper = styled.div`
     padding: 16px;
     padding-top: 2rem;
     padding-bottom: 6rem;
+    margin-bottom: 72px;
   `};
 
   z-index: 1;
 `
 
 const Marginer = styled.div`
-  margin-top: 5rem;
+  margin-top: 2.5rem;
 `
 
 export default function App() {

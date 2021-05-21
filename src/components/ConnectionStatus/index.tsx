@@ -18,7 +18,7 @@ const StyledPolling = styled.div<{ connected: boolean }>`
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    display: none;
+    bottom: 100px;
   `}
 `
 const StyledPollingDot = styled.div<{ connected: boolean }>`

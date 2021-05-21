@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next'
 const StyledSwapHeader = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.text2};
-  font-size: 2.25rem;
+  font-size: 2rem;
   display: flex;
   justify-content: space-between;
-  padding: 0 1rem 0 1.15rem;
+  padding: 0 1rem 0 1.5rem;
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -23,7 +23,7 @@ export default function SwapHeader() {
   const { t } = useTranslation()
   return (
     <StyledSwapHeader>
-      <TYPE.black fontWeight="700">{t('Swap')}</TYPE.black>
+      <TYPE.black fontWeight="700">{t('Swap Tokens')}</TYPE.black>
       <Settings />
     </StyledSwapHeader>
   )

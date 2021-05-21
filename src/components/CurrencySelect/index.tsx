@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
-
+import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 import tokenHandSvg from '../../assets/svg/token_hand.svg'
 
 const TokenSelectButton = styled.button`
@@ -15,9 +15,11 @@ const TokenSelectButton = styled.button`
   display: flex;
   font-weight: 700;
   font-size: 1.1rem;
+  border-radius: 1.5rem;
   height: 4.5rem;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
+  padding: 0 1rem;
 
   :hover {
     background-color: ${({ theme }) => darken(0.05, theme.yellow1)};
@@ -29,6 +31,30 @@ const TokenHandImage = styled.img`
   margin-right: 1rem;
 `
 
+const DownArrow = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const StyledDropDown = styled(DropDown)`
+  display: flex;
+  width: 10px;
+  height: auto;
+
+  path {
+    stroke: ${({ theme }) => theme.text5};
+    stroke-width: 2.5px;
+  }
+`
+
+const TokenSelectButtonWrapper = styled.div`
+  display: flex;
+`
 interface CurrencySelectProps {
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
@@ -60,8 +86,13 @@ export default function CurrencySelect({
           }
         }}
       >
-        <TokenHandImage src={tokenHandSvg} />
-        Select a Token
+        <TokenSelectButtonWrapper>
+          <TokenHandImage src={tokenHandSvg} />
+          Select a Token first
+        </TokenSelectButtonWrapper>
+        <DownArrow>
+          <StyledDropDown />
+        </DownArrow>
       </TokenSelectButton>
       {!disableCurrencySelect && onCurrencySelect && (
         <CurrencySearchModal
