@@ -22,7 +22,7 @@ const TransactionWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.125rem;
+  padding: .25rem 0;
 `
 
 const TransactionStatusText = styled.div`
@@ -36,11 +36,10 @@ const TransactionStatusText = styled.div`
 
 const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: boolean }>`
   border-radius: 0.5rem;
-  padding: 0.25rem 0rem;
   text-decoration: none !important;
   flex: 1;
 
-  :hover {
+  :hover .transaction-status-text {
     color: ${({ theme }) => theme.text1};
     text-decoration: underline;
   }
@@ -101,9 +100,9 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const Row = (
     <RowFixed flex="1">
-      <TransactionStatusText>
+      <TransactionStatusText className="transaction-status-text">
         {summary ?? truncateStringMiddle(hash, 6, 7)}
-        {success ? '&nbsp;↗' : ''}
+        {success ? ' ↗' : ''}
       </TransactionStatusText>
     </RowFixed>
   )
