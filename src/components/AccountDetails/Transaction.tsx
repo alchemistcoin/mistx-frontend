@@ -22,7 +22,7 @@ const TransactionWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: .25rem 0;
+  padding: 0.25rem 0;
 `
 
 const TransactionStatusText = styled.div`
