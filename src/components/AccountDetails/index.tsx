@@ -199,12 +199,22 @@ const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
 `
 
+const EmptyResults = styled.div`
+  color: ${({ theme }) => theme.text3};
+  font-size: 0.825rem;
+  font-weight: 500;
+`
+
 function renderTransactions(transactions: string[]) {
   return (
     <TransactionListWrapper>
-      {transactions.map((hash, i) => {
-        return <Transaction key={i} hash={hash} />
-      })}
+      {!!transactions.length ? (
+        transactions.map((hash, i) => {
+          return <Transaction key={i} hash={hash} />
+        })
+      ) : (
+        <EmptyResults>Nothing here yet</EmptyResults>
+      )}
     </TransactionListWrapper>
   )
 }
@@ -394,10 +404,13 @@ export default function AccountDetails({
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
           <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>Recent Transactions</TYPE.body>
-            <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear completed)</LinkStyledButton>
+            <TYPE.body>Pending Transactions</TYPE.body>
           </AutoRow>
           {renderTransactions(pendingTransactions)}
+          <AutoRow mb={'1rem'} mt={'2rem'} style={{ justifyContent: 'space-between' }}>
+            <TYPE.body>Recent Transactions</TYPE.body>
+            <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
+          </AutoRow>
           {renderTransactions(confirmedTransactions)}
         </LowerSection>
       ) : (
