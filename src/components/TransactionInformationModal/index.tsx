@@ -5,7 +5,7 @@ import { CloseIcon } from '../../theme/components'
 import { RowBetween } from '../Row'
 import { AutoColumn } from '../Column'
 import { ButtonYellow } from '../../components/Button'
-import { ExternalLink } from '../../theme'
+import Image from '../../assets/images/eth_sign_warning.png'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -32,6 +32,21 @@ const StyledLabel = styled.label`
 
 const StyledInput = styled.input`
   cursor: pointer;
+  margin-right: 0.5rem;
+`
+
+const ImageWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1.5rem;
+  height: 100%;
+  height: 14rem;
+
+  img {
+    display: flex;
+    height: 100%;
+  }
 `
 
 interface ConfirmationModalProps {
@@ -54,35 +69,32 @@ export default function TransactionInformationModal({ onDismiss, onContinue }: C
         <Section>
           <RowBetween>
             <Text fontWeight={500} fontSize={20}>
-              Signing Your Swap
+              Heads up!
             </Text>
             <CloseIcon onClick={onDismiss} />
           </RowBetween>
-          <RowBetween margin="2rem 0 0">
+          <RowBetween margin="0.5rem 0 0" flexDirection="column">
+            <ImageWrapper>
+              <img src={Image} />
+            </ImageWrapper>
             <Text fontWeight={300} fontSize={16}>
-              Due to a limitation with MetaMask you will see a red warning message before signing your transaction. This
-              is nothing to worry about your funds are safe.
+              mistX is completely free of Gas Fees, and uses an extra layer of security called MEV. Metamask is still due to update to the new security measures and will prompt a Signature request and a warming. This is an expected behaviour. Please press on Sign when the popup appears.
             </Text>
           </RowBetween>
           <RowBetween margin="1.5rem 0 0">
             <Text fontWeight={300} fontSize={16}>
-              <ExternalLink href="https://github.com/MetaMask/metamask-extension/issues/10914">
-                Find out more
-              </ExternalLink>
-            </Text>
-            <Text fontWeight={300} fontSize={16}>
-              <StyledLabel htmlFor="hideWarningModal">Hide this next time</StyledLabel>{' '}
               <StyledInput
                 type="checkbox"
                 id="hideWarningModal"
                 name="hideWarningModal"
                 onChange={toggleModalPerference}
               />
+              <StyledLabel htmlFor="hideWarningModal">Dont show this message next time</StyledLabel>
             </Text>
           </RowBetween>
         </Section>
         <BottomSection gap="12px">
-          <Button onClick={onContinue}>Continue</Button>
+          <Button onClick={onContinue}>I understand</Button>
         </BottomSection>
       </Wrapper>
     </>
