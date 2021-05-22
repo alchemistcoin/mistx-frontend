@@ -222,11 +222,7 @@ export function usePendingTransactions(): { [txHash: string]: TransactionDetails
 }
 
 export function isPendingTransaction(tx: TransactionDetails): boolean {
-  return !!(
-    tx.status !== Status.FAILED_TRANSACTION &&
-    tx.status !== Status.SUCCESSFUL_TRANSACTION &&
-    !tx.receipt
-  )
+  return !!(tx.status !== Status.FAILED_TRANSACTION && tx.status !== Status.SUCCESSFUL_TRANSACTION && !tx.receipt)
 }
 
 export function useHasPendingTransactions(): boolean {

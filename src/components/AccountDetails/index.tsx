@@ -201,25 +201,20 @@ const MainWalletAction = styled(WalletAction)`
 
 const EmptyResults = styled.div`
   color: ${({ theme }) => theme.text3};
-  font-size: .825rem;
+  font-size: 0.825rem;
   font-weight: 500;
 `
 
 function renderTransactions(transactions: string[]) {
   return (
     <TransactionListWrapper>
-      {!!transactions.length
-        ? (
-          transactions.map((hash, i) => {
-            return <Transaction key={i} hash={hash} />
-          })
-        )
-        : (
-          <EmptyResults>
-            Nothing here yet
-          </EmptyResults>
-        )
-      }
+      {!!transactions.length ? (
+        transactions.map((hash, i) => {
+          return <Transaction key={i} hash={hash} />
+        })
+      ) : (
+        <EmptyResults>Nothing here yet</EmptyResults>
+      )}
     </TransactionListWrapper>
   )
 }

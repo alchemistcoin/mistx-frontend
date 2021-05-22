@@ -22,7 +22,7 @@ const TransactionWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-bottom: .125rem;
+  margin-bottom: 0.125rem;
 `
 
 const TransactionStatusText = styled.div`
@@ -103,10 +103,7 @@ export default function Transaction({ hash }: { hash: string }) {
     <RowFixed flex="1">
       <TransactionStatusText>
         {summary ?? truncateStringMiddle(hash, 6, 7)}
-        {success
-          ? '&nbsp;↗'
-          : ''
-        }
+        {success ? '&nbsp;↗' : ''}
       </TransactionStatusText>
     </RowFixed>
   )
@@ -130,18 +127,13 @@ export default function Transaction({ hash }: { hash: string }) {
 
   return (
     <TransactionWrapper>
-      {success
-        ? (
-          <TransactionState
-            href={getEtherscanLink(chainId, hash, 'transaction')}
-            pending={pending}
-            success={success}
-          >
-            {Row}
-          </TransactionState>
-        )
-        : Row
-      }
+      {success ? (
+        <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
+          {Row}
+        </TransactionState>
+      ) : (
+        Row
+      )}
       {canCancel && (
         <CancelButton disabled={tx?.cancel === Status.CANCEL_TRANSACTION_PENDING} onClick={handleCancelClick}>
           {t('Cancel')}
