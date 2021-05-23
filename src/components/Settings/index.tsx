@@ -237,7 +237,7 @@ export default function SettingsTab() {
                   <Text fontWeight={600} fontSize={20}>
                     Miner Bribe Margin
                   </Text>
-                  <QuestionHelper text="Lorem ipsum" />
+                  <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
                 </SettingsHeader>
               </StyledRowFixed>
               <MinerBribeSlider />
