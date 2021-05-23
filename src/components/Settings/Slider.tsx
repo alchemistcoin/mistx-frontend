@@ -103,7 +103,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 cursor: 'pointer'
               }}
             >
-              {value}
+              {value}%
             </div>
             <div
               style={{
