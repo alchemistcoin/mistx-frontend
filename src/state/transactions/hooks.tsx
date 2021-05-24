@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId, Trade } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
@@ -25,6 +25,7 @@ interface TransactionResponseUnsentData {
   claim?: {
     recipient: string
   }
+  trade?: Trade
 }
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
@@ -41,11 +42,13 @@ export function useTransactionAdder(): (
       response: TransactionResponseIdentifier,
       {
         summary,
-        claim
+        claim,
+        trade,
       }: {
         summary?: string
         claim?: { recipient: string }
-        approval?: { tokenAddress: string; spender: string }
+        approval?: { tokenAddress: string; spender: string },
+        trade?: Trade
       } = {}
     ) => {
       if (!account) return
@@ -55,7 +58,14 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({ hash, from: account, chainId: chainId ?? response.chainId, summary, claim }))
+      dispatch(addTransaction({
+        hash,
+        from: account,
+        chainId: chainId ?? response.chainId,
+        summary,
+        claim,
+        trade,
+      }))
       addPopup(
         {
           txn: {
@@ -112,7 +122,11 @@ export function useTransactionUpdater(): (
             chainId: response.chainId,
             transaction,
             cancel: status,
-            status: status === Status.CANCEL_TRANSACTION_SUCCESSFUL ? Status.FAILED_TRANSACTION : undefined,
+            status: status === Status.CANCEL_TRANSACTION_SUCCESSFUL
+              ? Status.FAILED_TRANSACTION
+              : status === Status.CANCEL_TRANSACTION_FAILED && message?.includes('already completed')
+                ? Status.SUCCESSFUL_TRANSACTION
+                : undefined,
             message
           })
         )
@@ -127,7 +141,8 @@ export function useTransactionUpdater(): (
             message,
             blockNumber,
             flashbotsResolution,
-            mistxDiagnosis
+            mistxDiagnosis,
+            updatedAt: new Date().getTime(),
           })
         )
       }
@@ -214,10 +229,7 @@ export function usePendingTransactions(): { [txHash: string]: TransactionDetails
     let transaction: TransactionDetails
     return Object.keys(transactions).reduce((txs: { [txHash: string]: TransactionDetails }, hash: string) => {
       transaction = transactions[hash]
-      if (
-        (transaction.status === Status.PENDING_TRANSACTION && !transaction.receipt) ||
-        (transaction.receipt && transaction.receipt.status !== 1)
-      ) {
+      if (isPendingTransaction(transaction)) {
         txs[hash] = transaction
       }
       return txs

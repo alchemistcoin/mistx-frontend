@@ -150,7 +150,7 @@ function Web3StatusInner() {
   const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
 
-  console.log('pending transactions', pending)
+  console.log('pending transactions', sortedRecentTransactions)
 
   if (account) {
     return (
