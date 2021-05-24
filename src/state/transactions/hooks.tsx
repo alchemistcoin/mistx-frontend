@@ -43,11 +43,11 @@ export function useTransactionAdder(): (
       {
         summary,
         claim,
-        trade,
+        trade
       }: {
         summary?: string
         claim?: { recipient: string }
-        approval?: { tokenAddress: string; spender: string },
+        approval?: { tokenAddress: string; spender: string }
         trade?: Trade
       } = {}
     ) => {
@@ -58,14 +58,16 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({
-        hash,
-        from: account,
-        chainId: chainId ?? response.chainId,
-        summary,
-        claim,
-        trade,
-      }))
+      dispatch(
+        addTransaction({
+          hash,
+          from: account,
+          chainId: chainId ?? response.chainId,
+          summary,
+          claim,
+          trade
+        })
+      )
       addPopup(
         {
           txn: {
@@ -122,9 +124,10 @@ export function useTransactionUpdater(): (
             chainId: response.chainId,
             transaction,
             cancel: status,
-            status: status === Status.CANCEL_TRANSACTION_SUCCESSFUL
-              ? Status.FAILED_TRANSACTION
-              : status === Status.CANCEL_TRANSACTION_FAILED && message?.includes('already completed')
+            status:
+              status === Status.CANCEL_TRANSACTION_SUCCESSFUL
+                ? Status.FAILED_TRANSACTION
+                : status === Status.CANCEL_TRANSACTION_FAILED && message?.includes('already completed')
                 ? Status.SUCCESSFUL_TRANSACTION
                 : undefined,
             message
@@ -142,7 +145,7 @@ export function useTransactionUpdater(): (
             blockNumber,
             flashbotsResolution,
             mistxDiagnosis,
-            updatedAt: new Date().getTime(),
+            updatedAt: new Date().getTime()
           })
         )
       }

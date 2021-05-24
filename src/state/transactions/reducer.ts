@@ -80,7 +80,7 @@ export default createReducer(initialState, builder =>
             status,
             message,
             cancel,
-            updatedAt,
+            updatedAt
           }
         }
       ) => {

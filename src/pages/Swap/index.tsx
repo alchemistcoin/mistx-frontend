@@ -484,9 +484,7 @@ export default function Swap({ history }: RouteComponentProps) {
       />
       {hasPendingTransactions ? (
         <AppBody>
-          <PendingHeader>
-            Transaction In Progress
-          </PendingHeader>
+          <PendingHeader>Transaction In Progress</PendingHeader>
           <PendingWrapper>
             <TransactionDiagnosis />
           </PendingWrapper>

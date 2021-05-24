@@ -9,8 +9,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { CurrencyAmount } from '@alchemistcoin/sdk'
 import { PendingTransactionIcon } from 'components/Icons'
 
-const Wrapper = styled.div`
-`
+const Wrapper = styled.div``
 
 const StyledDiagnosticWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg1};
@@ -44,7 +43,7 @@ const CurrencyLabelWrapper = styled.div`
 `
 
 const CurrencyName = styled.div`
-  font-size: .875rem;
+  font-size: 0.875rem;
   font-weight: 400;
   line-height: 44px;
   margin-left: 1rem;
@@ -66,7 +65,7 @@ const GraphicContainer = styled.div`
 const StyledGraphicWrapper = styled.div`
   border-radius: 1.5rem;
   height: 160px;
-  margin: 0 .25rem;
+  margin: 0 0.25rem;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -81,21 +80,25 @@ const StyledGraphic = styled.img`
 `
 
 const Connector = () => (
-  <svg width="302" height="24" viewBox="0 0 302 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', margin: '0 auto' }}>
-    <path d="M13 12C13 18.6274 7.62744 24 1 24C0.663269 24 0.329712 23.9861 0 23.9589V24H1H302C295.373 24 290 18.6274 290 12C290 5.37256 295.373 0 302 0H1H0V0.0410767C0.329712 0.013855 0.663269 0 1 0C7.62744 0 13 5.37256 13 12Z" fill="#101B28"/>
+  <svg
+    width="302"
+    height="24"
+    viewBox="0 0 302 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ display: 'block', margin: '0 auto' }}
+  >
+    <path
+      d="M13 12C13 18.6274 7.62744 24 1 24C0.663269 24 0.329712 23.9861 0 23.9589V24H1H302C295.373 24 290 18.6274 290 12C290 5.37256 295.373 0 302 0H1H0V0.0410767C0.329712 0.013855 0.663269 0 1 0C7.62744 0 13 5.37256 13 12Z"
+      fill="#101B28"
+    />
   </svg>
 )
 
-const CurrencyLabel = ({
-  currency
-}: {
-  currency?: CurrencyAmount
-}) => (
+const CurrencyLabel = ({ currency }: { currency?: CurrencyAmount }) => (
   <CurrencyLabelWrapper>
     <CurrencyLogo currency={currency?.currency} size="24px" />
-    <CurrencyName>
-      {currency?.currency.symbol}
-    </CurrencyName>
+    <CurrencyName>{currency?.currency.symbol}</CurrencyName>
   </CurrencyLabelWrapper>
 )
 
@@ -106,8 +109,8 @@ export default function TransactionDiagnosis() {
   const hash = Object.keys(pendingTransactions)[0]
   const tx = pendingTransactions[hash]
   // const path = tx.processed?.swap.path;
-  const tokenInput = tx?.trade?.inputAmount;
-  const tokenOutput = tx?.trade?.outputAmount;
+  const tokenInput = tx?.trade?.inputAmount
+  const tokenOutput = tx?.trade?.outputAmount
   const canCancel = typeof tx?.status !== 'undefined'
 
   console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
@@ -143,12 +146,8 @@ export default function TransactionDiagnosis() {
           <TokenAmountWrapper>
             {tx && (
               <>
-                <TransactionAmount>
-                  {tokenInput?.toSignificant?.(4)}
-                </TransactionAmount>
-                <TransactionAmount>
-                  {tokenOutput?.toSignificant?.(4)}
-                </TransactionAmount>
+                <TransactionAmount>{tokenInput?.toSignificant?.(4)}</TransactionAmount>
+                <TransactionAmount>{tokenOutput?.toSignificant?.(4)}</TransactionAmount>
               </>
             )}
           </TokenAmountWrapper>

@@ -37,15 +37,43 @@ const EtherscanIcon = ({ ...props }: React.SVGProps<SVGSVGElement>): ReactElemen
 const PendingTransactionIcon = ({ ...props }: React.SVGProps<SVGSVGElement>): ReactElement => {
   return (
     <svg height="102" width="102" viewBox="0 0 102 102" fill="none" {...props}>
-      <rect x="-8.6" y="76.7" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -47.7753 40.0412)" fill={props.fill ? props.fill : '#7B8694'} width="66" height="2"/>
-      <rect x="23.4" y="-8.4" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -10.2129 24.4824)" fill={props.fill ? props.fill : '#7B8694'} width="2" height="66"/>
-      <rect x="44.6" y="23.6" transform="matrix(0.7071 -0.7071 0.7071 0.7071 5.3419 62.0349)" fill={props.fill ? props.fill : '#7B8694'} width="66" height="2"/>
-      <rect x="76.6" y="44.6" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -32.1521 77.6221)" fill={props.fill ? props.fill : '#7B8694'} width="2" height="66"/>
-      <circle fill={props.fill ? props.fill : '#7B8694'} cx="17.1" cy="51" r="3"/>
-      <circle fill={props.fill ? props.fill : '#7B8694'} cx="84.9" cy="51" r="3"/>
-      <circle fill={props.fill ? props.fill : '#7B8694'} cx="51" cy="21.1" r="3"/>
-      <circle fill={props.fill ? props.fill : '#7B8694'} cx="51" cy="80.6" r="3"/>
-      <circle fill={props.fill ? props.fill : '#7B8694'} strokeWidth={2} cx="51.2" cy="51.2" r="4.1"/>
+      <rect
+        x="-8.6"
+        y="76.7"
+        transform="matrix(0.7071 -0.7071 0.7071 0.7071 -47.7753 40.0412)"
+        fill={props.fill ? props.fill : '#7B8694'}
+        width="66"
+        height="2"
+      />
+      <rect
+        x="23.4"
+        y="-8.4"
+        transform="matrix(0.7071 -0.7071 0.7071 0.7071 -10.2129 24.4824)"
+        fill={props.fill ? props.fill : '#7B8694'}
+        width="2"
+        height="66"
+      />
+      <rect
+        x="44.6"
+        y="23.6"
+        transform="matrix(0.7071 -0.7071 0.7071 0.7071 5.3419 62.0349)"
+        fill={props.fill ? props.fill : '#7B8694'}
+        width="66"
+        height="2"
+      />
+      <rect
+        x="76.6"
+        y="44.6"
+        transform="matrix(0.7071 -0.7071 0.7071 0.7071 -32.1521 77.6221)"
+        fill={props.fill ? props.fill : '#7B8694'}
+        width="2"
+        height="66"
+      />
+      <circle fill={props.fill ? props.fill : '#7B8694'} cx="17.1" cy="51" r="3" />
+      <circle fill={props.fill ? props.fill : '#7B8694'} cx="84.9" cy="51" r="3" />
+      <circle fill={props.fill ? props.fill : '#7B8694'} cx="51" cy="21.1" r="3" />
+      <circle fill={props.fill ? props.fill : '#7B8694'} cx="51" cy="80.6" r="3" />
+      <circle fill={props.fill ? props.fill : '#7B8694'} strokeWidth={2} cx="51.2" cy="51.2" r="4.1" />
     </svg>
   )
 }
