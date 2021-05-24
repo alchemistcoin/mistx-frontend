@@ -229,6 +229,10 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
   )
 }
 
+export function isPendingTransaction(tx: TransactionDetails): boolean {
+  return !!(tx.status !== Status.FAILED_TRANSACTION && tx.status !== Status.SUCCESSFUL_TRANSACTION && !tx.receipt)
+}
+
 export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
   const transactions = useAllTransactions()
 
@@ -242,10 +246,6 @@ export function usePendingTransactions(): { [txHash: string]: TransactionDetails
       return txs
     }, {})
   }, [transactions])
-}
-
-export function isPendingTransaction(tx: TransactionDetails): boolean {
-  return !!(tx.status !== Status.FAILED_TRANSACTION && tx.status !== Status.SUCCESSFUL_TRANSACTION && !tx.receipt)
 }
 
 export function useHasPendingTransactions(): boolean {
