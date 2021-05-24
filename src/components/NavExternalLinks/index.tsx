@@ -4,14 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
 import { RowFixed } from '../Row'
-import {
-  GithubIcon,
-  DiscordIcon,
-  EtherscanIcon,
-  CoingeckoIcon,
-  EllipseIcon,
-  CoingeckoLightIcon
-} from '../Icons'
+import { GithubIcon, DiscordIcon, EtherscanIcon, CoingeckoIcon, EllipseIcon, CoingeckoLightIcon } from '../Icons'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const Wrapper = styled.div`
