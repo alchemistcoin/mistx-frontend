@@ -32,6 +32,7 @@ export interface TransactionDetails {
   cancel?: Status
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
+  lastUpdatedTime?: number
 }
 
 export interface TransactionState {
@@ -77,7 +78,8 @@ export default createReducer(initialState, builder =>
             mistxDiagnosis,
             status,
             message,
-            cancel
+            cancel,
+            lastUpdatedTime
           }
         }
       ) => {
@@ -94,6 +96,7 @@ export default createReducer(initialState, builder =>
 
         tx.cancel = cancel
         tx.message = message
+        tx.lastUpdatedTime = lastUpdatedTime
 
         const txs = transactions[chainId] ?? {}
         txs[hash] = tx

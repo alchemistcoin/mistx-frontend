@@ -4,11 +4,17 @@ import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
+import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 
 // state
 import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
-import { useAllTransactions, useTransactionRemover, useTransactionUpdater } from 'state/transactions/hooks'
+import {
+  useAllTransactions,
+  useTransactionRemover,
+  useTransactionUpdater,
+  usePendingTransactions
+} from 'state/transactions/hooks'
 import { ChainId } from '@alchemistcoin/sdk'
 import { useAddPopup } from 'state/application/hooks'
 
@@ -19,7 +25,9 @@ export enum Event {
   TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
   TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
   TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
-  TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS'
+  TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS',
+  TRANSACTION_STATUS_REQUEST = 'TRANSACTION_STATUS_REQUEST',
+  TRANSACTION_CANCEL_RESPONSE = 'TRANSACTION_CANCEL_RESPONSE'
 }
 
 export enum Status {
@@ -61,6 +69,7 @@ export interface TransactionReq {
   estimatedEffectiveGasPrice?: number
   estimatedGas?: number
   from: string
+  timestamp?: number
 }
 
 export interface TransactionRes {
@@ -99,6 +108,8 @@ interface QuoteEventsMap {
   [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
   [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
+  [Event.TRANSACTION_STATUS_REQUEST]: (response: TransactionReq) => void
+  [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -154,6 +165,7 @@ export default function Sockets(): null {
   const allTransactions = useAllTransactions()
   const updateTransaction = useTransactionUpdater()
   const removeTransaction = useTransactionRemover()
+  const pendingTransactions = usePendingTransactions()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -206,7 +218,8 @@ export default function Sockets(): null {
         updateTransaction(transactionId, {
           transaction: transaction.transaction,
           message: transaction.message,
-          status: transaction.status
+          status: transaction.status,
+          lastUpdatedTime: new Date().getTime()
         })
       }
 
@@ -223,7 +236,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
-      console.log('transaction diagnosis', diagnosis)
+      console.log('- log transaction diagnosis', diagnosis)
       const hash = keccak256(diagnosis.transaction.serializedSwap)
 
       const transactionId = {
@@ -234,7 +247,8 @@ export default function Sockets(): null {
       updateTransaction(transactionId, {
         blockNumber: diagnosis.blockNumber,
         flashbotsResolution: diagnosis.flashbotsResolution,
-        mistxDiagnosis: diagnosis.mistxDiagnosis
+        mistxDiagnosis: diagnosis.mistxDiagnosis,
+        lastUpdatedTime: new Date().getTime()
       })
     })
 
@@ -248,6 +262,31 @@ export default function Sockets(): null {
       socket.off(Event.TRANSACTION_DIAGNOSIS)
     }
   }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
+
+  // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
+  useEffect(() => {
+    let interval: any
+    clearInterval(interval)
+
+    if (pendingTransactions) {
+      interval = setInterval(() => {
+        const timeNow = new Date().getTime()
+        Object.keys(pendingTransactions).forEach(hash => {
+          const tx = pendingTransactions[hash]
+          if (tx.lastUpdatedTime) {
+            const secondsSinceLastUpdate = (timeNow - tx.lastUpdatedTime) / 1000
+            if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
+              const transactionReq: TransactionReq = tx.processed
+              socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
+            }
+          }
+        })
+      }, 5000)
+    } else {
+      clearInterval(interval)
+    }
+    return () => clearInterval(interval)
+  }, [pendingTransactions])
 
   return null
 }

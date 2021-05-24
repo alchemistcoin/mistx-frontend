@@ -81,6 +81,7 @@ export function useTransactionUpdater(): (
     blockNumber?: number
     flashbotsResolution?: string
     mistxDiagnosis?: Diagnosis
+    lastUpdatedTime?: number
   }
 ) => void {
   const dispatch = useDispatch<AppDispatch>()
@@ -94,7 +95,8 @@ export function useTransactionUpdater(): (
         status,
         blockNumber,
         flashbotsResolution,
-        mistxDiagnosis
+        mistxDiagnosis,
+        lastUpdatedTime
       }: {
         transaction?: TransactionProcessed
         message?: string
@@ -102,6 +104,7 @@ export function useTransactionUpdater(): (
         blockNumber?: number
         flashbotsResolution?: string
         mistxDiagnosis?: Diagnosis
+        lastUpdatedTime?: number
       } = {}
     ) => {
       // update state differently for Transaction Cancellation
@@ -113,7 +116,8 @@ export function useTransactionUpdater(): (
             transaction,
             cancel: status,
             status: status === Status.CANCEL_TRANSACTION_SUCCESSFUL ? Status.FAILED_TRANSACTION : undefined,
-            message
+            message,
+            lastUpdatedTime
           })
         )
       } else {
@@ -127,7 +131,8 @@ export function useTransactionUpdater(): (
             message,
             blockNumber,
             flashbotsResolution,
-            mistxDiagnosis
+            mistxDiagnosis,
+            lastUpdatedTime
           })
         )
       }
@@ -163,6 +168,7 @@ export function useTransactionCanceller() {
         estimatedEffectiveGasPrice: transaction.estimatedEffectiveGasPrice,
         estimatedGas: transaction.estimatedGas,
         from: account
+        // timestamp: transaction.timestamp
       })
     },
     [account]
@@ -190,7 +196,7 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   const { chainId } = useActiveWeb3React()
 
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
-
+  console.log('- log chainId', chainId)
   return chainId ? state[chainId] ?? {} : {}
 }
 

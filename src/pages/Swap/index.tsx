@@ -67,7 +67,6 @@ import { ArrowDownCircled } from 'components/Icons'
 import CurrencySelect from 'components/CurrencySelect'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
-
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 const SwapWrapper = styled.div`
@@ -454,7 +453,7 @@ export default function Swap({ history }: RouteComponentProps) {
   console.log('min trade amount', minTradeAmounts[0]?.[0].toExact())
   console.log('trade', trade)
 
-  console.log('pending transactions', hasPendingTransactions)
+  console.log('- log pending transactions', hasPendingTransactions)
 
   const bribeEstimate = useMinerBribeEstimate()
   console.log(

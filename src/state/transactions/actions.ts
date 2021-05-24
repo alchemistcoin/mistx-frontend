@@ -49,6 +49,7 @@ export const updateTransaction = createAction<{
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
   transaction?: TransactionProcessed
+  lastUpdatedTime?: number
 }>('transactions/updateTransaction')
 
 export const transactionError = createAction<{

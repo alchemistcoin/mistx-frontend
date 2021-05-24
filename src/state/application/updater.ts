@@ -46,19 +46,6 @@ export default function Updater(): null {
     }
   }, [dispatch, chainId, library, blockNumberCallback, windowVisible])
 
-  useEffect(() => {
-    if (!library || !chainId || !windowVisible || !state.blockNumber) return undefined
-
-    library
-      .getEtherPrice()
-      .then(data => {
-        console.log('getEtherPrice() ', data)
-      })
-      .catch(error => console.error(`Failed to get ether price for chainId: ${chainId}`, error))
-
-    return
-  }, [dispatch, chainId, library, state.blockNumber, windowVisible])
-
   const debouncedState = useDebounce(state, 100)
 
   useEffect(() => {
