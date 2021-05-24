@@ -41,6 +41,15 @@ export const ArrowWrapper = styled.div<{
       : null}
 `
 
+export const PendingHeader = styled.header`
+  color: ${({ theme }) => theme.text1};
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 2.25
+  margin: 2rem 0;
+  text-align: center;
+`
+
 export const PendingWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 0.75rem;

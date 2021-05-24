@@ -19,6 +19,7 @@ import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpa
 import {
   ArrowWrapper,
   BottomGrouping,
+  PendingHeader,
   PendingWrapper,
   RelativeWrapper,
   SwapCallbackError,
@@ -58,7 +59,6 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 // import { ClickableText } from './styleds'
-import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
@@ -130,13 +130,6 @@ const StyledButtonYellow = styled(ButtonYellow)`
   &:disabled {
     background-color: #485361;
   }
-`
-
-const LoaderWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding: 1.25rem 0;
 `
 
 export default function Swap({ history }: RouteComponentProps) {
@@ -454,8 +447,6 @@ export default function Swap({ history }: RouteComponentProps) {
   console.log('min trade amount', minTradeAmounts[0]?.[0].toExact())
   console.log('trade', trade)
 
-  console.log('pending transactions', hasPendingTransactions)
-
   const bribeEstimate = useMinerBribeEstimate()
   console.log(
     'bribe estimate min/max',
@@ -493,13 +484,8 @@ export default function Swap({ history }: RouteComponentProps) {
       />
       {hasPendingTransactions ? (
         <AppBody>
+          <PendingHeader>Transaction In Progress</PendingHeader>
           <PendingWrapper>
-            <LoaderWrapper>
-              <Loader size="2rem" stroke={theme.text4} />
-              <TYPE.main fontSize="1.5rem" fontWeight={600} ml="1rem">
-                Transaction Pending
-              </TYPE.main>
-            </LoaderWrapper>
             <TransactionDiagnosis />
           </PendingWrapper>
         </AppBody>

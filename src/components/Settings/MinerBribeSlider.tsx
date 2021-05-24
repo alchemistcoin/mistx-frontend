@@ -31,8 +31,8 @@ const MinderBribeSlider = () => {
     <Wrapper>
       <Slider min={MINER_BRIBE_MIN} max={MINER_BRIBE_MAX} step={1} value={userBribeMargin} onChange={onChange} />
       <LabelWrapper>
-        <div>low success rates (low fees)</div>
-        <div>high success rate ($$)</div>
+        <div>Low success rates (low fees)</div>
+        <div>High success rate ($$)</div>
       </LabelWrapper>
     </Wrapper>
   )
