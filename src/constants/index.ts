@@ -3,9 +3,9 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected } from '../connectors'
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0xAd3442B69c450Cb657e3D46308a017DAbe604951',
+  [ChainId.MAINNET]: '0xA58f22e0766B3764376c92915BA545d583c19DBc',
   [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
-  [ChainId.GÖRLI]: '0xf3f2A6D3FE0a2612571d1dE45aEae751f61f414E'
+  [ChainId.GÖRLI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b'
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
