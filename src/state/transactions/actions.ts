@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount } from '@alchemistcoin/sdk'
 import { Diagnosis, Status, SwapReq, TransactionProcessed } from '../../websocket/index'
 
 export interface SerializableTransactionReceipt {
@@ -20,6 +20,8 @@ export const addTransaction = createAction<{
   claim?: { recipient: string }
   summary?: string
   swap?: SwapReq
+  inputAmount?: CurrencyAmount
+  outputAmount?: CurrencyAmount
 }>('transactions/addTransaction')
 export const clearCompletedTransactions = createAction<{ chainId: ChainId }>('transactions/clearCompletedTransactions')
 export const clearAllTransactions = createAction<{ chainId: ChainId }>('transactions/clearAllTransactions')
@@ -49,7 +51,7 @@ export const updateTransaction = createAction<{
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
   transaction?: TransactionProcessed
-  lastUpdatedTime?: number
+  updatedAt?: number
 }>('transactions/updateTransaction')
 
 export const transactionError = createAction<{

@@ -207,32 +207,32 @@ export default function Sockets(): null {
       const hash = keccak256(transaction.transaction.serializedSwap)
       const tx = allTransactions?.[hash]
       const summary = tx?.summary
-      const completed = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
+      const previouslyCompleted = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
 
       const transactionId = {
         chainId: transaction.transaction.chainId,
         hash
       }
 
-      if (!completed) {
+      if (!previouslyCompleted) {
         updateTransaction(transactionId, {
           transaction: transaction.transaction,
           message: transaction.message,
           status: transaction.status,
-          lastUpdatedTime: new Date().getTime()
+          updatedAt: new Date().getTime()
         })
-      }
 
-      addPopup(
-        {
-          txn: {
-            hash,
-            summary,
-            ...transactionResToastStatus(transaction)
-          }
-        },
-        hash
-      )
+        addPopup(
+          {
+            txn: {
+              hash,
+              summary,
+              ...transactionResToastStatus(transaction)
+            }
+          },
+          hash
+        )
+      }
     })
 
     socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
@@ -248,7 +248,7 @@ export default function Sockets(): null {
         blockNumber: diagnosis.blockNumber,
         flashbotsResolution: diagnosis.flashbotsResolution,
         mistxDiagnosis: diagnosis.mistxDiagnosis,
-        lastUpdatedTime: new Date().getTime()
+        updatedAt: new Date().getTime()
       })
     })
 
@@ -273,8 +273,8 @@ export default function Sockets(): null {
         const timeNow = new Date().getTime()
         Object.keys(pendingTransactions).forEach(hash => {
           const tx = pendingTransactions[hash]
-          if (tx.lastUpdatedTime) {
-            const secondsSinceLastUpdate = (timeNow - tx.lastUpdatedTime) / 1000
+          if (tx.updatedAt) {
+            const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               const transactionReq: TransactionProcessed = tx.processed
               socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)

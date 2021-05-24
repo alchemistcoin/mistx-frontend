@@ -179,7 +179,6 @@ export default function CurrencyList({
   breakIndex: number | undefined
 }) {
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    console.log('showmist', showMIST, mistFirst)
     let formatted: (Currency | undefined)[] = showETH
       ? [Currency.ETHER, ...(showMIST ? mistFirst(currencies) : currencies)]
       : showMIST
