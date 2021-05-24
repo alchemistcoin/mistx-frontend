@@ -235,7 +235,7 @@ export default function SettingsTab() {
               <StyledRowFixed>
                 <SettingsHeader>
                   <Text fontWeight={600} fontSize={20}>
-                    Miner Bribe Margin
+                    Transaction Fee (ETH)
                   </Text>
                   <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
                 </SettingsHeader>

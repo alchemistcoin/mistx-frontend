@@ -1,6 +1,8 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
+import { BribeEstimate /*, CurrencyAmount*/ } from '@alchemistcoin/sdk'
+import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 type Props = {
   max: number
@@ -22,13 +24,54 @@ type ITrackProps = {
   disabled: boolean
 }
 
+type IMarkProps = {
+  props: {
+    key: string
+    style: React.CSSProperties
+    ref: React.RefObject<any>
+  }
+  index: number
+}
+
+// const SLIDER_VALUE_TO_THUMB_LABEL_MAP: string[] = ['25% Success', '70% Success', '90% Success', '99% Success']
+
+const SLIDER_VALUE_TO_LABEL_MAP: string[] = ['min success', 'med success', 'high success', 'max success']
+
+// const SLIDER_VALUE_TO_METHOD_MAP: any = ['minBribe', 'meanBribe', 'maxBribe', 'ASAP']
+
 const Slider = ({ max, min, onChange, value, step }: Props) => {
   const theme = useContext(ThemeContext)
   const [sliderValue, setSliderValue] = useState<number>(value)
+  const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
+  const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
+  useEffect(() => {
+    let label = ''
+    if (bribeEstimate) {
+      label = `${bribeEstimate.minBribe.toSignificant(2)} - ${bribeEstimate.maxBribe.toSignificant(2)}`
+    }
+    setSliderThumbLabel(label)
+  }, [bribeEstimate])
   const onSliderChange = (values: any) => {
+    // let label = ''
+    // if (bribeEstimate) {
+    //   label = `${bribeEstimate.minBribe.toSignificant(2)} - ${bribeEstimate.maxBribe.toSignificant(2)}`
+    // }
+    // setSliderThumbLabel(label)
     setSliderValue(values)
     onChange(values[0])
   }
+  console.log('bribeEstimate', bribeEstimate)
+  // const minerBribeContent = (index: any) => {
+  //   if (bribeEstimate) {
+  //     const key: keyof BribeEstimate = SLIDER_VALUE_TO_METHOD_MAP[index]
+  //     const bribeEstimateProperty: CurrencyAmount | BribeEstimates = bribeEstimate[key]
+  //     if (bribeEstimateProperty instanceof CurrencyAmount) {
+  //       console.log('- log ', bribeEstimateProperty)
+  //       return bribeEstimateProperty.toSignificant(6)
+  //     }
+  //   }
+  //   return <div>?</div>
+  // }
 
   return (
     <div
@@ -45,6 +88,61 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
         min={min}
         max={max}
         onChange={values => onSliderChange(values)}
+        renderMark={(props: IMarkProps) => (
+          <>
+            <div
+              {...props.props}
+              style={{
+                ...props.props.style,
+                height: '16px',
+                width: '5px',
+                backgroundColor: '#192431',
+                cursor: 'pointer'
+              }}
+            />
+            <div
+              style={{
+                ...props.props.style,
+                position: 'absolute',
+                bottom: '-40px'
+              }}
+            >
+              <div
+                style={{
+                  ...props.props.style,
+                  position: 'relative',
+                  width: '70px',
+                  left: '-35px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center'
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    fontSize: '14px',
+                    lineHeight: '14px'
+                  }}
+                >
+                  {SLIDER_VALUE_TO_LABEL_MAP[props.index]}
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    fontSize: '14px'
+                  }}
+                >
+                  {/*minerBribeContent(props.index)*/}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         renderTrack={(props: ITrackProps) => (
           <div
             onMouseDown={props.props.onMouseDown}
@@ -52,7 +150,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
             style={{
               height: '36px',
               display: 'flex',
-              width: '100%'
+              width: '100%',
+              position: 'relative'
             }}
           >
             <div
@@ -63,7 +162,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 borderRadius: '4px',
                 background: getTrackBackground({
                   values: [value],
-                  colors: [theme.primary2, '#192431'],
+                  colors: ['#192431', '#192431'],
                   min: min,
                   max: max
                 }),
@@ -73,6 +172,19 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
             >
               {props.children}
             </div>
+            <div
+              style={{
+                position: 'absolute',
+                height: '5px',
+                width: 'auto',
+                left: '-30px',
+                right: '-30px',
+                top: '16px',
+                zIndex: 1,
+                borderRadius: '4px',
+                background: '#192431'
+              }}
+            />
           </div>
         )}
         renderThumb={({ props, isDragged }) => (
@@ -87,7 +199,9 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              zIndex: 3,
+              position: 'relative'
             }}
           >
             <div
@@ -100,10 +214,13 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 backgroundColor: '#FFF',
                 color: theme.text5,
                 padding: '0.25rem 0.5rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                width: '140px',
+                textAlign: 'center',
+                zIndex: 3
               }}
             >
-              {value}%
+              {sliderThumbLabel}
             </div>
             <div
               style={{
@@ -111,7 +228,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 width: '14px',
                 borderRadius: '100%',
                 backgroundColor: isDragged ? '#FFF' : '#FFF',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                zIndex: 3
               }}
             />
           </div>
