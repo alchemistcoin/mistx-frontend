@@ -109,8 +109,8 @@ export default function TransactionDiagnosis() {
   const hash = Object.keys(pendingTransactions)[0]
   const tx = pendingTransactions[hash]
   // const path = tx.processed?.swap.path;
-  const tokenInput = tx?.trade?.inputAmount
-  const tokenOutput = tx?.trade?.outputAmount
+  const tokenInput = tx?.inputAmount
+  const tokenOutput = tx?.outputAmount
   const canCancel = typeof tx?.status !== 'undefined'
 
   console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
@@ -133,24 +133,35 @@ export default function TransactionDiagnosis() {
     <Wrapper>
       <StyledDiagnosticWrapper>
         <TokenWrapper>
-          <TokenAmountWrapper>
-            {tx && (
+          {!tokenInput && !tokenOutput
+            ? (
+              <div style={{ textAlign: 'center', width: '100%' }}>
+                {tx.summary}
+              </div>
+            )
+            : (
               <>
-                <CurrencyLabel currency={tokenInput} />
-                {/* <ArrowDown size="1rem" style={{ marginLeft: '.175rem' }}/> */}
-                <CurrencyLabel currency={tokenOutput} />
+                <TokenAmountWrapper>
+                  {tx && (
+                    <>
+                      <CurrencyLabel currency={tokenInput} />
+                      {/* <ArrowDown size="1rem" style={{ marginLeft: '.175rem' }}/> */}
+                      <CurrencyLabel currency={tokenOutput} />
+                    </>
+                  )}
+                </TokenAmountWrapper>
+                <PendingTransactionIcon />
+                <TokenAmountWrapper>
+                  {tx && (
+                    <>
+                      <TransactionAmount>{tokenInput?.toSignificant?.(4)}</TransactionAmount>
+                      <TransactionAmount>{tokenOutput?.toSignificant?.(4)}</TransactionAmount>
+                    </>
+                  )}
+                </TokenAmountWrapper>
               </>
-            )}
-          </TokenAmountWrapper>
-          <PendingTransactionIcon />
-          <TokenAmountWrapper>
-            {tx && (
-              <>
-                <TransactionAmount>{tokenInput?.toSignificant?.(4)}</TransactionAmount>
-                <TransactionAmount>{tokenOutput?.toSignificant?.(4)}</TransactionAmount>
-              </>
-            )}
-          </TokenAmountWrapper>
+            )
+          }
         </TokenWrapper>
         {canCancel && (
           <StyledCancelButton onClick={() => handleCancelClick(hash, tx)}>Cancel Transaction</StyledCancelButton>

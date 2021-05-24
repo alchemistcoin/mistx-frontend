@@ -1,4 +1,4 @@
-import { Trade } from '@alchemistcoin/sdk'
+import { CurrencyAmount } from '@alchemistcoin/sdk'
 import { createReducer } from '@reduxjs/toolkit'
 import { Diagnosis, Status, TransactionProcessed } from 'websocket'
 import {
@@ -33,7 +33,8 @@ export interface TransactionDetails {
   status?: Status
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
-  trade?: Trade
+  inputAmount?: CurrencyAmount
+  outputAmount?: CurrencyAmount
 }
 
 export interface TransactionState {
@@ -46,14 +47,14 @@ export const initialState: TransactionState = {}
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim, trade } }) => {
+    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim, inputAmount, outputAmount } }) => {
       const tx = transactions[chainId]?.[hash] as TransactionDetails
       if (tx && isPendingTransaction(tx)) {
         throw Error('Attempted to add existing transaction.')
       }
 
       const txs = transactions[chainId] ?? {}
-      txs[hash] = { hash, summary, claim, from, addedTime: now(), trade }
+      txs[hash] = { hash, summary, claim, from, addedTime: now(), inputAmount, outputAmount }
       transactions[chainId] = txs
     })
     .addCase(removeTransaction, (transactions, { payload: { chainId, hash } }) => {

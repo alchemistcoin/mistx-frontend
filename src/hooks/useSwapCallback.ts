@@ -185,7 +185,8 @@ export function useSwapCallback(
                       { chainId, hash },
                       {
                         summary: withRecipient,
-                        trade
+                        inputAmount: trade.inputAmount,
+                        outputAmount: trade.outputAmount,
                         //relay
                       }
                     )
