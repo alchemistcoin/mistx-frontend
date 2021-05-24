@@ -151,7 +151,7 @@ export function useTransactionCanceller() {
         status?: string
       }
     ) => {
-      if (!account) return;
+      if (!account) return
 
       emitTransactionCancellation({
         chainId: transaction.chainId,
