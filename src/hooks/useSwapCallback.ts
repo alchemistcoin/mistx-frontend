@@ -103,9 +103,6 @@ export function useSwapCallback(
           web3Provider.provider.isMetaMask = false
         }
 
-        console.log('methodName', methodName)
-        console.log('args', args)
-
         return approve()
           .then(signedApproval => {
             return contract.populateTransaction[methodName](...args, {
