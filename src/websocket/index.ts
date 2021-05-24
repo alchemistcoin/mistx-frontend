@@ -277,6 +277,7 @@ export default function Sockets(): null {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               const transactionReq: TransactionProcessed = tx.processed
+              console.log('- test socket.emit TRANSACTION_STATUS_REQUEST')
               socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
             }
           }
