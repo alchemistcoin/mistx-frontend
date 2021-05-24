@@ -255,7 +255,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 
   // info modal
-  const [showInfoModal, setShowInfoModal] = useState(false)
+  const [showInfoModal, setShowInfoModal] = useState(true)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
   // const openShowInfoModal = () => {
   //   setShowConfirmModal(false)
