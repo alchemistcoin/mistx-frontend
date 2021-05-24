@@ -100,7 +100,11 @@ export default function Menu() {
         <MenuFlyout>
           <MenuItem id="link" href="https://github.com/alchemistcoin/">
             <Info size={14} />
-            Item
+            Github
+          </MenuItem>
+          <MenuItem id="link" href="https://etherscan.io/address/0xA58f22e0766B3764376c92915BA545d583c19DBc#code">
+            <Info size={14} />
+            Contract
           </MenuItem>
         </MenuFlyout>
       )}
