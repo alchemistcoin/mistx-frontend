@@ -6,7 +6,7 @@ import { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
 import { CloseIcon /*CustomLightSpinner*/ } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
-import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
+import { AlertTriangle, CheckCircle } from 'react-feather'
 import { ButtonOutlined, ButtonYellow } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
 // import Circle from '../../assets/images/blue-loader.svg'
@@ -95,9 +95,6 @@ function TransactionSubmittedContent({
           <div />
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
-        <ConfirmedIcon>
-          <ArrowUpCircle strokeWidth={0.5} size={90} color={theme.text1} />
-        </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
           <Text fontWeight={500} fontSize={20} color={theme.text1}>
             Transaction Submitted
