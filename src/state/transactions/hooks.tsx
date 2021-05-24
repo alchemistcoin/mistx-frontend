@@ -157,19 +157,7 @@ export function useTransactionCanceller() {
       }
     ) => {
       if (!account) return
-
-      emitTransactionCancellation({
-        chainId: transaction.chainId,
-        serializedSwap: transaction.serializedSwap,
-        serializedApprove: transaction.serializedApprove,
-        swap: transaction.swap,
-        bribe: transaction.bribe,
-        routerAddress: transaction.routerAddress,
-        estimatedEffectiveGasPrice: transaction.estimatedEffectiveGasPrice,
-        estimatedGas: transaction.estimatedGas,
-        from: account
-        // timestamp: transaction.timestamp
-      })
+      emitTransactionCancellation(transaction)
     },
     [account]
   )

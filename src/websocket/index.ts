@@ -276,7 +276,7 @@ export default function Sockets(): null {
           if (tx.lastUpdatedTime) {
             const secondsSinceLastUpdate = (timeNow - tx.lastUpdatedTime) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
-              const transactionReq: TransactionReq = tx.processed
+              const transactionReq: TransactionProcessed = tx.processed
               socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
             }
           }
@@ -293,9 +293,8 @@ export default function Sockets(): null {
 
 export function emitTransactionRequest(transaction: TransactionReq) {
   socket.emit(Event.TRANSACTION_REQUEST, transaction)
-  console.log('websocket transaction sent', transaction)
 }
 
-export function emitTransactionCancellation(transaction: TransactionReq) {
+export function emitTransactionCancellation(transaction: TransactionProcessed) {
   socket.emit(Event.TRANSACTION_CANCEL_REQUEST, transaction)
 }
