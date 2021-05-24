@@ -60,6 +60,7 @@ export interface TransactionReq {
   routerAddress: string
   estimatedEffectiveGasPrice?: number
   estimatedGas?: number
+  from: string
 }
 
 export interface TransactionRes {
@@ -80,6 +81,7 @@ export interface TransactionProcessed {
   sessionToken: string
   chainId: number
   simulateOnly: boolean
+  from: string
 }
 
 export interface TransactionDiagnosisRes {
