@@ -137,6 +137,7 @@ export function useTransactionUpdater(): (
 }
 
 export function useTransactionCanceller() {
+  const { account } = useActiveWeb3React()
   return useCallback(
     async (
       response: TransactionResponseIdentifier,
@@ -150,6 +151,8 @@ export function useTransactionCanceller() {
         status?: string
       }
     ) => {
+      if (!account) return;
+
       emitTransactionCancellation({
         chainId: transaction.chainId,
         serializedSwap: transaction.serializedSwap,
@@ -158,10 +161,11 @@ export function useTransactionCanceller() {
         bribe: transaction.bribe,
         routerAddress: transaction.routerAddress,
         estimatedEffectiveGasPrice: transaction.estimatedEffectiveGasPrice,
-        estimatedGas: transaction.estimatedGas
+        estimatedGas: transaction.estimatedGas,
+        from: account
       })
     },
-    []
+    [account]
   )
 }
 
