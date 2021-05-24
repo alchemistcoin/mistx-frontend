@@ -15,7 +15,7 @@ export default function useLatestGasPrice(): BigNumber | undefined {
         return
       }
       const block = await library.getBlockWithTransactions(currentBlock)
-      const finalTransaction = block.transactions[block.transactions.length - 1]
+      const finalTransaction = block.transactions && block.transactions[block.transactions.length - 1]
       if (!finalTransaction) {
         setGasPrice(undefined)
         return

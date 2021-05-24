@@ -1,6 +1,6 @@
 import { CurrencyAmount } from '@alchemistcoin/sdk'
 import { createReducer } from '@reduxjs/toolkit'
-import { Diagnosis, Status, TransactionProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -20,19 +20,20 @@ export interface TransactionDetails {
   approval?: { tokenAddress: string; spender: string }
   summary?: string
   claim?: { recipient: string }
-  processed?: TransactionProcessed // swaps
   receipt?: SerializableTransactionReceipt
+  processed?: TransactionProcessed // swaps
   lastCheckedBlockNumber?: number
-  blockNumber?: number // from transaction diagnosis
   addedTime: number
   confirmedTime?: number
-  updatedAt?: number
   from: string
+  swap?: SwapReq
+  blockNumber?: number // from transaction diagnosis
+  status?: Status
   message?: string
   cancel?: Status
-  status?: Status
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
+  updatedAt?: number
   inputAmount?: CurrencyAmount
   outputAmount?: CurrencyAmount
 }
@@ -102,6 +103,7 @@ export default createReducer(initialState, builder =>
 
         if (cancel) tx.cancel = cancel
         tx.message = message
+        tx.updatedAt = updatedAt
 
         const txs = transactions[chainId] ?? {}
         txs[hash] = tx
@@ -122,7 +124,6 @@ export default createReducer(initialState, builder =>
             // wrapped/unwrapped
             newTransactions[currentHash] = currentTransaction
           }
-
           return newTransactions
         },
         {}

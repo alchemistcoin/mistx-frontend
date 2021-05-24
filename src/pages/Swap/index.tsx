@@ -67,7 +67,6 @@ import { ArrowDownCircled } from 'components/Icons'
 import CurrencySelect from 'components/CurrencySelect'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
-
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 const SwapWrapper = styled.div`
@@ -255,7 +254,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 
   // info modal
-  const [showInfoModal, setShowInfoModal] = useState(true)
+  const [showInfoModal, setShowInfoModal] = useState(false)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
   // const openShowInfoModal = () => {
   //   setShowConfirmModal(false)

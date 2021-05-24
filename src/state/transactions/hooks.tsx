@@ -97,6 +97,7 @@ export function useTransactionUpdater(): (
     blockNumber?: number
     flashbotsResolution?: string
     mistxDiagnosis?: Diagnosis
+    updatedAt?: number
   }
 ) => void {
   const dispatch = useDispatch<AppDispatch>()
@@ -110,7 +111,8 @@ export function useTransactionUpdater(): (
         status,
         blockNumber,
         flashbotsResolution,
-        mistxDiagnosis
+        mistxDiagnosis,
+        updatedAt
       }: {
         transaction?: TransactionProcessed
         message?: string
@@ -118,6 +120,7 @@ export function useTransactionUpdater(): (
         blockNumber?: number
         flashbotsResolution?: string
         mistxDiagnosis?: Diagnosis
+        updatedAt?: number
       } = {}
     ) => {
       // update state differently for Transaction Cancellation
@@ -134,7 +137,8 @@ export function useTransactionUpdater(): (
                 : status === Status.CANCEL_TRANSACTION_FAILED && message?.includes('already completed')
                 ? Status.SUCCESSFUL_TRANSACTION
                 : undefined,
-            message
+            message,
+            updatedAt
           })
         )
       } else {
@@ -149,7 +153,7 @@ export function useTransactionUpdater(): (
             blockNumber,
             flashbotsResolution,
             mistxDiagnosis,
-            updatedAt: new Date().getTime()
+            updatedAt
           })
         )
       }
@@ -174,18 +178,7 @@ export function useTransactionCanceller() {
       }
     ) => {
       if (!account) return
-
-      emitTransactionCancellation({
-        chainId: transaction.chainId,
-        serializedSwap: transaction.serializedSwap,
-        serializedApprove: transaction.serializedApprove,
-        swap: transaction.swap,
-        bribe: transaction.bribe,
-        routerAddress: transaction.routerAddress,
-        estimatedEffectiveGasPrice: transaction.estimatedEffectiveGasPrice,
-        estimatedGas: transaction.estimatedGas,
-        from: account
-      })
+      emitTransactionCancellation(transaction)
     },
     [account]
   )
@@ -212,7 +205,7 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   const { chainId } = useActiveWeb3React()
 
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
-
+  console.log('- log chainId', chainId)
   return chainId ? state[chainId] ?? {} : {}
 }
 
