@@ -75,7 +75,7 @@ export default function TransactionInformationModal({ onDismiss, onContinue }: C
           </RowBetween>
           <RowBetween margin="0.5rem 0 0" flexDirection="column">
             <ImageWrapper>
-              <img src={Image} />
+              <img src={Image} alt="metamask warning" />
             </ImageWrapper>
             <Text fontWeight={300} fontSize={16}>
               mistX is completely free of Gas Fees, and uses an extra layer of security called MEV. Metamask is still
