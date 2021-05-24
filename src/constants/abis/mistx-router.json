@@ -4,7 +4,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_mistJar",
+          "name": "_WETH",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_factory",
           "type": "address"
         }
       ],
@@ -35,14 +40,53 @@
       "type": "fallback"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "WETH",
+      "outputs": [
         {
           "internalType": "address",
-          "name": "_mistJar",
+          "name": "",
           "type": "address"
         }
       ],
-      "name": "changeJar",
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_manager",
+          "type": "address"
+        }
+      ],
+      "name": "addManager",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "bribePercent",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_bribePercent",
+          "type": "uint256"
+        }
+      ],
+      "name": "changeBribe",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -61,6 +105,51 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "factory",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "managers",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "owner",
       "outputs": [
@@ -71,6 +160,19 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_manager",
+          "type": "address"
+        }
+      ],
+      "name": "removeManager",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -149,11 +251,6 @@
           "type": "tuple"
         },
         {
-          "internalType": "contract IUniswapRouter",
-          "name": "_router",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "_bribe",
           "type": "uint256"
@@ -197,11 +294,6 @@
           "internalType": "struct MistXRouter.Swap",
           "name": "_swap",
           "type": "tuple"
-        },
-        {
-          "internalType": "contract IUniswapRouter",
-          "name": "_router",
-          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -249,11 +341,6 @@
           "type": "tuple"
         },
         {
-          "internalType": "contract IUniswapRouter",
-          "name": "_router",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "_bribe",
           "type": "uint256"
@@ -297,11 +384,6 @@
           "internalType": "struct MistXRouter.Swap",
           "name": "_swap",
           "type": "tuple"
-        },
-        {
-          "internalType": "contract IUniswapRouter",
-          "name": "_router",
-          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -349,11 +431,6 @@
           "type": "tuple"
         },
         {
-          "internalType": "contract IUniswapRouter",
-          "name": "_router",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "_bribe",
           "type": "uint256"
@@ -397,11 +474,6 @@
           "internalType": "struct MistXRouter.Swap",
           "name": "_swap",
           "type": "tuple"
-        },
-        {
-          "internalType": "contract IUniswapRouter",
-          "name": "_router",
-          "type": "address"
         },
         {
           "internalType": "uint256",

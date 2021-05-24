@@ -47,7 +47,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   useEffect(() => {
     let label = ''
     if (bribeEstimate) {
-      label = `${bribeEstimate.minBribe.toSignificant(2)} - ${bribeEstimate.maxBribe.toSignificant(2)}`
+      label = `${bribeEstimate.minBribe.toSignificant(3)} - ${bribeEstimate.maxBribe.toSignificant(3)}`
     }
     setSliderThumbLabel(label)
   }, [bribeEstimate])
