@@ -19,36 +19,34 @@ import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 
 const TransactionWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
+  padding: 0.25rem 0;
 `
 
 const TransactionStatusText = styled.div`
-  margin-right: 0.5rem;
-  display: flex;
   align-items: center;
-  :hover {
+  color: ${({ theme }) => theme.text3};
+  display: flex;
+  font-weight: 500;
+  font-size: 0.825rem;
+  margin-right: 0.5rem;
+`
+
+const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: boolean }>`
+  border-radius: 0.5rem;
+  text-decoration: none !important;
+  flex: 1;
+
+  :hover .transaction-status-text {
+    color: ${({ theme }) => theme.text1};
     text-decoration: underline;
   }
 `
 
-const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: boolean }>`
-  text-decoration: none !important;
-  border-radius: 0.5rem;
-  padding: 0.25rem 0rem;
-  flex: 1;
-  font-weight: 500;
-  font-size: 0.825rem;
-  color: ${({ theme }) => theme.text3};
-
-  :hover {
-    color: ${({ theme }) => theme.text1};
-  }
-`
-
 const StatusText = styled.div<{ cancelled?: boolean }>`
-  color: ${({ theme }) => theme.primary2}
+  color: ${({ theme }) => theme.text2}
   font-size: .75rem;
   font-weight: 600;
   margin: 0 .5rem;
@@ -100,6 +98,15 @@ export default function Transaction({ hash }: { hash: string }) {
   const success = tx && isSuccessfulTransaction(tx)
   const cancelTransaction = useTransactionCanceller()
 
+  const Row = (
+    <RowFixed flex="1">
+      <TransactionStatusText className="transaction-status-text">
+        {summary ?? truncateStringMiddle(hash, 6, 7)}
+        {success ? ' ↗' : ''}
+      </TransactionStatusText>
+    </RowFixed>
+  )
+
   function handleCancelClick() {
     if (!chainId) return
     if (!tx?.processed) return
@@ -119,11 +126,13 @@ export default function Transaction({ hash }: { hash: string }) {
 
   return (
     <TransactionWrapper>
-      <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
-        <RowFixed>
-          <TransactionStatusText>{summary ?? truncateStringMiddle(hash, 6, 7)} ↗</TransactionStatusText>
-        </RowFixed>
-      </TransactionState>
+      {success ? (
+        <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
+          {Row}
+        </TransactionState>
+      ) : (
+        Row
+      )}
       {canCancel && (
         <CancelButton disabled={tx?.cancel === Status.CANCEL_TRANSACTION_PENDING} onClick={handleCancelClick}>
           {t('Cancel')}
