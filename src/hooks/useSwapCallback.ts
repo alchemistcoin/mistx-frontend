@@ -103,6 +103,9 @@ export function useSwapCallback(
           web3Provider.provider.isMetaMask = false
         }
 
+        console.log('methodName', methodName)
+        console.log('args', args)
+
         return approve()
           .then(signedApproval => {
             return contract.populateTransaction[methodName](...args, {
@@ -160,7 +163,7 @@ export function useSwapCallback(
                       deadline: args[0][4]
                     }
 
-                    const minerBribeBN = BigNumber.from(args[2])
+                    const minerBribeBN = BigNumber.from(args[1])
                     const estimatedEffectiveGasPriceBn = minerBribeBN.div(BigNumber.from(trade.estimatedGas))
                     const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'))
 
@@ -169,7 +172,7 @@ export function useSwapCallback(
                       serializedApprove: signedApproval ? signedApproval : undefined,
                       serializedSwap: signedTx,
                       swap: swapReq,
-                      bribe: args[2], // need to use calculated bribe
+                      bribe: args[1], // need to use calculated bribe
                       routerAddress: ROUTER[trade.exchange],
                       estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
                       estimatedGas: Number(trade.estimatedGas),
