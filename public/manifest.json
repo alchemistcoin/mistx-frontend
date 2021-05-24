@@ -1,24 +1,24 @@
 {
-  "background_color": "#fff",
+  "background_color": "#FFBF00",
   "display": "standalone",
-  "homepage_url": "https://app.uniswap.org",
+  "homepage_url": "https://mistx.io",
   "icons": [
     {
-      "src": "./images/192x192_App_Icon.png",
+      "src": "./android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./images/512x512_App_Icon.png",
+      "src": "./android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
   "orientation": "portrait",
-  "name": "Uniswap",
-  "short_name": "Uniswap",
+  "name": "MistX",
+  "short_name": "MistX",
   "start_url": ".",
-  "theme_color": "#ff007a"
+  "theme_color": "#FFBF00"
 }
