@@ -8,7 +8,7 @@ import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 const Wrapper = styled.div`
   width: 100%;
-  padding: 0 2rem 5rem;
+  padding: 0 2rem 3rem;
 `
 
 // const LabelWrapper = styled.div`

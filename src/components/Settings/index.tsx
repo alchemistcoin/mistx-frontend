@@ -235,7 +235,7 @@ export default function SettingsTab() {
               <StyledRowFixed>
                 <SettingsHeader>
                   <Text fontWeight={600} fontSize={20}>
-                    Miner Bribe Margin
+                    Transaction Fee (ETH)
                   </Text>
                   <QuestionHelper text="Lorem ipsum" />
                 </SettingsHeader>

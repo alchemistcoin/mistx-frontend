@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
-import { BribeEstimate, CurrencyAmount, BribeEstimates } from '@alchemistcoin/sdk'
+import { BribeEstimate /*, CurrencyAmount*/ } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 type Props = {
@@ -33,35 +33,45 @@ type IMarkProps = {
   index: number
 }
 
-const SLIDER_VALUE_TO_THUMB_LABEL_MAP: string[] = ['25% Success', '70% Success', '90% Success', '99% Success']
+// const SLIDER_VALUE_TO_THUMB_LABEL_MAP: string[] = ['25% Success', '70% Success', '90% Success', '99% Success']
 
-const SLIDER_VALUE_TO_LABEL_MAP: string[] = ['min', 'med', 'max', 'vip']
+const SLIDER_VALUE_TO_LABEL_MAP: string[] = ['min success', 'med success', 'high success', 'max success']
 
-const SLIDER_VALUE_TO_METHOD_MAP: any = ['minBribe', 'meanBribe', 'maxBribe', 'ASAP']
+// const SLIDER_VALUE_TO_METHOD_MAP: any = ['minBribe', 'meanBribe', 'maxBribe', 'ASAP']
 
 const Slider = ({ max, min, onChange, value, step }: Props) => {
   const theme = useContext(ThemeContext)
   const [sliderValue, setSliderValue] = useState<number>(value)
-  const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('70% Success')
+  const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
   const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
-
+  useEffect(() => {
+    let label = ''
+    if (bribeEstimate) {
+      label = `${bribeEstimate.minBribe.toSignificant(2)} - ${bribeEstimate.maxBribe.toSignificant(2)}`
+    }
+    setSliderThumbLabel(label)
+  }, [bribeEstimate])
   const onSliderChange = (values: any) => {
-    setSliderThumbLabel(SLIDER_VALUE_TO_THUMB_LABEL_MAP[values[0]])
+    // let label = ''
+    // if (bribeEstimate) {
+    //   label = `${bribeEstimate.minBribe.toSignificant(2)} - ${bribeEstimate.maxBribe.toSignificant(2)}`
+    // }
+    // setSliderThumbLabel(label)
     setSliderValue(values)
     onChange(values[0])
   }
-
-  const minerBribeContent = (index: any) => {
-    if (bribeEstimate) {
-      const key: keyof BribeEstimate = SLIDER_VALUE_TO_METHOD_MAP[index]
-      const bribeEstimateProperty: CurrencyAmount | BribeEstimates = bribeEstimate[key]
-      if (bribeEstimateProperty instanceof CurrencyAmount) {
-        console.log('- log ', bribeEstimateProperty)
-        return bribeEstimateProperty.toSignificant(6)
-      }
-    }
-    return <div>?</div>
-  }
+  console.log('bribeEstimate', bribeEstimate)
+  // const minerBribeContent = (index: any) => {
+  //   if (bribeEstimate) {
+  //     const key: keyof BribeEstimate = SLIDER_VALUE_TO_METHOD_MAP[index]
+  //     const bribeEstimateProperty: CurrencyAmount | BribeEstimates = bribeEstimate[key]
+  //     if (bribeEstimateProperty instanceof CurrencyAmount) {
+  //       console.log('- log ', bribeEstimateProperty)
+  //       return bribeEstimateProperty.toSignificant(6)
+  //     }
+  //   }
+  //   return <div>?</div>
+  // }
 
   return (
     <div
@@ -94,7 +104,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
               style={{
                 ...props.props.style,
                 position: 'absolute',
-                bottom: '-50px'
+                bottom: '-40px'
               }}
             >
               <div
@@ -113,7 +123,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                     display: 'flex',
                     textAlign: 'center',
                     alignItems: 'center',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    lineHeight: '14px'
                   }}
                 >
                   {SLIDER_VALUE_TO_LABEL_MAP[props.index]}
@@ -126,7 +137,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                     fontSize: '14px'
                   }}
                 >
-                  {minerBribeContent(props.index)}
+                  {/*minerBribeContent(props.index)*/}
                 </div>
               </div>
             </div>
@@ -204,7 +215,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 color: theme.text5,
                 padding: '0.25rem 0.5rem',
                 cursor: 'pointer',
-                width: '120px',
+                width: '140px',
                 textAlign: 'center',
                 zIndex: 3
               }}
