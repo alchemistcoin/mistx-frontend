@@ -45,7 +45,7 @@ export function useTransactionAdder(): (
         summary,
         claim,
         inputAmount,
-        outputAmount,
+        outputAmount
       }: {
         summary?: string
         claim?: { recipient: string }
@@ -69,7 +69,7 @@ export function useTransactionAdder(): (
           summary,
           claim,
           inputAmount,
-          outputAmount,
+          outputAmount
         })
       )
       addPopup(

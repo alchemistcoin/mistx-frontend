@@ -186,7 +186,7 @@ export function useSwapCallback(
                       {
                         summary: withRecipient,
                         inputAmount: trade.inputAmount,
-                        outputAmount: trade.outputAmount,
+                        outputAmount: trade.outputAmount
                         //relay
                       }
                     )
