@@ -83,7 +83,7 @@ const StyledGraphic = styled.img`
 `
 
 const UpdatesWrapper = styled(RowBetween)`
-  font-size: .75rem;
+  font-size: 0.75rem;
   margin-top: 1rem;
   text-align: center;
 `
@@ -172,17 +172,13 @@ export default function TransactionDiagnosis() {
             {tx?.lastCheckedBlockNumber && (
               <TYPE.main>
                 {`Last Block `}
-                <b>
-                  {tx.lastCheckedBlockNumber}
-                </b>
+                <b>{tx.lastCheckedBlockNumber}</b>
               </TYPE.main>
             )}
             {tx?.updatedAt && (
               <TYPE.main>
                 {`Updated `}
-                <b>
-                  {dayjs(tx.updatedAt).format('h:mm:ssA')}
-                </b>
+                <b>{dayjs(tx.updatedAt).format('h:mm:ssA')}</b>
               </TYPE.main>
             )}
           </UpdatesWrapper>
