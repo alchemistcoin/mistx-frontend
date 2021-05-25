@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
-import { BribeEstimate /*, CurrencyAmount*/ } from '@alchemistcoin/sdk'
+import { BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
+import useUSDCPrice from '../../hooks/useUSDCPrice'
 
 type Props = {
   max: number
@@ -44,13 +45,19 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value)
   const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
   const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
+  const ethUSDCPrice = useUSDCPrice(WETH[1])
+  console.log('eth usdc price', ethUSDCPrice?.toSignificant(6))
   useEffect(() => {
     let label = ''
-    if (bribeEstimate) {
-      label = `${bribeEstimate.minBribe.toSignificant(3)} - ${bribeEstimate.maxBribe.toSignificant(3)}`
+    if (bribeEstimate && ethUSDCPrice) {
+      const minBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.minBribe.raw)
+      const maxBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.maxBribe.raw)
+      label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
+        .quote(maxBribeTokenAmount)
+        .toSignificant(2)}`
     }
     setSliderThumbLabel(label)
-  }, [bribeEstimate])
+  }, [bribeEstimate, ethUSDCPrice])
   const onSliderChange = (values: any) => {
     // let label = ''
     // if (bribeEstimate) {
@@ -215,7 +222,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 color: theme.text5,
                 padding: '0.25rem 0.5rem',
                 cursor: 'pointer',
-                width: '140px',
+                width: '100px',
                 textAlign: 'center',
                 zIndex: 3
               }}

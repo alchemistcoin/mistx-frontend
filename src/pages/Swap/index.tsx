@@ -67,7 +67,7 @@ import { ArrowDownCircled } from 'components/Icons'
 import CurrencySelect from 'components/CurrencySelect'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
-import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
+// import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -182,7 +182,7 @@ export default function Swap({ history }: RouteComponentProps) {
     v2Trade,
     currencyBalances,
     parsedAmount,
-    minTradeAmounts,
+    // minTradeAmounts,
     currencies,
     inputError: swapInputError,
     minAmountError: swapMinAmountError
@@ -434,24 +434,24 @@ export default function Swap({ history }: RouteComponentProps) {
     // }
   }
 
-  console.log('-------------------')
-  console.log('price impact', trade?.priceImpact.toSignificant(6))
-  console.log('miner bribe', trade?.minerBribe.toSignificant(6))
-  console.log('input amount', trade?.inputAmount.toSignificant(6))
-  console.log('output amount', trade?.outputAmount.toSignificant(6))
-  console.log('execution price', trade?.executionPrice.toSignificant(6))
-  console.log('mid price', trade?.nextMidPrice.toSignificant(6))
-  console.log('path', trade?.route.path)
-  console.log('min amounts', minTradeAmounts)
-  console.log('min trade amount', minTradeAmounts[0]?.[0].toExact())
-  console.log('trade', trade)
+  // console.log('-------------------')
+  // console.log('price impact', trade?.priceImpact.toSignificant(6))
+  // console.log('miner bribe', trade?.minerBribe.toSignificant(6))
+  // console.log('input amount', trade?.inputAmount.toSignificant(6))
+  // console.log('output amount', trade?.outputAmount.toSignificant(6))
+  // console.log('execution price', trade?.executionPrice.toSignificant(6))
+  // console.log('mid price', trade?.nextMidPrice.toSignificant(6))
+  // console.log('path', trade?.route.path)
+  // console.log('min amounts', minTradeAmounts)
+  // console.log('min trade amount', minTradeAmounts[0]?.[0].toExact())
+  // console.log('trade', trade)
 
-  const bribeEstimate = useMinerBribeEstimate()
-  console.log(
-    'bribe estimate min/max',
-    bribeEstimate?.minBribe.toSignificant(6),
-    bribeEstimate?.maxBribe.toSignificant(6)
-  )
+  // const bribeEstimate = useMinerBribeEstimate()
+  // console.log(
+  //   'bribe estimate min/max',
+  //   bribeEstimate?.minBribe.toSignificant(6),
+  //   bribeEstimate?.maxBribe.toSignificant(6)
+  // )
 
   return (
     <>

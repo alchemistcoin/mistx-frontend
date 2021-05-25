@@ -211,8 +211,6 @@ export const NetworkContextName = 'NETWORK'
 export const INITIAL_ALLOWED_SLIPPAGE = 50
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
-// default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 2
 // default min trade margin, in bips
 export const MIN_TRADE_MARGIN = 1
 
@@ -250,6 +248,8 @@ export const BLOCKED_ADDRESSES: string[] = [
 ]
 
 // Miner Bribe Margin
+// default bribe margin, in bips
+export const INITIAL_BRIBE_MARGIN = 2
 export const MINER_BRIBE_MIN = 5
 export const MINER_BRIBE_MAX = 200
 
