@@ -150,9 +150,7 @@ export function ConfirmationModalContent({
         </Text>
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
-      <AutoColumn style={{ padding: '2.25rem 2rem' }}>
-        {topContent()}
-      </AutoColumn>
+      <AutoColumn style={{ padding: '2.25rem 2rem' }}>{topContent()}</AutoColumn>
       <BottomSection>{bottomContent()}</BottomSection>
     </Wrapper>
   )

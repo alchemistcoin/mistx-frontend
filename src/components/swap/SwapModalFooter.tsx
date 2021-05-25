@@ -27,7 +27,7 @@ const PriceWrapper = styled.div`
 
 const ConfirmButton = styled(ButtonError)`
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     top: -45px;
     left: -1px;
@@ -38,11 +38,11 @@ const ConfirmButton = styled(ButtonError)`
   }
 
   &:hover:before {
-    box-shadow: 0 22px 0 0 ${({ theme }) => darken(.05, theme.primary2)};
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.05, theme.primary2)};
   }
 
   &:after {
-    content: "";
+    content: '';
     position: absolute;
     top: -45px;
     right: -1px;
@@ -53,7 +53,7 @@ const ConfirmButton = styled(ButtonError)`
   }
 
   &:hover:after {
-    box-shadow: 0 22px 0 0 ${({ theme }) => darken(.05, theme.primary2)};
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.05, theme.primary2)};
   }
 `
 
@@ -90,7 +90,7 @@ export default function SwapModalFooter({
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              display: 'flex',
+              display: 'flex'
             }}
           >
             {formatExecutionPrice(trade, showInverted)}
@@ -158,7 +158,7 @@ export default function SwapModalFooter({
           error={severity > 2}
           style={{
             borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
+            borderTopRightRadius: 0
           }}
           id="confirm-swap-or-send"
         >

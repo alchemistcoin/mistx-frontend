@@ -29,11 +29,7 @@ const ArrowDivider = styled(AutoRow)`
   }
 `
 
-const CurrencyDisplay = ({
-  amount,
-}: {
-  amount: CurrencyAmount
-}) => (
+const CurrencyDisplay = ({ amount }: { amount: CurrencyAmount }) => (
   <>
     <CurrencyLogo currency={amount.currency} size={'24px'} />
     <Text fontSize={14} fontWeight={400} style={{ marginLeft: '1rem' }}>
@@ -81,7 +77,7 @@ export default function SwapModalHeader({
           </TruncatedText>
         </RowFixed>
       </RowBetween>
-      <ArrowDivider justify='center'>
+      <ArrowDivider justify="center">
         <ArrowDownCircle size="24px" color={theme.text3} />
       </ArrowDivider>
       <RowBetween align="center">
