@@ -249,7 +249,7 @@ export const BLOCKED_ADDRESSES: string[] = [
 
 // Miner Bribe Margin
 // default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 2
+export const INITIAL_BRIBE_MARGIN = 50
 export const MINER_BRIBE_MIN = 25
 export const MINER_BRIBE_MAX = 200
 
