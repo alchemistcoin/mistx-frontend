@@ -75,7 +75,7 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
       ? theme.yellow2
       : severity === 1
       ? theme.text1
-      : theme.green1};
+      : theme.green2};
 `
 
 export const StyledBalanceMaxMini = styled.button`

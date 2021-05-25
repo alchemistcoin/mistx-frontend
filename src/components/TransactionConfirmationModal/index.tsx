@@ -144,15 +144,15 @@ export function ConfirmationModalContent({
 }) {
   return (
     <Wrapper>
-      <Section>
-        <RowBetween>
-          <Text fontWeight={500} fontSize={20}>
-            {title}
-          </Text>
-          <CloseIcon onClick={onDismiss} />
-        </RowBetween>
+      <RowBetween style={{ padding: '1rem 1.5rem 0' }}>
+        <Text fontWeight={700} fontSize={28}>
+          {title}
+        </Text>
+        <CloseIcon onClick={onDismiss} />
+      </RowBetween>
+      <AutoColumn style={{ padding: '2.25rem 2rem' }}>
         {topContent()}
-      </Section>
+      </AutoColumn>
       <BottomSection>{bottomContent()}</BottomSection>
     </Wrapper>
   )

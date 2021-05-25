@@ -1,5 +1,6 @@
 import { Trade, TradeType } from '@alchemistcoin/sdk'
 import { SettingsHeader } from 'components/shared/header/styled'
+import { darken } from 'polished'
 import React, { useContext, useMemo, useState } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
@@ -22,6 +23,38 @@ import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
 const PriceWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg4};
   padding: 1rem 2rem 1rem 1.5rem;
+`
+
+const ConfirmButton = styled(ButtonError)`
+  &:before {
+    content: "";
+    position: absolute;
+    top: -45px;
+    left: -1px;
+    height: 44px;
+    width: 44px;
+    border-bottom-left-radius: 50%;
+    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+  }
+
+  &:hover:before {
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(.05, theme.primary2)};
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: -45px;
+    right: -1px;
+    height: 44px;
+    width: 44px;
+    border-bottom-right-radius: 50%;
+    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+  }
+
+  &:hover:after {
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(.05, theme.primary2)};
+  }
 `
 
 export default function SwapModalFooter({
@@ -65,7 +98,7 @@ export default function SwapModalFooter({
               <Repeat size={14} />
             </StyledBalanceMaxMini>
           </Text>
-          <Text fontWeight={400} fontSize={14} color={theme.green1}>
+          <Text fontWeight={400} fontSize={14} color={theme.green2}>
             Current Price
           </Text>
         </RowBetween>
@@ -84,12 +117,12 @@ export default function SwapModalFooter({
             <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
           </RowFixed>
           <RowFixed>
-            <TYPE.black fontSize={14}>
+            <TYPE.black fontSize={14} fontWeight={700}>
               {trade.tradeType === TradeType.EXACT_INPUT
                 ? slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4) ?? '-'
                 : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? '-'}
             </TYPE.black>
-            <TYPE.black fontSize={14} marginLeft={'4px'}>
+            <TYPE.black fontSize={14} marginLeft={'4px'} fontWeight={700}>
               {trade.tradeType === TradeType.EXACT_INPUT
                 ? trade.outputAmount.currency.symbol
                 : trade.inputAmount.currency.symbol}
@@ -112,28 +145,27 @@ export default function SwapModalFooter({
             </TYPE.black>
             <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
           </AutoRow>
-          <TYPE.black fontSize={14}>
+          <TYPE.black fontSize={14} fontWeight={700}>
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>
 
       <AutoRow>
-        <ButtonError
+        <ConfirmButton
           onClick={onConfirm}
           disabled={disabledConfirm}
           error={severity > 2}
           style={{
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
-            margin: '10px 0 0 0'
           }}
           id="confirm-swap-or-send"
         >
           <Text fontSize={20} fontWeight={700}>
             {severity > 2 ? 'Swap Anyway' : 'Confirm Swap'}
           </Text>
-        </ButtonError>
+        </ConfirmButton>
 
         {swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
       </AutoRow>
