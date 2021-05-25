@@ -4,15 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
 import { RowFixed } from '../Row'
-import {
-  GithubIcon,
-  DiscordIcon,
-  UniswapIcon,
-  EtherscanIcon,
-  CoingeckoIcon,
-  EllipseIcon,
-  CoingeckoLightIcon
-} from '../Icons'
+import { GithubIcon, DiscordIcon, EtherscanIcon, CoingeckoIcon, EllipseIcon, CoingeckoLightIcon } from '../Icons'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const Wrapper = styled.div`
@@ -117,17 +109,6 @@ export default function NavExternalLinks({ header }: Props) {
               <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
             </StyledEllipseWapper>
             <EtherscanIcon fill={darkMode ? '#FFF' : '#1a0434'} />
-          </SocialLink>
-        </SocialLinkWrapper>
-        <SocialLinkWrapper header={header}>
-          <SocialLink
-            href="https://info.uniswap.org/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
-            title={t('uniswap')}
-          >
-            <StyledEllipseWapper>
-              <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-            </StyledEllipseWapper>
-            <UniswapIcon fill={darkMode ? '#FFF' : '#1a0434'} />
           </SocialLink>
         </SocialLinkWrapper>
         <SocialLinkWrapper header={header}>
