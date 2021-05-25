@@ -57,8 +57,6 @@ const MinderBribeSlider = () => {
   const [userBribeMargin, setUserBribeMargin] = useUserBribeMargin()
 
   const onChange = (setting: number) => {
-    // const
-    // const value = Math.floor()
     setUserBribeMargin(settingToValue(setting))
   }
   console.log('bribe estimate', bribeEstimate)
