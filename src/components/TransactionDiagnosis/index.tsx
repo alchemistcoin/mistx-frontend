@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { usePendingTransactions, useTransactionCanceller } from 'state/transactions/hooks'
 import { TransactionDetails } from 'state/transactions/reducer'
@@ -8,6 +9,8 @@ import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { CurrencyAmount } from '@alchemistcoin/sdk'
 import { PendingTransactionIcon } from 'components/Icons'
+import { TYPE } from 'theme'
+import { RowBetween } from 'components/Row'
 
 const Wrapper = styled.div``
 
@@ -77,6 +80,12 @@ const StyledGraphic = styled.img`
   width: 100%;
   top: 50%;
   transform: translate(-50%, -50%);
+`
+
+const UpdatesWrapper = styled(RowBetween)`
+  font-size: 0.75rem;
+  margin-top: 1rem;
+  text-align: center;
 `
 
 const Connector = () => (
@@ -158,6 +167,22 @@ export default function TransactionDiagnosis() {
             </>
           )}
         </TokenWrapper>
+        {(tx?.lastCheckedBlockNumber || tx.updatedAt) && (
+          <UpdatesWrapper>
+            {tx?.lastCheckedBlockNumber && (
+              <TYPE.main>
+                {`Last Block `}
+                <b>{tx.lastCheckedBlockNumber}</b>
+              </TYPE.main>
+            )}
+            {tx?.updatedAt && (
+              <TYPE.main>
+                {`Updated `}
+                <b>{dayjs(tx.updatedAt).format('h:mm:ssA')}</b>
+              </TYPE.main>
+            )}
+          </UpdatesWrapper>
+        )}
         {canCancel && (
           <StyledCancelButton onClick={() => handleCancelClick(hash, tx)}>Cancel Transaction</StyledCancelButton>
         )}
