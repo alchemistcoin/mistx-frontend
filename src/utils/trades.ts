@@ -31,8 +31,10 @@ export function isETHTrade(trade: Trade | undefined | null): boolean | undefined
   if (!trade) {
     return undefined
   } else if (
-    (!currencyEquals(trade.route.input, ETHER) || !currencyEquals(trade.route.input, WETH[trade.route.chainId])) &&
-    (!currencyEquals(trade.route.output, ETHER) || !currencyEquals(trade.route.output, WETH[trade.route.chainId]))
+    !currencyEquals(trade.route.input, ETHER) &&
+    !currencyEquals(trade.route.input, WETH[trade.route.chainId]) &&
+    !currencyEquals(trade.route.output, ETHER) &&
+    !currencyEquals(trade.route.output, WETH[trade.route.chainId])
   ) {
     return false
   }
