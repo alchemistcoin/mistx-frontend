@@ -14,6 +14,8 @@ import {
   useUserSingleHopOnly
 } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
+// components
+import { SettingsHeader } from '../shared/header/styled'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import Modal from '../Modal'
@@ -132,26 +134,6 @@ const ModalContentWrapper = styled.div`
 const SettingWrapper = styled.div<{ darkBg?: boolean }>`
   padding: 1.5rem 1.5rem;
   background-color: ${({ theme, darkBg }) => darkBg && '#232E3B'};
-`
-
-const SettingsHeader = styled.div`
-  position: relative;
-  width: 100%;
-  display: flex;
-  margin: 0 0 1.5rem;
-  color: ${({ theme }) => theme.text1};
-  align-items: center;
-  justify-content: space-between;
-
-  &:before {
-    position: absolute;
-    left: -1.5rem;
-    top: 3px;
-    height: 24px;
-    width: 2px;
-    content: '';
-    background-color: ${({ theme }) => theme.primary2};
-  }
 `
 
 const StyledRowFixed = styled(RowFixed)`

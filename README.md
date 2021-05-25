@@ -1,5 +1,6 @@
 # Uniswap Interface
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0a896031-c171-4032-8b00-f0104c10005a/deploy-status)](https://app.netlify.com/sites/alchemist-mistx-0523/deploys)
 [![Unit Tests](https://github.com/Uniswap/uniswap-interface/actions/workflows/unit-tests.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/unit-tests.yaml)
 [![Integration Tests](https://github.com/Uniswap/uniswap-interface/actions/workflows/integration-tests.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/integration-tests.yaml)
 [![Lint](https://github.com/Uniswap/uniswap-interface/actions/workflows/lint.yml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/lint.yml)
