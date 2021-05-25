@@ -155,7 +155,8 @@ function transactionResToastStatus(transaction: TransactionRes) {
   return {
     pending,
     success,
-    message
+    message,
+    status: transaction.status
   }
 }
 
