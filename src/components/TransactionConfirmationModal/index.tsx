@@ -23,7 +23,7 @@ const Section = styled(AutoColumn)`
   padding: 24px;
 `
 
-const BottomSection = styled(Section)`
+const BottomSection = styled(AutoColumn)`
   background-color: ${({ theme }) => theme.bg1};
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -153,7 +153,7 @@ export function ConfirmationModalContent({
         </RowBetween>
         {topContent()}
       </Section>
-      <BottomSection gap="12px">{bottomContent()}</BottomSection>
+      <BottomSection>{bottomContent()}</BottomSection>
     </Wrapper>
   )
 }
