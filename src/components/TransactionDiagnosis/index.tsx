@@ -131,7 +131,7 @@ export default function TransactionDiagnosis() {
   const canCancel = typeof tx?.status !== 'undefined'
   const [cancelClicked, setCancelClicked] = useState(false)
 
-  console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
+  // console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
 
   function handleCancelClick(hash: string, tx: TransactionDetails) {
     if (!chainId) return

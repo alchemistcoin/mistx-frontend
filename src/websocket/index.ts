@@ -170,22 +170,22 @@ export default function Sockets(): null {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log('websocket connected')
+      // console.log('websocket connected')
       dispatch(updateSocketStatus(true))
     })
 
     socket.on('connect_error', err => {
-      console.log('websocket connect error', err)
+      // console.log('websocket connect error', err)
       dispatch(updateSocketStatus(false))
     })
 
     socket.on('disconnect', err => {
-      console.log('websocket disconnect', err)
+      // console.log('websocket disconnect', err)
       dispatch(updateSocketStatus(false))
     })
 
     socket.on(Event.SOCKET_ERR, err => {
-      console.log('websocket err', err)
+      // console.log('websocket err', err)
       if (err.event === Event.TRANSACTION_REQUEST) {
         const transactionReq = err.data as TransactionReq
         const hash = keccak256(transactionReq.serializedSwap)
@@ -237,7 +237,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
-      console.log('- log transaction diagnosis', diagnosis)
+      // console.log('- log transaction diagnosis', diagnosis)
       const hash = keccak256(diagnosis.transaction.serializedSwap)
 
       const transactionId = {
@@ -278,7 +278,7 @@ export default function Sockets(): null {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               const transactionReq: TransactionProcessed = tx.processed
-              console.log('- test socket.emit TRANSACTION_STATUS_REQUEST')
+              // console.log('- test socket.emit TRANSACTION_STATUS_REQUEST')
               socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
             }
           }

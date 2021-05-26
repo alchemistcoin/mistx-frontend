@@ -176,7 +176,7 @@ export function useSwapCallback(
                       from: account
                     }
 
-                    console.log('emit transaction', transactionReq)
+                    // console.log('emit transaction', transactionReq)
                     // send transaction via sockets here
 
                     // we can't have TransactionResponse here

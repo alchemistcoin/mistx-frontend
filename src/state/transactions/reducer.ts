@@ -67,7 +67,7 @@ export default createReducer(initialState, builder =>
       if (tx && isPendingTransaction(tx)) {
         throw Error('Attempted to add existing transaction.')
       }
-      console.log('TRADE', trade?.inputAmount.currency)
+      // console.log('TRADE', trade?.inputAmount.currency)
       const txs = transactions[chainId] ?? {}
       txs[hash] = {
         hash,
