@@ -2,15 +2,15 @@ import React from 'react'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { usePendingTransactions, useTransactionCanceller } from 'state/transactions/hooks'
-import { TransactionDetails } from 'state/transactions/reducer'
+import { AmountDetails, TransactionDetails } from 'state/transactions/reducer'
 import { ButtonOutlined } from 'components/Button'
 import { useActiveWeb3React } from 'hooks'
 // import { ArrowDown } from 'react-feather'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { CurrencyAmount } from '@alchemistcoin/sdk'
 import { PendingTransactionIcon } from 'components/Icons'
 import { TYPE } from 'theme'
 import { RowBetween } from 'components/Row'
+import { ETHER, Token } from '@alchemistcoin/sdk'
 
 const Wrapper = styled.div``
 
@@ -104,10 +104,16 @@ const Connector = () => (
   </svg>
 )
 
-const CurrencyLabel = ({ currency }: { currency?: CurrencyAmount }) => (
+const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => (
   <CurrencyLabelWrapper>
-    <CurrencyLogo currency={currency?.currency} size="24px" />
-    <CurrencyName>{currency?.currency.symbol}</CurrencyName>
+    <CurrencyLogo
+      currency={amount.currency.address && amount.currency.chainId
+        ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
+        : ETHER
+      }
+      size="24px"
+    />
+    <CurrencyName>{amount.currency.symbol}</CurrencyName>
   </CurrencyLabelWrapper>
 )
 
@@ -118,8 +124,8 @@ export default function TransactionDiagnosis() {
   const hash = Object.keys(pendingTransactions)[0]
   const tx = pendingTransactions[hash]
   // const path = tx.processed?.swap.path;
-  const tokenInput = tx?.inputAmount
-  const tokenOutput = tx?.outputAmount
+  const tokenInput = tx?.trade?.inputAmount
+  const tokenOutput = tx?.trade?.outputAmount
   const canCancel = typeof tx?.status !== 'undefined'
 
   console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
@@ -147,20 +153,16 @@ export default function TransactionDiagnosis() {
           ) : (
             <>
               <TokenAmountWrapper>
-                {tx && (
-                  <>
-                    <CurrencyLabel currency={tokenInput} />
-                    {/* <ArrowDown size="1rem" style={{ marginLeft: '.175rem' }}/> */}
-                    <CurrencyLabel currency={tokenOutput} />
-                  </>
-                )}
+                {tokenInput && <CurrencyLabel amount={tokenInput} />}
+                {/* <ArrowDown size="1rem" style={{ marginLeft: '.175rem' }}/> */}
+                {tokenOutput && <CurrencyLabel amount={tokenOutput} />}
               </TokenAmountWrapper>
               <PendingTransactionIcon />
               <TokenAmountWrapper>
                 {tx && (
                   <>
-                    <TransactionAmount>{tokenInput?.toSignificant?.(4)}</TransactionAmount>
-                    <TransactionAmount>{tokenOutput?.toSignificant?.(4)}</TransactionAmount>
+                    <TransactionAmount>{tokenInput?.value}</TransactionAmount>
+                    <TransactionAmount>{tokenOutput?.value}</TransactionAmount>
                   </>
                 )}
               </TokenAmountWrapper>

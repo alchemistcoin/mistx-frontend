@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ChainId, CurrencyAmount } from '@alchemistcoin/sdk'
+import { ChainId, Trade } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
@@ -25,8 +25,7 @@ interface TransactionResponseUnsentData {
   claim?: {
     recipient: string
   }
-  inputAmount?: CurrencyAmount
-  outputAmount?: CurrencyAmount
+  trade?: Trade
 }
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
@@ -44,14 +43,12 @@ export function useTransactionAdder(): (
       {
         summary,
         claim,
-        inputAmount,
-        outputAmount
+        trade,
       }: {
         summary?: string
         claim?: { recipient: string }
         approval?: { tokenAddress: string; spender: string }
-        inputAmount?: CurrencyAmount
-        outputAmount?: CurrencyAmount
+        trade?: Trade
       } = {}
     ) => {
       if (!account) return
@@ -68,8 +65,7 @@ export function useTransactionAdder(): (
           chainId: chainId ?? response.chainId,
           summary,
           claim,
-          inputAmount,
-          outputAmount
+          trade,
         })
       )
       addPopup(
@@ -205,7 +201,7 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   const { chainId } = useActiveWeb3React()
 
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
-  console.log('- log chainId', chainId)
+  // console.log('- log chainId', chainId)
   return chainId ? state[chainId] ?? {} : {}
 }
 
@@ -246,7 +242,7 @@ export function useHasPendingTransactions(): boolean {
 
   return useMemo(() => {
     let transaction: TransactionDetails
-    console.log('transactions', transactions)
+
     return Object.keys(transactions).some(hash => {
       transaction = transactions[hash]
       return isPendingTransaction(transaction)
