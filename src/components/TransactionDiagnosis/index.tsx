@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { usePendingTransactions, useTransactionCanceller } from 'state/transactions/hooks'
@@ -127,13 +127,16 @@ export default function TransactionDiagnosis() {
   // const path = tx.processed?.swap.path;
   const tokenInput = tx?.trade?.inputAmount
   const tokenOutput = tx?.trade?.outputAmount
+
   const canCancel = typeof tx?.status !== 'undefined'
+  const [cancelClicked, setCancelClicked] = useState(false)
 
   console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
 
   function handleCancelClick(hash: string, tx: TransactionDetails) {
     if (!chainId) return
     if (!tx?.processed) return
+    setCancelClicked(true)
     cancelTransaction(
       {
         chainId,
@@ -187,7 +190,9 @@ export default function TransactionDiagnosis() {
           </UpdatesWrapper>
         )}
         {canCancel && (
-          <StyledCancelButton onClick={() => handleCancelClick(hash, tx)}>Cancel Transaction</StyledCancelButton>
+          <StyledCancelButton disabled={cancelClicked} onClick={() => handleCancelClick(hash, tx)}>
+            Cancel Transaction
+          </StyledCancelButton>
         )}
       </StyledDiagnosticWrapper>
       <Connector />
