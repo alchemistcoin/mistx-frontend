@@ -208,18 +208,6 @@ export default function CurrencyList({
     }
     return currencies
   }, [currencies, otherListTokens, showMIST])
-  // const itemData: (Currency | undefined)[] = useMemo(() => {
-  //   let formatted: (Currency | undefined)[] = showETH
-  //     ? [Currency.ETHER, ...(showMIST ? mistFirst(currencies) : currencies)]
-  //     : showMIST
-  //     ? mistFirst(currencies)
-  //     : currencies
-
-  //   if (breakIndex !== undefined) {
-  //     formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
-  //   }
-  //   return formatted
-  // }, [breakIndex, currencies, showETH, showMIST])
 
   const { chainId } = useActiveWeb3React()
 
