@@ -61,7 +61,6 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
     setSliderValue(values)
     onChange(values[0])
   }
-  console.log('bribeEstimate', bribeEstimate)
 
   return (
     <div
