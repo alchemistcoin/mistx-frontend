@@ -46,7 +46,6 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
   const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
   const ethUSDCPrice = useUSDCPrice(WETH[1])
-  console.log('eth usdc price', ethUSDCPrice?.toSignificant(6))
   useEffect(() => {
     let label = '.....'
     if (bribeEstimate && ethUSDCPrice) {

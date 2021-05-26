@@ -1,4 +1,4 @@
-import { currencyEquals, Trade } from '@alchemistcoin/sdk'
+import { currencyEquals, Trade, Price } from '@alchemistcoin/sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -33,7 +33,8 @@ export default function ConfirmSwapModal({
   swapErrorMessage,
   isOpen,
   attemptingTxn,
-  txHash
+  txHash,
+  ethUSDCPrice,
 }: {
   isOpen: boolean
   trade: Trade | undefined
@@ -46,6 +47,7 @@ export default function ConfirmSwapModal({
   onConfirm: () => void
   swapErrorMessage: string | undefined
   onDismiss: () => void
+  ethUSDCPrice: Price | undefined
 }) {
   const showAcceptChanges = useMemo(
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),
@@ -72,9 +74,10 @@ export default function ConfirmSwapModal({
         disabledConfirm={showAcceptChanges}
         swapErrorMessage={swapErrorMessage}
         allowedSlippage={allowedSlippage}
+        ethUSDCPrice={ethUSDCPrice}
       />
     ) : null
-  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade])
+  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade, ethUSDCPrice])
 
   // text to show while loading
   const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${

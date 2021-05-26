@@ -1,4 +1,4 @@
-import { Trade, TradeType } from '@alchemistcoin/sdk'
+import { Trade, TradeType, Price, TokenAmount, WETH } from '@alchemistcoin/sdk'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
 import React, { useContext, useMemo, useState } from 'react'
@@ -62,13 +62,15 @@ export default function SwapModalFooter({
   onConfirm,
   allowedSlippage,
   swapErrorMessage,
-  disabledConfirm
+  disabledConfirm,
+  ethUSDCPrice
 }: {
   trade: Trade
   allowedSlippage: number
   onConfirm: () => void
   swapErrorMessage: string | undefined
   disabledConfirm: boolean
+  ethUSDCPrice: Price | undefined
 }) {
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
@@ -147,6 +149,19 @@ export default function SwapModalFooter({
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
+          </TYPE.black>
+        </RowBetween>
+        <RowBetween>
+          <AutoRow width="fit-content">
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Transaction Fee
+            </TYPE.black>
+            <QuestionHelper text="A tip for the miner to accept the transaction." />
+          </AutoRow>
+          <TYPE.black fontSize={14} fontWeight={700}>
+            {ethUSDCPrice
+              ? `$ ${ethUSDCPrice.quote(new TokenAmount(WETH[1], trade.minerBribe.raw)).toSignificant(4)}`
+              : `Loading...`}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>

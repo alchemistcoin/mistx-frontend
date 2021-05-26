@@ -488,6 +488,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onConfirm={handleSwap}
         swapErrorMessage={swapErrorMessage}
         onDismiss={handleConfirmDismiss}
+        ethUSDCPrice={ethUSDCPrice}
       />
       {hasPendingTransactions ? (
         <AppBody>
@@ -581,9 +582,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         <FeeInnerLeft>
                           Transaction fee:
                           <span>
-                            $
                             {ethUSDCPrice
-                              ? `${ethUSDCPrice
+                              ? `$ ${ethUSDCPrice
                                   .quote(new TokenAmount(WETH[1], trade.minerBribe.raw))
                                   .toSignificant(4)} (${trade.minerBribe.toSignificant(2)} ETH)`
                               : `${trade.minerBribe.toSignificant(2)} ETH`}
