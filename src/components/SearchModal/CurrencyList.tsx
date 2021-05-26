@@ -98,15 +98,15 @@ function TokenTags({ currency }: { currency: Currency }) {
   )
 }
 
-// const mistFirst = (currencies: Currency[]): Currency[] =>
-//   currencies.reduce((arr: Currency[], currency: Currency) => {
-//     if (currency.symbol === 'MIST') {
-//       arr.unshift(currency)
-//       return arr
-//     }
-//     arr.push(currency)
-//     return arr
-//   }, [])
+const mistFirst = (currencies: Currency[]): Currency[] =>
+  currencies.reduce((arr: Currency[], currency: Currency) => {
+    if (currency.symbol === 'MIST') {
+      arr.unshift(currency)
+      return arr
+    }
+    arr.push(currency)
+    return arr
+  }, [])
 
 const BREAK_LINE = 'BREAK'
 type BreakLine = typeof BREAK_LINE
@@ -187,8 +187,7 @@ export default function CurrencyList({
   onCurrencySelect,
   otherCurrency,
   fixedListRef,
-  // showETH,
-  // showMIST,
+  showMIST,
   showImportView,
   setImportToken
 }: {
@@ -199,18 +198,16 @@ export default function CurrencyList({
   onCurrencySelect: (currency: Currency) => void
   otherCurrency?: Currency | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
-  showETH: boolean
   showMIST: boolean
   showImportView: () => void
   setImportToken: (token: Token) => void
-  breakIndex: number | undefined
 }) {
   const itemData: (Currency | BreakLine)[] = useMemo(() => {
     if (otherListTokens && otherListTokens?.length > 0) {
-      return [...currencies, BREAK_LINE, ...otherListTokens]
+      return [...(showMIST ? mistFirst(currencies) : currencies), BREAK_LINE, ...otherListTokens]
     }
     return currencies
-  }, [currencies, otherListTokens])
+  }, [currencies, otherListTokens, showMIST])
   // const itemData: (Currency | undefined)[] = useMemo(() => {
   //   let formatted: (Currency | undefined)[] = showETH
   //     ? [Currency.ETHER, ...(showMIST ? mistFirst(currencies) : currencies)]
@@ -225,10 +222,6 @@ export default function CurrencyList({
   // }, [breakIndex, currencies, showETH, showMIST])
 
   const { chainId } = useActiveWeb3React()
-
-  // const inactiveTokens: {
-  //   [address: string]: Token
-  // } = useAllInactiveTokens()
 
   const Row = useCallback(
     ({ data, index, style }) => {

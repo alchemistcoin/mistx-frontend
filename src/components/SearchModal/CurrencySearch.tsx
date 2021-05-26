@@ -97,12 +97,9 @@ export function CurrencySearch({
     }
   }, [isAddressSearch])
 
-  const [showETH, showMIST] = useMemo(() => {
+  const [showMIST] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()
-    return [
-      s === '' || s === 'e' || s === 'et' || s === 'eth',
-      s === '' || s === 'm' || s === 'mi' || s === 'mis' || s === 'mist'
-    ]
+    return [s === '' || s === 'm' || s === 'mi' || s === 'mis' || s === 'mist']
   }, [debouncedQuery])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
@@ -172,8 +169,7 @@ export function CurrencySearch({
   useOnClickOutside(node, open ? toggle : undefined)
 
   // if no results on main list, show option to expand into inactive
-  const inactiveTokens = useSearchInactiveTokenLists(filteredTokens.length === 0 ? debouncedQuery : '')
-  const filteredInactiveTokens: Token[] = useSortedTokensByQuery(inactiveTokens, debouncedQuery)
+  const filteredInactiveTokens = useSearchInactiveTokenLists(filteredTokens.length === 0 ? debouncedQuery : undefined)
 
   return (
     <ContentWrapper>
@@ -211,12 +207,9 @@ export function CurrencySearch({
             {({ height }) => (
               <CurrencyList
                 height={height}
-                showETH={showETH}
                 showMIST={showMIST}
-                currencies={
-                  filteredInactiveTokens ? filteredSortedTokens.concat(filteredInactiveTokens) : filteredSortedTokens
-                }
-                breakIndex={inactiveTokens && filteredSortedTokens ? filteredSortedTokens.length : undefined}
+                currencies={filteredSortedTokensWithETH}
+                otherListTokens={filteredInactiveTokens}
                 onCurrencySelect={handleCurrencySelect}
                 otherCurrency={otherSelectedCurrency}
                 selectedCurrency={selectedCurrency}
