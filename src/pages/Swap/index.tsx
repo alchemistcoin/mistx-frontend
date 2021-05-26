@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
@@ -23,8 +23,12 @@ import {
   PendingWrapper,
   RelativeWrapper,
   SwapCallbackError,
-  Wrapper
+  Wrapper,
+  FeeWrapper,
+  FeeInnerLeft,
+  FeeInnerRight
 } from '../../components/swap/styleds'
+import QuestionHelper from '../../components/QuestionHelper'
 // import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 
@@ -35,6 +39,7 @@ import SwapHeader from '../../components/swap/SwapHeader'
 import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
+import useUSDCPrice from '../../hooks/useUSDCPrice'
 // import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
@@ -174,6 +179,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get user transaction deadline TTL, in minutes
   // const [transactionTTL] = useUserTransactionTTL()
+
+  // ETH/USDC Price
+  const ethUSDCPrice = useUSDCPrice(WETH[1])
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -563,6 +571,29 @@ export default function Swap({ history }: RouteComponentProps) {
                       </LinkStyledButton>
                     </AutoRow>
                     <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
+                  </>
+                ) : null}
+
+                {trade && trade.minerBribe ? (
+                  <>
+                    <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
+                      <FeeWrapper>
+                        <FeeInnerLeft>
+                          Transaction fee:
+                          <span>
+                            $
+                            {ethUSDCPrice
+                              ? `${ethUSDCPrice
+                                  .quote(new TokenAmount(WETH[1], trade.minerBribe.raw))
+                                  .toSignificant(4)} (${trade.minerBribe.toSignificant(2)} ETH)`
+                              : `${trade.minerBribe.toSignificant(2)} ETH`}
+                          </span>
+                        </FeeInnerLeft>
+                        <FeeInnerRight>
+                          <QuestionHelper text="A tip for the miner to accept the transaction. You can change this in the settings." />
+                        </FeeInnerRight>
+                      </FeeWrapper>
+                    </AutoRow>
                   </>
                 ) : null}
 
