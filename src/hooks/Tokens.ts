@@ -63,7 +63,7 @@ export function useAllInactiveTokens(): { [address: string]: Token } {
 
   // filter out any token that are on active list
   const activeTokensAddresses = Object.keys(useAllTokens())
-  const filteredInactive = activeTokensAddresses
+  return activeTokensAddresses
     ? Object.keys(inactiveTokens).reduce<{ [address: string]: Token }>((newMap, address) => {
         if (!activeTokensAddresses.includes(address)) {
           newMap[address] = inactiveTokens[address]
@@ -71,8 +71,6 @@ export function useAllInactiveTokens(): { [address: string]: Token } {
         return newMap
       }, {})
     : inactiveTokens
-
-  return filteredInactive
 }
 
 export function useUnsupportedTokens(): { [address: string]: Token } {
@@ -91,7 +89,7 @@ export function useIsTokenActive(token: Token | undefined | null): boolean {
 }
 
 // used to detect extra search results
-export function useFoundOnInactiveList(searchQuery: string): Token[] | undefined {
+export function useSearchInactiveLists(searchQuery: string): Token[] | undefined {
   const { chainId } = useActiveWeb3React()
   const inactiveTokens = useAllInactiveTokens()
 
@@ -99,8 +97,7 @@ export function useFoundOnInactiveList(searchQuery: string): Token[] | undefined
     if (!chainId || searchQuery === '') {
       return undefined
     } else {
-      const tokens = filterTokens(Object.values(inactiveTokens), searchQuery)
-      return tokens
+      return filterTokens(Object.values(inactiveTokens), searchQuery)
     }
   }, [chainId, inactiveTokens, searchQuery])
 }
