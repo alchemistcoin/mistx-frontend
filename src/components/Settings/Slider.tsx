@@ -48,7 +48,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   const ethUSDCPrice = useUSDCPrice(WETH[1])
   console.log('eth usdc price', ethUSDCPrice?.toSignificant(6))
   useEffect(() => {
-    let label = ''
+    let label = '.....'
     if (bribeEstimate && ethUSDCPrice) {
       const minBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.minBribe.raw)
       const maxBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.maxBribe.raw)
@@ -59,26 +59,10 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
     setSliderThumbLabel(label)
   }, [bribeEstimate, ethUSDCPrice])
   const onSliderChange = (values: any) => {
-    // let label = ''
-    // if (bribeEstimate) {
-    //   label = `${bribeEstimate.minBribe.toSignificant(2)} - ${bribeEstimate.maxBribe.toSignificant(2)}`
-    // }
-    // setSliderThumbLabel(label)
     setSliderValue(values)
     onChange(values[0])
   }
   console.log('bribeEstimate', bribeEstimate)
-  // const minerBribeContent = (index: any) => {
-  //   if (bribeEstimate) {
-  //     const key: keyof BribeEstimate = SLIDER_VALUE_TO_METHOD_MAP[index]
-  //     const bribeEstimateProperty: CurrencyAmount | BribeEstimates = bribeEstimate[key]
-  //     if (bribeEstimateProperty instanceof CurrencyAmount) {
-  //       console.log('- log ', bribeEstimateProperty)
-  //       return bribeEstimateProperty.toSignificant(6)
-  //     }
-  //   }
-  //   return <div>?</div>
-  // }
 
   return (
     <div
