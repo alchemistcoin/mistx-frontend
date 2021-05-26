@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { CheckCircle, Triangle } from 'react-feather'
 
@@ -97,7 +97,7 @@ export default function Transaction({ hash }: { hash: string }) {
   const canCancel = pending && typeof tx?.status !== 'undefined'
   const success = tx && isSuccessfulTransaction(tx)
   const cancelTransaction = useTransactionCanceller()
-
+  const [cancelClicked, setCancelClicked] = useState(false)
   const Row = (
     <RowFixed flex="1">
       <TransactionStatusText className="transaction-status-text">
@@ -110,7 +110,7 @@ export default function Transaction({ hash }: { hash: string }) {
   function handleCancelClick() {
     if (!chainId) return
     if (!tx?.processed) return
-
+    setCancelClicked(true)
     cancelTransaction(
       {
         chainId,
@@ -134,7 +134,7 @@ export default function Transaction({ hash }: { hash: string }) {
         Row
       )}
       {canCancel && (
-        <CancelButton disabled={tx?.cancel === Status.CANCEL_TRANSACTION_PENDING} onClick={handleCancelClick}>
+        <CancelButton disabled={cancelClicked} onClick={handleCancelClick}>
           {t('Cancel')}
         </CancelButton>
       )}
