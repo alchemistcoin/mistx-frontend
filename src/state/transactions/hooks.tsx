@@ -43,7 +43,7 @@ export function useTransactionAdder(): (
       {
         summary,
         claim,
-        trade,
+        trade
       }: {
         summary?: string
         claim?: { recipient: string }
@@ -65,7 +65,7 @@ export function useTransactionAdder(): (
           chainId: chainId ?? response.chainId,
           summary,
           claim,
-          trade,
+          trade
         })
       )
       addPopup(

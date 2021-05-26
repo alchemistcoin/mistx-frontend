@@ -107,9 +107,10 @@ const Connector = () => (
 const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => (
   <CurrencyLabelWrapper>
     <CurrencyLogo
-      currency={amount.currency.address && amount.currency.chainId
-        ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
-        : ETHER
+      currency={
+        amount.currency.address && amount.currency.chainId
+          ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
+          : ETHER
       }
       size="24px"
     />

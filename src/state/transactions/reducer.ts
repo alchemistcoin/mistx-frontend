@@ -62,48 +62,49 @@ export const initialState: TransactionState = {}
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(
-      addTransaction,
-      (transactions, { payload: { chainId, from, hash, summary, claim, trade } }) => {
-        const tx = transactions[chainId]?.[hash] as TransactionDetails
-        if (tx && isPendingTransaction(tx)) {
-          throw Error('Attempted to add existing transaction.')
-        }
-        console.log('TRADE', trade?.inputAmount.currency);
-        const txs = transactions[chainId] ?? {}
-        txs[hash] = {
-          hash,
-          summary,
-          claim,
-          from,
-          addedTime: now(),
-          trade: trade ? {
-            inputAmount: {
-              currency: {
-                chainId: trade.inputAmount.currency instanceof Token ? trade.inputAmount.currency.chainId : undefined,
-                address: trade.inputAmount.currency instanceof Token ? trade.inputAmount.currency.address : undefined,
-                decimals: trade.inputAmount.currency.decimals,
-                symbol: trade.inputAmount.currency.symbol,
-                name: trade.inputAmount.currency.name,
-              },
-              value: trade.inputAmount.toSignificant(4)
-            },
-            outputAmount: {
-              currency: {
-                ...trade.outputAmount.currency,
-                chainId: trade.outputAmount.currency instanceof Token ? trade.outputAmount.currency.chainId : undefined,
-                address: trade.outputAmount.currency instanceof Token ? trade.outputAmount.currency.address : undefined,
-                decimals: trade.outputAmount.currency.decimals,
-                symbol: trade.outputAmount.currency.symbol,
-                name: trade.outputAmount.currency.name,
-              },
-              value: trade.outputAmount.toSignificant(4)
-            }
-          } : undefined
-        }
-        transactions[chainId] = txs
+    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim, trade } }) => {
+      const tx = transactions[chainId]?.[hash] as TransactionDetails
+      if (tx && isPendingTransaction(tx)) {
+        throw Error('Attempted to add existing transaction.')
       }
-    )
+      console.log('TRADE', trade?.inputAmount.currency)
+      const txs = transactions[chainId] ?? {}
+      txs[hash] = {
+        hash,
+        summary,
+        claim,
+        from,
+        addedTime: now(),
+        trade: trade
+          ? {
+              inputAmount: {
+                currency: {
+                  chainId: trade.inputAmount.currency instanceof Token ? trade.inputAmount.currency.chainId : undefined,
+                  address: trade.inputAmount.currency instanceof Token ? trade.inputAmount.currency.address : undefined,
+                  decimals: trade.inputAmount.currency.decimals,
+                  symbol: trade.inputAmount.currency.symbol,
+                  name: trade.inputAmount.currency.name
+                },
+                value: trade.inputAmount.toSignificant(4)
+              },
+              outputAmount: {
+                currency: {
+                  ...trade.outputAmount.currency,
+                  chainId:
+                    trade.outputAmount.currency instanceof Token ? trade.outputAmount.currency.chainId : undefined,
+                  address:
+                    trade.outputAmount.currency instanceof Token ? trade.outputAmount.currency.address : undefined,
+                  decimals: trade.outputAmount.currency.decimals,
+                  symbol: trade.outputAmount.currency.symbol,
+                  name: trade.outputAmount.currency.name
+                },
+                value: trade.outputAmount.toSignificant(4)
+              }
+            }
+          : undefined
+      }
+      transactions[chainId] = txs
+    })
     .addCase(removeTransaction, (transactions, { payload: { chainId, hash } }) => {
       const tx = transactions[chainId]?.[hash]
       if (!tx) {
