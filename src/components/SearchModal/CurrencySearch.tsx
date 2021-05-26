@@ -170,7 +170,7 @@ export function CurrencySearch({
 
   // if no results on main list, show option to expand into inactive
   const filteredInactiveTokens = useSearchInactiveTokenLists(filteredTokens.length === 0 ? debouncedQuery : undefined)
-  console.log('translation', t, t('tokenSearchPlaceholder'))
+  // console.log('translation', t, t('tokenSearchPlaceholder'))
   return (
     <ContentWrapper>
       <PaddedColumn gap="16px">
