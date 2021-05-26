@@ -1,10 +1,10 @@
-import { Currency, ETHER, Token } from '@alchemistcoin/sdk'
+import { Currency, ETHER, Token, ChainId } from '@alchemistcoin/sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import EthereumLogo from '../../assets/images/ethereum-logo.png'
 import useHttpLocations from '../../hooks/useHttpLocations'
-import { WrappedTokenInfo } from '../../state/lists/hooks'
+import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import Logo from '../Logo'
 
 export const getTokenLogoURL = (address: string) =>
@@ -36,13 +36,14 @@ export default function CurrencyLogo({
   const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
   const srcs: string[] = useMemo(() => {
-    if (currency === ETHER) return []
+    if (!currency || currency === ETHER) return []
 
     if (currency instanceof Token) {
+      const defaultUrls = currency.chainId === ChainId.MAINNET ? [getTokenLogoURL(currency.address)] : []
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, getTokenLogoURL(currency.address)]
+        return [...uriLocations, ...defaultUrls]
       }
-      return [getTokenLogoURL(currency.address)]
+      return [...defaultUrls]
     }
     return []
   }, [currency, uriLocations])

@@ -15,7 +15,6 @@ const TokenSelectButton = styled.button`
   display: flex;
   font-weight: 700;
   font-size: 1.1rem;
-  border-radius: 1.5rem;
   height: 4.5rem;
   justify-content: space-between;
   width: 100%;
@@ -87,7 +86,7 @@ export default function CurrencySelect({
         }}
       >
         <TokenSelectButtonWrapper>
-          <TokenHandImage src={tokenHandSvg} />
+          <TokenHandImage width="24px" height="24px" src={tokenHandSvg} />
           Select a Token first
         </TokenSelectButtonWrapper>
         <DownArrow>
