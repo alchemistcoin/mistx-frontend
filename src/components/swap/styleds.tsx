@@ -203,3 +203,39 @@ export const TokenHandImage = styled.img`
   height: 1.875rem;
   margin-right: 1rem;
 `
+
+export const FeeWrapper = styled.div`
+  height: 2.5rem;
+  font-size: 0.875rem;
+  padding: 0 1.25rem;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  border-radius: 1.25rem;
+  background-color: ${({ theme }) => theme.bg5};
+  line-height: 2.5rem;
+  color: ${({ theme }) => theme.text3};
+  span {
+    color: ${({ theme }) => theme.white};
+  }
+`
+
+export const FeeInnerLeft = styled.div`
+  width: 100%;
+  text-align: left;
+  color: ${({ theme }) => theme.text3};
+  span {
+    padding-left: 0.25rem;
+    color: ${({ theme }) => theme.white};
+  }
+`
+
+export const FeeInnerRight = styled.div`
+  width: 1.25rem;
+  text-align: right;
+  color: ${({ theme }) => theme.white};
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+  margin-top: -2px;
+`
