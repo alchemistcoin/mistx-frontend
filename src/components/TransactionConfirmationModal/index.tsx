@@ -2,7 +2,7 @@ import { ChainId, Currency } from '@alchemistcoin/sdk'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import Modal from '../Modal'
-import { ExternalLink } from '../../theme'
+// import { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
 import { CloseIcon /*CustomLightSpinner*/ } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
@@ -12,7 +12,7 @@ import { AutoColumn, ColumnCenter } from '../Column'
 // import Circle from '../../assets/images/blue-loader.svg'
 import Loader from '../Loader'
 import MetaMaskLogo from '../../assets/images/metamask.png'
-import { getEtherscanLink } from '../../utils'
+// import { getEtherscanLink } from '../../utils'
 import { useActiveWeb3React } from '../../hooks'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 
@@ -73,8 +73,8 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
 
 function TransactionSubmittedContent({
   onDismiss,
-  chainId,
-  hash,
+  // chainId,
+  // hash,
   currencyToAdd
 }: {
   onDismiss: () => void
@@ -99,13 +99,13 @@ function TransactionSubmittedContent({
           <Text fontWeight={500} fontSize={20} color={theme.text1}>
             Transaction Submitted
           </Text>
-          {chainId && hash && (
+          {/*chainId && hash && (
             <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
               <Text fontWeight={500} fontSize={14} color={theme.text1}>
                 View on Etherscan
               </Text>
             </ExternalLink>
-          )}
+          )*/}
           {currencyToAdd && library?.provider?.isMetaMask && (
             <ButtonYellow mt="12px" padding="6px 1rem" width="fit-content" onClick={addToken}>
               {!success ? (
