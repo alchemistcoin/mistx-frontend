@@ -24,9 +24,7 @@ import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
 
 function currencyKey(currency: Currency | WrappedTokenInfo): string {
-  console.log('currencyKey', currency)
   return currency instanceof WrappedTokenInfo ? currency.address : 'ETHER'
-  // return currency.isToken ? currency.address : 'ETHER'
 }
 
 const StyledBalanceText = styled(Text)`
@@ -155,7 +153,6 @@ function CurrencyRow({
   const customAdded = useIsUserAddedToken(currency)
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
-  console.log('currency', currency, balance, key)
   // only show add or remove buttons if not on selected list
   return (
     <MenuItem
