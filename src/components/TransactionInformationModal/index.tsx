@@ -78,9 +78,7 @@ export default function TransactionInformationModal({ onDismiss, onContinue }: C
               <img src={Image} alt="metamask warning" />
             </ImageWrapper>
             <Text fontWeight={300} fontSize={16}>
-              mistX is completely free of Gas Fees, and uses an extra layer of security called MEV. Metamask is still
-              due to update to the new security measures and will prompt a Signature request and a warning. This is an
-              expected behaviour. Please press on Sign when the popup appears.
+              Due to a limitation of Metamask, 0-gas transactions must be manually signed. This is not an error.
             </Text>
           </RowBetween>
           <RowBetween margin="1.5rem 0 0">
