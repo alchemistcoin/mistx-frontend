@@ -46,7 +46,7 @@ const HeaderLinks = styled(Row)`
 const LogoWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 1rem 0;
+  margin: 1rem 0 0.1rem 0;
   height: ${rem(80)};
 
   > svg {
@@ -59,11 +59,12 @@ const LogoWrapperMobile = styled.div`
   display: flex;
   flex-direction: row;
   height: ${rem(60)};
-  margin: 0.5rem 0;
+  width: 5rem;
+  margin: 0.5rem 0 0 0;
 
   > a {
     position: relative;
-    right: 1.5rem;
+    right: 5rem;
   }
 
   > svg {
