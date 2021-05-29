@@ -5,7 +5,7 @@ import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 
-import { ButtonError, ButtonYellow } from '../../components/Button'
+import { ButtonError } from '../../components/Button'
 import { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 
@@ -72,6 +72,7 @@ import { ArrowDownCircled } from 'components/Icons'
 import CurrencySelect from 'components/CurrencySelect'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
+import { darken } from 'polished'
 // import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 const SwapWrapper = styled.div`
@@ -116,24 +117,59 @@ const StyledAutoRow = styled(AutoRow)`
 
 const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
   border-radius: 0 0 20px 20px;
-  padding: 1.5rem 0;
+  padding: 1.375rem 0;
   background-color: ${({ theme }) => theme.primary2};
 
   &:disabled {
     background-color: #485361;
+
+    &:before,
+    &:after {
+      box-shadow: 0 22px 0 0 #485361;
+    }
+
+    &:hover:before,
+    &:hover:after {
+      box-shadow: 0 22px 0 0 #485361;;
+    }
+  }
+
+  &:before,
+  &:after {
+    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+    content: '';
+    height: 44px;
+    position: absolute;
+    top: -45px;
+    width: 44px;
+  }
+
+  &:before {
+    border-bottom-left-radius: 50%;
+    left: -1px;
+  }
+
+  &:after {
+    border-bottom-right-radius: 50%;
+    right: -1px;
+  }
+
+  &:focus:before,
+  &:focus:after,
+  &:hover:before,
+  &:hover:after {
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.05, theme.primary2)};
+  }
+
+  &:active:before,
+  &:active:after {
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.1, theme.primary2)};
   }
 `
 
-const StyledButtonYellow = styled(ButtonYellow)`
-  border-radius: 0 0 20px 20px;
-  padding: 1.5rem 0;
-  background-color: ${({ theme }) => theme.primary2};
+const StyledButtonYellow = styled(StyledButtonError)`
   font-size: 20px;
   font-weight: 700;
-
-  &:disabled {
-    background-color: #485361;
-  }
 `
 
 export default function Swap({ history }: RouteComponentProps) {
@@ -642,7 +678,9 @@ export default function Swap({ history }: RouteComponentProps) {
                       <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
                     </StyledButtonYellow>
                   ) : !account ? (
-                    <StyledButtonYellow onClick={toggleWalletModal}>Connect Wallet</StyledButtonYellow>
+                    <StyledButtonYellow disabled={false} onClick={toggleWalletModal}>
+                      Connect Wallet
+                    </StyledButtonYellow>
                   ) : showWrap ? (
                     <StyledButtonYellow disabled={Boolean(wrapInputError)} onClick={onWrap}>
                       <Text fontSize={20} fontWeight={700}>

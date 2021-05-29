@@ -7,7 +7,6 @@ export const SettingsHeader = styled.div`
   margin: 0 0 1.5rem;
   color: ${({ theme }) => theme.text1};
   align-items: center;
-  justify-content: space-between;
 
   &:before {
     position: absolute;
