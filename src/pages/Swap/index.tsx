@@ -130,7 +130,7 @@ const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
 
     &:hover:before,
     &:hover:after {
-      box-shadow: 0 22px 0 0 #485361;;
+      box-shadow: 0 22px 0 0 #485361;
     }
   }
 

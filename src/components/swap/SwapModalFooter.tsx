@@ -36,7 +36,7 @@ const ConfirmButton = styled(ButtonError)`
 
     &:hover:before,
     &:hover:after {
-      box-shadow: 0 22px 0 0 #485361;;
+      box-shadow: 0 22px 0 0 #485361;
     }
   }
 
