@@ -11,15 +11,9 @@ const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
-    z-index: 2;
-    background-color: transparent;
-    overflow: hidden;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     background-color: ${({ theme }) => theme.modalBG};
+    display: flex;
+    z-index: 2;
   }
 `
 
@@ -31,18 +25,17 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
 )).attrs({
   'aria-label': 'dialog'
 })`
-  overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+  overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
 
   &[data-reach-dialog-content] {
-    margin: 0;
     background-color: ${({ theme }) => theme.bg5};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     border-top: 2px solid ${({ theme }) => theme.primary2};
+    margin: auto;
     padding: 0px;
     width: 50vw;
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+    overflow-y: auto;
     overflow-x: hidden;
-    align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
     max-width: 428px;
 
     ${({ maxHeight }) =>
@@ -89,7 +82,7 @@ export default function Modal({
   isOpen,
   onDismiss,
   minHeight = false,
-  maxHeight = 90,
+  maxHeight,
   initialFocusRef,
   children
 }: ModalProps) {
