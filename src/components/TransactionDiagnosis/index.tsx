@@ -9,15 +9,15 @@ import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { PendingTransactionIcon } from 'components/Icons'
 import { TYPE } from 'theme'
-import { RowBetween } from 'components/Row'
 import { ETHER, Token } from '@alchemistcoin/sdk'
+import { SettingsHeader } from 'components/shared/header/styled'
 
 const Wrapper = styled.div``
 
 const StyledDiagnosticWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg1};
   border-radius: 1.5rem;
-  padding: 2.25rem 2.5rem;
+  padding: 2.25rem 1.875rem;
 `
 
 const StyledCancelButton = styled(ButtonOutlined)`
@@ -82,10 +82,19 @@ const StyledGraphic = styled.img`
   transform: translate(-50%, -50%);
 `
 
-const UpdatesWrapper = styled(RowBetween)`
-  font-size: 0.75rem;
-  margin-top: 1rem;
+const UpdatesHeader = styled(SettingsHeader)`
+  flex-direction: column;
+  font-size: 1.5rem;
+  line-height: 2rem;
   text-align: center;
+
+  &:before {
+    background-color: ${({ theme }) => theme.green1}
+    border-radius: 0 5px 5px 0;
+    height: 72px;
+    left: -1.875rem;
+    width: 5px;
+  }
 `
 
 const Connector = () => (
@@ -151,6 +160,20 @@ export default function TransactionDiagnosis() {
   return (
     <Wrapper>
       <StyledDiagnosticWrapper>
+        <UpdatesHeader>
+          <TYPE.black display="block" fontWeight="700" mb=".625rem">
+            {`Last Block: ${tx.lastCheckedBlockNumber || '...'}`}
+          </TYPE.black>
+          {tx?.updatedAt ? (
+            <TYPE.green display="block" fontWeight="700">
+              {`Updated: ${dayjs(tx.updatedAt).format('h:mm:ssA')}`}
+            </TYPE.green>
+          ) : (
+            <TYPE.green display="block" fontWeight="700">
+              {`Sent at: ${dayjs(tx.addedTime).format('h:mm:ssA')}`}
+            </TYPE.green>
+          )}
+        </UpdatesHeader>
         <TokenWrapper>
           {!tokenInput && !tokenOutput ? (
             <div style={{ textAlign: 'center', width: '100%' }}>{tx.summary}</div>
@@ -173,22 +196,6 @@ export default function TransactionDiagnosis() {
             </>
           )}
         </TokenWrapper>
-        {(tx?.lastCheckedBlockNumber || tx.updatedAt) && (
-          <UpdatesWrapper>
-            {tx?.lastCheckedBlockNumber && (
-              <TYPE.main>
-                {`Last Block `}
-                <b>{tx.lastCheckedBlockNumber}</b>
-              </TYPE.main>
-            )}
-            {tx?.updatedAt && (
-              <TYPE.main>
-                {`Updated `}
-                <b>{dayjs(tx.updatedAt).format('h:mm:ssA')}</b>
-              </TYPE.main>
-            )}
-          </UpdatesWrapper>
-        )}
         {canCancel && (
           <StyledCancelButton disabled={cancelClicked} onClick={() => handleCancelClick(hash, tx)}>
             Cancel Transaction

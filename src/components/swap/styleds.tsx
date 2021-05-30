@@ -45,7 +45,7 @@ export const PendingHeader = styled.header`
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 2.25
-  margin: 2rem 0;
+  margin-bottom: 2rem;
   text-align: center;
 `
 

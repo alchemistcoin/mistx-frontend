@@ -180,6 +180,9 @@ export const TYPE = {
   blue(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'blue1'} {...props} />
   },
+  green(props: TextProps) {
+    return <TextWrapper fontWeight={500} color={'green1'} {...props} />
+  },
   yellow(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'yellow1'} {...props} />
   },

@@ -26,34 +26,50 @@ const PriceWrapper = styled.div`
 `
 
 const ConfirmButton = styled(ButtonError)`
-  &:before {
-    content: '';
-    position: absolute;
-    top: -45px;
-    left: -1px;
-    height: 44px;
-    width: 44px;
-    border-bottom-left-radius: 50%;
-    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+  &:disabled {
+    background-color: #485361;
+
+    &:before,
+    &:after {
+      box-shadow: 0 22px 0 0 #485361;
+    }
+
+    &:hover:before,
+    &:hover:after {
+      box-shadow: 0 22px 0 0 #485361;
+    }
   }
 
-  &:hover:before {
-    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.05, theme.primary2)};
+  &:before,
+  &:after {
+    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+    content: '';
+    height: 44px;
+    position: absolute;
+    top: -45px;
+    width: 44px;
+  }
+
+  &:before {
+    border-bottom-left-radius: 50%;
+    left: -1px;
   }
 
   &:after {
-    content: '';
-    position: absolute;
-    top: -45px;
-    right: -1px;
-    height: 44px;
-    width: 44px;
     border-bottom-right-radius: 50%;
-    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+    right: -1px;
   }
 
+  &:focus:before,
+  &:focus:after,
+  &:hover:before,
   &:hover:after {
     box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.05, theme.primary2)};
+  }
+
+  &:active:before,
+  &:active:after {
+    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.1, theme.primary2)};
   }
 `
 
