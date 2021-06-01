@@ -9,7 +9,7 @@ import useIsWindowVisible from '../../hooks/useIsWindowVisible'
 import { AppDispatch } from '../index'
 import { acceptListUpdate } from './actions'
 import { useActiveListUrls } from './hooks'
-import { useAllInactiveTokens } from 'hooks/Tokens'
+// import { useAllInactiveTokens } from 'hooks/Tokens'
 import { UNSUPPORTED_LIST_URLS } from 'constants/lists'
 
 export default function Updater(): null {
@@ -22,7 +22,7 @@ export default function Updater(): null {
   const activeListUrls = useActiveListUrls()
 
   // initiate loading
-  useAllInactiveTokens()
+  // useAllInactiveTokens()
 
   const fetchList = useFetchListCallback()
   const fetchAllListsCallback = useCallback(() => {
@@ -37,6 +37,7 @@ export default function Updater(): null {
 
   // whenever a list is not loaded and not loading, try again to load it
   useEffect(() => {
+    if (!dispatch || !fetchList || !library || !lists) return
     Object.keys(lists).forEach(listUrl => {
       const list = lists[listUrl]
       if (!list.current && !list.loadingRequestId && !list.error) {
@@ -47,6 +48,7 @@ export default function Updater(): null {
 
   // if any lists from unsupported lists are loaded, check them too (in case new updates since last visit)
   useEffect(() => {
+    if (!dispatch || !fetchList || !library || !lists) return
     Object.keys(UNSUPPORTED_LIST_URLS).forEach(listUrl => {
       const list = lists[listUrl]
       if (!list || (!list.current && !list.loadingRequestId && !list.error)) {
@@ -57,6 +59,7 @@ export default function Updater(): null {
 
   // automatically update lists if versions are minor/patch
   useEffect(() => {
+    if (!dispatch || !activeListUrls || !lists) return
     Object.keys(lists).forEach(listUrl => {
       const list = lists[listUrl]
       if (list.current && list.pendingUpdate) {

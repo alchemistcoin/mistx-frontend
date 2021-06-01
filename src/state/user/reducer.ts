@@ -1,4 +1,4 @@
-import { INITIAL_ALLOWED_SLIPPAGE, DEFAULT_DEADLINE_FROM_NOW } from '../../constants'
+import { INITIAL_ALLOWED_SLIPPAGE, DEFAULT_DEADLINE_FROM_NOW, INITIAL_BRIBE_MARGIN } from '../../constants'
 import { createReducer } from '@reduxjs/toolkit'
 import { updateVersion } from '../global/actions'
 import {
@@ -12,6 +12,7 @@ import {
   updateUserDarkMode,
   updateUserExpertMode,
   updateUserSlippageTolerance,
+  updateUserBribeMargin,
   updateUserDeadline,
   toggleURLWarning,
   updateUserSingleHopOnly
@@ -32,6 +33,9 @@ export interface UserState {
 
   // user defined slippage tolerance in bips, used in all txns
   userSlippageTolerance: number
+
+  // user defined bribe margin in bips, used in all txns
+  userBribeMargin: number
 
   // deadline set by user in minutes, used in all txns
   userDeadline: number
@@ -58,11 +62,12 @@ function pairKey(token0Address: string, token1Address: string) {
 }
 
 export const initialState: UserState = {
-  userDarkMode: null,
+  userDarkMode: true,
   matchesDarkMode: false,
   userExpertMode: false,
   userSingleHopOnly: false,
   userSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
+  userBribeMargin: INITIAL_BRIBE_MARGIN,
   userDeadline: DEFAULT_DEADLINE_FROM_NOW,
   tokens: {},
   pairs: {},
@@ -77,6 +82,12 @@ export default createReducer(initialState, builder =>
       // noinspection SuspiciousTypeOfGuard
       if (typeof state.userSlippageTolerance !== 'number') {
         state.userSlippageTolerance = INITIAL_ALLOWED_SLIPPAGE
+      }
+
+      // bribe marrgin isnt being tracked in local storage, reset to default
+      // noinspection SuspiciousTypeOfGuard
+      if (typeof state.userBribeMargin !== 'number') {
+        state.userBribeMargin = INITIAL_BRIBE_MARGIN
       }
 
       // deadline isnt being tracked in local storage, reset to default
@@ -101,6 +112,10 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateUserSlippageTolerance, (state, action) => {
       state.userSlippageTolerance = action.payload.userSlippageTolerance
+      state.timestamp = currentTimestamp()
+    })
+    .addCase(updateUserBribeMargin, (state, action) => {
+      state.userBribeMargin = action.payload.userBribeMargin
       state.timestamp = currentTimestamp()
     })
     .addCase(updateUserDeadline, (state, action) => {

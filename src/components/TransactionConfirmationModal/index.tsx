@@ -1,17 +1,18 @@
-import { ChainId, Currency } from '@uniswap/sdk'
+import { ChainId, Currency } from '@alchemistcoin/sdk'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import Modal from '../Modal'
-import { ExternalLink } from '../../theme'
+// import { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
-import { CloseIcon, CustomLightSpinner } from '../../theme/components'
+import { CloseIcon /*CustomLightSpinner*/ } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
-import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
-import { ButtonPrimary, ButtonLight } from '../Button'
+import { AlertTriangle, CheckCircle } from 'react-feather'
+import { ButtonOutlined, ButtonYellow } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
-import Circle from '../../assets/images/blue-loader.svg'
+// import Circle from '../../assets/images/blue-loader.svg'
+import Loader from '../Loader'
 import MetaMaskLogo from '../../assets/images/metamask.png'
-import { getEtherscanLink } from '../../utils'
+// import { getEtherscanLink } from '../../utils'
 import { useActiveWeb3React } from '../../hooks'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 
@@ -22,8 +23,8 @@ const Section = styled(AutoColumn)`
   padding: 24px;
 `
 
-const BottomSection = styled(Section)`
-  background-color: ${({ theme }) => theme.bg2};
+const BottomSection = styled(AutoColumn)`
+  background-color: ${({ theme }) => theme.bg1};
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 `
@@ -39,6 +40,8 @@ const StyledLogo = styled.img`
 `
 
 function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
+  const theme = useContext(ThemeContext)
+
   return (
     <Wrapper>
       <Section>
@@ -47,7 +50,8 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
         <ConfirmedIcon>
-          <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
+          <Loader stroke={theme.text3} size="80px" />
+          {/* <CustomLightSpinner src={Circle} alt="loader" size={'90px'} /> */}
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
           <Text fontWeight={500} fontSize={20}>
@@ -58,7 +62,7 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
               {pendingText}
             </Text>
           </AutoColumn>
-          <Text fontSize={12} color="#565A69" textAlign="center">
+          <Text fontSize={12} color={theme.text2} textAlign="center">
             Confirm this transaction in your wallet
           </Text>
         </AutoColumn>
@@ -69,8 +73,8 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
 
 function TransactionSubmittedContent({
   onDismiss,
-  chainId,
-  hash,
+  // chainId,
+  // hash,
   currencyToAdd
 }: {
   onDismiss: () => void
@@ -91,22 +95,19 @@ function TransactionSubmittedContent({
           <div />
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
-        <ConfirmedIcon>
-          <ArrowUpCircle strokeWidth={0.5} size={90} color={theme.primary1} />
-        </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={500} fontSize={20}>
+          <Text fontWeight={500} fontSize={20} color={theme.text1}>
             Transaction Submitted
           </Text>
-          {chainId && hash && (
+          {/*chainId && hash && (
             <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+              <Text fontWeight={500} fontSize={14} color={theme.text1}>
                 View on Etherscan
               </Text>
             </ExternalLink>
-          )}
+          )*/}
           {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonLight mt="12px" padding="6px 12px" width="fit-content" onClick={addToken}>
+            <ButtonYellow mt="12px" padding="6px 1rem" width="fit-content" onClick={addToken}>
               {!success ? (
                 <RowFixed>
                   Add {currencyToAdd.symbol} to Metamask <StyledLogo src={MetaMaskLogo} />
@@ -117,13 +118,13 @@ function TransactionSubmittedContent({
                   <CheckCircle size={'16px'} stroke={theme.green1} style={{ marginLeft: '6px' }} />
                 </RowFixed>
               )}
-            </ButtonLight>
+            </ButtonYellow>
           )}
-          <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
-            <Text fontWeight={500} fontSize={20}>
+          <ButtonOutlined onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
+            <Text fontWeight={600} fontSize="20px">
               Close
             </Text>
-          </ButtonPrimary>
+          </ButtonOutlined>
         </AutoColumn>
       </Section>
     </Wrapper>
@@ -143,16 +144,14 @@ export function ConfirmationModalContent({
 }) {
   return (
     <Wrapper>
-      <Section>
-        <RowBetween>
-          <Text fontWeight={500} fontSize={20}>
-            {title}
-          </Text>
-          <CloseIcon onClick={onDismiss} />
-        </RowBetween>
-        {topContent()}
-      </Section>
-      <BottomSection gap="12px">{bottomContent()}</BottomSection>
+      <RowBetween style={{ padding: '1rem 1.5rem 0' }}>
+        <Text fontWeight={700} fontSize={28}>
+          {title}
+        </Text>
+        <CloseIcon onClick={onDismiss} />
+      </RowBetween>
+      <AutoColumn style={{ padding: '2.25rem 2rem' }}>{topContent()}</AutoColumn>
+      <BottomSection>{bottomContent()}</BottomSection>
     </Wrapper>
   )
 }
@@ -176,7 +175,11 @@ export function TransactionErrorContent({ message, onDismiss }: { message: strin
         </AutoColumn>
       </Section>
       <BottomSection gap="12px">
-        <ButtonPrimary onClick={onDismiss}>Dismiss</ButtonPrimary>
+        <ButtonOutlined onClick={onDismiss}>
+          <Text fontWeight="500" fontSize={20}>
+            Dismiss
+          </Text>
+        </ButtonOutlined>
       </BottomSection>
     </Wrapper>
   )
@@ -205,9 +208,8 @@ export default function TransactionConfirmationModal({
 
   if (!chainId) return null
 
-  // confirmation screen
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (

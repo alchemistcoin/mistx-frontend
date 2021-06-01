@@ -41,46 +41,65 @@ export function colors(darkMode: boolean): Colors {
     black,
 
     // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
+    text1: darkMode ? '#FFFFFF' : '#190134',
     text2: darkMode ? '#C3C5CB' : '#565A69',
     text3: darkMode ? '#6C7284' : '#888D9B',
-    text4: darkMode ? '#565A69' : '#C3C5CB',
+    text4: darkMode ? '#343F4D' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // backgrounds / greys
-    bg1: darkMode ? '#212429' : '#FFFFFF',
-    bg2: darkMode ? '#2C2F36' : '#F7F8FA',
-    bg3: darkMode ? '#40444F' : '#EDEEF2',
-    bg4: darkMode ? '#565A69' : '#CED0D9',
-    bg5: darkMode ? '#6C7284' : '#888D9B',
+    bg1: darkMode ? '#1F2E3C' : '#FFFFFF',
+    bg2: darkMode ? '#1D2230' : '#FCFCFC',
+    bg3: darkMode ? '#222D3B' : '#EDEEF2',
+    bg4: darkMode ? '#2A3543' : '#CED0D9',
+    bg5: darkMode ? '#343F4D' : '#888D9B',
+    bg6: darkMode ? '#0E0F1E' : '#FFFFFF',
 
-    //specialty colors
-    modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
-    advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
+    // borders
+    border1: darkMode ? '#1F2E3C' : '#e9eaec',
+    border2: darkMode ? '#354350' : '#c2c7cb',
 
     //primary colors
-    primary1: darkMode ? '#2172E5' : '#ff007a',
-    primary2: darkMode ? '#3680E7' : '#FF8CC3',
-    primary3: darkMode ? '#4D8FEA' : '#FF99C9',
+    primary1: '#131a22',
+    primary2: '#FFBF00',
+    primary3: '#FEA6F6',
     primary4: darkMode ? '#376bad70' : '#F6DDE8',
     primary5: darkMode ? '#153d6f70' : '#FDEAF1',
+    primary6: darkMode ? '#901EF2' : '#901EF2',
 
     // color text
     primaryText1: darkMode ? '#6da8ff' : '#ff007a',
+    secondaryText1: darkMode ? '#FFBF00' : '#1a0434',
 
     // secondary colors
-    secondary1: darkMode ? '#2172E5' : '#ff007a',
-    secondary2: darkMode ? '#17000b26' : '#F6DDE8',
-    secondary3: darkMode ? '#17000b26' : '#FDEAF1',
+    secondary1: '#3E4957',
+    secondary2: '#2f2c43',
+    secondary3: '#201e2f',
+    secondary4: '#201e2f',
 
     // other
-    red1: '#FD4040',
+    red1: '#D96A19',
     red2: '#F82D3A',
     red3: '#D60000',
     green1: '#27AE60',
-    yellow1: '#FFE270',
+    green2: '#22DA4A',
+    yellow1: '#FFBF00',
     yellow2: '#F3841E',
-    blue1: '#2172E5'
+    blue1: '#1938D9',
+    blue2: '#00b0ff',
+    blue3: '#71E7FF',
+
+    // specialty colors
+    modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
+    advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
+    headerBg: darkMode
+      ? 'linear-gradient(180deg,rgba(32,47,60,1) 0%,rgb(19 26 34 / 1) 100%)'
+      : 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgb(19 26 34 / 15%) 100%)',
+    btnBorder: darkMode ? '#FFBF00' : '#1a0434',
+
+    // buttons
+    btnPrimaryBg: darkMode ? '#190134' : '#190134',
+    btnSecondaryBg: darkMode ? '#901EF2' : '#901EF2'
 
     // dont wanna forget these blue yet
     // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
@@ -90,6 +109,8 @@ export function colors(darkMode: boolean): Colors {
 
 export function theme(darkMode: boolean): DefaultTheme {
   return {
+    darkMode,
+
     ...colors(darkMode),
 
     grids: {
@@ -159,6 +180,9 @@ export const TYPE = {
   blue(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'blue1'} {...props} />
   },
+  green(props: TextProps) {
+    return <TextWrapper fontWeight={500} color={'green1'} {...props} />
+  },
   yellow(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'yellow1'} {...props} />
   },
@@ -177,13 +201,16 @@ export const TYPE = {
 }
 
 export const FixedGlobalStyle = createGlobalStyle`
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700&display=swap');
+
 html, input, textarea, button {
   font-family: 'Inter', sans-serif;
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 }
 
@@ -212,7 +239,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv03' on;
-  
+    
 }
 `
 
@@ -226,10 +253,9 @@ body {
   min-height: 100vh;
   background-position: 0 -30vh;
   background-repeat: no-repeat;
-  background-image: ${({ theme }) =>
-    `radial-gradient(50% 50% at 50% 50%, ${transparentize(0.9, theme.primary1)} 0%, ${transparentize(
+  background: ${({ theme }) =>
+    `radial-gradient(48.8% 62.34% at 50% 0%, ${transparentize(0.1, theme.bg1)} 0%, ${transparentize(
       1,
-      theme.bg1
-    )} 100%)`};
-}
+      theme.bg2
+    )} 100%)`}}
 `

@@ -6,22 +6,54 @@ import { Text } from 'rebass'
 import { AutoColumn } from '../Column'
 
 export const Wrapper = styled.div`
-  position: relative;
   padding: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 1rem 0;
+  `};
 `
 
-export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  padding: 2px;
+export const RelativeWrapper = styled.div`
+  position: relative;
+`
+
+export const ArrowWrapper = styled.div<{
+  color?: string
+  clickable: boolean
+}>`
+  align-items: center;
+  border-radius: 50%;
+  background: #2a3645;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  width: 2.5rem;
 
   ${({ clickable }) =>
     clickable
       ? css`
           :hover {
             cursor: pointer;
-            opacity: 0.8;
+            color: ${({ theme }) => theme.text2};
           }
         `
       : null}
+`
+
+export const PendingHeader = styled.header`
+  color: ${({ theme }) => theme.text1};
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 2.25
+  margin-bottom: 2rem;
+  text-align: center;
+`
+
+export const PendingWrapper = styled.div`
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
+  overflow: hidden;
 `
 
 export const SectionBreak = styled.div`
@@ -31,7 +63,8 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div`
-  margin-top: 1rem;
+  margin: 1rem 0 0 0;
+  padding: 0;
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
@@ -42,7 +75,7 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
       ? theme.yellow2
       : severity === 1
       ? theme.text1
-      : theme.green1};
+      : theme.green2};
 `
 
 export const StyledBalanceMaxMini = styled.button`
@@ -150,4 +183,59 @@ export const Separator = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${({ theme }) => theme.bg2};
+`
+
+export const TokenSelectButton = styled.button`
+  align-items: center;
+  background-color: ${({ theme }) => theme.yellow1};
+  border: 1px solid ${({ theme }) => theme.bg2};
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  font-weight: 700;
+  font-size: 1.25rem;
+  height: 110px;
+  justify-content: center;
+  width: 100%;
+`
+
+export const TokenHandImage = styled.img`
+  height: 1.875rem;
+  margin-right: 1rem;
+`
+
+export const FeeWrapper = styled.div`
+  height: 2.5rem;
+  font-size: 0.875rem;
+  padding: 0 1.25rem;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  border-radius: 1.25rem;
+  background-color: ${({ theme }) => theme.bg5};
+  line-height: 2.5rem;
+  color: ${({ theme }) => theme.text3};
+  span {
+    color: ${({ theme }) => theme.white};
+  }
+`
+
+export const FeeInnerLeft = styled.div`
+  width: 100%;
+  text-align: left;
+  color: ${({ theme }) => theme.text3};
+  span {
+    padding-left: 0.25rem;
+    color: ${({ theme }) => theme.white};
+  }
+`
+
+export const FeeInnerRight = styled.div`
+  width: 1.25rem;
+  text-align: right;
+  color: ${({ theme }) => theme.white};
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+  margin-top: -2px;
 `

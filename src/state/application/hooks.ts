@@ -2,12 +2,17 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
+import { Gas } from './reducer'
 import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
 
   return useSelector((state: AppState) => state.application.blockNumber[chainId ?? -1])
+}
+
+export function useGas(): Gas | undefined {
+  return useSelector((state: AppState) => state.application.gas)
 }
 
 export function useModalOpen(modal: ApplicationModal): boolean {
@@ -51,14 +56,6 @@ export function useToggleSelfClaimModal(): () => void {
   return useToggleModal(ApplicationModal.SELF_CLAIM)
 }
 
-export function useToggleDelegateModal(): () => void {
-  return useToggleModal(ApplicationModal.DELEGATE)
-}
-
-export function useToggleVoteModal(): () => void {
-  return useToggleModal(ApplicationModal.VOTE)
-}
-
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
   const dispatch = useDispatch()
@@ -86,4 +83,8 @@ export function useRemovePopup(): (key: string) => void {
 export function useActivePopups(): AppState['application']['popupList'] {
   const list = useSelector((state: AppState) => state.application.popupList)
   return useMemo(() => list.filter(item => item.show), [list])
+}
+
+export function useSocketStatus(): AppState['application']['socketStatus'] {
+  return useSelector<AppState, AppState['application']['socketStatus']>(state => state.application.socketStatus)
 }

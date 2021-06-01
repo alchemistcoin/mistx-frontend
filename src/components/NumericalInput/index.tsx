@@ -2,22 +2,30 @@ import React from 'react'
 import styled from 'styled-components'
 import { escapeRegExp } from '../../utils'
 
-const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string }>`
+const StyledInput = styled.input<{
+  error?: boolean
+  align?: string
+  fontSize?: string
+  fontWeight?: string
+}>`
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   width: 0;
   position: relative;
-  font-weight: 500;
+  font-weight: 600;
   outline: none;
   border: none;
   flex: 1 1 auto;
-  background-color: ${({ theme }) => theme.bg1};
-  font-size: ${({ fontSize }) => fontSize ?? '24px'};
+  background-color: inherit;
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0px;
   -webkit-appearance: textfield;
+  font: inherit;
+  font-size: ${({ fontSize }) => fontSize ?? '24px'};
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
 
   ::-webkit-search-decoration {
     -webkit-appearance: none;
@@ -33,7 +41,8 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
   }
 
   ::placeholder {
-    color: ${({ theme }) => theme.text4};
+    color: ${({ theme }) => theme.text1};
+    font-weight: 600;
   }
 `
 
@@ -49,6 +58,7 @@ export const Input = React.memo(function InnerInput({
   onUserInput: (input: string) => void
   error?: boolean
   fontSize?: string
+  fontWeight?: string
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {
@@ -68,12 +78,13 @@ export const Input = React.memo(function InnerInput({
       // universal input options
       inputMode="decimal"
       title="Token Amount"
+      fontSize={'2.2rem'}
       autoComplete="off"
       autoCorrect="off"
       // text-specific options
       type="text"
       pattern="^[0-9]*[.,]?[0-9]*$"
-      placeholder={placeholder || '0.0'}
+      placeholder={placeholder || '0'}
       minLength={1}
       maxLength={79}
       spellCheck="false"

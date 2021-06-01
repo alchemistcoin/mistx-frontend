@@ -1,11 +1,11 @@
-import { Currency, ETHER, Token } from '@uniswap/sdk'
+import { Currency, ETHER, Token } from '@alchemistcoin/sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
-import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from '../../hooks/Tokens'
+import { useAllTokens, useToken, useIsUserAddedToken, useSearchInactiveTokenLists } from '../../hooks/Tokens'
 import { CloseIcon, TYPE, ButtonText, IconWrapper } from '../../theme'
 import { isAddress } from '../../utils'
 import Column from '../Column'
@@ -36,10 +36,15 @@ const Footer = styled.div`
   padding: 20px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  background-color: ${({ theme }) => theme.bg1};
+  background-color: ${({ theme }) => theme.bg5};
   border-top: 1px solid ${({ theme }) => theme.bg2};
 `
 
+const StyledIconWrapper = styled(IconWrapper)`
+  svg path {
+    stroke: ${({ theme }) => theme.text1};
+  }
+`
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
@@ -92,9 +97,9 @@ export function CurrencySearch({
     }
   }, [isAddressSearch])
 
-  const showETH: boolean = useMemo(() => {
+  const [showMIST] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()
-    return s === '' || s === 'e' || s === 'et' || s === 'eth'
+    return [s === '' || s === 'm' || s === 'mi' || s === 'mis' || s === 'mist']
   }, [debouncedQuery])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
@@ -108,6 +113,14 @@ export function CurrencySearch({
   }, [filteredTokens, tokenComparator])
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
+
+  const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
+    const s = debouncedQuery.toLowerCase().trim()
+    if (s === '' || s === 'e' || s === 'et' || s === 'eth') {
+      return [ETHER, ...filteredSortedTokens]
+    }
+    return filteredSortedTokens
+  }, [debouncedQuery, filteredSortedTokens])
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -137,17 +150,17 @@ export function CurrencySearch({
         const s = debouncedQuery.toLowerCase().trim()
         if (s === 'eth') {
           handleCurrencySelect(ETHER)
-        } else if (filteredSortedTokens.length > 0) {
+        } else if (filteredSortedTokensWithETH.length > 0) {
           if (
-            filteredSortedTokens[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
-            filteredSortedTokens.length === 1
+            filteredSortedTokensWithETH[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
+            filteredSortedTokensWithETH.length === 1
           ) {
-            handleCurrencySelect(filteredSortedTokens[0])
+            handleCurrencySelect(filteredSortedTokensWithETH[0])
           }
         }
       }
     },
-    [filteredSortedTokens, handleCurrencySelect, debouncedQuery]
+    [filteredSortedTokensWithETH, handleCurrencySelect, debouncedQuery]
   )
 
   // menu ui
@@ -156,9 +169,8 @@ export function CurrencySearch({
   useOnClickOutside(node, open ? toggle : undefined)
 
   // if no results on main list, show option to expand into inactive
-  const inactiveTokens = useFoundOnInactiveList(debouncedQuery)
-  const filteredInactiveTokens: Token[] = useSortedTokensByQuery(inactiveTokens, debouncedQuery)
-
+  const filteredInactiveTokens = useSearchInactiveTokenLists(filteredTokens.length === 0 ? debouncedQuery : undefined)
+  // console.log('translation', t, t('tokenSearchPlaceholder'))
   return (
     <ContentWrapper>
       <PaddedColumn gap="16px">
@@ -195,11 +207,9 @@ export function CurrencySearch({
             {({ height }) => (
               <CurrencyList
                 height={height}
-                showETH={showETH}
-                currencies={
-                  filteredInactiveTokens ? filteredSortedTokens.concat(filteredInactiveTokens) : filteredSortedTokens
-                }
-                breakIndex={inactiveTokens && filteredSortedTokens ? filteredSortedTokens.length : undefined}
+                showMIST={showMIST}
+                currencies={filteredSortedTokensWithETH}
+                otherListTokens={filteredInactiveTokens}
                 onCurrencySelect={handleCurrencySelect}
                 otherCurrency={otherSelectedCurrency}
                 selectedCurrency={selectedCurrency}
@@ -219,12 +229,12 @@ export function CurrencySearch({
       )}
       <Footer>
         <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.blue1} className="list-token-manage-button">
+          <ButtonText onClick={showManageView} color={theme.text1} className="list-token-manage-button">
             <RowFixed>
-              <IconWrapper size="16px" marginRight="6px">
+              <StyledIconWrapper size="16px" marginRight="6px">
                 <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.blue1}>Manage</TYPE.main>
+              </StyledIconWrapper>
+              <TYPE.main color={theme.text1}>Manage</TYPE.main>
             </RowFixed>
           </ButtonText>
         </Row>

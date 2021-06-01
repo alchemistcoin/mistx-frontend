@@ -1,17 +1,20 @@
-import { MaxUint256 } from '@ethersproject/constants'
-import { TransactionResponse } from '@ethersproject/providers'
-import { Trade, TokenAmount, CurrencyAmount, ETHER } from '@uniswap/sdk'
+import { Trade, TokenAmount, CurrencyAmount, ETHER, ChainId } from '@alchemistcoin/sdk'
 import { useCallback, useMemo } from 'react'
-import { ROUTER_ADDRESS } from '../constants'
+import { MISTX_ROUTER_ADDRESS } from '../constants'
 import { useTokenAllowance } from '../data/Allowances'
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { Field } from '../state/swap/actions'
-import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks'
+import { useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 import { Version } from './useToggledVersion'
+import { PopulatedTransaction } from '@ethersproject/contracts'
+import { keccak256 } from '@ethersproject/keccak256'
+import { ethers } from 'ethers'
+import { SignatureLike } from '@ethersproject/bytes'
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -24,8 +27,8 @@ export enum ApprovalState {
 export function useApproveCallback(
   amountToApprove?: CurrencyAmount,
   spender?: string
-): [ApprovalState, () => Promise<void>] {
-  const { account } = useActiveWeb3React()
+): [ApprovalState, () => Promise<string | undefined>] {
+  const { account, library, chainId } = useActiveWeb3React()
   const token = amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
@@ -46,55 +49,104 @@ export function useApproveCallback(
   }, [amountToApprove, currentAllowance, pendingApproval, spender])
 
   const tokenContract = useTokenContract(token?.address)
-  const addTransaction = useTransactionAdder()
+  // const addTransaction = useTransactionAdder()
 
-  const approve = useCallback(async (): Promise<void> => {
+  const approve = useCallback(async (): Promise<string | undefined> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
       console.error('approve was called unnecessarily')
-      return
+      return undefined
     }
     if (!token) {
       console.error('no token')
-      return
+      return undefined
+    }
+
+    if (!library) {
+      console.error('no provider')
+      return undefined
+    }
+
+    if (!chainId) {
+      console.error('no chainId')
+      return undefined
+    }
+
+    if (!account) {
+      console.error('no account')
+      return undefined
     }
 
     if (!tokenContract) {
       console.error('tokenContract is null')
-      return
+      return undefined
     }
 
     if (!amountToApprove) {
       console.error('missing amount to approve')
-      return
+      return undefined
     }
 
     if (!spender) {
       console.error('no spender')
-      return
+      return undefined
     }
 
-    let useExact = false
-    const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
-      // general fallback for tokens who restrict approval amounts
-      useExact = true
-      return tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
-    })
+    // let useExact = false
+    // const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+    //   // general fallback for tokens who restrict approval amounts
+    //   useExact = true
+    //   return tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
+    // })
+    //we always useExact
+    const estimatedGas = await tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
 
-    return tokenContract
-      .approve(spender, useExact ? amountToApprove.raw.toString() : MaxUint256, {
-        gasLimit: calculateGasMargin(estimatedGas)
+    if (!(tokenContract.signer instanceof JsonRpcSigner)) {
+      throw new Error(`Cannot sign transactions with this wallet type`)
+    }
+
+    // ethers will change eth_sign to personal_sign if it detects metamask
+    let web3Provider: Web3Provider | undefined
+    let isMetamask: boolean | undefined
+    if (library instanceof Web3Provider) {
+      web3Provider = library as Web3Provider
+      isMetamask = web3Provider.provider.isMetaMask
+      web3Provider.provider.isMetaMask = false
+    }
+
+    //use populate instead of broadcasting
+    return tokenContract.populateTransaction
+      .approve(spender, amountToApprove.raw.toString(), {
+        nonce: tokenContract.signer.getTransactionCount(),
+        gasLimit: calculateGasMargin(estimatedGas) //needed?
       })
-      .then((response: TransactionResponse) => {
-        addTransaction(response, {
-          summary: 'Approve ' + amountToApprove.currency.symbol,
-          approval: { tokenAddress: token.address, spender: spender }
-        })
+      .then((response: PopulatedTransaction) => {
+        delete response.from
+        response.chainId = chainId
+        const serialized = ethers.utils.serializeTransaction(response)
+        const hash = keccak256(serialized)
+        return library
+          .jsonRpcFetchFunc('eth_sign', [account, hash])
+          .then((signature: SignatureLike) => {
+            //this returns the transaction & signature serialized and ready to broadcast
+            const txWithSig = ethers.utils.serializeTransaction(response, signature)
+            return txWithSig
+            // const hash = keccak256(txWithSig)
+            // addTransaction({ hash }, {
+            //   summary: 'Approve ' + amountToApprove.currency.symbol,
+            //   approval: { tokenAddress: token.address, spender: spender }
+            // })
+          })
+          .finally(() => {
+            if (web3Provider) {
+              web3Provider.provider.isMetaMask = isMetamask
+            }
+          })
       })
       .catch((error: Error) => {
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library])
 
   return [approvalState, approve]
 }
@@ -107,5 +159,9 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
   )
   const tradeIsV1 = getTradeVersion(trade) === Version.v1
   const v1ExchangeAddress = useV1TradeExchangeAddress(trade)
-  return useApproveCallback(amountToApprove, tradeIsV1 ? v1ExchangeAddress : ROUTER_ADDRESS)
+  const { chainId } = useActiveWeb3React()
+  return useApproveCallback(
+    amountToApprove,
+    tradeIsV1 ? v1ExchangeAddress : MISTX_ROUTER_ADDRESS[chainId || ChainId.MAINNET]
+  )
 }

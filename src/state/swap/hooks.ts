@@ -1,23 +1,37 @@
 import useENS from '../../hooks/useENS'
 import { Version } from '../../hooks/useToggledVersion'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@uniswap/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  ETHER,
+  Exchange,
+  JSBI,
+  Token,
+  TokenAmount,
+  Trade,
+  TradeType
+} from '@alchemistcoin/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useV1Trade } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
-import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
+import { useTradeExactIn, useTradeExactOut, useMinTradeAmount, MinTradeEstimates } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
+import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import { isAddress } from '../../utils'
+import { isETHTrade, isTradeBetter } from '../../utils/trades'
 import { AppDispatch, AppState } from '../index'
-import { useCurrencyBalances } from '../wallet/hooks'
+import { useCurrencyBalance, useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
 import useToggledVersion from '../../hooks/useToggledVersion'
-import { useUserSlippageTolerance } from '../user/hooks'
+import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
+import { BigNumber } from '@ethersproject/bignumber'
+import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -112,7 +126,9 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  minTradeAmounts: MinTradeEstimates
   inputError?: string
+  minAmountError?: boolean
   v1Trade: Trade | undefined
 } {
   const { account } = useActiveWeb3React()
@@ -126,7 +142,8 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
-
+  const [userBribeMargin] = useUserBribeMargin()
+  const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
@@ -137,14 +154,69 @@ export function useDerivedSwapInfo(): {
     outputCurrency ?? undefined
   ])
 
+  const ethBalance = useCurrencyBalance(account ?? undefined, Currency.ETHER)
+
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  const minTradeAmounts = useMinTradeAmount(
+    inputCurrency as Currency,
+    outputCurrency as Currency,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin),
+    BigNumber.from(MIN_TRADE_MARGIN)
+  )
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const bestTradeExactIn = useTradeExactIn(
+    Exchange.UNI,
+    minTradeAmounts[Exchange.UNI],
+    isExactIn ? parsedAmount : undefined,
+    outputCurrency ?? undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
+  )
+  const bestTradeExactInSushi = useTradeExactIn(
+    Exchange.UNI,
+    minTradeAmounts[Exchange.UNI],
+    isExactIn ? parsedAmount : undefined,
+    outputCurrency ?? undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
+  )
+  const bestTradeExactOut = useTradeExactOut(
+    Exchange.UNI,
+    minTradeAmounts[Exchange.UNI],
+    inputCurrency ?? undefined,
+    !isExactIn ? parsedAmount : undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
+  )
+  const bestTradeExactOutSushi = useTradeExactOut(
+    Exchange.UNI,
+    minTradeAmounts[Exchange.UNI],
+    inputCurrency ?? undefined,
+    !isExactIn ? parsedAmount : undefined,
+    gasPriceToBeat,
+    BigNumber.from(userBribeMargin)
+  )
+  //compare quotes
+  let v2Trade
+  if (isExactIn) {
+    //simpler?
+    if (bestTradeExactIn || bestTradeExactInSushi) {
+      v2Trade = isTradeBetter(bestTradeExactInSushi, bestTradeExactIn, BETTER_TRADE_LESS_HOPS_THRESHOLD)
+        ? bestTradeExactIn
+        : bestTradeExactInSushi
+    }
+  } else {
+    if (bestTradeExactOut || bestTradeExactOutSushi) {
+      v2Trade = isTradeBetter(bestTradeExactOutSushi, bestTradeExactOut, BETTER_TRADE_LESS_HOPS_THRESHOLD)
+        ? bestTradeExactOut
+        : bestTradeExactOutSushi
+    }
+  }
 
+  //from here on we already set the right exchange for the trade - just need to set the router contract
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
     [Field.OUTPUT]: relevantTokenBalances[1]
@@ -164,11 +236,11 @@ export function useDerivedSwapInfo(): {
   }
 
   if (!parsedAmount) {
-    inputError = inputError ?? 'Enter an amount'
+    inputError = inputError ?? 'Swap'
   }
 
   if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
-    inputError = inputError ?? 'Select a token'
+    inputError = inputError ?? 'Swap'
   }
 
   const formattedTo = isAddress(to)
@@ -207,12 +279,41 @@ export function useDerivedSwapInfo(): {
     inputError = 'Insufficient ' + amountIn.currency.symbol + ' balance'
   }
 
+  // check if input amount is too low
+  let minAmountError = false
+  const minTradeAmountsForBestExchange = minTradeAmounts[v2Trade ? v2Trade.exchange : Exchange.UNDEFINED]
+  if (minTradeAmountsForBestExchange && parsedAmount) {
+    if (
+      minTradeAmountsForBestExchange[isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT] &&
+      minTradeAmountsForBestExchange[isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT].greaterThan(
+        parsedAmount
+      )
+    ) {
+      minAmountError = true
+    }
+  } else if (parsedAmount && (minTradeAmounts[Exchange.UNI] || minTradeAmounts[Exchange.SUSHI])) {
+    minAmountError = true
+  }
+
+  if (minAmountError) {
+    inputError = 'Min trade amount not met'
+  }
+
+  // check if the user has ETH to pay the bribe for token -> token swap
+  // what do we display if we have multiple inputErrors? (order)
+  const ethTrade = isETHTrade(v2Trade)
+  if (ethTrade !== undefined && !ethTrade && JSBI.LT(ethBalance?.raw, v2Trade?.minerBribe.raw)) {
+    inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (bribe)'
+  }
+
   return {
     currencies,
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
+    minTradeAmounts,
     inputError,
+    minAmountError,
     v1Trade
   }
 }

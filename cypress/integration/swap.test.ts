@@ -1,6 +1,6 @@
 describe('Swap', () => {
   beforeEach(() => {
-    cy.visit('/swap')
+    cy.visit('/exchange')
   })
   it('can enter an amount into input', () => {
     cy.get('#swap-currency-input .token-amount-input')

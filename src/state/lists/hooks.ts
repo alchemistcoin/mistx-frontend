@@ -1,36 +1,16 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
-import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
-import { ChainId, Token } from '@uniswap/sdk'
-import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
+import DEFAULT_TOKEN_LIST from '@alchemistcoin/default-token-list'
+import { ChainId } from '@alchemistcoin/sdk'
+import { TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from '../index'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from '../../constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
-
-type TagDetails = Tags[keyof Tags]
-export interface TagInfo extends TagDetails {
-  id: string
-}
-
-/**
- * Token instances created from token info.
- */
-export class WrappedTokenInfo extends Token {
-  public readonly tokenInfo: TokenInfo
-  public readonly tags: TagInfo[]
-  constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
-    super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name)
-    this.tokenInfo = tokenInfo
-    this.tags = tags
-  }
-  public get logoURI(): string | undefined {
-    return this.tokenInfo.logoURI
-  }
-}
+import { WrappedTokenInfo } from './wrappedTokenInfo'
 
 export type TokenAddressMap = Readonly<
-  { [chainId in ChainId]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }> }
+  { [chainId in ChainId | number]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }> }
 >
 
 /**
@@ -41,7 +21,8 @@ const EMPTY_LIST: TokenAddressMap = {
   [ChainId.RINKEBY]: {},
   [ChainId.ROPSTEN]: {},
   [ChainId.GÖRLI]: {},
-  [ChainId.MAINNET]: {}
+  [ChainId.MAINNET]: {},
+  [ChainId.HARDHAT]: {}
 }
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
@@ -53,22 +34,18 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 
   const map = list.tokens.reduce<TokenAddressMap>(
     (tokenMap, tokenInfo) => {
-      const tags: TagInfo[] =
-        tokenInfo.tags
-          ?.map(tagId => {
-            if (!list.tags?.[tagId]) return undefined
-            return { ...list.tags[tagId], id: tagId }
-          })
-          ?.filter((x): x is TagInfo => Boolean(x)) ?? []
-      const token = new WrappedTokenInfo(tokenInfo, tags)
-      if (tokenMap[token.chainId][token.address] !== undefined) throw Error('Duplicate tokens.')
+      const token = new WrappedTokenInfo(tokenInfo, list)
+      if (tokenMap[token.chainId][token.address] !== undefined) {
+        console.error(new Error(`Duplicate token! ${token.address}`))
+        return tokenMap
+      }
       return {
         ...tokenMap,
         [token.chainId]: {
-          ...tokenMap[token.chainId],
+          ...tokenMap[token.chainId as ChainId],
           [token.address]: {
             token,
-            list: list
+            list
           }
         }
       }
@@ -79,14 +56,7 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   return map
 }
 
-export function useAllLists(): {
-  readonly [url: string]: {
-    readonly current: TokenList | null
-    readonly pendingUpdate: TokenList | null
-    readonly loadingRequestId: string | null
-    readonly error: string | null
-  }
-} {
+export function useAllLists(): AppState['lists']['byUrl'] {
   return useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
 }
 
@@ -96,7 +66,8 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     3: { ...map1[3], ...map2[3] },
     4: { ...map1[4], ...map2[4] },
     5: { ...map1[5], ...map2[5] },
-    42: { ...map1[42], ...map2[42] }
+    42: { ...map1[42], ...map2[42] },
+    1337: { ...map1[1337], ...map2[1337] }
   }
 }
 
@@ -116,8 +87,7 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
           const current = lists[currentUrl]?.current
           if (!current) return allTokens
           try {
-            const newTokens = Object.assign(listToTokenMap(current))
-            return combineMaps(allTokens, newTokens)
+            return combineMaps(allTokens, listToTokenMap(current))
           } catch (error) {
             console.error('Could not show token list due to error', error)
             return allTokens
@@ -168,7 +138,10 @@ export function useUnsupportedTokenList(): TokenAddressMap {
   const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS)
 
   // format into one token address map
-  return combineMaps(localUnsupportedListMap, loadedUnsupportedListMap)
+  return useMemo(() => combineMaps(localUnsupportedListMap, loadedUnsupportedListMap), [
+    localUnsupportedListMap,
+    loadedUnsupportedListMap
+  ])
 }
 
 export function useIsListActive(url: string): boolean {

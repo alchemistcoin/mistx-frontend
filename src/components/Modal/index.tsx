@@ -11,15 +11,9 @@ const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
-    z-index: 2;
-    background-color: transparent;
-    overflow: hidden;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     background-color: ${({ theme }) => theme.modalBG};
+    display: flex;
+    z-index: 2;
   }
 `
 
@@ -31,20 +25,19 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
 )).attrs({
   'aria-label': 'dialog'
 })`
-  overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+  overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
 
   &[data-reach-dialog-content] {
-    margin: 0 0 2rem 0;
-    background-color: ${({ theme }) => theme.bg1};
+    background-color: ${({ theme }) => theme.bg5};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
+    border-top: 2px solid ${({ theme }) => theme.primary2};
+    margin: auto;
     padding: 0px;
     width: 50vw;
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+    overflow-y: auto;
     overflow-x: hidden;
+    max-width: 428px;
 
-    align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
-
-    max-width: 420px;
     ${({ maxHeight }) =>
       maxHeight &&
       css`
@@ -55,8 +48,10 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
       css`
         min-height: ${minHeight}vh;
       `}
+
     display: flex;
-    border-radius: 20px;
+    border-radius: 0 0 20px 20px;
+
     ${({ theme }) => theme.mediaWidth.upToMedium`
       width: 65vw;
       margin: 0;
@@ -66,7 +61,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
       ${mobile &&
         css`
           width: 100vw;
-          border-radius: 20px;
+          border-radius: 0 0 20px 20px;
           border-bottom-left-radius: 0;
           border-bottom-right-radius: 0;
         `}
@@ -87,7 +82,7 @@ export default function Modal({
   isOpen,
   onDismiss,
   minHeight = false,
-  maxHeight = 90,
+  maxHeight,
   initialFocusRef,
   children
 }: ModalProps) {

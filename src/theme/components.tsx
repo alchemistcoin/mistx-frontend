@@ -67,19 +67,19 @@ export const IconWrapper = styled.div<{ stroke?: string; size?: string; marginRi
   margin-right: ${({ marginRight }) => marginRight ?? 0};
   margin-left: ${({ marginLeft }) => marginLeft ?? 0};
   & > * {
-    stroke: ${({ theme, stroke }) => stroke ?? theme.blue1};
+    stroke: ${({ theme, stroke }) => stroke ?? theme.blue2};
   }
 `
 
 // A button that triggers some onClick result, but looks like a link.
 export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
-  border: none;
-  text-decoration: none;
   background: none;
-
+  border: none;
+  color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.primary2)};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-  color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.primary1)};
+  font-size: 0.75rem;
   font-weight: 500;
+  text-decoration: none;
 
   :hover {
     text-decoration: ${({ disabled }) => (disabled ? null : 'underline')};
@@ -119,7 +119,7 @@ export const StyledInternalLink = styled(Link)`
 const StyledLink = styled.a`
   text-decoration: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.text1};
   font-weight: 500;
 
   :hover {

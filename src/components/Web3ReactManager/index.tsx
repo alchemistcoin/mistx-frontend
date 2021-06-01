@@ -16,10 +16,10 @@ const MessageWrapper = styled.div`
 `
 
 const Message = styled.h2`
-  color: ${({ theme }) => theme.secondary1};
+  color: ${({ theme }) => theme.bg5};
 `
 
-export default function Web3ReactManager({ children }: { children: JSX.Element }) {
+export default function Web3ReactManager({ children }: { children: any }) {
   const { t } = useTranslation()
   const { active } = useWeb3React()
   const { active: networkActive, error: networkError, activate: activateNetwork } = useWeb3React(NetworkContextName)

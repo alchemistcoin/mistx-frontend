@@ -3,9 +3,9 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
-import { ROUTER_ADDRESS } from '../constants'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@uniswap/sdk'
+import { abi as MISTX_ROUTER_ABI } from '../constants/abis/mistx-router.json'
+import { MISTX_ROUTER_ADDRESS } from '../constants'
+import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@alchemistcoin/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
@@ -22,7 +22,8 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   3: 'ropsten.',
   4: 'rinkeby.',
   5: 'goerli.',
-  42: 'kovan.'
+  42: 'kovan.',
+  1337: ''
 }
 
 export function getEtherscanLink(
@@ -98,8 +99,11 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(_: number, library: Web3Provider, account?: string): Contract {
-  return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account)
+export function getRouterContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
+  const routerAddress = MISTX_ROUTER_ADDRESS[chainId]
+    ? MISTX_ROUTER_ADDRESS[chainId]
+    : MISTX_ROUTER_ADDRESS[ChainId.MAINNET]
+  return getContract(routerAddress as string, MISTX_ROUTER_ABI, library, account)
 }
 
 export function escapeRegExp(string: string): string {

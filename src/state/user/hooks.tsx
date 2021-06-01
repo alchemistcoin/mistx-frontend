@@ -1,4 +1,4 @@
-import { ChainId, Pair, Token } from '@uniswap/sdk'
+import { ChainId, Exchange, Pair, Token } from '@alchemistcoin/sdk'
 import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -17,6 +17,7 @@ import {
   updateUserDeadline,
   updateUserExpertMode,
   updateUserSlippageTolerance,
+  updateUserBribeMargin,
   toggleURLWarning,
   updateUserSingleHopOnly
 } from './actions'
@@ -115,6 +116,23 @@ export function useUserSlippageTolerance(): [number, (slippage: number) => void]
   return [userSlippageTolerance, setUserSlippageTolerance]
 }
 
+export function useUserBribeMargin(): [number, (bribeMargin: number) => void] {
+  const dispatch = useDispatch<AppDispatch>()
+  const userBribeMargin = useSelector<AppState, AppState['user']['userBribeMargin']>(state => {
+    return state.user.userBribeMargin
+  })
+
+  const setUserBribeMargin = useCallback(
+    (userBribeMargin: number) => {
+      const bribeMargin = userBribeMargin < 1 ? 1 : userBribeMargin
+      dispatch(updateUserBribeMargin({ userBribeMargin: bribeMargin }))
+    },
+    [dispatch]
+  )
+
+  return [userBribeMargin, setUserBribeMargin]
+}
+
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
   const dispatch = useDispatch<AppDispatch>()
   const userDeadline = useSelector<AppState, AppState['user']['userDeadline']>(state => {
@@ -189,12 +207,22 @@ export function useURLWarningToggle(): () => void {
 }
 
 /**
- * Given two tokens return the liquidity token that represents its liquidity shares
+ * Given two tokens return the liquidity token that represents its liquidity shares (for Uniswap)
  * @param tokenA one of the two tokens
  * @param tokenB the other token
  */
 export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
-  return new Token(tokenA.chainId, Pair.getAddress(tokenA, tokenB), 18, 'UNI-V2', 'Uniswap V2')
+  return new Token(tokenA.chainId, Pair.getAddress(tokenA, tokenB, Exchange.UNI), 18, 'UNI-V2', 'Uniswap V2')
+}
+
+/**
+ * Given two tokens return the liquidity token that represents its liquidity shares
+ * @param tokenA one of the two tokens
+ * @param tokenB the other token
+ * @param exchange the dex
+ */
+export function toV2LiquidityTokenGeneral([tokenA, tokenB]: [Token, Token], exchange: Exchange): Token {
+  return new Token(tokenA.chainId, Pair.getAddress(tokenA, tokenB, exchange), 18, 'UNI-V2', 'Uniswap V2')
 }
 
 /**

@@ -4,6 +4,7 @@ import {
   Currency,
   CurrencyAmount,
   ETHER,
+  Exchange,
   JSBI,
   Pair,
   Route,
@@ -12,7 +13,8 @@ import {
   Trade,
   TradeType,
   WETH
-} from '@uniswap/sdk'
+} from '@alchemistcoin/sdk'
+import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo } from 'react'
 import { useActiveWeb3React } from '../hooks'
 import { useAllTokens } from '../hooks/Tokens'
@@ -30,7 +32,7 @@ export function useV1ExchangeAddress(tokenAddress?: string): string | undefined 
 
 export class MockV1Pair extends Pair {
   constructor(etherAmount: BigintIsh, tokenAmount: TokenAmount) {
-    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount))
+    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount), Exchange.UNI)
   }
 }
 
@@ -100,7 +102,9 @@ export function useV1Trade(
   isExactIn?: boolean,
   inputCurrency?: Currency,
   outputCurrency?: Currency,
-  exactAmount?: CurrencyAmount
+  exactAmount?: CurrencyAmount,
+  gasPriceToBeat?: BigNumber,
+  minerBribeMargin?: BigNumber
 ): Trade | undefined {
   // get the mock v1 pairs
   const inputPair = useMockV1Pair(inputCurrency)
@@ -125,8 +129,14 @@ export function useV1Trade(
   let v1Trade: Trade | undefined
   try {
     v1Trade =
-      route && exactAmount
-        ? new Trade(route, exactAmount, isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT)
+      route && exactAmount && gasPriceToBeat && minerBribeMargin
+        ? new Trade(
+            route,
+            exactAmount,
+            isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
+            gasPriceToBeat.toString(),
+            minerBribeMargin.toString()
+          )
         : undefined
   } catch (error) {
     console.debug('Failed to create V1 trade', error)

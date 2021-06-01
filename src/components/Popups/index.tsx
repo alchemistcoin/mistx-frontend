@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useActivePopups } from '../../state/application/hooks'
 import { AutoColumn } from '../Column'
 import PopupItem from './PopupItem'
-import ClaimPopup from './ClaimPopup'
+// import ClaimPopup from './ClaimPopup'
 import { useURLWarningVisible } from '../../state/user/hooks'
 
 const MobilePopupWrapper = styled.div<{ height: string | number }>`
@@ -33,11 +33,16 @@ const MobilePopupInner = styled.div`
 
 const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
   position: fixed;
-  top: ${({ extraPadding }) => (extraPadding ? '108px' : '88px')};
+  bottom: ${({ extraPadding }) => (extraPadding ? '88px' : '52px')};
   right: 1rem;
-  max-width: 355px !important;
+  max-width: 380px !important;
   width: 100%;
-  z-index: 3;
+  z-index: 100;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    bottom: 120px;
+    right: .5rem;
+  `}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -53,7 +58,7 @@ export default function Popups() {
   return (
     <>
       <FixedPopupColumn gap="20px" extraPadding={urlWarningActive}>
-        <ClaimPopup />
+        {/* <ClaimPopup /> */}
         {activePopups.map(item => (
           <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
         ))}
