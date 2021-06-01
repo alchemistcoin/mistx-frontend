@@ -98,6 +98,10 @@ export default function Menu() {
 
       {open && (
         <MenuFlyout>
+          <MenuItem id="link" href="https://duneanalytics.com/alchemistcoin/MistX-Dashboard">
+            <Info size={14} />
+            Statistics
+          </MenuItem>
           <MenuItem id="link" href="https://github.com/alchemistcoin/">
             <Info size={14} />
             Github
