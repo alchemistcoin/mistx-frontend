@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
+import { Info } from 'react-feather'
 import MetamaskIcon from '../../assets/images/metamask.png'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { fortmatic, injected, portis } from '../../connectors'
@@ -89,8 +90,12 @@ const Blurb = styled.div`
   margin-top: 2rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     margin: 1rem;
-    font-size: 12px;
   `};
+`
+
+const BottomBlurb = styled(Blurb)`
+  border-top: 1px solid #57687b;
+  padding-top: 1rem;
 `
 
 const OptionGrid = styled.div`
@@ -356,6 +361,12 @@ export default function WalletModal({
               <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
             </Blurb>
           )}
+          <BottomBlurb>
+            <span>
+              <Info size={14} style={{ marginRight: '0.25rem' }} /> Hardware wallets are not supported, we are working
+              on it.
+            </span>
+          </BottomBlurb>
         </ContentWrapper>
       </UpperSection>
     )
