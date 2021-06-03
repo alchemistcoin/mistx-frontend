@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ChainId, Trade } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount, Trade } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from 'state/application/hooks'
 import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
+import { WrapType } from 'hooks/useWrapCallback'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -26,6 +27,9 @@ interface TransactionResponseUnsentData {
     recipient: string
   }
   trade?: Trade
+  wrapType?: WrapType
+  inputAmount?: CurrencyAmount
+  outputAmount?: CurrencyAmount
 }
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
@@ -43,12 +47,18 @@ export function useTransactionAdder(): (
       {
         summary,
         claim,
-        trade
+        trade,
+        inputAmount,
+        outputAmount,
+        wrapType
       }: {
         summary?: string
         claim?: { recipient: string }
         approval?: { tokenAddress: string; spender: string }
         trade?: Trade
+        inputAmount?: CurrencyAmount
+        outputAmount?: CurrencyAmount
+        wrapType?: WrapType
       } = {}
     ) => {
       if (!account) return
@@ -65,7 +75,10 @@ export function useTransactionAdder(): (
           chainId: chainId ?? response.chainId,
           summary,
           claim,
-          trade
+          trade,
+          inputAmount,
+          outputAmount,
+          wrapType,
         })
       )
       addPopup(

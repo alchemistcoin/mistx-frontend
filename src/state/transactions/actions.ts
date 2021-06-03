@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
-import { ChainId, Trade } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount, Trade } from '@alchemistcoin/sdk'
 import { Diagnosis, Status, SwapReq, TransactionProcessed } from '../../websocket/index'
+import { WrapType } from 'hooks/useWrapCallback'
 
 export interface SerializableTransactionReceipt {
   to: string
@@ -21,6 +22,9 @@ export const addTransaction = createAction<{
   summary?: string
   swap?: SwapReq
   trade?: Trade
+  wrapType?: WrapType
+  inputAmount?: CurrencyAmount
+  outputAmount?: CurrencyAmount
 }>('transactions/addTransaction')
 export const clearCompletedTransactions = createAction<{ chainId: ChainId }>('transactions/clearCompletedTransactions')
 export const clearAllTransactions = createAction<{ chainId: ChainId }>('transactions/clearAllTransactions')
