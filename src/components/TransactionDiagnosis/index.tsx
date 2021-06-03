@@ -113,19 +113,21 @@ const Connector = () => (
   </svg>
 )
 
-const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => (
-  <CurrencyLabelWrapper>
-    <CurrencyLogo
-      currency={
-        amount.currency.address && amount.currency.chainId
-          ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
-          : ETHER
-      }
-      size="24px"
-    />
-    <CurrencyName>{amount.currency.symbol}</CurrencyName>
-  </CurrencyLabelWrapper>
-)
+const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => {
+  return (
+    <CurrencyLabelWrapper>
+      <CurrencyLogo
+        currency={
+          amount.currency.address && amount.currency.chainId
+            ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
+            : ETHER
+        }
+        size="24px"
+      />
+      <CurrencyName>{amount.currency.symbol}</CurrencyName>
+    </CurrencyLabelWrapper>
+  )
+}
 
 export default function TransactionDiagnosis() {
   const pendingTransactions = usePendingTransactions()
@@ -134,8 +136,8 @@ export default function TransactionDiagnosis() {
   const hash = Object.keys(pendingTransactions)[0]
   const tx = pendingTransactions[hash]
   // const path = tx.processed?.swap.path;
-  const tokenInput = tx?.trade?.inputAmount
-  const tokenOutput = tx?.trade?.outputAmount
+  const tokenInput = tx?.inputAmount
+  const tokenOutput = tx?.outputAmount
 
   const canCancel = typeof tx?.status !== 'undefined'
   const [cancelClicked, setCancelClicked] = useState(false)
@@ -186,12 +188,8 @@ export default function TransactionDiagnosis() {
               </TokenAmountWrapper>
               <PendingTransactionIcon />
               <TokenAmountWrapper>
-                {tx && (
-                  <>
-                    <TransactionAmount>{tokenInput?.value}</TransactionAmount>
-                    <TransactionAmount>{tokenOutput?.value}</TransactionAmount>
-                  </>
-                )}
+                <TransactionAmount>{tokenInput?.value}</TransactionAmount>
+                <TransactionAmount>{tokenOutput?.value}</TransactionAmount>
               </TokenAmountWrapper>
             </>
           )}
