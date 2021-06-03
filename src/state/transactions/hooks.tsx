@@ -78,7 +78,7 @@ export function useTransactionAdder(): (
           trade,
           inputAmount,
           outputAmount,
-          wrapType,
+          wrapType
         })
       )
       addPopup(
