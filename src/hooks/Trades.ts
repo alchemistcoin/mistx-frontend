@@ -252,26 +252,27 @@ export function useMinTradeAmount(
 ): MinTradeEstimates {
   // const SUSHIPairs = useAllCommonPairs(Exchange.SUSHI, currencyIn, currencyOut)
   const UNIPairs = useAllCommonPairs(Exchange.UNI, currencyIn, currencyOut)
-  const allUNIPairs: Pair[] = useMemo(() => {
-    if (UNIPairs.length) return [UNIPairs[0]]
-    return []
-  }, [UNIPairs])
+  // const allUNIPairs: Pair[] = useMemo(() => {
+  //   if (UNIPairs.length) return [UNIPairs[0]]
+  //   return []
+  // }, [UNIPairs])
   // const allSUSHIPairs: Pair[] = useMemo(() => {
   //   if (SUSHIPairs.length) return [SUSHIPairs[0]]
   //   return []
   // }, [SUSHIPairs])
 
   const uniMinTradeEstimate = useMemo(() => {
-    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin) return null
+    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin || !UNIPairs.length)
+      return null
     return Trade.estimateMinTradeAmounts(
-      allUNIPairs,
+      UNIPairs,
       currencyIn,
       currencyOut,
       gasPriceToBeat.toString(),
       minerBribeMargin.toString(),
       minTradeMargin.toString()
     )
-  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, allUNIPairs])
+  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, UNIPairs])
 
   // const sushiMinTradeEstimate = useMemo(() => {
   //   if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin) return null
