@@ -1,18 +1,22 @@
-import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useMemo, useState } from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
+import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
+// components
+import AppBody from '../AppBody'
 import AddressInputPanel from '../../components/AddressInputPanel'
-
+import { ArrowDownCircled } from 'components/Icons'
+import { AutoRow } from '../../components/Row'
 import { ButtonError } from '../../components/Button'
+// import { ClickableText } from './styleds'
 import { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
-
-import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
-import ConfirmInfoModal from '../../components/swap/ConfirmInfoModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import { AutoRow } from '../../components/Row'
+import CurrencySelect from 'components/CurrencySelect'
+import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import TransactionDiagnosis from 'components/TransactionDiagnosis'
 // import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import BetterTradeLink, { DefaultVersionLink } from '../../components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
@@ -30,12 +34,10 @@ import {
 } from '../../components/swap/styleds'
 import QuestionHelper from '../../components/QuestionHelper'
 // import TradePrice from '../../components/swap/TradePrice'
-import TokenWarningModal from '../../components/TokenWarningModal'
-
+// import TokenWarningModal from '../../components/TokenWarningModal'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
-
-// import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
+// hooks
 import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
@@ -46,6 +48,9 @@ import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useSocketStatus, useWalletModalToggle } from '../../state/application/hooks'
+import { useIsTransactionUnsupported } from 'hooks/Trades'
+// import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
+// state
 import { Field } from '../../state/swap/actions'
 import {
   useDefaultsFromURLSearch,
@@ -59,21 +64,16 @@ import {
   // useUserTransactionTTL,
   useUserSingleHopOnly
 } from '../../state/user/hooks'
-import { LinkStyledButton, TYPE } from '../../theme'
+import { useHasPendingTransactions } from 'state/transactions/hooks'
+// constants
+// import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
+// utils
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import AppBody from '../AppBody'
-// import { ClickableText } from './styleds'
-import { useIsTransactionUnsupported } from 'hooks/Trades'
-import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
-import { RouteComponentProps } from 'react-router-dom'
-import { ArrowDownCircled } from 'components/Icons'
-import CurrencySelect from 'components/CurrencySelect'
-import { useHasPendingTransactions } from 'state/transactions/hooks'
-import TransactionDiagnosis from 'components/TransactionDiagnosis'
+// theme
 import { darken } from 'polished'
-// import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
+import { LinkStyledButton, TYPE } from '../../theme'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -171,6 +171,11 @@ const StyledButtonYellow = styled(StyledButtonError)`
   font-size: 20px;
   font-weight: 700;
 `
+
+// Lazy Load
+const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'))
+const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
+const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -499,33 +504,35 @@ export default function Swap({ history }: RouteComponentProps) {
 
   return (
     <>
-      <TokenWarningModal
-        isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
-        tokens={importTokensNotInDefault}
-        onConfirm={handleConfirmTokenWarning}
-        onDismiss={handleDismissTokenWarning}
-      />
-      <ConfirmInfoModal
-        isOpen={showInfoModal}
-        onDismiss={handleInfoModalDismiss}
-        onConfirm={displayConfirmModal}
-        trade={trade}
-        attemptingTxn={attemptingTxn}
-      />
-      <ConfirmSwapModal
-        isOpen={showConfirmModal}
-        trade={trade}
-        originalTrade={tradeToConfirm}
-        onAcceptChanges={handleAcceptChanges}
-        attemptingTxn={attemptingTxn}
-        txHash={txHash}
-        recipient={recipient}
-        allowedSlippage={allowedSlippage}
-        onConfirm={handleSwap}
-        swapErrorMessage={swapErrorMessage}
-        onDismiss={handleConfirmDismiss}
-        ethUSDCPrice={ethUSDCPrice}
-      />
+      <Suspense fallback={null}>
+        <TokenWarningModal
+          isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
+          tokens={importTokensNotInDefault}
+          onConfirm={handleConfirmTokenWarning}
+          onDismiss={handleDismissTokenWarning}
+        />
+        <ConfirmInfoModal
+          isOpen={showInfoModal}
+          onDismiss={handleInfoModalDismiss}
+          onConfirm={displayConfirmModal}
+          trade={trade}
+          attemptingTxn={attemptingTxn}
+        />
+        <ConfirmSwapModal
+          isOpen={showConfirmModal}
+          trade={trade}
+          originalTrade={tradeToConfirm}
+          onAcceptChanges={handleAcceptChanges}
+          attemptingTxn={attemptingTxn}
+          txHash={txHash}
+          recipient={recipient}
+          allowedSlippage={allowedSlippage}
+          onConfirm={handleSwap}
+          swapErrorMessage={swapErrorMessage}
+          onDismiss={handleConfirmDismiss}
+          ethUSDCPrice={ethUSDCPrice}
+        />
+      </Suspense>
       {hasPendingTransactions ? (
         <AppBody>
           <PendingHeader>Transaction In Progress</PendingHeader>
