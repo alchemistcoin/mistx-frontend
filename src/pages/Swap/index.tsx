@@ -31,6 +31,7 @@ import {
 import QuestionHelper from '../../components/QuestionHelper'
 // import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
+import HardwareWalletModal from '../../components/HardwareWalletModal'
 
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
@@ -73,7 +74,6 @@ import CurrencySelect from 'components/CurrencySelect'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
 import { darken } from 'polished'
-// import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -197,8 +197,11 @@ export default function Swap({ history }: RouteComponentProps) {
       return !Boolean(token.address in defaultTokens)
     })
 
-  const { account } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
+
+  // Check if a metamask account is connected
+  const metaMaskConnected: any = account && account?.length > 0 && library?.connection.url === 'metamask'
 
   // Server Connection Status
   const webSocketConnected = useSocketStatus()
@@ -297,13 +300,9 @@ export default function Swap({ history }: RouteComponentProps) {
   })
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 
-  // info modal
+  // Modals
   const [showInfoModal, setShowInfoModal] = useState(false)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
-  // const openShowInfoModal = () => {
-  //   setShowConfirmModal(false)
-  //   setShowInfoModal(true)
-  // }
 
   const displayConfirmModal = () => {
     setShowInfoModal(false)
@@ -526,6 +525,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleConfirmDismiss}
         ethUSDCPrice={ethUSDCPrice}
       />
+      <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
       {hasPendingTransactions ? (
         <AppBody>
           <PendingHeader>Transaction In Progress</PendingHeader>

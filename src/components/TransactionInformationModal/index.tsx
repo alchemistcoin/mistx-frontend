@@ -81,6 +81,11 @@ export default function TransactionInformationModal({ onDismiss, onContinue }: C
               Due to a limitation of Metamask, 0-gas transactions must be manually signed. This is not an error.
             </Text>
           </RowBetween>
+          <RowBetween margin="0.5rem 0 0">
+            <Text fontWeight={300} fontSize={16}>
+              You may have to do this twice
+            </Text>
+          </RowBetween>
           <RowBetween margin="1.5rem 0 0">
             <Text fontWeight={300} fontSize={16}>
               <StyledInput
