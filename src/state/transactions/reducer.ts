@@ -1,5 +1,6 @@
 import { ChainId, Token } from '@alchemistcoin/sdk'
 import { createReducer } from '@reduxjs/toolkit'
+import { WrapType } from 'hooks/useWrapCallback'
 import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
@@ -14,11 +15,6 @@ import {
 import { isPendingTransaction } from './hooks'
 
 const now = () => new Date().getTime()
-
-export interface TradeDetails {
-  inputAmount: AmountDetails
-  outputAmount: AmountDetails
-}
 export interface CurrencyDetails {
   chainId?: ChainId
   address?: string
@@ -49,7 +45,9 @@ export interface TransactionDetails {
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
   updatedAt?: number
-  trade?: TradeDetails
+  inputAmount?: AmountDetails
+  outputAmount?: AmountDetails
+  wrapType?: WrapType
 }
 
 export interface TransactionState {
@@ -62,49 +60,56 @@ export const initialState: TransactionState = {}
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, summary, claim, trade } }) => {
-      const tx = transactions[chainId]?.[hash] as TransactionDetails
-      if (tx && isPendingTransaction(tx)) {
-        throw Error('Attempted to add existing transaction.')
-      }
-      // console.log('TRADE', trade?.inputAmount.currency)
-      const txs = transactions[chainId] ?? {}
-      txs[hash] = {
-        hash,
-        summary,
-        claim,
-        from,
-        addedTime: now(),
-        trade: trade
-          ? {
-              inputAmount: {
+    .addCase(
+      addTransaction,
+      (
+        transactions,
+        { payload: { chainId, from, hash, summary, claim, trade, wrapType, inputAmount, outputAmount } }
+      ) => {
+        const tx = transactions[chainId]?.[hash] as TransactionDetails
+        if (tx && isPendingTransaction(tx)) {
+          throw Error('Attempted to add existing transaction.')
+        }
+
+        const input = trade ? trade.inputAmount : inputAmount
+        const output = trade ? trade.outputAmount : outputAmount
+
+        const txs = transactions[chainId] ?? {}
+        txs[hash] = {
+          hash,
+          summary,
+          claim,
+          from,
+          addedTime: now(),
+          wrapType,
+          inputAmount: input
+            ? {
                 currency: {
-                  chainId: trade.inputAmount.currency instanceof Token ? trade.inputAmount.currency.chainId : undefined,
-                  address: trade.inputAmount.currency instanceof Token ? trade.inputAmount.currency.address : undefined,
-                  decimals: trade.inputAmount.currency.decimals,
-                  symbol: trade.inputAmount.currency.symbol,
-                  name: trade.inputAmount.currency.name
+                  chainId: input.currency instanceof Token ? input.currency.chainId : undefined,
+                  address: input.currency instanceof Token ? input.currency.address : undefined,
+                  decimals: input.currency.decimals,
+                  symbol: input.currency.symbol,
+                  name: input.currency.name
                 },
-                value: trade.inputAmount.toSignificant(4)
-              },
-              outputAmount: {
-                currency: {
-                  ...trade.outputAmount.currency,
-                  chainId:
-                    trade.outputAmount.currency instanceof Token ? trade.outputAmount.currency.chainId : undefined,
-                  address:
-                    trade.outputAmount.currency instanceof Token ? trade.outputAmount.currency.address : undefined,
-                  decimals: trade.outputAmount.currency.decimals,
-                  symbol: trade.outputAmount.currency.symbol,
-                  name: trade.outputAmount.currency.name
-                },
-                value: trade.outputAmount.toSignificant(4)
+                value: input.toSignificant(4)
               }
-            }
-          : undefined
+            : undefined,
+          outputAmount: output
+            ? {
+                currency: {
+                  chainId: output.currency instanceof Token ? output.currency.chainId : undefined,
+                  address: output.currency instanceof Token ? output.currency.address : undefined,
+                  decimals: output.currency.decimals,
+                  symbol: output.currency.symbol,
+                  name: output.currency.name
+                },
+                value: output.toSignificant(4)
+              }
+            : undefined
+        }
+        transactions[chainId] = txs
       }
-      transactions[chainId] = txs
-    })
+    )
     .addCase(removeTransaction, (transactions, { payload: { chainId, hash } }) => {
       const tx = transactions[chainId]?.[hash]
       if (!tx) {

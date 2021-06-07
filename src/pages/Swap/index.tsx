@@ -34,7 +34,6 @@ import {
 } from '../../components/swap/styleds'
 import QuestionHelper from '../../components/QuestionHelper'
 // import TradePrice from '../../components/swap/TradePrice'
-// import TokenWarningModal from '../../components/TokenWarningModal'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
 // hooks
@@ -49,7 +48,6 @@ import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useTogg
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useSocketStatus, useWalletModalToggle } from '../../state/application/hooks'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
-// import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 // state
 import { Field } from '../../state/swap/actions'
 import {
@@ -176,6 +174,7 @@ const StyledButtonYellow = styled(StyledButtonError)`
 const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'))
 const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
+const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletModal'))
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -202,8 +201,11 @@ export default function Swap({ history }: RouteComponentProps) {
       return !Boolean(token.address in defaultTokens)
     })
 
-  const { account } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
+
+  // Check if a metamask account is connected
+  const metaMaskConnected: any = account && account?.length > 0 && library?.connection.url === 'metamask'
 
   // Server Connection Status
   const webSocketConnected = useSocketStatus()
@@ -302,13 +304,9 @@ export default function Swap({ history }: RouteComponentProps) {
   })
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 
-  // info modal
+  // Modals
   const [showInfoModal, setShowInfoModal] = useState(false)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
-  // const openShowInfoModal = () => {
-  //   setShowConfirmModal(false)
-  //   setShowInfoModal(true)
-  // }
 
   const displayConfirmModal = () => {
     setShowInfoModal(false)
@@ -353,7 +351,7 @@ export default function Swap({ history }: RouteComponentProps) {
   //   }
   // }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
+  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT], wrapType)
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
@@ -532,6 +530,7 @@ export default function Swap({ history }: RouteComponentProps) {
           onDismiss={handleConfirmDismiss}
           ethUSDCPrice={ethUSDCPrice}
         />
+        <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
       </Suspense>
       {hasPendingTransactions ? (
         <AppBody>
