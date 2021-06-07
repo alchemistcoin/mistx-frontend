@@ -2,10 +2,19 @@ import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemistcoin/sd
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected } from '../connectors'
 
-export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0xA58f22e0766B3764376c92915BA545d583c19DBc',
-  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
-  [ChainId.GÖRLI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b'
+export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: { [exchange in Exchange]?: string } } = {
+  [ChainId.MAINNET]: {
+    [Exchange.UNI]: '0xA58f22e0766B3764376c92915BA545d583c19DBc',
+    [Exchange.SUSHI]: '0xfcadF926669E7caD0e50287eA7D563020289Ed2C'
+  },
+  [ChainId.HARDHAT]: {
+    [Exchange.UNI]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
+    [Exchange.SUSHI]: '0xc5a5c42992decbae36851359345fe25997f5c42d'
+  },
+  [ChainId.GÖRLI]: {
+    [Exchange.UNI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b',
+    [Exchange.SUSHI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b'
+  }
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {

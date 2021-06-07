@@ -1,4 +1,4 @@
-import { Trade, TokenAmount, CurrencyAmount, ETHER, ChainId } from '@alchemistcoin/sdk'
+import { Trade, TokenAmount, CurrencyAmount, ETHER, ChainId, Exchange } from '@alchemistcoin/sdk'
 import { useCallback, useMemo } from 'react'
 import { MISTX_ROUTER_ADDRESS } from '../constants'
 import { useTokenAllowance } from '../data/Allowances'
@@ -162,6 +162,6 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
   const { chainId } = useActiveWeb3React()
   return useApproveCallback(
     amountToApprove,
-    tradeIsV1 ? v1ExchangeAddress : MISTX_ROUTER_ADDRESS[chainId || ChainId.MAINNET]
+    tradeIsV1 ? v1ExchangeAddress : MISTX_ROUTER_ADDRESS[chainId || ChainId.MAINNET]?.[trade?.exchange || Exchange.UNI]
   )
 }

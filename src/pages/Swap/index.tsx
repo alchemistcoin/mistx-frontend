@@ -491,7 +491,7 @@ export default function Swap({ history }: RouteComponentProps) {
   // console.log('path', trade?.route.path)
   // console.log('min amounts', minTradeAmounts)
   // console.log('min trade amount', minTradeAmounts[0]?.[0].toExact())
-  console.log('trade', trade)
+  // console.log('trade', trade)
 
   // const bribeEstimate = useMinerBribeEstimate()
   // console.log(
