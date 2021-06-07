@@ -57,7 +57,11 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
             <Text fontWeight={300} fontSize={16}>
               mistX will not work with hardware wallets connected with MetaMask due to their lack of support for
               eth_signTransaction. Use a standard MetaMask wallet instead. We are pushing MetaMask to fix the issue{' '}
-              <a href="https://github.com/MetaMask/metamask-extension/issues/10914" target="_blank" rel="noreferrer">
+              <a
+                href="https://github.com/MetaMask/metamask-extension/issues/10914"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 here
               </a>{' '}
               show your support and leave a comment!
