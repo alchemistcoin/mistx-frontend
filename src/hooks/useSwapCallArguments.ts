@@ -47,7 +47,7 @@ export function useSwapCallArguments(
     const tradeVersion = getTradeVersion(trade)
     if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return undefined
 
-    const contract: Contract = getRouterContract(chainId, library, account)
+    const contract: Contract = getRouterContract(chainId, library, trade, account)
 
     if (trade.tradeType === TradeType.EXACT_INPUT) {
       pendingCall = {

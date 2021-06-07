@@ -49,7 +49,7 @@ const StyledMenu = styled.div`
 `
 
 const MenuFlyout = styled.span`
-  min-width: 8.125rem;
+  min-width: 8.75rem;
   background-color: ${({ theme }) => theme.bg3};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
@@ -108,7 +108,11 @@ export default function Menu() {
           </MenuItem>
           <MenuItem id="link" href="https://etherscan.io/address/0xA58f22e0766B3764376c92915BA545d583c19DBc#code">
             <Info size={14} />
-            Contract
+            Contract 1
+          </MenuItem>
+          <MenuItem id="link" href="https://etherscan.io/address/0xfcadf926669e7cad0e50287ea7d563020289ed2c#code">
+            <Info size={14} />
+            Contract 2
           </MenuItem>
         </MenuFlyout>
       )}
