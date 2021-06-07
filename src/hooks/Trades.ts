@@ -250,16 +250,8 @@ export function useMinTradeAmount(
   minerBribeMargin?: BigNumber,
   minTradeMargin?: BigNumber
 ): MinTradeEstimates {
-  // const SUSHIPairs = useAllCommonPairs(Exchange.SUSHI, currencyIn, currencyOut)
+  const SUSHIPairs = useAllCommonPairs(Exchange.SUSHI, currencyIn, currencyOut)
   const UNIPairs = useAllCommonPairs(Exchange.UNI, currencyIn, currencyOut)
-  // const allUNIPairs: Pair[] = useMemo(() => {
-  //   if (UNIPairs.length) return [UNIPairs[0]]
-  //   return []
-  // }, [UNIPairs])
-  // const allSUSHIPairs: Pair[] = useMemo(() => {
-  //   if (SUSHIPairs.length) return [SUSHIPairs[0]]
-  //   return []
-  // }, [SUSHIPairs])
 
   const uniMinTradeEstimate = useMemo(() => {
     if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin || !UNIPairs.length)
@@ -274,19 +266,18 @@ export function useMinTradeAmount(
     )
   }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, UNIPairs])
 
-  // const sushiMinTradeEstimate = useMemo(() => {
-  //   if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin) return null
-  //   return null
-  //   return Trade.estimateMinTradeAmounts(
-  //     allSUSHIPairs,
-  //     currencyIn,
-  //     currencyOut,
-  //     gasPriceToBeat.toString(),
-  //     minerBribeMargin.toString(),
-  //     minTradeMargin.toString()
-  //   )
-  // }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, allSUSHIPairs])
-  const sushiMinTradeEstimate = null
+  const sushiMinTradeEstimate = useMemo(() => {
+    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin || !SUSHIPairs.length)
+      return null
+    return Trade.estimateMinTradeAmounts(
+      SUSHIPairs,
+      currencyIn,
+      currencyOut,
+      gasPriceToBeat.toString(),
+      minerBribeMargin.toString(),
+      minTradeMargin.toString()
+    )
+  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, SUSHIPairs])
   return {
     [Exchange.UNI]: uniMinTradeEstimate,
     [Exchange.SUSHI]: sushiMinTradeEstimate,
