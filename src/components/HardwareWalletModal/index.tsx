@@ -33,14 +33,22 @@ interface HardwareWalletModalProps {
 export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalletModalProps) {
   const hideWHardwareWalletWarningModalPerference = localStorage.getItem('hideHardwareWarningModal') === 'true'
   const [localModalOpen, setModalOpen] = useState<boolean>(false)
+  const [dirtyModal, setDirtyModal] = useState<boolean>(false)
 
-  if (metaMaskConnected && !hideWHardwareWalletWarningModalPerference && !localModalOpen) {
+  if (metaMaskConnected && !hideWHardwareWalletWarningModalPerference && !dirtyModal) {
     setModalOpen(true)
+    setDirtyModal(true)
   }
 
   const hideModal = () => {
+    setModalOpen(false)
+    setDirtyModal(true)
+  }
+
+  const cta = () => {
     localStorage.setItem('hideHardwareWarningModal', 'true')
     setModalOpen(false)
+    setDirtyModal(true)
   }
 
   return (
@@ -64,12 +72,12 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
               >
                 here
               </a>{' '}
-              show your support and leave a comment!
+              ( Show your support and leave a comment! )
             </Text>
           </RowBetween>
         </Section>
         <BottomSection gap="12px">
-          <Button onClick={hideModal}>I understand</Button>
+          <Button onClick={cta}>I understand</Button>
         </BottomSection>
       </Wrapper>
     </Modal>
