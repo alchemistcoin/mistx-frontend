@@ -29,6 +29,7 @@ export default function useWrapCallback(
   const balance = useCurrencyBalance(account ?? undefined, inputCurrency)
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
   const inputAmount = useMemo(() => tryParseAmount(typedValue, inputCurrency), [inputCurrency, typedValue])
+  const outputAmount = useMemo(() => tryParseAmount(typedValue, outputCurrency), [outputCurrency, typedValue])
   const addTransaction = useTransactionAdder()
 
   return useMemo(() => {
@@ -43,8 +44,14 @@ export default function useWrapCallback(
           sufficientBalance && inputAmount
             ? async () => {
                 try {
+                  console.log('input amount', inputAmount)
                   const txReceipt = await wethContract.deposit({ value: `0x${inputAmount.raw.toString(16)}` })
-                  addTransaction(txReceipt, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` })
+                  addTransaction(txReceipt, {
+                    summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH`,
+                    wrapType: WrapType.WRAP,
+                    inputAmount,
+                    outputAmount
+                  })
                 } catch (error) {
                   console.error('Could not deposit', error)
                 }
@@ -60,7 +67,12 @@ export default function useWrapCallback(
             ? async () => {
                 try {
                   const txReceipt = await wethContract.withdraw(`0x${inputAmount.raw.toString(16)}`)
-                  addTransaction(txReceipt, { summary: `Unwrap ${inputAmount.toSignificant(6)} WETH to ETH` })
+                  addTransaction(txReceipt, {
+                    summary: `Unwrap ${inputAmount.toSignificant(6)} WETH to ETH`,
+                    wrapType: WrapType.UNWRAP,
+                    inputAmount,
+                    outputAmount
+                  })
                 } catch (error) {
                   console.error('Could not withdraw', error)
                 }
@@ -71,5 +83,5 @@ export default function useWrapCallback(
     } else {
       return NOT_APPLICABLE
     }
-  }, [wethContract, chainId, inputCurrency, outputCurrency, inputAmount, balance, addTransaction])
+  }, [wethContract, chainId, inputCurrency, outputCurrency, inputAmount, outputAmount, balance, addTransaction])
 }

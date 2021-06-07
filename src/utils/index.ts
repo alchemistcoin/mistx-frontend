@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as MISTX_ROUTER_ABI } from '../constants/abis/mistx-router.json'
 import { MISTX_ROUTER_ADDRESS } from '../constants'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@alchemistcoin/sdk'
+import { ChainId, JSBI, Percent, Token, Trade, CurrencyAmount, Currency, ETHER, Exchange } from '@alchemistcoin/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
@@ -99,10 +99,10 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
+export function getRouterContract(chainId: ChainId, library: Web3Provider, trade: Trade, account?: string): Contract {
   const routerAddress = MISTX_ROUTER_ADDRESS[chainId]
-    ? MISTX_ROUTER_ADDRESS[chainId]
-    : MISTX_ROUTER_ADDRESS[ChainId.MAINNET]
+    ? MISTX_ROUTER_ADDRESS[chainId]?.[trade.exchange || Exchange.UNI]
+    : MISTX_ROUTER_ADDRESS[ChainId.MAINNET]?.[trade.exchange || Exchange.UNI]
   return getContract(routerAddress as string, MISTX_ROUTER_ABI, library, account)
 }
 

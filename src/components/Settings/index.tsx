@@ -50,7 +50,6 @@ const StyledMenuButton = styled.button`
   padding: 0;
   width: ${rem(36)};
   height: ${rem(36)};
-  padding: 0.3rem;
   border-radius: 100%;
 
   :hover,
@@ -62,12 +61,13 @@ const StyledMenuButton = styled.button`
 `
 
 const StyledMenuIcon = styled.div`
-  width: ${rem(36)};
-  height: ${rem(36)};
+  display: flex;
+  align-items: center;
 
   svg {
-    width: 100%;
-    height: 100%;
+    display: flex;
+    width: ${rem(24)};
+    height: ${rem(24)};
 
     > * {
       stroke: ${({ theme }) => theme.primary2};

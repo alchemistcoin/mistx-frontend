@@ -175,7 +175,7 @@ export function useSwapCallback(
                       estimatedGas: Number(trade.estimatedGas),
                       from: account
                     }
-
+                    // console.log('trans req', transactionReq)
                     // console.log('emit transaction', transactionReq)
                     // send transaction via sockets here
 

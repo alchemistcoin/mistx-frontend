@@ -2,10 +2,19 @@ import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemistcoin/sd
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected } from '../connectors'
 
-export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0xA58f22e0766B3764376c92915BA545d583c19DBc',
-  [ChainId.HARDHAT]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
-  [ChainId.GÖRLI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b'
+export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: { [exchange in Exchange]?: string } } = {
+  [ChainId.MAINNET]: {
+    [Exchange.UNI]: '0xA58f22e0766B3764376c92915BA545d583c19DBc',
+    [Exchange.SUSHI]: '0xfcadF926669E7caD0e50287eA7D563020289Ed2C'
+  },
+  [ChainId.HARDHAT]: {
+    [Exchange.UNI]: '0xc5a5c42992decbae36851359345fe25997f5c42d',
+    [Exchange.SUSHI]: '0xc5a5c42992decbae36851359345fe25997f5c42d'
+  },
+  [ChainId.GÖRLI]: {
+    [Exchange.UNI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b',
+    [Exchange.SUSHI]: '0x0d811AE473C61956eb25f6414dFF98CC5b99193b'
+  }
 }
 
 export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
@@ -14,7 +23,7 @@ export const MISTX_RELAY_URI: { [chainId in ChainId]?: string } = {
 
 export const ROUTER: { [exchange in Exchange]: string } = {
   [Exchange.UNI]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  [Exchange.SUSHI]: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9',
+  [Exchange.SUSHI]: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
   [Exchange.UNDEFINED]: '0x0'
 }
 
@@ -232,7 +241,7 @@ export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(JSBI.Bi
 export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(JSBI.BigInt(1500), BIPS_BASE) // 15%
 
 // used to ensure the user doesn't send so much ETH so they end up with <.01
-export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(0), JSBI.BigInt(16)) // .00 ETH
+export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .00 ETH
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000))
 
 export const ZERO_PERCENT = new Percent('0')
