@@ -50,7 +50,6 @@ const StyledMenuButton = styled.button`
   padding: 0;
   width: ${rem(36)};
   height: ${rem(36)};
-  //padding: 0.3rem;
   border-radius: 100%;
 
   :hover,
