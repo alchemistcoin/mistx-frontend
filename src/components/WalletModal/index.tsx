@@ -89,7 +89,6 @@ const Blurb = styled.div`
   margin-top: 2rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     margin: 1rem;
-    font-size: 12px;
   `};
 `
 
