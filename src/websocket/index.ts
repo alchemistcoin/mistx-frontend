@@ -226,7 +226,7 @@ export default function Sockets(): null {
             }
           },
           hash,
-          10000
+          60000
         )
       }
     })

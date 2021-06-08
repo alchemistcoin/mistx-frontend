@@ -91,7 +91,7 @@ export function useTransactionAdder(): (
           }
         },
         hash,
-        10000
+        60000
       )
     },
     [addPopup, dispatch, chainId, account]
