@@ -196,7 +196,7 @@ export default function TransactionDiagnosis() {
         </TokenWrapper>
         {canCancel && (
           <StyledCancelButton disabled={cancelClicked} onClick={() => handleCancelClick(hash, tx)}>
-            Cancel Transaction
+            {cancelClicked ? 'Cancellation Pending' : 'Cancel Transaction'}
           </StyledCancelButton>
         )}
       </StyledDiagnosticWrapper>
