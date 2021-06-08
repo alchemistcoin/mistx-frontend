@@ -34,7 +34,7 @@ export default function TransactionPopup({
 
   const theme = useContext(ThemeContext)
   const cancellation = status === Status.FAILED_TRANSACTION || status === Status.CANCEL_TRANSACTION_SUCCESSFUL
-  
+
   return (
     <RowNoFlex>
       <div style={{ paddingRight: 16, marginTop: 2 }}>
