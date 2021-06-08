@@ -57,12 +57,12 @@ export function useToggleSelfClaimModal(): () => void {
 }
 
 // returns a function that allows adding a popup
-export function useAddPopup(): (content: PopupContent, key?: string) => void {
+export function useAddPopup(): (content: PopupContent, key?: string, removeAfterMs?: number) => void {
   const dispatch = useDispatch()
 
   return useCallback(
-    (content: PopupContent, key?: string) => {
-      dispatch(addPopup({ content, key }))
+    (content: PopupContent, key?: string, removeAfterMs?: number) => {
+      dispatch(addPopup({ content, key, removeAfterMs }))
     },
     [dispatch]
   )

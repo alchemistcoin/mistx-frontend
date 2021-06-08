@@ -12,6 +12,7 @@ import { Status } from '../../websocket'
 
 const RowNoFlex = styled(AutoRow)`
   flex-wrap: nowrap;
+  align-items: flex-start;
 `
 
 export default function TransactionPopup({
@@ -32,10 +33,11 @@ export default function TransactionPopup({
   const { chainId } = useActiveWeb3React()
 
   const theme = useContext(ThemeContext)
-  const cancellation = status === Status.CANCEL_TRANSACTION_PENDING || status === Status.CANCEL_TRANSACTION_SUCCESSFUL
+  const cancellation = status === Status.FAILED_TRANSACTION || status === Status.CANCEL_TRANSACTION_SUCCESSFUL
+
   return (
     <RowNoFlex>
-      <div style={{ paddingRight: 16 }}>
+      <div style={{ paddingRight: 16, marginTop: 2 }}>
         {success && !cancellation ? (
           <CheckCircle color={theme.green1} size={24} />
         ) : pending ? (
@@ -46,13 +48,13 @@ export default function TransactionPopup({
       </div>
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>{summary ?? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}</TYPE.body>
-        {chainId && success && !cancellation && (
-          <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>View on Etherscan</ExternalLink>
-        )}
         {message && (
           <TYPE.body fontSize=".875rem" mt=".5rem">
             {message}
           </TYPE.body>
+        )}
+        {chainId && success && !cancellation && (
+          <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>View on Etherscan</ExternalLink>
         )}
       </AutoColumn>
     </RowNoFlex>

@@ -34,8 +34,6 @@ export enum Status {
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   FAILED_TRANSACTION = 'FAILED_TRANSACTION',
   SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
-  CANCEL_TRANSACTION_PENDING = 'CANCEL_TRANSACTION_PENDING',
-  CANCEL_TRANSACTION_FAILED = 'CANCEL_TRANSACTION_FAILED',
   CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL'
 }
 
@@ -76,6 +74,7 @@ export interface TransactionRes {
   transaction: TransactionProcessed
   status: Status
   message: string
+  error: string
 }
 
 export interface TransactionProcessed {
@@ -132,16 +131,11 @@ function transactionResToastStatus(transaction: TransactionRes) {
   switch (transaction.status) {
     case Status.FAILED_TRANSACTION:
       break
-    case Status.CANCEL_TRANSACTION_FAILED:
-      break
     case Status.PENDING_TRANSACTION:
       pending = true
       break
-    case Status.CANCEL_TRANSACTION_PENDING:
-      message = 'Cancellation pending'
-      pending = true
-      break
     case Status.SUCCESSFUL_TRANSACTION:
+      message = 'Successful Transaction'
       success = true
       break
     case Status.CANCEL_TRANSACTION_SUCCESSFUL:
@@ -231,7 +225,8 @@ export default function Sockets(): null {
               ...transactionResToastStatus(transaction)
             }
           },
-          hash
+          hash,
+          60000
         )
       }
     })
