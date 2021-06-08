@@ -90,7 +90,8 @@ export function useTransactionAdder(): (
             summary
           }
         },
-        hash
+        hash,
+        60000
       )
     },
     [addPopup, dispatch, chainId, account]
@@ -143,7 +144,7 @@ export function useTransactionUpdater(): (
             status:
               status === Status.CANCEL_TRANSACTION_SUCCESSFUL
                 ? Status.FAILED_TRANSACTION
-                : status === Status.CANCEL_TRANSACTION_FAILED && message?.includes('already completed')
+                : message?.includes('already completed') // TO DO - lets not rely on text from the backend
                 ? Status.SUCCESSFUL_TRANSACTION
                 : undefined,
             message,

@@ -68,18 +68,6 @@ export default function Updater(): null {
                   }
                 })
               )
-
-              addPopup(
-                {
-                  txn: {
-                    hash,
-                    summary: transactions[hash]?.summary,
-                    pending: false,
-                    success: receipt.status === 1
-                  }
-                },
-                hash
-              )
             } else {
               dispatch(checkedTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
             }
