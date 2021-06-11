@@ -54,8 +54,8 @@ export default function CancelConfirmationModal({ isOpen, onClose, onSubmit }: C
           </RowBetween>
           <RowBetween margin="0.5rem 0 0" flexDirection="column">
             <Text fontWeight={300} fontSize={16}>
-              Submitting this attempt does not guarantee your original transaction will be cancelled.
-              If the cancellation attempt is successful, you <b>will not</b> be charged any fee.
+              Submitting this attempt does not guarantee your original transaction will be cancelled. If the
+              cancellation attempt is successful, you <b>will not</b> be charged any fee.
             </Text>
           </RowBetween>
         </Section>
