@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { usePendingTransactions, useTransactionCanceller } from 'state/transactions/hooks'
-import { AmountDetails, TransactionDetails } from 'state/transactions/reducer'
+import { AmountDetails } from 'state/transactions/reducer'
 import { ButtonOutlined } from 'components/Button'
 import { useActiveWeb3React } from 'hooks'
 // import { ArrowDown } from 'react-feather'
@@ -129,6 +129,8 @@ const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => {
   )
 }
 
+const CancelConfirmationModal = React.lazy(() => import('components/CancelConfirmationModal'))
+
 export default function TransactionDiagnosis() {
   const pendingTransactions = usePendingTransactions()
   const { chainId } = useActiveWeb3React()
@@ -140,11 +142,16 @@ export default function TransactionDiagnosis() {
   const tokenOutput = tx?.outputAmount
 
   const canCancel = typeof tx?.status !== 'undefined'
+  const [cancelIntent, setCancelIntent] = useState(false)
   const [cancelClicked, setCancelClicked] = useState(false)
 
   // console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
 
-  function handleCancelClick(hash: string, tx: TransactionDetails) {
+  function handleCancelIntent() {
+    setCancelIntent(true)
+  }
+
+  function handleCancelClick() {
     if (!chainId) return
     if (!tx?.processed) return
     setCancelClicked(true)
@@ -161,6 +168,11 @@ export default function TransactionDiagnosis() {
 
   return (
     <Wrapper>
+      <CancelConfirmationModal
+        isOpen={cancelIntent}
+        onClose={() => setCancelIntent(false)}
+        onSubmit={handleCancelClick}
+      />
       <StyledDiagnosticWrapper>
         <UpdatesHeader>
           <TYPE.black display="block" fontWeight="700" mb=".625rem">
@@ -195,7 +207,7 @@ export default function TransactionDiagnosis() {
           )}
         </TokenWrapper>
         {canCancel && (
-          <StyledCancelButton disabled={cancelClicked} onClick={() => handleCancelClick(hash, tx)}>
+          <StyledCancelButton disabled={cancelClicked} onClick={handleCancelIntent}>
             {cancelClicked ? 'Cancellation Pending' : 'Cancel Transaction'}
           </StyledCancelButton>
         )}
