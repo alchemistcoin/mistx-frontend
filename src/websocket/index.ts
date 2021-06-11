@@ -271,7 +271,7 @@ export default function Sockets(): null {
           let isDead = false
           if (tx.processed?.swap?.deadline) {
             const deadline = BigNumber.from(tx.processed?.swap?.deadline).toNumber() * 1000
-            if (deadline <= timeNow) isDead = true
+            if (deadline <= timeNow - MANUAL_CHECK_TX_STATUS_INTERVAL * 1000) isDead = true
           }
           if (tx.processed && isDead) {
             const transactionId = {
