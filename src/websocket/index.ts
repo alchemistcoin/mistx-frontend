@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
-import { BigNumberish } from '@ethersproject/bignumber'
+import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
@@ -263,13 +263,28 @@ export default function Sockets(): null {
   useEffect(() => {
     let interval: any
     clearInterval(interval)
-
     if (pendingTransactions) {
       interval = setInterval(() => {
         const timeNow = new Date().getTime()
         Object.keys(pendingTransactions).forEach(hash => {
           const tx = pendingTransactions[hash]
-          if (tx.updatedAt) {
+          let isDead = false
+          if (tx.processed?.swap?.deadline) {
+            const deadline = BigNumber.from(tx.processed?.swap?.deadline).toNumber() * 1000
+            if (deadline <= timeNow - MANUAL_CHECK_TX_STATUS_INTERVAL * 1000) isDead = true
+          }
+          if (tx.processed && isDead) {
+            const transactionId = {
+              chainId: tx.processed.chainId,
+              hash
+            }
+            updateTransaction(transactionId, {
+              transaction: tx.processed,
+              message: 'TX is detected as expired on FE',
+              status: Status.FAILED_TRANSACTION,
+              updatedAt: timeNow
+            })
+          } else if (tx.updatedAt) {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               const transactionReq: TransactionProcessed = tx.processed
@@ -283,7 +298,7 @@ export default function Sockets(): null {
       clearInterval(interval)
     }
     return () => clearInterval(interval)
-  }, [pendingTransactions])
+  }, [pendingTransactions, updateTransaction])
 
   return null
 }
