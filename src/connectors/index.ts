@@ -1,5 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
+import { LedgerConnector } from '@web3-react/ledger-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
@@ -27,6 +28,11 @@ let networkLibrary: Web3Provider | undefined
 export function getNetworkLibrary(): Web3Provider {
   return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any))
 }
+
+export const ledger = new LedgerConnector({
+  chainId: 1,
+  url: NETWORK_URL,
+})
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42, 1337]

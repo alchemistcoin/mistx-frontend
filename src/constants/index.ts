@@ -1,6 +1,7 @@
 import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemistcoin/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { injected } from '../connectors'
+
+import { injected, ledger } from '../connectors'
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: { [exchange in Exchange]?: string } } = {
   [ChainId.MAINNET]: {
@@ -160,6 +161,14 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //   color: '#010101',
   //   primary: true
   // },
+  LEDGER: {
+    connector: ledger,
+    name: 'Ledger',
+    iconName: 'ledger.svg',
+    description: 'Hardware Wallet',
+    href: null,
+    color: '#000'
+  },
   METAMASK: {
     connector: injected,
     name: 'MetaMask',
