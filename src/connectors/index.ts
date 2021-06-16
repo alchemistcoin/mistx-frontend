@@ -32,6 +32,7 @@ export function getNetworkLibrary(): Web3Provider {
 export const ledger = new LedgerConnector({
   chainId: 1,
   url: NETWORK_URL,
+  baseDerivationPath: `44'/60'/x'/0/0`
 })
 
 export const injected = new InjectedConnector({

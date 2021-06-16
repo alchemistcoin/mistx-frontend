@@ -38,7 +38,7 @@
     "@web3-react/core": "^6.0.9",
     "@web3-react/fortmatic-connector": "^6.0.9",
     "@web3-react/injected-connector": "^6.0.7",
-    "@web3-react/ledger-connector": "^6.1.9",
+    "@web3-react/ledger-connector": "Dire-0x/ledger-connector",
     "@web3-react/portis-connector": "^6.0.9",
     "@web3-react/walletconnect-connector": "^6.1.1",
     "@web3-react/walletlink-connector": "^6.0.9",
@@ -128,7 +128,6 @@
   "dependencies": {
     "@alchemistcoin/default-token-list": "git+https://github.com/alchemistcoin/default-token-list.git#main",
     "react-range": "^1.8.7",
-    "socket.io-client": "^4.0.1",
-    "web3-react": "../web3-react"
+    "socket.io-client": "^4.0.1"
   }
 }
