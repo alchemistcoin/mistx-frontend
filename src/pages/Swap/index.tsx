@@ -315,7 +315,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   const hideWarningModalPerference =
-    (library as Web3Provider).provider.isMetaMask && localStorage.getItem('hideWarningModal')
+    !(library as Web3Provider).provider.isMetaMask || localStorage.getItem('hideWarningModal')
 
   // const handleInfoModalContinue = () => {
   //   setShowInfoModal(false);

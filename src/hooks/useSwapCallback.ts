@@ -79,6 +79,8 @@ export function useSwapCallback(
         try {
           const signedApproval = await approve()
 
+          console.log('signed approval', signedApproval)
+
           // ethers will change eth_sign to personal_sign if it detects metamask
           if (library instanceof Web3Provider) {
             web3Provider = library as Web3Provider
@@ -96,11 +98,10 @@ export function useSwapCallback(
                       return nonce + 1
                     }),
               gasLimit: calculateGasMargin(BigNumber.from(500000)),
-              ...(value && !isZero(value) ? { value } : {})
+              ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
 
             //delete for serialize necessary
-            delete populatedTx.from
             populatedTx.chainId = chainId
 
             // HANDLE METAMASK
@@ -108,6 +109,8 @@ export function useSwapCallback(
             // For other wallets, use eth_signTransaction
             let signedTx
             if (isMetamask) {
+              console.log('metamask transaction')
+              delete populatedTx.from
               const serialized = ethers.utils.serializeTransaction(populatedTx)
               const hash = keccak256(serialized)
               const signature: SignatureLike = await library.jsonRpcFetchFunc('eth_sign', [account, hash])
@@ -116,15 +119,17 @@ export function useSwapCallback(
               // basically does everything that AD does with hexlify etc. - kek
               signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
             } else {
+              console.log('eth_signTransaction', populatedTx.value?.toHexString(), populatedTx.gasLimit?.toHexString())
               const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
                 {
                   ...populatedTx,
+                  gas: populatedTx.gasLimit?.toHexString(),
                   gasLimit: populatedTx.gasLimit?.toHexString(),
                   gasPrice: '0x0',
-                  ...(value && !isZero(value) ? { value } : {})
+                  ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ])
-
+              console.log('sign transaction finished')
               signedTx = signedTxRes.raw
             }
 

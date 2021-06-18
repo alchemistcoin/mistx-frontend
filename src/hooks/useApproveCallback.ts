@@ -126,11 +126,12 @@ export function useApproveCallback(
           gasLimit: calculateGasMargin(estimatedGas) //needed?
         }
       )
-      delete populatedTx.from
       populatedTx.chainId = chainId
 
       let signedTx
       if (isMetamask) {
+        delete populatedTx.from
+
         const serialized = ethers.utils.serializeTransaction(populatedTx)
         const hash = keccak256(serialized)
         const signature: SignatureLike = await library.jsonRpcFetchFunc('eth_sign', [account, hash])
