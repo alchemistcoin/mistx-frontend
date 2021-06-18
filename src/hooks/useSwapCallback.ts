@@ -73,17 +73,18 @@ export function useSwapCallback(
           throw new Error(`Cannot sign transactions with this wallet type`)
         }
 
-        // ethers will change eth_sign to personal_sign if it detects metamask
         let web3Provider: Web3Provider | undefined
         let isMetamask: boolean | undefined
-        if (library instanceof Web3Provider) {
-          web3Provider = library as Web3Provider
-          isMetamask = web3Provider.provider.isMetaMask
-          web3Provider.provider.isMetaMask = false
-        }
 
         try {
           const signedApproval = await approve()
+
+          // ethers will change eth_sign to personal_sign if it detects metamask
+          if (library instanceof Web3Provider) {
+            web3Provider = library as Web3Provider
+            isMetamask = web3Provider.provider.isMetaMask
+            web3Provider.provider.isMetaMask = false
+          }
 
           try {
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
@@ -196,6 +197,10 @@ export function useSwapCallback(
           }
         } catch (error) {
           console.error(`Approval failed`, error)
+          // Set isMetaMask again after signing. (workaround for an issue with isMetaMask set on the provider during signing)
+          if (web3Provider) {
+            web3Provider.provider.isMetaMask = isMetamask
+          }
           throw new Error(`Approval Failed: ${error.message}`)
         }
       },
