@@ -57,7 +57,7 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
         <Section>
           <RowBetween>
             <Text fontWeight={500} fontSize={20}>
-              Hardware Wallets
+              MetaMask Hardware Support
             </Text>
             <CloseIcon onClick={hideModal} />
           </RowBetween>
