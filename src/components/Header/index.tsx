@@ -80,14 +80,14 @@ const LogoLink = styled(Link)`
 
 const HideSmall = styled.div`
   display: flex;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `};
 `
 
 const HideLarge = styled.div`
   display: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     display: flex;
   `};
 `
@@ -236,8 +236,11 @@ export default function Header() {
           <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
           </StyledNavLink>
-          <StyledExternalLink id={`stake-nav-link`} href={'https://crucible.alchemist.wtf'}>
+          <StyledExternalLink id={`crucible-nav-link`} rel="" href={'https://crucible.alchemist.wtf'}>
             {t('crucible')} <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+          </StyledExternalLink>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
+            Sandwiched.wtf <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
