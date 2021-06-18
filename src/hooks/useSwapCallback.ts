@@ -109,7 +109,6 @@ export function useSwapCallback(
             // For other wallets, use eth_signTransaction
             let signedTx
             if (isMetamask) {
-              console.log('metamask transaction')
               delete populatedTx.from
               const serialized = ethers.utils.serializeTransaction(populatedTx)
               const hash = keccak256(serialized)
@@ -119,7 +118,6 @@ export function useSwapCallback(
               // basically does everything that AD does with hexlify etc. - kek
               signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
             } else {
-              console.log('eth_signTransaction', populatedTx.value?.toHexString(), populatedTx.gasLimit?.toHexString())
               const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
                 {
                   ...populatedTx,
@@ -129,7 +127,6 @@ export function useSwapCallback(
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ])
-              console.log('sign transaction finished')
               signedTx = signedTxRes.raw
             }
 
