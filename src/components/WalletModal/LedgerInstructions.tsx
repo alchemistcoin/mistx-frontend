@@ -39,11 +39,11 @@ export default function LedgerInstructions({ onSubmit }: { onSubmit: () => void 
       <Title>Before proceeding, make sure...</Title>
       <List>
         <ListItem>1. Ledger Live app is closed</ListItem>
-        <ListItem>{'2. "Contract data" is enabled on the device'}</ListItem>
+        <ListItem>{'2. "Contract data" is enabled on your device'}</ListItem>
         <ListItem>
-          3. The device is plugged in via USB, <b>not</b> bluetooth
+          3. The device is plugged in via USB, <b>not</b>&nbsp;bluetooth
         </ListItem>
-        <ListItem>4. The device is unlcoked and in the Ethereum app</ListItem>
+        <ListItem>4. The device is unlocked and in the Ethereum app</ListItem>
       </List>
       <ButtonYellow onClick={handleSubmit}>
         <Text fontWeight="700" fontSize={20}>
