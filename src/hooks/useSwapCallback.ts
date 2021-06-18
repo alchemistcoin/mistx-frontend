@@ -121,7 +121,7 @@ export function useSwapCallback(
                   ...populatedTx,
                   gasLimit: populatedTx.gasLimit?.toHexString(),
                   gasPrice: '0x0',
-                  ...(value && !isZero(value) ? { value: populatedTx.value?.toHexString() } : {})
+                  ...(value && !isZero(value) ? { value } : {})
                 }
               ])
 
