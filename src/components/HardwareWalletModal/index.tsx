@@ -57,22 +57,36 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
         <Section>
           <RowBetween>
             <Text fontWeight={500} fontSize={20}>
-              Hardware Wallets
+              MetaMask Hardware Support
             </Text>
             <CloseIcon onClick={hideModal} />
           </RowBetween>
           <RowBetween margin="0.5rem 0 0" flexDirection="column">
             <Text fontWeight={300} fontSize={16}>
-              mistX will not work with hardware wallets connected with MetaMask due to their lack of support for
-              eth_signTransaction. Use a standard MetaMask wallet instead. We are pushing MetaMask to fix the issue{' '}
-              <a
-                href="https://github.com/MetaMask/metamask-extension/issues/10914"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                here
-              </a>{' '}
-              ( Show your support and leave a comment! )
+              <div style={{ marginBottom: '1em' }}>
+                mistX will <b style={{ fontWeight: 600 }}>not work with hardware wallets connected with MetaMask</b> due
+                to their lack of support for eth_signTransaction.
+              </div>
+              <div>
+                <span>You can:</span>
+                <ul>
+                  <li>Connect your Ledger directly</li>
+                  <li>Use Wallet Connect</li>
+                  <li>Use a standard MetaMask wallet</li>
+                </ul>
+                <span>
+                  We are&nbsp;
+                  <a
+                    href="https://github.com/MetaMask/metamask-extension/issues/10914"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    pushing MetaMask to fix the issue
+                  </a>
+                  {'. '}
+                  (&nbsp;Show your support and leave a comment!&nbsp;)
+                </span>
+              </div>
             </Text>
           </RowBetween>
         </Section>
