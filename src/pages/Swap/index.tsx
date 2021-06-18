@@ -4,6 +4,7 @@ import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { Web3Provider } from '@ethersproject/providers'
 // components
 import AppBody from '../AppBody'
 import AddressInputPanel from '../../components/AddressInputPanel'
@@ -313,7 +314,8 @@ export default function Swap({ history }: RouteComponentProps) {
     setShowConfirmModal(true)
   }
 
-  const hideWarningModalPerference = localStorage.getItem('hideWarningModal')
+  const hideWarningModalPerference =
+    !(library as Web3Provider).provider.isMetaMask || localStorage.getItem('hideWarningModal')
 
   // const handleInfoModalContinue = () => {
   //   setShowInfoModal(false);
