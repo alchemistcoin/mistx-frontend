@@ -64,8 +64,8 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
           <RowBetween margin="0.5rem 0 0" flexDirection="column">
             <Text fontWeight={300} fontSize={16}>
               <div style={{ marginBottom: '1em' }}>
-                mistX will <b style={{ fontWeight: 600 }}>not work with hardware wallets connected with MetaMask</b> due to their lack of support for
-                eth_signTransaction.
+                mistX will <b style={{ fontWeight: 600 }}>not work with hardware wallets connected with MetaMask</b> due
+                to their lack of support for eth_signTransaction.
               </div>
               <div>
                 <span>You can:</span>
