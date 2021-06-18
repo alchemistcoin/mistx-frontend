@@ -3,18 +3,17 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Trade } from '@alchemistcoin/sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
-// import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin /*, isAddress, shortenAddress */ } from '../utils'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { /*MISTX_RELAY_URI, */ INITIAL_ALLOWED_SLIPPAGE, ROUTER } from '../constants'
+import { INITIAL_ALLOWED_SLIPPAGE, ROUTER } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
-// import { useEstimationCallback } from './useEstimationCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import { TransactionReq, SwapReq, emitTransactionRequest } from '../websocket'
 
@@ -38,10 +37,9 @@ export function useSwapCallback(
   // transactionTTL: number // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-  // const addTransaction = useTransactionAdder()
+  const addTransaction = useTransactionAdder()
   const useApprove = useApproveCallbackFromTrade(trade, allowedSlippage)
   const approve = useApprove[1]
-  // const estimationCall = useEstimationCallback(trade, allowedSlippage, recipientAddressOrName)
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
@@ -71,30 +69,6 @@ export function useSwapCallback(
           }
         } = swapCall
 
-        // const sendToRelay = (serializedApproval: string | undefined, serializedSwap: string, deadline: number) => {
-        // const relayURI = chainId ? MISTX_RELAY_URI[chainId] : undefined
-        // if (!relayURI) throw new Error('Could not determine relay URI for this network')
-        // console.log('Send to relay', serializedApproval, serializedSwap, deadline)
-        //TODO change this to our relay
-        // const body = JSON.stringify({
-        //   method: 'archer_submitTx',
-        //   tx: rawTransaction,
-        //   deadline: deadline.toString()
-        // })
-
-        // fetch(relayURI, {
-        //   method: 'POST',
-        //   body,
-        //   headers: {
-        //     Authorization: process.env.REACT_APP_MISTX_API_KEY ?? '',
-        //     'Content-Type': 'application/json'
-        //   }
-        // })
-        //.then(res => res.json())
-        //.then(json => console.log(json))
-        // .catch(err => console.error(err))
-        // }
-
         if (!(contract.signer instanceof JsonRpcSigner)) {
           throw new Error(`Cannot sign transactions with this wallet type`)
         }
@@ -120,8 +94,7 @@ export function useSwapCallback(
                   : contract.signer.getTransactionCount().then(nonce => {
                       return nonce + 1
                     }),
-              gasLimit: calculateGasMargin(BigNumber.from(500000)), //needed?
-              //gasLimit: calculateGasMargin(BigNumber.from(trade.estimatedGas)), //needed?
+              gasLimit: calculateGasMargin(BigNumber.from(500000)),
               ...(value && !isZero(value) ? { value } : {})
             })
 
@@ -137,7 +110,7 @@ export function useSwapCallback(
               const serialized = ethers.utils.serializeTransaction(populatedTx)
               const hash = keccak256(serialized)
               const signature: SignatureLike = await library.jsonRpcFetchFunc('eth_sign', [account, hash])
-              console.log('signature', signature)
+              // console.log('signature', signature)
               // this returns the transaction & signature serialized and ready to broadcast
               // basically does everything that AD does with hexlify etc. - kek
               signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
@@ -147,7 +120,7 @@ export function useSwapCallback(
                   ...populatedTx,
                   gasLimit: populatedTx.gasLimit?.toHexString(),
                   gasPrice: '0x0',
-                  value: populatedTx.value?.toHexString()
+                  ...(value && !isZero(value) ? { value: populatedTx.value?.toHexString() } : {})
                 }
               ])
 
@@ -159,22 +132,22 @@ export function useSwapCallback(
               web3Provider.provider.isMetaMask = isMetamask
             }
 
-            console.log('SIGNED TX', signedTx)
+            // console.log('SIGNED TX', signedTx)
             const hash = keccak256(signedTx)
-            // const inputSymbol = trade.inputAmount.currency.symbol
-            // const outputSymbol = trade.outputAmount.currency.symbol
-            // const inputAmount = trade.inputAmount.toSignificant(3)
-            // const outputAmount = trade.outputAmount.toSignificant(3)
+            const inputSymbol = trade.inputAmount.currency.symbol
+            const outputSymbol = trade.outputAmount.currency.symbol
+            const inputAmount = trade.inputAmount.toSignificant(3)
+            const outputAmount = trade.outputAmount.toSignificant(3)
 
-            // const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-            // const withRecipient =
-            //   recipient === account
-            //     ? base
-            //     : `${base} to ${
-            //         recipientAddressOrName && isAddress(recipientAddressOrName)
-            //           ? shortenAddress(recipientAddressOrName)
-            //           : recipientAddressOrName
-            //       }`
+            const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+            const withRecipient =
+              recipient === account
+                ? base
+                : `${base} to ${
+                    recipientAddressOrName && isAddress(recipientAddressOrName)
+                      ? shortenAddress(recipientAddressOrName)
+                      : recipientAddressOrName
+                  }`
             const swapReq: SwapReq = {
               amount0: args[0][0] as string,
               amount1: args[0][1] as string,
@@ -198,25 +171,15 @@ export function useSwapCallback(
               estimatedGas: Number(trade.estimatedGas),
               from: account
             }
-            // console.log('trans req', transactionReq)
-            // console.log('emit transaction', transactionReq)
-            // send transaction via sockets here
 
-            // we can't have TransactionResponse here
-            // This can be handled by the socket method
-            // addTransaction(
-            //   { chainId, hash },
-            //   {
-            //     summary: withRecipient,
-            //     trade
-            //     //relay
-            //   }
-            // )
-
-            //
-            //
-            //
-            // if (relay) sendToRelay(relay.serializedApprove, relay.serializedSwap, relay.deadline)
+            addTransaction(
+              { chainId, hash },
+              {
+                summary: withRecipient,
+                trade
+                //relay
+              }
+            )
 
             emitTransactionRequest(transactionReq)
 
@@ -238,5 +201,5 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve /*addTransaction*/])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve, addTransaction])
 }

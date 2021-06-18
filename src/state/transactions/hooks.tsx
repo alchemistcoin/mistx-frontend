@@ -6,9 +6,9 @@ import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
-import { useAddPopup } from 'state/application/hooks'
-import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from 'websocket'
-import { WrapType } from 'hooks/useWrapCallback'
+import { useAddPopup } from '../application/hooks'
+import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from '../../websocket'
+import { WrapType } from '../../hooks/useWrapCallback'
 
 interface TransactionResponseIdentifier {
   chainId: ChainId
