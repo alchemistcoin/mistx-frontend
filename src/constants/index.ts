@@ -163,7 +163,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   LEDGER: {
     connector: ledger,
     name: 'Ledger',
-    iconName: 'ledger.svg',
+    iconName: 'ledger-logo.png',
     description: 'Hardware Wallet',
     href: null,
     color: '#000'
