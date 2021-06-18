@@ -14,7 +14,7 @@ import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useWalletModalToggle } from '../../state/application/hooks'
 import { ExternalLink } from '../../theme'
 import AccountDetails from '../AccountDetails'
-import LedgerInstructions from './LedgerInstructions';
+import LedgerInstructions from './LedgerInstructions'
 
 import Modal from '../Modal'
 import Option from './Option'
