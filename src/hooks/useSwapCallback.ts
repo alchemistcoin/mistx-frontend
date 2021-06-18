@@ -79,8 +79,6 @@ export function useSwapCallback(
         try {
           const signedApproval = await approve()
 
-          console.log('signed approval', signedApproval)
-
           // ethers will change eth_sign to personal_sign if it detects metamask
           if (library instanceof Web3Provider) {
             web3Provider = library as Web3Provider
