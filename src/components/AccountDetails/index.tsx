@@ -325,7 +325,6 @@ export default function AccountDetails({
                     <WalletAction
                       style={{ fontSize: '.825rem', fontWeight: 600, marginRight: '8px' }}
                       onClick={() => {
-                        console.log('deactivate ledger', connector)
                         deactivate()
                       }}
                     >
