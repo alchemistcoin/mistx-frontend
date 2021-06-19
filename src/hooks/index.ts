@@ -65,7 +65,7 @@ export function useInactiveListener(suppress = false) {
 
       const handleAccountsChanged = (accounts: string[]) => {
         if (window.fathom) {
-          window.fathom.trackGoal('U9IGQOT8', 0) // account connected
+          window.fathom.trackGoal(process.env.REACT_APP_FATHOM_ACCOUNT_CONNECTED, 0)
         }
         if (accounts.length > 0) {
           // eat errors

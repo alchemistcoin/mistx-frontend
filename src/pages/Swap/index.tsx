@@ -402,7 +402,7 @@ export default function Swap({ history }: RouteComponentProps) {
           action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
         })
         if (window.fathom) {
-          window.fathom.trackGoal('GIIEFO3L', 0) // swap intent
+          window.fathom.trackGoal(process.env.REACT_APP_FATHOM_SWAP_INTENT, 0)
         }
       })
       .catch(error => {

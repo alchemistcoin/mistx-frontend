@@ -41,7 +41,7 @@ export default function CancelConfirmationModal({ isOpen, onClose, onSubmit }: C
     onSubmit()
     onClose()
     if (window.fathom) {
-      window.fathom.trackGoal('YRZMSENQ', 0) // cancel intent
+      window.fathom.trackGoal(process.env.REACT_APP_FATHOM_CANCEL_INTENT, 0)
     }
   }
 

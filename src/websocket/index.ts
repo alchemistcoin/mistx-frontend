@@ -219,10 +219,10 @@ export default function Sockets(): null {
 
         if (window.fathom) {
           if (tx?.status !== Status.SUCCESSFUL_TRANSACTION) {
-            window.fathom.trackGoal('XKYPUPST', 0) // swap complete
+            window.fathom.trackGoal(process.env.REACT_APP_FATHOM_SWAP_COMPLETE, 0)
           }
           if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL) {
-            window.fathom.trackGoal('XDMEIFQU', 0) // cancel complete
+            window.fathom.trackGoal(process.env.REACT_APP_FATHOM_CANCEL_COMPLETE, 0)
           }
         }
 
