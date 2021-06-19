@@ -64,8 +64,6 @@ export function useInactiveListener(suppress = false) {
       }
 
       const handleAccountsChanged = (accounts: string[]) => {
-        console.log('- log handleAccountsChanged', accounts)
-        console.log(ethereum)
         if (window.fathom) {
           window.fathom.trackGoal('U9IGQOT8', 0) // account connected
         }

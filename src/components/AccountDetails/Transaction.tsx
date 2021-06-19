@@ -108,7 +108,6 @@ export default function Transaction({ hash }: { hash: string }) {
   )
 
   function handleCancelClick() {
-    console.log('handleCancelClick')
     if (!chainId) return
     if (!tx?.processed) return
     setCancelClicked(true)
