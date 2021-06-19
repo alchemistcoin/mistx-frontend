@@ -218,7 +218,7 @@ export default function Sockets(): null {
         })
 
         if (window.fathom) {
-          if (tx?.status !== Status.SUCCESSFUL_TRANSACTION) {
+          if (tx?.status === Status.SUCCESSFUL_TRANSACTION) {
             window.fathom.trackGoal(process.env.REACT_APP_FATHOM_SWAP_COMPLETE, 0)
           }
           if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL) {
