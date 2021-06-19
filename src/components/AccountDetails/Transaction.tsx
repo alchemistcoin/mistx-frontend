@@ -108,9 +108,13 @@ export default function Transaction({ hash }: { hash: string }) {
   )
 
   function handleCancelClick() {
+    console.log('handleCancelClick')
     if (!chainId) return
     if (!tx?.processed) return
     setCancelClicked(true)
+    if (window.fathom) {
+      window.fathom.trackGoal('YRZMSENQ', 0) // cancel intent
+    }
     cancelTransaction(
       {
         chainId,

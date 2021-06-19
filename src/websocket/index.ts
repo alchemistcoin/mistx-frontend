@@ -217,6 +217,15 @@ export default function Sockets(): null {
           updatedAt: new Date().getTime()
         })
 
+        if (window.fathom) {
+          if (tx?.status !== Status.SUCCESSFUL_TRANSACTION) {
+            window.fathom.trackGoal('XKYPUPST', 0) // swap complete
+          }
+          if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL) {
+            window.fathom.trackGoal('XDMEIFQU', 0) // cancel complete
+          }
+        }
+
         addPopup(
           {
             txn: {

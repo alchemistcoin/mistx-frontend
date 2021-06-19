@@ -397,11 +397,13 @@ export default function Swap({ history }: RouteComponentProps) {
             getTradeVersion(trade)
           ].join('/')
         })
-
         ReactGA.event({
           category: 'Routing',
           action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
         })
+        if (window.fathom) {
+          window.fathom.trackGoal('GIIEFO3L', 0) // swap intent
+        }
       })
       .catch(error => {
         setShowInfoModal(false)

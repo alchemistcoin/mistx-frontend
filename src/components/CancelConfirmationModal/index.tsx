@@ -40,6 +40,9 @@ export default function CancelConfirmationModal({ isOpen, onClose, onSubmit }: C
   const cta = () => {
     onSubmit()
     onClose()
+    if (window.fathom) {
+      window.fathom.trackGoal('YRZMSENQ', 0) // cancel intent
+    }
   }
 
   return (
