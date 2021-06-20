@@ -209,6 +209,10 @@ export default function Sockets(): null {
         hash
       }
 
+      if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
+        window.fathom.trackGoal(process.env.REACT_APP_FATHOM_CANCEL_COMPLETE, 0)
+      }
+
       if (!previouslyCompleted) {
         updateTransaction(transactionId, {
           transaction: transaction.transaction,
@@ -217,13 +221,8 @@ export default function Sockets(): null {
           updatedAt: new Date().getTime()
         })
 
-        if (window.fathom) {
-          if (tx?.status === Status.SUCCESSFUL_TRANSACTION) {
-            window.fathom.trackGoal(process.env.REACT_APP_FATHOM_SWAP_COMPLETE, 0)
-          }
-          if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL) {
-            window.fathom.trackGoal(process.env.REACT_APP_FATHOM_CANCEL_COMPLETE, 0)
-          }
+        if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
+          window.fathom.trackGoal(process.env.REACT_APP_FATHOM_SWAP_COMPLETE, 0)
         }
 
         addPopup(

@@ -44,7 +44,6 @@ export default function useWrapCallback(
           sufficientBalance && inputAmount
             ? async () => {
                 try {
-                  console.log('input amount', inputAmount)
                   const txReceipt = await wethContract.deposit({ value: `0x${inputAmount.raw.toString(16)}` })
                   addTransaction(txReceipt, {
                     summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH`,
@@ -52,6 +51,9 @@ export default function useWrapCallback(
                     inputAmount,
                     outputAmount
                   })
+                  if (window.fathom) {
+                    window.fathom.trackGoal(process.env.REACT_APP_FATHOM_WRAP_INTENT, 0)
+                  }
                 } catch (error) {
                   console.error('Could not deposit', error)
                 }
