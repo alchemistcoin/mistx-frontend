@@ -153,7 +153,6 @@ export function useTransactionUpdater(): (
         )
       } else {
         // normal state update for transaction changes
-        console.log('--- updateTransaction', response, transaction, status, message)
         dispatch(
           updateTransaction({
             hash: response.hash,
