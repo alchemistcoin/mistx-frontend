@@ -51,7 +51,6 @@ export default function Updater(): null {
           .getTransactionReceipt(hash)
           .then(receipt => {
             if (receipt) {
-              // console.log('has receipt', receipt)
               dispatch(
                 finalizeTransaction({
                   chainId,
@@ -68,6 +67,22 @@ export default function Updater(): null {
                   }
                 })
               )
+              if (
+                transactions[hash] &&
+                transactions[hash].inputAmount?.currency.symbol === 'ETH' &&
+                transactions[hash].outputAmount?.currency.symbol === 'WETH' &&
+                window.fathom
+              ) {
+                window.fathom.trackGoal(process.env.REACT_APP_FATHOM_WRAP_COMPLETE, 0)
+              }
+              if (
+                transactions[hash] &&
+                transactions[hash].inputAmount?.currency.symbol === 'WETH' &&
+                transactions[hash].outputAmount?.currency.symbol === 'ETH' &&
+                window.fathom
+              ) {
+                window.fathom.trackGoal(process.env.REACT_APP_FATHOM_UNWRAP_COMPLETE, 0)
+              }
             } else {
               dispatch(checkedTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
             }

@@ -75,6 +75,9 @@ export default function useWrapCallback(
                     inputAmount,
                     outputAmount
                   })
+                  if (window.fathom) {
+                    window.fathom.trackGoal(process.env.REACT_APP_FATHOM_UNWRAP_INTENT, 0)
+                  }
                 } catch (error) {
                   console.error('Could not withdraw', error)
                 }
