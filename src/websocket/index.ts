@@ -5,6 +5,7 @@ import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+import FATHOM_GOALS from '../constants/fathom'
 
 // state
 import { updateGas } from '../state/application/actions'
@@ -210,7 +211,7 @@ export default function Sockets(): null {
       }
 
       if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
-        window.fathom.trackGoal(process.env.REACT_APP_FATHOM_CANCEL_COMPLETE, 0)
+        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
       }
 
       if (!previouslyCompleted) {
@@ -222,7 +223,7 @@ export default function Sockets(): null {
         })
 
         if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
-          window.fathom.trackGoal(process.env.REACT_APP_FATHOM_SWAP_COMPLETE, 0)
+          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
         }
 
         addPopup(

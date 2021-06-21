@@ -5,6 +5,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { useCurrencyBalance } from '../state/wallet/hooks'
 import { useActiveWeb3React } from './index'
 import { useWETHContract } from './useContract'
+import FATHOM_GOALS from '../constants/fathom'
 
 export enum WrapType {
   NOT_APPLICABLE,
@@ -52,7 +53,7 @@ export default function useWrapCallback(
                     outputAmount
                   })
                   if (window.fathom) {
-                    window.fathom.trackGoal(process.env.REACT_APP_FATHOM_WRAP_INTENT, 0)
+                    window.fathom.trackGoal(FATHOM_GOALS.WRAP_INTENT, 0)
                   }
                 } catch (error) {
                   console.error('Could not deposit', error)
@@ -76,7 +77,7 @@ export default function useWrapCallback(
                     outputAmount
                   })
                   if (window.fathom) {
-                    window.fathom.trackGoal(process.env.REACT_APP_FATHOM_UNWRAP_INTENT, 0)
+                    window.fathom.trackGoal(FATHOM_GOALS.UNWRAP_INTENT, 0)
                   }
                 } catch (error) {
                   console.error('Could not withdraw', error)

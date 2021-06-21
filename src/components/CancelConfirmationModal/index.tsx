@@ -6,6 +6,7 @@ import { RowBetween } from '../Row'
 import { AutoColumn } from '../Column'
 import { ButtonYellow } from '../Button'
 import Modal from '../Modal'
+import FATHOM_GOALS from '../../constants/fathom'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -41,7 +42,7 @@ export default function CancelConfirmationModal({ isOpen, onClose, onSubmit }: C
     onSubmit()
     onClose()
     if (window.fathom) {
-      window.fathom.trackGoal(process.env.REACT_APP_FATHOM_CANCEL_INTENT, 0)
+      window.fathom.trackGoal(FATHOM_GOALS.CANCEL_INTENT, 0)
     }
   }
 

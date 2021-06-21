@@ -4,6 +4,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { checkedTransaction, finalizeTransaction } from './actions'
+import FATHOM_GOALS from '../../constants/fathom'
 
 export function shouldCheck(
   lastBlockNumber: number,
@@ -73,7 +74,7 @@ export default function Updater(): null {
                 transactions[hash].outputAmount?.currency.symbol === 'WETH' &&
                 window.fathom
               ) {
-                window.fathom.trackGoal(process.env.REACT_APP_FATHOM_WRAP_COMPLETE, 0)
+                window.fathom.trackGoal(FATHOM_GOALS.WRAP_COMPLETE, 0)
               }
               if (
                 transactions[hash] &&
@@ -81,7 +82,7 @@ export default function Updater(): null {
                 transactions[hash].outputAmount?.currency.symbol === 'ETH' &&
                 window.fathom
               ) {
-                window.fathom.trackGoal(process.env.REACT_APP_FATHOM_UNWRAP_COMPLETE, 0)
+                window.fathom.trackGoal(FATHOM_GOALS.UNWRAP_COMPLETE, 0)
               }
             } else {
               dispatch(checkedTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
