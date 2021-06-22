@@ -15,6 +15,7 @@ import { useModalOpen, useWalletModalToggle } from '../../state/application/hook
 import { ExternalLink } from '../../theme'
 import AccountDetails from '../AccountDetails'
 import LedgerInstructions from './LedgerInstructions'
+import fathomConnectionEvent from './fathomConnectionEvent'
 
 import Modal from '../Modal'
 import Option from './Option'
@@ -116,6 +117,11 @@ const WALLET_VIEWS = {
   LEDGER: 'ledger',
   PENDING: 'pending'
 }
+declare module '@web3-react/abstract-connector' {
+  export interface AbstractConnector {
+    walletConnectProvider: any
+  }
+}
 
 export default function WalletModal({
   pendingTransactions,
@@ -167,6 +173,7 @@ export default function WalletModal({
   async function submitActivate(connector: AbstractConnector) {
     try {
       await activate(connector, undefined, true)
+      fathomConnectionEvent(connector)
     } catch (error) {
       // console.log('wallet connection error', error)
       if (error instanceof UnsupportedChainIdError) {
@@ -178,7 +185,6 @@ export default function WalletModal({
   }
 
   function activateIntent(connector: AbstractConnector | undefined) {
-    // TODO: track wallet change
 
     if (!connector) return
     if (walletView !== WALLET_VIEWS.LEDGER && connector === SUPPORTED_WALLETS.LEDGER.connector) {

@@ -1,5 +1,5 @@
 const fathomGoals = () => {
-  if (process.env.REACT_APP_FATHOM_ENV === 'production') {
+  if (process.env.REACT_APP_FATHOM_ENV === 'production' && window.location.host === 'app.mistx.io') {
     return {
       SWAP_INTENT: 'S0KCFF7F',
       SWAP_COMPLETE: 'EGT3DZLX',
@@ -9,7 +9,9 @@ const fathomGoals = () => {
       UNWRAP_COMPLETE: 'QC9OMXOA',
       CANCEL_INTENT: 'GQSDISFO',
       CANCEL_COMPLETE: 'PADWRJDR',
-      ACCOUNT_CONNECTED: 'K9GZPRL4'
+      METAMASK_CONNECTED: 'K9GZPRL4',
+      WALLET_CONNECT_CONNECTED: 'KF01BKBA',
+      LEDGER_CONNECTED: ''
     }
   }
   return {
@@ -21,7 +23,9 @@ const fathomGoals = () => {
     SWAP_COMPLETE: 'G6QMR6GI',
     CANCEL_INTENT: 'GZWTXZJ6',
     CANCEL_COMPLETE: 'WL9TKL6Q',
-    ACCOUNT_CONNECTED: 'O7INS7NB'
+    METAMASK_CONNECTED: 'O7INS7NB',
+    WALLET_CONNECT_CONNECTED: 'A6ICCX3D',
+    LEDGER_CONNECTED: 'UIFMKUPR'
   }
 }
 

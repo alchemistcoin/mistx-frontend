@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { injected } from '../connectors'
 import { NetworkContextName } from '../constants'
-import FATHOM_GOALS from '../constants/fathom'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & { chainId?: ChainId } {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -65,9 +64,6 @@ export function useInactiveListener(suppress = false) {
       }
 
       const handleAccountsChanged = (accounts: string[]) => {
-        if (window.fathom) {
-          window.fathom.trackGoal(FATHOM_GOALS.ACCOUNT_CONNECTED, 0)
-        }
         if (accounts.length > 0) {
           // eat errors
           activate(injected, undefined, true).catch(error => {
@@ -78,6 +74,7 @@ export function useInactiveListener(suppress = false) {
 
       ethereum.on('chainChanged', handleChainChanged)
       ethereum.on('accountsChanged', handleAccountsChanged)
+      ethereum.on('providerChanged', handleChainChanged)
 
       return () => {
         if (ethereum.removeListener) {
