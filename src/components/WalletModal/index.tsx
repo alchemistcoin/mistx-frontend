@@ -117,11 +117,6 @@ const WALLET_VIEWS = {
   LEDGER: 'ledger',
   PENDING: 'pending'
 }
-declare module '@web3-react/abstract-connector' {
-  export interface AbstractConnector {
-    walletConnectProvider: any
-  }
-}
 
 export default function WalletModal({
   pendingTransactions,
