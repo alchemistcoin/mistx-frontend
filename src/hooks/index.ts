@@ -74,6 +74,7 @@ export function useInactiveListener(suppress = false) {
 
       ethereum.on('chainChanged', handleChainChanged)
       ethereum.on('accountsChanged', handleAccountsChanged)
+      ethereum.on('providerChanged', handleChainChanged)
 
       return () => {
         if (ethereum.removeListener) {

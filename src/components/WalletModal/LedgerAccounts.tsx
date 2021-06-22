@@ -95,7 +95,7 @@ export default function LedgerAccounts({ connector, onSubmit }: { connector: Led
 
   return (
     <Wrapper>
-      <Title>Available Ledger Accounts</Title>
+      <Title>Choose a Ledger Account</Title>
       <List>
         {accounts.map((account, i) => {
           return (
@@ -115,7 +115,7 @@ export default function LedgerAccounts({ connector, onSubmit }: { connector: Led
         disabled={accountsLoading}
       >
         <Text fontWeight="700" fontSize={12}>
-          {accountsLoading ? `Loading...` : `Load More`}
+          {accountsLoading ? `Loading accounts...` : `Load more`}
         </Text>
       </WalletAction>
       <ButtonYellow onClick={handleSubmit}>
