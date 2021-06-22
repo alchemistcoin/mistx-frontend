@@ -185,7 +185,6 @@ export default function WalletModal({
   }
 
   function activateIntent(connector: AbstractConnector | undefined) {
-
     if (!connector) return
     if (walletView !== WALLET_VIEWS.LEDGER && connector === SUPPORTED_WALLETS.LEDGER.connector) {
       setWalletView(WALLET_VIEWS.LEDGER)
