@@ -1,15 +1,15 @@
 const fathomGoals = () => {
   if (process.env.REACT_APP_FATHOM_ENV === 'production') {
     return {
-      WRAP_INTENT: '',
-      WRAP_COMPLETE: '',
-      UNWRAP_INTENT: '',
-      UNWRAP_COMPLETE: '',
-      SWAP_INTENT: '',
-      SWAP_COMPLETE: '',
-      CANCEL_INTENT: '',
-      CANCEL_COMPLETE: '',
-      ACCOUNT_CONNECTED: ''
+      SWAP_INTENT: 'S0KCFF7F',
+      SWAP_COMPLETE: 'EGT3DZLX',
+      WRAP_INTENT: 'TMDR9X4O',
+      WRAP_COMPLETE: 'J4MILHXE',
+      UNWRAP_INTENT: '1YU6ME7D',
+      UNWRAP_COMPLETE: 'QC9OMXOA',
+      CANCEL_INTENT: 'GQSDISFO',
+      CANCEL_COMPLETE: 'PADWRJDR',
+      ACCOUNT_CONNECTED: 'K9GZPRL4'
     }
   }
   return {
