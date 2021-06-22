@@ -5,6 +5,7 @@ import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+import FATHOM_GOALS from '../constants/fathom'
 
 // state
 import { updateGas } from '../state/application/actions'
@@ -209,6 +210,10 @@ export default function Sockets(): null {
         hash
       }
 
+      if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
+        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
+      }
+
       if (!previouslyCompleted) {
         updateTransaction(transactionId, {
           transaction: transaction.transaction,
@@ -216,6 +221,10 @@ export default function Sockets(): null {
           status: transaction.status,
           updatedAt: new Date().getTime()
         })
+
+        if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+        }
 
         addPopup(
           {
@@ -288,7 +297,6 @@ export default function Sockets(): null {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               const transactionReq: TransactionProcessed = tx.processed
-              // console.log('- test socket.emit TRANSACTION_STATUS_REQUEST')
               socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
             }
           }

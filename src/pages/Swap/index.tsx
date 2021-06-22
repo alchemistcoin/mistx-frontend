@@ -73,6 +73,7 @@ import { isTradeBetter } from 'utils/trades'
 // theme
 import { darken } from 'polished'
 import { LinkStyledButton, TYPE } from '../../theme'
+import FATHOM_GOALS from '../../constants/fathom'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -397,11 +398,13 @@ export default function Swap({ history }: RouteComponentProps) {
             getTradeVersion(trade)
           ].join('/')
         })
-
         ReactGA.event({
           category: 'Routing',
           action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
         })
+        if (window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.SWAP_INTENT, 0)
+        }
       })
       .catch(error => {
         setShowInfoModal(false)
