@@ -4,6 +4,8 @@ import FATHOM_GOALS from '../../constants/fathom'
 const fathomConnectionEvent = (connector: any) => {
   if (!window.fathom) return
 
+  window.fathom.trackGoal(FATHOM_GOALS.WALLET_CONNECTED, 0)
+
   if (connector === SUPPORTED_WALLETS.METAMASK.connector) {
     window.fathom.trackGoal(FATHOM_GOALS.METAMASK_CONNECTED, 0)
   }
