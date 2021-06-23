@@ -1,6 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { LedgerConnector } from '@web3-react/ledger-connector'
 import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import styled from 'styled-components'
@@ -15,6 +16,8 @@ import { useModalOpen, useWalletModalToggle } from '../../state/application/hook
 import { ExternalLink } from '../../theme'
 import AccountDetails from '../AccountDetails'
 import LedgerInstructions from './LedgerInstructions'
+import LedgerAccounts from './LedgerAccounts'
+import fathomConnectionEvent from './fathomConnectionEvent'
 
 import Modal from '../Modal'
 import Option from './Option'
@@ -114,6 +117,7 @@ const WALLET_VIEWS = {
   OPTIONS_SECONDARY: 'options_secondary',
   ACCOUNT: 'account',
   LEDGER: 'ledger',
+  LEDGER_ACCOUNTS: 'ledger_accounts',
   PENDING: 'pending'
 }
 
@@ -142,10 +146,13 @@ export default function WalletModal({
 
   // close on connection, when logged out before
   useEffect(() => {
-    if (account && !previousAccount && walletModalOpen) {
+    if (account && !previousAccount && walletModalOpen && connector !== SUPPORTED_WALLETS.LEDGER.connector) {
       toggleWalletModal()
     }
-  }, [account, previousAccount, toggleWalletModal, walletModalOpen])
+    if (account && !previousAccount && walletModalOpen && connector === SUPPORTED_WALLETS.LEDGER.connector) {
+      setWalletView(WALLET_VIEWS.LEDGER_ACCOUNTS)
+    }
+  }, [account, previousAccount, toggleWalletModal, walletModalOpen, connector])
 
   // always reset to account view
   useEffect(() => {
@@ -160,13 +167,18 @@ export default function WalletModal({
   const connectorPrevious = usePrevious(connector)
   useEffect(() => {
     if (walletModalOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
-      setWalletView(WALLET_VIEWS.ACCOUNT)
+      if (connector === SUPPORTED_WALLETS.LEDGER.connector) {
+        setWalletView(WALLET_VIEWS.LEDGER_ACCOUNTS)
+      } else {
+        setWalletView(WALLET_VIEWS.ACCOUNT)
+      }
     }
   }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
 
   async function submitActivate(connector: AbstractConnector) {
     try {
       await activate(connector, undefined, true)
+      fathomConnectionEvent(connector)
     } catch (error) {
       // console.log('wallet connection error', error)
       if (error instanceof UnsupportedChainIdError) {
@@ -178,8 +190,6 @@ export default function WalletModal({
   }
 
   function activateIntent(connector: AbstractConnector | undefined) {
-    // TODO: track wallet change
-
     if (!connector) return
     if (walletView !== WALLET_VIEWS.LEDGER && connector === SUPPORTED_WALLETS.LEDGER.connector) {
       setWalletView(WALLET_VIEWS.LEDGER)
@@ -341,6 +351,32 @@ export default function WalletModal({
             onSubmit={() => {
               activateIntent(SUPPORTED_WALLETS.LEDGER.connector)
             }}
+          />
+        </>
+      )
+    }
+
+    if (walletView === WALLET_VIEWS.LEDGER_ACCOUNTS) {
+      return (
+        <>
+          <CloseIcon onClick={toggleWalletModal}>
+            <CloseColor />
+          </CloseIcon>
+          <HeaderRow color="blue">
+            <HoverText
+              onClick={() => {
+                setPendingError(false)
+                setWalletView(WALLET_VIEWS.ACCOUNT)
+              }}
+            >
+              Back
+            </HoverText>
+          </HeaderRow>
+          <LedgerAccounts
+            onSubmit={() => {
+              toggleWalletModal()
+            }}
+            connector={SUPPORTED_WALLETS.LEDGER.connector as LedgerConnector}
           />
         </>
       )
