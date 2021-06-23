@@ -210,7 +210,7 @@ export default function Sockets(): null {
         hash
       }
 
-      if (tx?.status !== Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
+      if (tx?.status === Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
         window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
       }
 
