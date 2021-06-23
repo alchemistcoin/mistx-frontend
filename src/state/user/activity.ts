@@ -13,7 +13,7 @@ const Activity = () => {
         const timeNow = new Date().getTime()
         const timeDiffMins = Math.floor(Number(lastUpdateVersionTimestamp) - timeNow) / 1000 / 60
         if (timeDiffMins > 1440) {
-          location.reload()
+          window.location.reload()
         }
       }
     })
