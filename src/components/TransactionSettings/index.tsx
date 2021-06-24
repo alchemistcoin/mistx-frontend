@@ -158,7 +158,6 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
   } else {
     deadlineError = undefined
   }
-  console.log('raw slippage', rawSlippage)
 
   function parseCustomSlippage(value: string) {
     setSlippageInput(value)
