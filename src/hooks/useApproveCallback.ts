@@ -146,6 +146,7 @@ export function useApproveCallback(
         const signature: SignatureLike = await library.jsonRpcFetchFunc('eth_sign', [account, hash])
         signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
       } else {
+<<<<<<< HEAD
         try {
           const signPayload = [
             {
@@ -166,6 +167,19 @@ export function useApproveCallback(
           console.error('jsonRpcFetch error', e)
           throw e
         }
+=======
+        const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
+          {
+            ...populatedTx,
+            gasLimit: populatedTx.gasLimit?.toHexString(),
+            gasPrice: '0x0',
+            // none: `${populatedTx.nonce}`
+            nonce: undefined
+          }
+        ])
+
+        signedTx = signedTxRes.raw
+>>>>>>> 971cb0f... test undefined nonce
       }
 
       if (web3Provider) {
