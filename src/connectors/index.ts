@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { LedgerConnector } from '@web3-react/ledger-connector'
+import { TrezorConnector } from '@web3-react/trezor-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
@@ -33,6 +34,16 @@ export const ledger = new LedgerConnector({
   chainId: 1,
   url: NETWORK_URL,
   baseDerivationPath: `44'/60'/x'/0/0`
+})
+
+export const trezor = new TrezorConnector({
+  chainId: 1,
+  config: {
+    networkId: 1
+  },
+  url: NETWORK_URL,
+  manifestEmail: 'thealchemistcoin@protonmail.com',
+  manifestAppUrl: 'https://app.mistx.io'
 })
 
 export const injected = new InjectedConnector({

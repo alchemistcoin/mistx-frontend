@@ -1515,10 +1515,17 @@
     "@ethersproject/transactions" "^5.4.0"
     "@ethersproject/web" "^5.4.0"
 
+<<<<<<< HEAD
 "@ethersproject/abstract-signer@5.4.1", "@ethersproject/abstract-signer@^5.4.0":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/abstract-signer/-/abstract-signer-5.4.1.tgz#e4e9abcf4dd4f1ba0db7dff9746a5f78f355ea81"
   integrity sha512-SkkFL5HVq1k4/25dM+NWP9MILgohJCgGv5xT5AcRruGz4ILpfHeBtO/y6j+Z3UN/PAjDeb4P7E51Yh8wcGNLGA==
+=======
+"@ethersproject/abstract-signer@5.4.0", "@ethersproject/abstract-signer@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/abstract-signer/-/abstract-signer-5.4.0.tgz#cd5f50b93141ee9f9f49feb4075a0b3eafb57d65"
+  integrity sha512-AieQAzt05HJZS2bMofpuxMEp81AHufA5D6M4ScKwtolj041nrfIbIi8ciNW7+F59VYxXq+V4c3d568Q6l2m8ew==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@ethersproject/abstract-provider" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"
@@ -1552,10 +1559,17 @@
     "@ethersproject/bytes" "^5.4.0"
     "@ethersproject/properties" "^5.4.0"
 
+<<<<<<< HEAD
 "@ethersproject/bignumber@5.4.1", "@ethersproject/bignumber@>=5.0.0-beta.130", "@ethersproject/bignumber@^5.4.0":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.4.1.tgz#64399d3b9ae80aa83d483e550ba57ea062c1042d"
   integrity sha512-fJhdxqoQNuDOk6epfM7yD6J8Pol4NUCy1vkaGAkuujZm0+lNow//MKu1hLhRiYV4BsOHyBv5/lsTjF+7hWwhJg==
+=======
+"@ethersproject/bignumber@5.4.0", "@ethersproject/bignumber@>=5.0.0-beta.130", "@ethersproject/bignumber@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.4.0.tgz#be8dea298c0ec71208ee60f0b245be0761217ad9"
+  integrity sha512-OXUu9f9hO3vGRIPxU40cignXZVaYyfx6j9NNMjebKdnaCL3anCLSSy8/b8d03vY6dh7duCC0kW72GEC4tZer2w==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@ethersproject/bytes" "^5.4.0"
     "@ethersproject/logger" "^5.4.0"
@@ -1575,10 +1589,17 @@
   dependencies:
     "@ethersproject/bignumber" "^5.4.0"
 
+<<<<<<< HEAD
 "@ethersproject/contracts@5.4.1":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/contracts/-/contracts-5.4.1.tgz#3eb4f35b7fe60a962a75804ada2746494df3e470"
   integrity sha512-m+z2ZgPy4pyR15Je//dUaymRUZq5MtDajF6GwFbGAVmKz/RF+DNIPwF0k5qEcL3wPGVqUjFg2/krlCRVTU4T5w==
+=======
+"@ethersproject/contracts@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/contracts/-/contracts-5.4.0.tgz#e05fe6bd33acc98741e27d553889ec5920078abb"
+  integrity sha512-hkO3L3IhS1Z3ZtHtaAG/T87nQ7KiPV+/qnvutag35I0IkiQ8G3ZpCQ9NNOpSCzn4pWSW4CfzmtE02FcqnLI+hw==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@ethersproject/abi" "^5.4.0"
     "@ethersproject/abstract-provider" "^5.4.0"
@@ -1591,7 +1612,11 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/transactions" "^5.4.0"
 
+<<<<<<< HEAD
 "@ethersproject/experimental@^5.4.0":
+=======
+"@ethersproject/experimental@^5.0.1":
+>>>>>>> 78650c6... WIP: add trezor connect.
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/experimental/-/experimental-5.4.0.tgz#72c280dc4c981749f7ea0a9ecffd663c633a145e"
   integrity sha512-dy+AgxqRUwJ+8J6bIz062NL7a+Vv+zGP4geeN09nvNEMPzY/kPYQBV5RECRbFFCH0U5mASf5ZnuF1N2DIIaZ1g==
@@ -1663,6 +1688,7 @@
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.4.0.tgz#f39adadf62ad610c420bcd156fd41270e91b3ca9"
   integrity sha512-xYdWGGQ9P2cxBayt64d8LC8aPFJk6yWCawQi/4eJ4+oJdMMjEBMrIcIMZ9AxhwpPVmnBPrsB10PcXGmGAqgUEQ==
+<<<<<<< HEAD
 
 "@ethersproject/networks@5.4.1", "@ethersproject/networks@^5.4.0":
   version "5.4.1"
@@ -1690,6 +1716,35 @@
   version "5.4.3"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.4.3.tgz#4cd7ccd9e12bc3875b33df8b24abf735663958a5"
   integrity sha512-VURwkaWPoUj7jq9NheNDT5Iyy64Qcyf6BOFDwVdHsmLmX/5prNjFrgSX3GHPE4z1BRrVerDxe2yayvXKFm/NNg==
+=======
+
+"@ethersproject/networks@5.4.0", "@ethersproject/networks@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/networks/-/networks-5.4.0.tgz#71eecd3ef3755118b42c1a5d2a44a7e07202e10a"
+  integrity sha512-5fywtKRDcnaVeA5SjxXH3DOQqe/IbeD/plwydi94SdPps1fbDUrnO6SzDExaruBZXxpxJcO9upG9UComsei4bg==
+  dependencies:
+    "@ethersproject/logger" "^5.4.0"
+
+"@ethersproject/pbkdf2@5.4.0", "@ethersproject/pbkdf2@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/pbkdf2/-/pbkdf2-5.4.0.tgz#ed88782a67fda1594c22d60d0ca911a9d669641c"
+  integrity sha512-x94aIv6tiA04g6BnazZSLoRXqyusawRyZWlUhKip2jvoLpzJuLb//KtMM6PEovE47pMbW+Qe1uw+68ameJjB7g==
+  dependencies:
+    "@ethersproject/bytes" "^5.4.0"
+    "@ethersproject/sha2" "^5.4.0"
+
+"@ethersproject/properties@5.4.0", "@ethersproject/properties@>=5.0.0-beta.131", "@ethersproject/properties@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/properties/-/properties-5.4.0.tgz#38ba20539b44dcc5d5f80c45ad902017dcdbefe7"
+  integrity sha512-7jczalGVRAJ+XSRvNA6D5sAwT4gavLq3OXPuV/74o3Rd2wuzSL035IMpIMgei4CYyBdialJMrTqkOnzccLHn4A==
+  dependencies:
+    "@ethersproject/logger" "^5.4.0"
+
+"@ethersproject/providers@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.4.0.tgz#1b9eeaf394d790a662ec66373d7219c82f4433f2"
+  integrity sha512-XRmI9syLnkNdLA8ikEeg0duxmwSWTTt9S+xabnTOyI51JPJyhQ0QUNT+wvmod218ebb7rLupHDPQ7UVe2/+Tjg==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@ethersproject/abstract-provider" "^5.4.0"
     "@ethersproject/abstract-signer" "^5.4.0"
@@ -2637,9 +2692,15 @@
     "@babel/types" "^7.0.0"
 
 "@types/babel__traverse@*", "@types/babel__traverse@^7.0.6":
+<<<<<<< HEAD
   version "7.14.2"
   resolved "https://registry.yarnpkg.com/@types/babel__traverse/-/babel__traverse-7.14.2.tgz#ffcd470bbb3f8bf30481678fb5502278ca833a43"
   integrity sha512-K2waXdXBi2302XUdcHcR1jCeU0LL4TD9HRs/gk0N2Xvrht+G/BfJa4QObBQZfhMdxiCpV3COl5Nfq4uKTeTnJA==
+=======
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/@types/babel__traverse/-/babel__traverse-7.14.0.tgz#a34277cf8acbd3185ea74129e1f100491eb1da7f"
+  integrity sha512-IilJZ1hJBUZwMOVDNTdflOOLzJB/ZtljYVa7k3gEZN/jqIJIPkWHC6dvbX+DD2CwZDHB9wAKzZPzzqMIkW37/w==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@babel/types" "^7.3.0"
 
@@ -2772,9 +2833,15 @@
     "@types/node" "*"
 
 "@types/node@*":
+<<<<<<< HEAD
   version "16.4.11"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.11.tgz#245030af802c776c31f00eb0cdde40ee615db462"
   integrity sha512-nWSFUbuNiPKJEe1IViuodSI+9cM+vpM8SWF/O6dJK7wmGRNq55U7XavJHrlRrPkSMuUZUFzg1xaZ1B+ZZCrRWw==
+=======
+  version "15.12.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.12.5.tgz#9a78318a45d75c9523d2396131bd3cca54b2d185"
+  integrity sha512-se3yX7UHv5Bscf8f1ERKvQOD6sTyycH3hdaoozvaLxgUiY5lIGEeH37AD0G0Qi9kPqihPn0HOfd2yaIEN9VwEg==
+>>>>>>> 78650c6... WIP: add trezor connect.
 
 "@types/node@^10.11.7":
   version "10.17.60"
@@ -2792,9 +2859,15 @@
   integrity sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==
 
 "@types/node@^14.14.31":
+<<<<<<< HEAD
   version "14.17.8"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.8.tgz#813b73ab7d82ac06ddfd2458b13c88459a3b319f"
   integrity sha512-0CHLt50GbUmH/6MrlBIKNdWCglvlyQKkorRf08/0DIi0ryuTPP+ijWLSI19SbDTHSKaagGDELiImY4BSikt61w==
+=======
+  version "14.17.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.4.tgz#218712242446fc868d0e007af29a4408c7765bc0"
+  integrity sha512-8kQ3+wKGRNN0ghtEn7EGps/B8CzuBz1nXZEIGGLP2GnwbqYn4dbTs7k+VKLTq1HvZLRCIDtN3Snx1Ege8B7L5A==
+>>>>>>> 78650c6... WIP: add trezor connect.
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -3315,6 +3388,16 @@
     "@web3-react/types" "^6.0.7"
     tiny-invariant "^1.0.6"
 
+"@web3-react/trezor-connector@^6.1.9":
+  version "6.1.9"
+  resolved "https://registry.yarnpkg.com/@web3-react/trezor-connector/-/trezor-connector-6.1.9.tgz#865e7e50664ace31d17d0de80710fd6fc774e4bc"
+  integrity sha512-47Ah62RnR3lXd10UNQk9pJZCDcVpwn3xFQXPOL0bWMHFkl+XDFcOok2yN4QJI3xSp6AdOt3gFuqTNe0RJzzU4Q==
+  dependencies:
+    "@0x/subproviders" "^5.0.4"
+    "@web3-react/abstract-connector" "^6.0.7"
+    "@web3-react/types" "^6.0.7"
+    trezor-connect "^7.0.5"
+
 "@web3-react/types@^6.0.7":
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-6.0.7.tgz#34a6204224467eedc6123abaf55fbb6baeb2809f"
@@ -3331,9 +3414,15 @@
     tiny-invariant "^1.0.6"
 
 "@web3-react/walletlink-connector@^6.0.9":
+<<<<<<< HEAD
   version "6.2.3"
   resolved "https://registry.yarnpkg.com/@web3-react/walletlink-connector/-/walletlink-connector-6.2.3.tgz#d6c2c3a1b8b7e05147845ee61fa19de13db82e19"
   integrity sha512-vJsXyC2NWpVrlnfgwsssDuFo3P/xCoKOjvkEjbQyQEig2aucPijwuxc58BG/YzDx4FyeeyzpnkDMLfcXFuI1pg==
+=======
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@web3-react/walletlink-connector/-/walletlink-connector-6.2.2.tgz#a8358f64ad0bd4b34b9a8c7e484fb9564fb4c460"
+  integrity sha512-KiforQAdj9xoI8a/t7oLx2f7fzSTrqUppM/NVplHtIwDgE2AYcxlcAk62F/MA/436U0b3GLGld3MwRNAYyDOZg==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@web3-react/abstract-connector" "^6.0.7"
     "@web3-react/types" "^6.0.7"
@@ -5421,10 +5510,17 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
+<<<<<<< HEAD
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001035, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001248:
   version "1.0.30001248"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001248.tgz#26ab45e340f155ea5da2920dadb76a533cb8ebce"
   integrity sha512-NwlQbJkxUFJ8nMErnGtT0QTM2TJ33xgz4KXJSMIrjXIbDVdaYueGyjOrLKRtJC+rTiWfi6j5cnZN1NBiSBJGNw==
+=======
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001035, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001219:
+  version "1.0.30001240"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001240.tgz#ec15d125b590602c8731545c5351ff054ad2d52f"
+  integrity sha512-nb8mDzfMdxBDN7ZKx8chWafAdBp5DAAlpWvNyUGe5tcDWd838zpzDN3Rah9cjCqhfOKkrvx40G2SDtP0qiWX/w==
+>>>>>>> 78650c6... WIP: add trezor connect.
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -6445,10 +6541,17 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
+<<<<<<< HEAD
 cypress@*:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/cypress/-/cypress-8.1.0.tgz#9aaed7fb2a4d1876528b72d437f97bc824db0735"
   integrity sha512-GXjlqPjY/6HPbQwAp3AvlA1Mk/NoJTAmqVSUhQsuM/1xDpd/FQHkxVuq5h6O6RrAoCXSgpZPXFsVtdqE+FwEJw==
+=======
+cypress@*, cypress@^7.1.0:
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-7.6.0.tgz#80fe7496cd4165a0fa06e25fc11413dda4544463"
+  integrity sha512-tTwQExY28CKt6cY85/2V1uLExcMfpBEBWXt/EcE2ht/Onl9k4lxUS7ul1UnUO5MrYwMIHMdGVh13DxdzXj4Z5w==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     "@cypress/request" "^2.88.5"
     "@cypress/xvfb" "^1.2.4"
@@ -6468,6 +6571,7 @@ cypress@*:
     dayjs "^1.10.4"
     debug "^4.3.2"
     enquirer "^2.3.6"
+<<<<<<< HEAD
     eventemitter2 "^6.4.3"
     execa "4.1.0"
     executable "^4.1.1"
@@ -6515,6 +6619,8 @@ cypress@^7.1.0:
     dayjs "^1.10.4"
     debug "^4.3.2"
     enquirer "^2.3.6"
+=======
+>>>>>>> 78650c6... WIP: add trezor connect.
     eventemitter2 "^6.4.3"
     execa "4.1.0"
     executable "^4.1.1"
@@ -6587,10 +6693,17 @@ debug@3.2.6:
   dependencies:
     ms "^2.1.1"
 
+<<<<<<< HEAD
 debug@4.3.2, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.2, debug@~4.3.1:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.2.tgz#f0a49c18ac8779e31d4a0c6029dfb76873c7428b"
   integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
+=======
+debug@4.3.1, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@~4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
+  integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     ms "2.1.2"
 
@@ -6607,6 +6720,13 @@ debug@^3.1.0, debug@^3.1.1, debug@^3.2.5, debug@^3.2.7:
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
   dependencies:
     ms "^2.1.1"
+
+debug@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.2.tgz#f0a49c18ac8779e31d4a0c6029dfb76873c7428b"
+  integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
+  dependencies:
+    ms "2.1.2"
 
 decamelize@^1.2.0:
   version "1.2.0"
@@ -7042,10 +7162,30 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
+<<<<<<< HEAD
 electron-to-chromium@^1.3.378, electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.793:
   version "1.3.795"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.795.tgz#91f09b4c77f8dab562dd592ce929b009201c24ff"
   integrity sha512-4TPxrLf9Fzsi4rVgTlDm+ubxoXm3/TN67/LGHx/a4UkVubKILa6L26O6eTnHewixG/knzU9L3lLmfL39eElwlQ==
+=======
+electron-to-chromium@^1.3.378, electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.723:
+  version "1.3.759"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.759.tgz#b0d652d376831470a4c230ba721da2427bfb996a"
+  integrity sha512-nM76xH0t2FBH5iMEZDVc3S/qbdKjGH7TThezxC8k1Q7w7WHvIAyJh8lAe2UamGfdRqBTjHfPDn82LJ0ksCiB9g==
+
+elliptic@6.5.3:
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.3.tgz#cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6"
+  integrity sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==
+  dependencies:
+    bn.js "^4.4.0"
+    brorand "^1.0.1"
+    hash.js "^1.0.0"
+    hmac-drbg "^1.0.0"
+    inherits "^2.0.1"
+    minimalistic-assert "^1.0.0"
+    minimalistic-crypto-utils "^1.0.0"
+>>>>>>> 78650c6... WIP: add trezor connect.
 
 elliptic@6.5.4, elliptic@^6.4.0, elliptic@^6.5.2, elliptic@^6.5.3:
   version "6.5.4"
@@ -7110,7 +7250,11 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   dependencies:
     once "^1.4.0"
 
+<<<<<<< HEAD
 engine.io-client@~5.1.2:
+=======
+engine.io-client@~5.1.1:
+>>>>>>> 78650c6... WIP: add trezor connect.
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-5.1.2.tgz#27108da9b39ae03262443d945caf2caa3655c4cb"
   integrity sha512-blRrgXIE0A/eurWXRzvfCLG7uUFJqfTGFsyJzXSK71srMMGJ2VraBLg8Mdw28uUxSpVicepBN9X7asqpD1mZcQ==
@@ -8018,6 +8162,7 @@ ethereumjs-wallet@0.6.5:
     uuid "^3.3.2"
 
 ethers@^5.0.7, ethers@^5.4.0:
+<<<<<<< HEAD
   version "5.4.3"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.4.3.tgz#9469e7f353285caac4114467eb2618f755a3f7d0"
   integrity sha512-esWqdrFZObpyZyhH6VLHCz5vRA/YJrEmQO77sALWSWFjFtJr5ITIRwJ448N+mxIrvnqjZGQ2Jx2zC3xt5lc64g==
@@ -8032,15 +8177,38 @@ ethers@^5.0.7, ethers@^5.4.0:
     "@ethersproject/bytes" "5.4.0"
     "@ethersproject/constants" "5.4.0"
     "@ethersproject/contracts" "5.4.1"
+=======
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.4.0.tgz#e9fe4b39350bcce5edd410c70bd57ba328ecf474"
+  integrity sha512-hqN1x0CV8VMpQ25WnNEjaMqtB3nA4DRAb2FSmmNaUbD1dF6kWbHs8YaXbVvD37FCg3GTEyc4rV9Pxafk1ByHKw==
+  dependencies:
+    "@ethersproject/abi" "5.4.0"
+    "@ethersproject/abstract-provider" "5.4.0"
+    "@ethersproject/abstract-signer" "5.4.0"
+    "@ethersproject/address" "5.4.0"
+    "@ethersproject/base64" "5.4.0"
+    "@ethersproject/basex" "5.4.0"
+    "@ethersproject/bignumber" "5.4.0"
+    "@ethersproject/bytes" "5.4.0"
+    "@ethersproject/constants" "5.4.0"
+    "@ethersproject/contracts" "5.4.0"
+>>>>>>> 78650c6... WIP: add trezor connect.
     "@ethersproject/hash" "5.4.0"
     "@ethersproject/hdnode" "5.4.0"
     "@ethersproject/json-wallets" "5.4.0"
     "@ethersproject/keccak256" "5.4.0"
     "@ethersproject/logger" "5.4.0"
+<<<<<<< HEAD
     "@ethersproject/networks" "5.4.1"
     "@ethersproject/pbkdf2" "5.4.0"
     "@ethersproject/properties" "5.4.0"
     "@ethersproject/providers" "5.4.3"
+=======
+    "@ethersproject/networks" "5.4.0"
+    "@ethersproject/pbkdf2" "5.4.0"
+    "@ethersproject/properties" "5.4.0"
+    "@ethersproject/providers" "5.4.0"
+>>>>>>> 78650c6... WIP: add trezor connect.
     "@ethersproject/random" "5.4.0"
     "@ethersproject/rlp" "5.4.0"
     "@ethersproject/sha2" "5.4.0"
@@ -12150,11 +12318,14 @@ multicodec@^3.0.1:
   dependencies:
     uint8arrays "^2.1.5"
     varint "^6.0.0"
+<<<<<<< HEAD
 
 multiformats@^9.4.2:
   version "9.4.3"
   resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-9.4.3.tgz#9da626a633ed43a4444b911eaf3344060326be5d"
   integrity sha512-sCNjBP/NPCeQu83Mst8IQZq9+HuR7Catvk/m7CeH0r/nupsU6gM7GINf5E1HCDRxDeU+Cgda/WPmcwQhYs3dyA==
+=======
+>>>>>>> 78650c6... WIP: add trezor connect.
 
 multihashes@^0.4.15, multihashes@~0.4.15:
   version "0.4.21"
@@ -16698,6 +16869,15 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
+trezor-connect@^7.0.5:
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/trezor-connect/-/trezor-connect-7.0.5.tgz#00ebc0abd302177042b6ff9ba71e7bc491e4b360"
+  integrity sha512-cGHcNuO/kGVF6b1mp5VB/RwXcXwqZJDPLp3opx7vM+BQ8xB4oDAUdL+T8aCKRbDv6HwP/wvGwoaok/+9kYOPfA==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    events "^3.0.0"
+    whatwg-fetch "^3.0.0"
+
 trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
@@ -16870,9 +17050,15 @@ uint8arrays@1.1.0:
     web-encoding "^1.0.2"
 
 uint8arrays@^2.0.5, uint8arrays@^2.1.3, uint8arrays@^2.1.5:
+<<<<<<< HEAD
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/uint8arrays/-/uint8arrays-2.1.10.tgz#34d023c843a327c676e48576295ca373c56e286a"
   integrity sha512-Q9/hhJa2836nQfEJSZTmr+pg9+cDJS9XEAp7N2Vg5MzL3bK/mkMVfjscRGYruP9jNda6MAdf4QD/y78gSzkp6A==
+=======
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/uint8arrays/-/uint8arrays-2.1.5.tgz#9e6e6377a9463d5eba4620a3f0450f7eb389a351"
+  integrity sha512-CSR7AO+4AHUeSOnZ/NBNCElDeWfRh9bXtOck27083kc7SznmmHIhNEkEOCQOn0wvrIMjS3IH0TNLR16vuc46mA==
+>>>>>>> 78650c6... WIP: add trezor connect.
   dependencies:
     multiformats "^9.4.2"
 

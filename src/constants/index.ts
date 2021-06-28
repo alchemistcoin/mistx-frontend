@@ -1,6 +1,6 @@
 import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemist-coin/mistx-core'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { injected, ledger, walletconnect } from '../connectors'
+import { injected, ledger, trezor, walletconnect } from '../connectors'
 
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: { [exchange in Exchange]?: string } } = {
   [ChainId.MAINNET]: {
@@ -167,6 +167,14 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //   color: '#010101',
   //   primary: true
   // },
+  METAMASK: {
+    connector: injected,
+    name: 'MetaMask',
+    iconName: 'metamask.png',
+    description: 'Easy-to-use browser extension.',
+    href: null,
+    color: '#E8831D'
+  },
   LEDGER: {
     connector: ledger,
     name: 'Ledger',
@@ -175,13 +183,13 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: '#000'
   },
-  METAMASK: {
-    connector: injected,
-    name: 'MetaMask',
-    iconName: 'metamask.png',
-    description: 'Easy-to-use browser extension.',
+  TREZOR: {
+    connector: trezor,
+    name: 'Trezor',
+    iconName: 'trezor-logo.png',
+    description: 'Hardware Wallet',
     href: null,
-    color: '#E8831D'
+    color: '#000'
   },
   WALLET_CONNECT: {
     connector: walletconnect,

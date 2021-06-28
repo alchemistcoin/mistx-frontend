@@ -34,6 +34,7 @@ export default function useLatestGasPrice(): BigNumber | undefined {
       }
     }
   }, [block])
+
   return useMemo(() => {
     if (!gasPrice) return undefined
     return BigNumber.from(gasPrice)
