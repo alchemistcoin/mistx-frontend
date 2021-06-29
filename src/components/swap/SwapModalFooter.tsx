@@ -104,8 +104,6 @@ export default function SwapModalFooter({
       : slippageAdjustedAmounts[Field.OUTPUT]?.currency
   )
 
-  console.log('tradeToken price', tokenUSDCPrice, tokenUSDCPrice?.toSignificant(4))
-
   return (
     <>
       <PriceWrapper>
