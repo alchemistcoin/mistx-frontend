@@ -23,7 +23,7 @@ const Left = styled.a`
   flex-direction: column;
   width: auto;
   height: 43px;
-  border: 2px solid #f7b903;
+  border: 2px solid ${({ theme }) => theme.primary1};
   border-right: 0;
   border-radius: 0;
   padding: 7px 0 7px 14px;
@@ -40,7 +40,7 @@ const Right = styled.div`
   display: flex;
   width: 30px;
   height: 43px;
-  border: 2px solid #f7b903;
+  border: 2px solid ${({ theme }) => theme.primary1};
   border-left: 0;
 `
 
