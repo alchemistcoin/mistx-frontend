@@ -199,7 +199,7 @@ export default function SettingsTab() {
             </AutoColumn>
           </ModalContentWrapper>
         </Modal>
-        <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
+        <StyledMenuButton onClick={() => !open && toggle()} id="open-settings-dialog-button">
           <StyledMenuIcon>{open ? <Close /> : <Cog />}</StyledMenuIcon>
           {expertMode ? (
             <EmojiWrapper>
@@ -217,7 +217,7 @@ export default function SettingsTab() {
               <StyledRowFixed>
                 <SettingsHeader>
                   <Text fontWeight={600} fontSize={20}>
-                    Transaction Fee (ETH)
+                    Transaction Fee
                   </Text>
                   <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
                 </SettingsHeader>
