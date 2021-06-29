@@ -21,6 +21,10 @@ export default function NetworkWarningModal() {
 
   const { chainId } = useActiveWeb3React()
 
+  function handleClose() {
+    // do nothing
+  }
+
   useEffect(() => {
     if (chainId && chainId !== NETWORK_CHAIN_ID) {
       setIsOpen(true)
@@ -32,7 +36,7 @@ export default function NetworkWarningModal() {
   if (!isOpen || !chainId) return null
 
   return (
-    <Modal isOpen={isOpen} onDismiss={() => {}}>
+    <Modal isOpen={isOpen} onDismiss={handleClose}>
       <Wrapper>
         <Section>
           <RowBetween>
