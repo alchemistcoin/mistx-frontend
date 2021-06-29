@@ -51,10 +51,11 @@ const MistBalance = () => {
   const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
   const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
   const mistBalance = balance?.toSignificant(2)
+  if (!account) return null
   return (
     <Container>
       <Left href={`${window.location.origin}/exchange?outputCurrency=0x88ACDd2a6425c3FaAE4Bc9650Fd7E27e0Bebb7aB`}>
-        {!account || !mistBalance ? (
+        {account && !mistBalance ? (
           <StyledLoader stroke="#fff" size="20px" />
         ) : (
           <> {mistBalance ? mistBalance : '0'} MIST</>
