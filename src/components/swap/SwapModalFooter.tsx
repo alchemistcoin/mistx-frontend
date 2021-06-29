@@ -13,6 +13,7 @@ import {
   formatExecutionPrice,
   warningSeverity
 } from '../../utils/prices'
+import useUSDCPrice from '../../utils/useUSDCPrice'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
@@ -96,6 +97,14 @@ export default function SwapModalFooter({
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
+  const minerBribeEth = new TokenAmount(WETH[1], trade.minerBribe.raw)
+  const tokenUSDCPrice = useUSDCPrice(
+    trade.tradeType === TradeType.EXACT_INPUT
+      ? slippageAdjustedAmounts[Field.INPUT]?.currency
+      : slippageAdjustedAmounts[Field.OUTPUT]?.currency
+  )
+
+  console.log('tradeToken price', tokenUSDCPrice, tokenUSDCPrice?.toSignificant(4))
 
   return (
     <>
@@ -112,11 +121,11 @@ export default function SwapModalFooter({
             }}
           >
             {formatExecutionPrice(trade, showInverted)}
-            <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)}>
+            <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)} style={{ marginRight: '.5rem' }}>
               <Repeat size={14} />
             </StyledBalanceMaxMini>
           </Text>
-          <Text fontWeight={400} fontSize={14} color={theme.green2}>
+          <Text fontWeight={400} fontSize={14} color={theme.green2} style={{ whiteSpace: 'nowrap' }}>
             Current Price
           </Text>
         </RowBetween>
@@ -135,16 +144,24 @@ export default function SwapModalFooter({
             <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
           </RowFixed>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={700}>
-              {trade.tradeType === TradeType.EXACT_INPUT
-                ? slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4) ?? '-'
-                : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? '-'}
-            </TYPE.black>
-            <TYPE.black fontSize={14} marginLeft={'4px'} fontWeight={700}>
-              {trade.tradeType === TradeType.EXACT_INPUT
-                ? trade.outputAmount.currency.symbol
-                : trade.inputAmount.currency.symbol}
-            </TYPE.black>
+            {ethUSDCPrice ? (
+              <>
+                <TYPE.black fontSize={14} fontWeight={700}>
+                  {trade.tradeType === TradeType.EXACT_INPUT
+                    ? slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4) ?? '-'
+                    : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? '-'}
+                </TYPE.black>
+                <TYPE.black fontSize={14} marginLeft={'4px'} fontWeight={700}>
+                  {trade.tradeType === TradeType.EXACT_INPUT
+                    ? trade.outputAmount.currency.symbol
+                    : trade.inputAmount.currency.symbol}
+                </TYPE.black>
+              </>
+            ) : (
+              <TYPE.black fontSize={14} fontWeight={700}>
+                Loading...
+              </TYPE.black>
+            )}
           </RowFixed>
         </RowBetween>
         <RowBetween>
@@ -165,6 +182,15 @@ export default function SwapModalFooter({
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
+            &nbsp;&nbsp;
+            {realizedLPFee && ethUSDCPrice
+              ? '(' +
+                tokenUSDCPrice
+                  ?.divide(ethUSDCPrice || '0x1')
+                  .multiply(realizedLPFee)
+                  .toSignificant(2) +
+                ' ETH)'
+              : '-'}
           </TYPE.black>
         </RowBetween>
         <RowBetween>
@@ -176,7 +202,7 @@ export default function SwapModalFooter({
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
             {ethUSDCPrice
-              ? `$ ${ethUSDCPrice.quote(new TokenAmount(WETH[1], trade.minerBribe.raw)).toSignificant(4)}`
+              ? `$ ${ethUSDCPrice.quote(minerBribeEth).toSignificant(4)} (${minerBribeEth.toSignificant(2)} ETH)`
               : `Loading...`}
           </TYPE.black>
         </RowBetween>
