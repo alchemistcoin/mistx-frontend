@@ -17,7 +17,7 @@ const Container = styled.div`
 const Left = styled.a`
   position: relative;
   display: flex;
-  min-width: 95px;
+  min-width: 40px;
   align-content: center;
   justify-items: center;
   flex-direction: column;
@@ -32,6 +32,7 @@ const Left = styled.a`
   color: #fff;
   text-decoration: none;
   justify-content: center;
+  white-space: pre;
 `
 
 const Right = styled.div`
