@@ -14,9 +14,33 @@ const Container = styled.div`
   left: 30px;
   height: 43px;
   width: auto;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: 43px;
+    top: 0;
+    bottom: 0;
+    left: -15px;
+    right: 0;
+    height: auto;
+    width: auto;
+    border: 2px solid #ba900e;
+    border-radius: 30px 0 0 30px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    left: 0;
+    &:before {
+      right: 0;
+      left: -30px;
+      padding: 0;
+      border-radius: 0 30px 30px 0; 
+    }
+  `};
 `
 
-const Left = styled.div`
+const Wrapper = styled.div`
   position: relative;
   display: flex;
   min-width: 40px;
@@ -25,10 +49,9 @@ const Left = styled.div`
   flex-direction: column;
   width: auto;
   height: 43px;
-  border: 2px solid #ba900e;
   border-right: 0;
   border-radius: 0;
-  padding: 7px 0 7px 14px;
+  padding: 0 30px 0 0;
   border-radius: 30px 0 0 30px;
   font-weight: 600;
   color: #fff;
@@ -36,15 +59,11 @@ const Left = styled.div`
   justify-content: center;
   white-space: pre;
   cursor: pointer;
-`
 
-const Right = styled.div`
-  position: relative;
-  display: flex;
-  width: 30px;
-  height: 43px;
-  border: 2px solid #ba900e;
-  border-left: 0;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 0 20px 0px 0px;
+    border-radius: 0;
+  `};
 `
 
 const StyledLoader = styled(Loader)`
@@ -60,14 +79,13 @@ const MistBalance = () => {
   if (!account) return null
   return (
     <Container>
-      <Left onClick={handleOutputSelect}>
+      <Wrapper onClick={handleOutputSelect}>
         {account && !mistBalance ? (
           <StyledLoader stroke="#fff" size="20px" />
         ) : (
           <> {mistBalance ? mistBalance : '0'} MIST</>
         )}
-      </Left>
-      <Right />
+      </Wrapper>
     </Container>
   )
 }
