@@ -1,8 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Field } from '../../state/swap/actions'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { useAlchmeistToken } from '../../state/lists/hooks'
 import { useActiveWeb3React } from '../../hooks'
+import { useSwapActionHandlers } from '../../state/swap/hooks'
 import Loader from 'components/Loader'
 
 const Container = styled.div`
@@ -12,9 +14,33 @@ const Container = styled.div`
   left: 30px;
   height: 43px;
   width: auto;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: 43px;
+    top: 0;
+    bottom: 0;
+    left: -15px;
+    right: 0;
+    height: auto;
+    width: auto;
+    border: 2px solid #ba900e;
+    border-radius: 30px 0 0 30px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    left: 0;
+    &:before {
+      right: 0;
+      left: -30px;
+      padding: 0;
+      border-radius: 0 30px 30px 0; 
+    }
+  `};
 `
 
-const Left = styled.a`
+const Wrapper = styled.div`
   position: relative;
   display: flex;
   min-width: 40px;
@@ -23,25 +49,21 @@ const Left = styled.a`
   flex-direction: column;
   width: auto;
   height: 43px;
-  border: 2px solid ${({ theme }) => theme.primary1};
   border-right: 0;
   border-radius: 0;
-  padding: 7px 0 7px 14px;
+  padding: 0 30px 0 0;
   border-radius: 30px 0 0 30px;
   font-weight: 600;
   color: #fff;
   text-decoration: none;
   justify-content: center;
   white-space: pre;
-`
+  cursor: pointer;
 
-const Right = styled.div`
-  position: relative;
-  display: flex;
-  width: 30px;
-  height: 43px;
-  border: 2px solid ${({ theme }) => theme.primary1};
-  border-left: 0;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 0 20px 0px 0px;
+    border-radius: 0;
+  `};
 `
 
 const StyledLoader = styled(Loader)`
@@ -49,20 +71,21 @@ const StyledLoader = styled(Loader)`
 `
 const MistBalance = () => {
   const { account } = useActiveWeb3React()
+  const { onCurrencySelection } = useSwapActionHandlers()
   const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
   const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
   const mistBalance = balance?.toSignificant(2)
+  const handleOutputSelect = () => onCurrencySelection(Field.OUTPUT, alchemistToken.token)
   if (!account) return null
   return (
     <Container>
-      <Left href={`${window.location.origin}/exchange?outputCurrency=0x88ACDd2a6425c3FaAE4Bc9650Fd7E27e0Bebb7aB`}>
+      <Wrapper onClick={handleOutputSelect}>
         {account && !mistBalance ? (
           <StyledLoader stroke="#fff" size="20px" />
         ) : (
           <> {mistBalance ? mistBalance : '0'} MIST</>
         )}
-      </Left>
-      <Right />
+      </Wrapper>
     </Container>
   )
 }
