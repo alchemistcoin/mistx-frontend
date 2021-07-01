@@ -19,7 +19,6 @@ import CurrencySelect from 'components/CurrencySelect'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
 // import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
-import BetterTradeLink, { DefaultVersionLink } from '../../components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import {
   ArrowWrapper,
@@ -44,7 +43,6 @@ import useUSDCPrice from '../../hooks/useUSDCPrice'
 // import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
-import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useSocketStatus, useWalletModalToggle } from '../../state/application/hooks'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
@@ -68,7 +66,6 @@ import { useHasPendingTransactions } from 'state/transactions/hooks'
 // utils
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import { isTradeBetter } from 'utils/trades'
 // theme
 import { darken } from 'polished'
 import { LinkStyledButton, TYPE } from '../../theme'
@@ -231,7 +228,6 @@ export default function Swap({ history }: RouteComponentProps) {
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
   const {
-    v1Trade,
     v2Trade,
     currencyBalances,
     parsedAmount,
@@ -247,17 +243,8 @@ export default function Swap({ history }: RouteComponentProps) {
   )
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
-  const toggledVersion = useToggledVersion()
-  const tradesByVersion = {
-    [Version.v1]: v1Trade,
-    [Version.v2]: v2Trade
-  }
 
-  const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
-  const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
-
-  const betterTradeLinkV2: Version | undefined =
-    toggledVersion === Version.v1 && isTradeBetter(v1Trade, v2Trade) ? Version.v2 : undefined
+  const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
     ? {
@@ -718,11 +705,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     </StyledButtonError>
                   )}
                   {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-                  {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
-                    <BetterTradeLink version={betterTradeLinkV2} />
-                  ) : toggledVersion !== DEFAULT_VERSION && defaultTrade ? (
-                    <DefaultVersionLink />
-                  ) : null}
+
                 </BottomGrouping>
               )}
             </SwapWrapper>
