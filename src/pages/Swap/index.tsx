@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, WETH, Currency, TradeType } from '@alchemistcoin/sdk'
 import { Web3Provider } from '@ethersproject/providers'
 // components
 import AppBody from '../AppBody'
@@ -38,7 +38,6 @@ import QuestionHelper from '../../components/QuestionHelper'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
 // hooks
-import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
@@ -295,7 +294,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // modal and loading
   const [{ tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
-    tradeToConfirm: Trade | undefined
+    tradeToConfirm: Trade<Currency, Currency, TradeType> | undefined
     swapErrorMessage: string | undefined
     attemptingTxn: boolean
     txHash: string | undefined
@@ -355,7 +354,7 @@ export default function Swap({ history }: RouteComponentProps) {
   //   }
   // }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT], wrapType)
+  const maxAmountInput: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT], wrapType)
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
@@ -393,11 +392,7 @@ export default function Swap({ history }: RouteComponentProps) {
               : (recipientAddress ?? recipient) === account
               ? 'Swap w/o Send + recipient'
               : 'Swap w/ Send',
-          label: [
-            trade?.inputAmount?.currency?.symbol,
-            trade?.outputAmount?.currency?.symbol,
-            getTradeVersion(trade)
-          ].join('/')
+          label: [trade?.inputAmount?.currency?.symbol, trade?.outputAmount?.currency?.symbol, 'v2'].join('/')
         })
         ReactGA.event({
           category: 'Routing',
@@ -633,7 +628,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           <span>
                             {ethUSDCPrice
                               ? `$ ${ethUSDCPrice
-                                  .quote(new TokenAmount(WETH[1], trade.minerBribe.raw))
+                                  .quote(CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient))
                                   .toSignificant(4)} (${trade.minerBribe.toSignificant(2)} ETH)`
                               : `${trade.minerBribe.toSignificant(2)} ETH`}
                           </span>

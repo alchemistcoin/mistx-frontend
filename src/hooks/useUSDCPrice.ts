@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, TokenAmount, Price, Token, Exchange } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, Price, Token, Exchange } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { useTradeExactOut } from './Trades'
@@ -6,13 +6,13 @@ import { useActiveWeb3React } from './'
 import { BigNumber } from '@ethersproject/bignumber'
 // USDC amount used when calculating spot price for a given currency.
 // The amount is large enough to filter low liquidity pairs.
-const usdcCurrencyAmount = new TokenAmount(USDC, BigNumber.from(100_000e6).toString())
+const usdcCurrencyAmount = CurrencyAmount.fromRawAmount(USDC, BigNumber.from(100_000e6).toString())
 
 /**
  * Returns the price in USDC of the input currency
  * @param currency currency to compute the USDC price of
  */
-export default function useUSDCPrice(currency?: Currency): Price | undefined {
+export default function useUSDCPrice(currency?: Currency): Price<Currency, Token> | undefined {
   const { chainId } = useActiveWeb3React()
 
   const v2USDCTrade = useTradeExactOut(
@@ -55,7 +55,7 @@ export default function useUSDCPrice(currency?: Currency): Price | undefined {
   }, [chainId, currency, v2USDCTrade])
 }
 
-export function useUSDCValue(currencyAmount: CurrencyAmount | undefined | null) {
+export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null) {
   const price = useUSDCPrice(currencyAmount?.currency)
 
   return useMemo(() => {

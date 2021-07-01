@@ -10,7 +10,6 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { useActiveWeb3React } from 'hooks'
 import { getEtherscanLink } from 'utils'
 import { Currency, Token } from '@alchemistcoin/sdk'
-import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { useUnsupportedTokens } from '../../hooks/Tokens'
 
 const DetailsFooter = styled.div<{ show: boolean }>`
@@ -51,7 +50,7 @@ export default function UnsupportedCurrencyFooter({
   const tokens =
     chainId && currencies
       ? currencies.map(currency => {
-          return wrappedCurrency(currency, chainId)
+          return currency?.wrapped
         })
       : []
 

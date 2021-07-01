@@ -1,4 +1,4 @@
-import { Trade, TradeType, Price, TokenAmount, WETH } from '@alchemistcoin/sdk'
+import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemistcoin/sdk'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
 import React, { useContext, useMemo, useState } from 'react'
@@ -82,12 +82,12 @@ export default function SwapModalFooter({
   disabledConfirm,
   ethUSDCPrice
 }: {
-  trade: Trade
+  trade: Trade<Currency, Currency, TradeType>
   allowedSlippage: number
   onConfirm: () => void
   swapErrorMessage: string | undefined
   disabledConfirm: boolean
-  ethUSDCPrice: Price | undefined
+  ethUSDCPrice: Price<Currency, Token> | undefined
 }) {
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
@@ -97,11 +97,10 @@ export default function SwapModalFooter({
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
-  const minerBribeEth = new TokenAmount(WETH[1], trade.minerBribe.raw)
-  const tokenCurrency =
-    trade.tradeType === TradeType.EXACT_INPUT
-      ? slippageAdjustedAmounts[Field.INPUT]?.currency
-      : slippageAdjustedAmounts[Field.OUTPUT]?.currency
+  const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
+  const tokenCurrency = trade.tradeType === TradeType.EXACT_INPUT
+    ? slippageAdjustedAmounts[Field.INPUT]?.currency
+    : slippageAdjustedAmounts[Field.OUTPUT]?.currency
   const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
 
   return (
