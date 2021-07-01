@@ -704,7 +704,6 @@ export default function Swap({ history }: RouteComponentProps) {
                     </StyledButtonError>
                   )}
                   {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-
                 </BottomGrouping>
               )}
             </SwapWrapper>
