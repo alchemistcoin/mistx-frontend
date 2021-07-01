@@ -9,7 +9,7 @@ import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { PendingTransactionIcon } from 'components/Icons'
 import { TYPE } from 'theme'
-import { ETHER, Token } from '@alchemistcoin/sdk'
+import { Ether, Token } from '@alchemistcoin/sdk'
 import { SettingsHeader } from 'components/shared/header/styled'
 
 const Wrapper = styled.div``
@@ -120,7 +120,7 @@ const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => {
         currency={
           amount.currency.address && amount.currency.chainId
             ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
-            : ETHER
+            : Ether.onChain(18)
         }
         size="24px"
       />

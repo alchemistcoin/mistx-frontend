@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
-import { BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { BribeEstimate, WETH, CurrencyAmount } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 
@@ -49,8 +49,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   useEffect(() => {
     let label = '.....'
     if (bribeEstimate && ethUSDCPrice) {
-      const minBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.minBribe.raw)
-      const maxBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.maxBribe.raw)
+      const minBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.minBribe.quotient)
+      const maxBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.maxBribe.quotient)
       label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
         .quote(maxBribeTokenAmount)
         .toSignificant(2)}`

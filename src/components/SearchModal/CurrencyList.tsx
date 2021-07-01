@@ -17,7 +17,6 @@ import { MenuItem } from './styleds'
 import Loader from '../Loader'
 import { isTokenOnList } from '../../utils'
 import ImportRow from './ImportRow'
-import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
@@ -56,7 +55,7 @@ const FixedContentRow = styled.div`
   align-items: center;
 `
 
-function Balance({ balance }: { balance: CurrencyAmount }) {
+function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
   return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(4)}</StyledBalanceText>
 }
 
@@ -222,7 +221,7 @@ export default function CurrencyList({
       const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
       const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
       const handleSelect = () => onCurrencySelect(currency)
-      const token = wrappedCurrency(currency, chainId)
+      const token = currency?.wrapped
 
       const showImport = index > currencies.length
 
@@ -248,7 +247,7 @@ export default function CurrencyList({
         )
       }
     },
-    [chainId, currencies.length, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
+    [currencies.length, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
   )
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])

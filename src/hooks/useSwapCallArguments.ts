@@ -1,8 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@alchemistcoin/sdk'
+import { JSBI, Percent, Router, SwapParameters, Trade, TradeType, Currency } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
-import { getTradeVersion } from '../data/V1'
 import { getRouterContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import useTransactionDeadline from './useTransactionDeadline'
@@ -32,7 +31,7 @@ export interface FailedCall {
  * @param recipientAddressOrName
  */
 export function useSwapCallArguments(
-  trade: Trade | undefined, // trade to execute, required
+  trade: Trade<Currency, Currency, TradeType> | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): PendingCall | undefined {
@@ -44,8 +43,7 @@ export function useSwapCallArguments(
 
   return useMemo((): PendingCall | undefined => {
     let pendingCall: PendingCall
-    const tradeVersion = getTradeVersion(trade)
-    if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return undefined
+    if (!trade || !recipient || !library || !account || !chainId || !deadline) return undefined
 
     const contract: Contract = getRouterContract(chainId, library, trade, account)
 

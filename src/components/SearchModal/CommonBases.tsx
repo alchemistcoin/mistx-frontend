@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Text } from 'rebass'
-import { ChainId, Currency, currencyEquals, ETHER, Token } from '@alchemistcoin/sdk'
+import { ChainId, Currency, Ether, currencyEquals, Token } from '@alchemistcoin/sdk'
 import styled from 'styled-components'
 
 import { SUGGESTED_BASES } from '../../constants'
@@ -34,6 +34,7 @@ export default function CommonBases({
   selectedCurrency?: Currency | null
   onSelect: (currency: Currency) => void
 }) {
+  const ether = useMemo(() => chainId && Ether.onChain(chainId), [chainId])
   return (
     <AutoColumn gap="md">
       <AutoRow>
@@ -45,13 +46,13 @@ export default function CommonBases({
       <AutoRow gap="4px">
         <BaseWrapper
           onClick={() => {
-            if (!selectedCurrency || !currencyEquals(selectedCurrency, ETHER)) {
-              onSelect(ETHER)
+            if (ether && (!selectedCurrency || !currencyEquals(selectedCurrency, ether))) {
+              onSelect(ether)
             }
           }}
-          disable={selectedCurrency === ETHER}
+          disable={selectedCurrency === ether}
         >
-          <CurrencyLogo currency={ETHER} style={{ marginRight: 8 }} />
+          <CurrencyLogo currency={ether} style={{ marginRight: 8 }} />
           <Text fontWeight={500} fontSize={16}>
             ETH
           </Text>
