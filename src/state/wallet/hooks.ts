@@ -36,7 +36,7 @@ export function useETHBalances(
     () =>
       addresses.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, address, i) => {
         const value = results?.[i]?.result?.[0]
-        if (value) memo[address] = CurrencyAmount.fromRawAmount(Ether.onChain(18), JSBI.BigInt(value.toString()))
+        if (value) memo[address] = CurrencyAmount.fromRawAmount(Ether.onChain(1), JSBI.BigInt(value.toString()))
         return memo
       }, {}),
     [addresses, results]

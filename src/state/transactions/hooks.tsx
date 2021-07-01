@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ChainId, CurrencyAmount, Trade } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
@@ -26,10 +26,10 @@ interface TransactionResponseUnsentData {
   claim?: {
     recipient: string
   }
-  trade?: Trade
+  trade?: Trade<Currency, Currency, TradeType>
   wrapType?: WrapType
-  inputAmount?: CurrencyAmount
-  outputAmount?: CurrencyAmount
+  inputAmount?: CurrencyAmount<Currency>
+  outputAmount?: CurrencyAmount<Currency>
 }
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
@@ -55,9 +55,9 @@ export function useTransactionAdder(): (
         summary?: string
         claim?: { recipient: string }
         approval?: { tokenAddress: string; spender: string }
-        trade?: Trade
-        inputAmount?: CurrencyAmount
-        outputAmount?: CurrencyAmount
+        trade?: Trade<Currency, Currency, TradeType>
+        inputAmount?: CurrencyAmount<Currency>
+        outputAmount?: CurrencyAmount<Currency>
         wrapType?: WrapType
       } = {}
     ) => {

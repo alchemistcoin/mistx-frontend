@@ -208,8 +208,6 @@ export default function CurrencyList({
     return currencies
   }, [currencies, otherListTokens, showMIST])
 
-  const { chainId } = useActiveWeb3React()
-
   const Row = useCallback(
     ({ data, index, style }) => {
       const row: Currency | BreakLine = data[index]
