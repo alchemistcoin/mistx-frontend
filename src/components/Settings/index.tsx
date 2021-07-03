@@ -1,11 +1,13 @@
-import React, { useContext, useRef, useState, useEffect } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { X } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
+import { useSelector, useDispatch } from 'react-redux'
 import { lighten, rem, darken } from 'polished'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
+import { updateFeeDisplayCurrency } from '../../state/user/actions'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
 import {
   useExpertModeManager,
@@ -13,6 +15,7 @@ import {
   useUserSlippageTolerance,
   useUserSingleHopOnly
 } from '../../state/user/hooks'
+import { AppState } from '../../state'
 import { TYPE } from '../../theme'
 // components
 import { SettingsHeader, SettingsHeaderEnd } from '../shared/header/styled'
@@ -183,6 +186,7 @@ const ToggleButton = styled.button<{ active: boolean }>`
 `
 
 export default function SettingsTab() {
+  const dispatch = useDispatch()
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
@@ -201,15 +205,9 @@ export default function SettingsTab() {
 
   useOnClickOutside(node, open ? toggle : undefined)
 
-  const [feeCurrency, setFeeCurrency] = useState<'ETH' | 'USDC'>('USDC')
-  const toggleFeeCurrency = (token: any): void => {
-    console.log('toggleFeeCurrency', token)
-    setFeeCurrency(token)
-  }
-
-  useEffect(() => {
-    console.log('useEffect')
-  }, [feeCurrency])
+  const feeDisplayCurrency = useSelector<AppState, AppState['user']['feeDisplayCurrency']>(
+    state => state.user.feeDisplayCurrency
+  )
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
@@ -273,11 +271,17 @@ export default function SettingsTab() {
                     <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
                   </Text>
                   <SettingsHeaderEnd>
-                    <ToggleButton onClick={() => toggleFeeCurrency('ETH')} active={feeCurrency === 'ETH'}>
-                      ETH
-                    </ToggleButton>
-                    <ToggleButton onClick={() => toggleFeeCurrency('USDC')} active={feeCurrency === 'USDC'}>
+                    <ToggleButton
+                      onClick={() => dispatch(updateFeeDisplayCurrency('USD'))}
+                      active={feeDisplayCurrency === 'USD'}
+                    >
                       USD
+                    </ToggleButton>
+                    <ToggleButton
+                      onClick={() => dispatch(updateFeeDisplayCurrency('ETH'))}
+                      active={feeDisplayCurrency === 'ETH'}
+                    >
+                      ETH
                     </ToggleButton>
                   </SettingsHeaderEnd>
                 </SettingsHeader>
