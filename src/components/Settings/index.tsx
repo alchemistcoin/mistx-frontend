@@ -1,8 +1,8 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState, useEffect } from 'react'
 import { X } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { lighten, rem } from 'polished'
+import { lighten, rem, darken } from 'polished'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
@@ -15,7 +15,7 @@ import {
 } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 // components
-import { SettingsHeader } from '../shared/header/styled'
+import { SettingsHeader, SettingsHeaderEnd } from '../shared/header/styled'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import Modal from '../Modal'
@@ -140,6 +140,48 @@ const StyledRowFixed = styled(RowFixed)`
   width: 100%;
 `
 
+const ToggleButton = styled.button<{ active: boolean }>`
+  color: ${({ theme }) => theme.text1};
+  align-items: center;
+  height: 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: auto;
+  min-width: 3.5rem;
+  border: 1px solid ${({ theme }) => theme.primary2};
+  outline: none;
+  background: transparent;
+  font-weight: 600;
+  background: transparent;
+  cursor: pointer;
+  color: ${({ theme }) => theme.text1};
+
+  ${({ active, theme }) =>
+    active &&
+    `
+      background: ${theme.primary2};
+      color: ${theme.text5};
+  `}
+
+  &:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+  }
+
+  &:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  :hover {
+    border-color: solid ${({ theme }) => darken(0.1, theme.primary2)};
+  }
+  :focus {
+    background: ${({ theme }) => darken(0.1, theme.primary2)};
+  }
+`
+
 export default function SettingsTab() {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
@@ -158,6 +200,16 @@ export default function SettingsTab() {
   const [showConfirmation, setShowConfirmation] = useState(false)
 
   useOnClickOutside(node, open ? toggle : undefined)
+
+  const [feeCurrency, setFeeCurrency] = useState<'ETH' | 'USDC'>('USDC')
+  const toggleFeeCurrency = (token: any): void => {
+    console.log('toggleFeeCurrency', token)
+    setFeeCurrency(token)
+  }
+
+  useEffect(() => {
+    console.log('useEffect')
+  }, [feeCurrency])
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
@@ -217,9 +269,17 @@ export default function SettingsTab() {
               <StyledRowFixed>
                 <SettingsHeader>
                   <Text fontWeight={600} fontSize={20}>
-                    Transaction Fee (ETH)
+                    Transaction Fee
+                    <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
                   </Text>
-                  <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
+                  <SettingsHeaderEnd>
+                    <ToggleButton onClick={() => toggleFeeCurrency('ETH')} active={feeCurrency === 'ETH'}>
+                      ETH
+                    </ToggleButton>
+                    <ToggleButton onClick={() => toggleFeeCurrency('USDC')} active={feeCurrency === 'USDC'}>
+                      USD
+                    </ToggleButton>
+                  </SettingsHeaderEnd>
                 </SettingsHeader>
               </StyledRowFixed>
               <MinerBribeSlider />

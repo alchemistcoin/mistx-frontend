@@ -204,11 +204,25 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 color: theme.text5,
                 padding: '0.25rem 0.5rem',
                 cursor: 'pointer',
-                width: '100px',
+                minWidth: '150px',
                 textAlign: 'center',
                 zIndex: 3
               }}
             >
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '-7px',
+                  left: '50%',
+                  height: '9px',
+                  marginLeft: '-8px',
+                  fontWeight: 700,
+                  zIndex: 2,
+                  borderLeft: '8px solid transparent',
+                  borderTop: '8px solid #fff',
+                  borderRight: '8px solid transparent'
+                }}
+              />
               {sliderThumbLabel}
             </div>
             <div

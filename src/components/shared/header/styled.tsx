@@ -7,6 +7,12 @@ export const SettingsHeader = styled.div`
   margin: 0 0 1.5rem;
   color: ${({ theme }) => theme.text1};
   align-items: center;
+  justify-content: space-between;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+  }
 
   &:before {
     position: absolute;
@@ -17,4 +23,10 @@ export const SettingsHeader = styled.div`
     content: '';
     background-color: ${({ theme }) => theme.primary2};
   }
+`
+
+export const SettingsHeaderEnd = styled.div`
+  position: relative;
+  display: flex;
+  align-self: flex-end;
 `
