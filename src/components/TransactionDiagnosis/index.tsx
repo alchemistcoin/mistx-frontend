@@ -120,7 +120,7 @@ const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => {
         currency={
           amount.currency.address && amount.currency.chainId
             ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
-            : Ether.onChain(1)
+            : Ether.onChain(1) // chainId 1 ok since this is only for display purposes
         }
         size="24px"
       />

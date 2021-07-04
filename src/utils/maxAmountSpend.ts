@@ -10,9 +10,11 @@ export function maxAmountSpend(
   currencyAmount?: CurrencyAmount<Currency>,
   wrapType?: WrapType
 ): CurrencyAmount<Currency> | undefined {
-  const ETH = Ether.onChain(1)
   if (!currencyAmount) return undefined
+
   if (currencyAmount.currency.isNative && wrapType !== WrapType.NOT_APPLICABLE) {
+    const ETH = Ether.onChain(currencyAmount.currency.chainId)
+
     if (JSBI.greaterThan(currencyAmount.quotient, MIN_ETH)) {
       return CurrencyAmount.fromRawAmount(ETH, JSBI.subtract(currencyAmount.quotient, MIN_ETH))
     } else {
