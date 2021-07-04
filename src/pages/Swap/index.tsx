@@ -711,14 +711,13 @@ export default function Swap({ history }: RouteComponentProps) {
                       onClick={swapButtonAction}
                       id="swap-button"
                       disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                      error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
                     >
                       <Text fontSize={20} fontWeight={700}>
                         {swapInputError
                           ? swapInputError
                           : priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
-                          : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                          : `Swap`}
                       </Text>
                     </StyledButtonError>
                   )}
