@@ -173,6 +173,7 @@ const StyledButtonYellow = styled(StyledButtonError)`
 `
 
 // Lazy Load
+const NetworkWarningModal = React.lazy(() => import('components/NetworkWarningModal'))
 const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'))
 const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
@@ -508,6 +509,7 @@ export default function Swap({ history }: RouteComponentProps) {
   return (
     <>
       <Suspense fallback={null}>
+        <NetworkWarningModal />
         <TokenWarningModal
           isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
           tokens={importTokensNotInDefault}

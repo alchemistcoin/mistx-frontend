@@ -21,7 +21,7 @@ export default function useLatestGasPrice(): BigNumber | undefined {
         return
       }
 
-      setGasPrice(finalTransaction.gasPrice.toString())
+      setGasPrice(finalTransaction.gasPrice?.toString())
     }
     calculateMinerBribe()
   }, [library, currentBlock])

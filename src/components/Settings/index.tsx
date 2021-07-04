@@ -249,7 +249,7 @@ export default function SettingsTab() {
             </AutoColumn>
           </ModalContentWrapper>
         </Modal>
-        <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
+        <StyledMenuButton onClick={() => !open && toggle()} id="open-settings-dialog-button">
           <StyledMenuIcon>{open ? <Close /> : <Cog />}</StyledMenuIcon>
           {expertMode ? (
             <EmojiWrapper>
