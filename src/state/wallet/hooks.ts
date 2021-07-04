@@ -14,6 +14,7 @@ export function useETHBalances(
   uncheckedAddresses?: (string | undefined)[]
 ): { [address: string]: CurrencyAmount<Currency> | undefined } {
   const multicallContract = useMulticallContract()
+  const { chainId } = useActiveWeb3React()
 
   const addresses: string[] = useMemo(
     () =>
@@ -32,15 +33,14 @@ export function useETHBalances(
     addresses.map(address => [address])
   )
 
-  return useMemo(
-    () =>
-      addresses.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, address, i) => {
-        const value = results?.[i]?.result?.[0]
-        if (value) memo[address] = CurrencyAmount.fromRawAmount(Ether.onChain(1), JSBI.BigInt(value.toString()))
-        return memo
-      }, {}),
-    [addresses, results]
-  )
+  return useMemo(() => {
+    if (!chainId) return {}
+    return addresses.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, address, i) => {
+      const value = results?.[i]?.result?.[0]
+      if (value) memo[address] = CurrencyAmount.fromRawAmount(Ether.onChain(chainId), JSBI.BigInt(value.toString()))
+      return memo
+    }, {})
+  }, [addresses, chainId, results])
 }
 
 /**
