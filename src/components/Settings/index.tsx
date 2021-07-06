@@ -137,6 +137,10 @@ const ModalContentWrapper = styled.div`
 const SettingWrapper = styled.div<{ darkBg?: boolean }>`
   padding: 1.5rem 1.5rem;
   background-color: ${({ theme, darkBg }) => darkBg && '#232E3B'};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 1.5rem 1rem;
+  `}
 `
 
 const StyledRowFixed = styled(RowFixed)`

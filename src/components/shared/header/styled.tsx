@@ -22,6 +22,10 @@ export const SettingsHeader = styled.div`
     width: 2px;
     content: '';
     background-color: ${({ theme }) => theme.primary2};
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      left: -1rem
+   `}
   }
 `
 
