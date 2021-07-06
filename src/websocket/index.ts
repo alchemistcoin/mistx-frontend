@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { io, Socket } from 'socket.io-client'
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
+import { MistxSocket } from '@alchemistcoin/sdk'
 
 // state
 import { updateGas } from '../state/application/actions'
@@ -100,30 +100,6 @@ export interface TransactionDiagnosisRes {
   mistxDiagnosis: Diagnosis
 }
 
-interface QuoteEventsMap {
-  [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
-  [Event.SOCKET_ERR]: (err: any) => void
-  [Event.GAS_CHANGE]: (response: Gas) => void
-  [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
-  [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
-  [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
-  [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
-  [Event.TRANSACTION_STATUS_REQUEST]: (response: TransactionReq) => void
-  [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
-}
-
-const tokenKey = `SESSION_TOKEN`
-const token = localStorage.getItem(tokenKey)
-const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
-
-const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
-  transports: ['websocket'],
-  auth: { token },
-  reconnection: true,
-  reconnectionDelay: 5000,
-  autoConnect: true
-})
-
 function transactionResToastStatus(transaction: TransactionRes) {
   let pending = false
   let success = false
@@ -155,6 +131,9 @@ function transactionResToastStatus(transaction: TransactionRes) {
   }
 }
 
+const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
+const socket = new MistxSocket(serverUrl)
+
 export default function Sockets(): null {
   const dispatch = useDispatch()
   const addPopup = useAddPopup()
@@ -164,107 +143,93 @@ export default function Sockets(): null {
   const pendingTransactions = usePendingTransactions()
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // console.log('websocket connected')
-      dispatch(updateSocketStatus(true))
-    })
+    const disconnect = socket.init({
+      onConnect: () => {
+        // console.log('websocket connected')
+        dispatch(updateSocketStatus(true))
+      },
+      onConnectError: () => {
+        // console.log('websocket connect error', err)
+        dispatch(updateSocketStatus(false))
+      },
+      onDisconnect: () => {
+        // console.log('websocket disconnect', err)
+        dispatch(updateSocketStatus(false))
+      },
+      onError: (err: any) => {
+        // console.log('websocket err', err)
+        if (err.event === Event.TRANSACTION_REQUEST) {
+          const transactionReq = err.data as TransactionReq
+          const hash = keccak256(transactionReq.serializedSwap)
+          removeTransaction({
+            chainId: transactionReq.chainId,
+            hash
+          })
+        }
+      },
+      onGasChange: (gas: Gas) => {
+        dispatch(updateGas(gas))
+      },
+      onTransactionResponse: (transaction: TransactionRes) => {
+        const hash = keccak256(transaction.transaction.serializedSwap)
+        const tx = allTransactions?.[hash]
+        const summary = tx?.summary
+        const previouslyCompleted = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
 
-    socket.on('connect_error', err => {
-      // console.log('websocket connect error', err)
-      dispatch(updateSocketStatus(false))
-    })
-
-    socket.on('disconnect', err => {
-      // console.log('websocket disconnect', err)
-      dispatch(updateSocketStatus(false))
-    })
-
-    socket.on(Event.SOCKET_ERR, err => {
-      // console.log('websocket err', err)
-      if (err.event === Event.TRANSACTION_REQUEST) {
-        const transactionReq = err.data as TransactionReq
-        const hash = keccak256(transactionReq.serializedSwap)
-        removeTransaction({
-          chainId: transactionReq.chainId,
+        const transactionId = {
+          chainId: transaction.transaction.chainId,
           hash
-        })
-      }
-    })
-
-    socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
-      localStorage.setItem(tokenKey, session.token)
-    })
-
-    socket.on(Event.GAS_CHANGE, gas => {
-      dispatch(updateGas(gas))
-    })
-
-    socket.on(Event.TRANSACTION_RESPONSE, transaction => {
-      const hash = keccak256(transaction.transaction.serializedSwap)
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
-      const previouslyCompleted = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
-
-      const transactionId = {
-        chainId: transaction.transaction.chainId,
-        hash
-      }
-
-      if (tx?.status === Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
-        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
-      }
-
-      if (!previouslyCompleted) {
-        updateTransaction(transactionId, {
-          transaction: transaction.transaction,
-          message: transaction.message,
-          status: transaction.status,
-          updatedAt: new Date().getTime()
-        })
-
-        if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
-          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
         }
 
-        addPopup(
-          {
-            txn: {
-              hash,
-              summary,
-              ...transactionResToastStatus(transaction)
-            }
-          },
-          hash,
-          60000
-        )
+        if (tx?.status === Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
+        }
+
+        if (!previouslyCompleted) {
+          updateTransaction(transactionId, {
+            transaction: transaction.transaction,
+            message: transaction.message,
+            status: transaction.status,
+            updatedAt: new Date().getTime()
+          })
+
+          if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
+            window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+          }
+
+          addPopup(
+            {
+              txn: {
+                hash,
+                summary,
+                ...transactionResToastStatus(transaction)
+              }
+            },
+            hash,
+            60000
+          )
+        }
+      },
+      onTransactionUpdate: (diagnosis: TransactionDiagnosisRes) => {
+        // console.log('- log transaction diagnosis', diagnosis)
+        const hash = keccak256(diagnosis.transaction.serializedSwap)
+
+        const transactionId = {
+          chainId: diagnosis.transaction.chainId,
+          hash
+        }
+
+        updateTransaction(transactionId, {
+          blockNumber: diagnosis.blockNumber,
+          flashbotsResolution: diagnosis.flashbotsResolution,
+          mistxDiagnosis: diagnosis.mistxDiagnosis,
+          updatedAt: new Date().getTime()
+        })
       }
-    })
-
-    socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
-      // console.log('- log transaction diagnosis', diagnosis)
-      const hash = keccak256(diagnosis.transaction.serializedSwap)
-
-      const transactionId = {
-        chainId: diagnosis.transaction.chainId,
-        hash
-      }
-
-      updateTransaction(transactionId, {
-        blockNumber: diagnosis.blockNumber,
-        flashbotsResolution: diagnosis.flashbotsResolution,
-        mistxDiagnosis: diagnosis.mistxDiagnosis,
-        updatedAt: new Date().getTime()
-      })
     })
 
     return () => {
-      socket.off('connect')
-      socket.off('connect_error')
-      socket.off(Event.SOCKET_ERR)
-      socket.off(Event.SOCKET_SESSION_RESPONSE)
-      socket.off(Event.GAS_CHANGE)
-      socket.off(Event.TRANSACTION_RESPONSE)
-      socket.off(Event.TRANSACTION_DIAGNOSIS)
+      disconnect()
     }
   }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
 
@@ -289,7 +254,7 @@ export default function Sockets(): null {
             }
             updateTransaction(transactionId, {
               transaction: tx.processed,
-              message: 'TX is detected as expired on FE',
+              message: 'Transaction expired',
               status: Status.FAILED_TRANSACTION,
               updatedAt: timeNow
             })
@@ -297,7 +262,7 @@ export default function Sockets(): null {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               const transactionReq: TransactionProcessed = tx.processed
-              socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
+              socket.emitStatusRequest(transactionReq)
             }
           }
         })
@@ -312,9 +277,9 @@ export default function Sockets(): null {
 }
 
 export function emitTransactionRequest(transaction: TransactionReq) {
-  socket.emit(Event.TRANSACTION_REQUEST, transaction)
+  socket.emitTransactionRequest(transaction)
 }
 
 export function emitTransactionCancellation(transaction: TransactionProcessed) {
-  socket.emit(Event.TRANSACTION_CANCEL_REQUEST, transaction)
+  socket.emitTransactionCancellation(transaction)
 }

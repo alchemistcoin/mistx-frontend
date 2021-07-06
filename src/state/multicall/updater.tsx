@@ -145,6 +145,8 @@ export default function Updater(): null {
       cancellations.current?.cancellations?.forEach(c => c())
     }
 
+    console.log('dispatch multical', chainId, multicallContract)
+
     dispatch(
       fetchingMulticallResults({
         calls,

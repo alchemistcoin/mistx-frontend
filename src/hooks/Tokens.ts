@@ -184,9 +184,8 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 }
 
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
+  const { chainId } = useActiveWeb3React()
   const isETH = currencyId?.toUpperCase() === 'ETH'
   const token = useToken(isETH ? undefined : currencyId)
-  const { chainId } = useActiveWeb3React()
-  if (!chainId) return
-  return isETH ? Ether.onChain(chainId) : token
+  return useMemo(() => (chainId && isETH ? Ether.onChain(chainId) : token), [chainId, isETH, token])
 }
