@@ -171,9 +171,9 @@ export function useSwapCallback(
             let transactions: TransactionReq[] = []
             if (signedApproval) {
               const signedTransactionApproval: TransactionReq = {
-                estimatedGas: Number(trade.estimatedGas),
-                estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
-                serialized: signedTx,
+                estimatedGas: 25000,
+                estimatedEffectiveGasPrice: 0,
+                serialized: signedApproval,
                 raw: undefined
               }
               transactions = [signedTransactionApproval, transactionReq] // signed approval first
