@@ -18,10 +18,9 @@ export default function useLatestGasPrice(): BigNumber | undefined {
       const finalTransaction = block.transactions && block.transactions[block.transactions.length - 1]
       if (!finalTransaction) {
         setGasPrice(undefined)
-        return
+      } else {
+        setGasPrice(finalTransaction.gasPrice?.toString())
       }
-
-      setGasPrice(finalTransaction.gasPrice.toString())
     }
     calculateMinerBribe()
   }, [library, currentBlock])
