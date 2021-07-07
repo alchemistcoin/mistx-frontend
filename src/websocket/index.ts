@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
-import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
+import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
-import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import PJSON from '../../package.json'
-import FATHOM_GOALS from '../constants/fathom'
+// import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+// import FATHOM_GOALS from '../constants/fathom'
 
 // state
 import { updateGas } from '../state/application/actions'
@@ -18,7 +18,7 @@ import {
   useTransactionUpdater,
   usePendingTransactions
 } from 'state/transactions/hooks'
-import { ChainId } from '@alchemistcoin/sdk'
+// import { ChainId } from '@alchemistcoin/sdk'
 import { useAddPopup } from 'state/application/hooks'
 
 export enum Event {
@@ -30,14 +30,17 @@ export enum Event {
   TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
   TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS',
   TRANSACTION_STATUS_REQUEST = 'TRANSACTION_STATUS_REQUEST',
-  TRANSACTION_CANCEL_RESPONSE = 'TRANSACTION_CANCEL_RESPONSE'
+  TRANSACTION_CANCEL_RESPONSE = 'TRANSACTION_CANCEL_RESPONSE',
+  MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
+  BUNDLE_RESPONSE = 'BUNDLE_RESPONSE'
 }
 
 export enum Status {
   PENDING_TRANSACTION = 'PENDING_TRANSACTION',
   FAILED_TRANSACTION = 'FAILED_TRANSACTION',
   SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
-  CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL'
+  CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL',
+  FAILED_BUNDLE = 'FAILED_BUNDLE'
 }
 
 export enum Diagnosis {
@@ -57,26 +60,26 @@ export interface SocketSession {
   token: string
   version: MistXVersion | undefined
 }
-export interface SwapReq {
-  amount0: BigNumberish
-  amount1: BigNumberish
-  path: Array<string>
-  to: string
-  deadline: string | string[]
-}
+// export interface SwapReq {
+//   amount0: BigNumberish
+//   amount1: BigNumberish
+//   path: Array<string>
+//   to: string
+//   deadline: string | string[]
+// }
 
-export interface TransactionReq {
-  chainId: ChainId
-  serializedSwap: string
-  serializedApprove: string | undefined
-  swap: SwapReq
-  bribe: BigNumberish
-  routerAddress: string
-  estimatedEffectiveGasPrice?: number
-  estimatedGas?: number
-  from: string
-  timestamp?: number
-}
+// export interface TransactionReq {
+//   chainId: ChainId
+//   serializedSwap: string
+//   serializedApprove: string | undefined
+//   swap: SwapReq
+//   bribe: BigNumberish
+//   routerAddress: string
+//   estimatedEffectiveGasPrice?: number
+//   estimatedGas?: number
+//   from: string
+//   timestamp?: number
+// }
 
 export interface TransactionRes {
   transaction: TransactionProcessed
@@ -85,26 +88,75 @@ export interface TransactionRes {
   error: string
 }
 
-export interface TransactionProcessed {
-  serializedSwap: string
-  serializedApprove: string | undefined
-  swap: SwapReq
-  bribe: BigNumberish
-  routerAddress: string
-  estimatedEffectiveGasPrice: number
-  estimatedGas: number
-  timestamp: number // EPOCH
-  sessionToken: string
-  chainId: number
-  simulateOnly: boolean
-  from: string
-}
-
+// export interface TransactionProcessed {
+//   serializedSwap: string
+//   serializedApprove: string | undefined
+//   swap: SwapReq
+//   bribe: BigNumberish
+//   routerAddress: string
+//   estimatedEffectiveGasPrice: number
+//   estimatedGas: number
+//   timestamp: number // EPOCH
+//   sessionToken: string
+//   chainId: number
+//   simulateOnly: boolean
+//   from: string
+// }
 export interface TransactionDiagnosisRes {
   transaction: TransactionProcessed
   blockNumber: number
   flashbotsResolution: string
   mistxDiagnosis: Diagnosis
+}
+export interface TransactionReq {
+  serialized: string // serialized transactions
+  raw: SwapReq | undefined // raw def. of each type of trade
+  estimatedGas?: number
+  estimatedEffectiveGasPrice?: number
+}
+
+// ---------------------------------------
+
+export interface TransactionProcessed {
+  serialized: string
+  bundle: string // bundle.serialized
+  raw: SwapReq
+  estimatedGas: number
+  estimatedEffectiveGasPrice: number
+}
+export interface BundleReq {
+  transactions: TransactionReq[]
+  chainId: number
+  bribe: string // BigNumber
+  from: string
+  deadline: BigNumberish
+  simulateOnly: boolean
+}
+export interface SwapReq {
+  amount0: BigNumberish
+  amount1: BigNumberish
+  path: Array<string>
+  to: string
+}
+
+interface BundleProcessed {
+  serialized: string
+  transactions: TransactionProcessed[]
+  bribe: BigNumberish
+  sessionToken: string
+  chainId: number
+  timestamp: number // EPOCH,
+  totalEstimatedGas: number
+  totalEstimatedEffectiveGasPrice: number
+  from: string
+  deadline: BigNumberish
+  simulateOnly: boolean
+}
+interface BundleRes {
+  bundle: BundleProcessed
+  status: string
+  message: string
+  error: string
 }
 
 interface QuoteEventsMap {
@@ -117,6 +169,8 @@ interface QuoteEventsMap {
   [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
   [Event.TRANSACTION_STATUS_REQUEST]: (response: TransactionReq) => void
   [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
+  [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
+  [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -131,36 +185,36 @@ const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
   autoConnect: true
 })
 
-function transactionResToastStatus(transaction: TransactionRes) {
-  let pending = false
-  let success = false
-  let message = transaction.message
+// function transactionResToastStatus(transaction: TransactionRes) {
+//   let pending = false
+//   let success = false
+//   let message = transaction.message
 
-  switch (transaction.status) {
-    case Status.FAILED_TRANSACTION:
-      break
-    case Status.PENDING_TRANSACTION:
-      pending = true
-      break
-    case Status.SUCCESSFUL_TRANSACTION:
-      message = 'Successful Transaction'
-      success = true
-      break
-    case Status.CANCEL_TRANSACTION_SUCCESSFUL:
-      success = true
-      break
-    default:
-      pending = true
-      break
-  }
+//   switch (transaction.status) {
+//     case Status.FAILED_TRANSACTION:
+//       break
+//     case Status.PENDING_TRANSACTION:
+//       pending = true
+//       break
+//     case Status.SUCCESSFUL_TRANSACTION:
+//       message = 'Successful Transaction'
+//       success = true
+//       break
+//     case Status.CANCEL_TRANSACTION_SUCCESSFUL:
+//       success = true
+//       break
+//     default:
+//       pending = true
+//       break
+//   }
 
-  return {
-    pending,
-    success,
-    message,
-    status: transaction.status
-  }
-}
+//   return {
+//     pending,
+//     success,
+//     message,
+//     status: transaction.status
+//   }
+// }
 
 export default function Sockets(): null {
   const dispatch = useDispatch()
@@ -190,14 +244,14 @@ export default function Sockets(): null {
 
     socket.on(Event.SOCKET_ERR, err => {
       // console.log('websocket err', err)
-      if (err.event === Event.TRANSACTION_REQUEST) {
-        const transactionReq = err.data as TransactionReq
-        const hash = keccak256(transactionReq.serializedSwap)
-        removeTransaction({
-          chainId: transactionReq.chainId,
-          hash
-        })
-      }
+      // if (err.event === Event.TRANSACTION_REQUEST) {
+      //   const transactionReq = err.data as TransactionReq
+      //   const hash = keccak256(transactionReq.serializedSwap)
+      //   removeTransaction({
+      //     chainId: transactionReq.chainId,
+      //     hash
+      //   })
+      // }
     })
 
     socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
@@ -219,61 +273,100 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.TRANSACTION_RESPONSE, transaction => {
-      const hash = keccak256(transaction.transaction.serializedSwap)
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
-      const previouslyCompleted = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
+      // const hash = keccak256(transaction.transaction.serializedSwap)
+      // const tx = allTransactions?.[hash]
+      // const summary = tx?.summary
+      // const previouslyCompleted = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
+      // const transactionId = {
+      //   chainId: transaction.transaction.chainId,
+      //   hash
+      // }
+      // if (tx?.status === Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
+      //   window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
+      // }
+      // if (!previouslyCompleted) {
+      //   updateTransaction(transactionId, {
+      //     transaction: transaction.transaction,
+      //     message: transaction.message,
+      //     status: transaction.status,
+      //     updatedAt: new Date().getTime()
+      //   })
+      //   if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
+      //     window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+      //   }
+      //   addPopup(
+      //     {
+      //       txn: {
+      //         hash,
+      //         summary,
+      //         ...transactionResToastStatus(transaction)
+      //       }
+      //     },
+      //     hash,
+      //     60000
+      //   )
+      // }
+    })
 
-      const transactionId = {
-        chainId: transaction.transaction.chainId,
-        hash
-      }
+    socket.on(Event.BUNDLE_RESPONSE, response => {
 
-      if (tx?.status === Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
-        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
-      }
+      const [transaction] = response.bundle.transactions
 
-      if (!previouslyCompleted) {
-        updateTransaction(transactionId, {
-          transaction: transaction.transaction,
-          message: transaction.message,
-          status: transaction.status,
-          updatedAt: new Date().getTime()
-        })
+      if (transaction) {
+        const hash = keccak256(transaction.serialized)
+        const tx = allTransactions?.[hash]
+        const summary = tx?.summary
+        const previouslyCompleted = tx?.status !== Status.PENDING_TRANSACTION && tx?.receipt
 
-        if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
-          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
-        }
+        console.log('tx', tx)
+        console.log('summary', summary)
+        console.log('previouslyCompleted', previouslyCompleted)
 
-        addPopup(
-          {
-            txn: {
-              hash,
-              summary,
-              ...transactionResToastStatus(transaction)
-            }
-          },
-          hash,
-          60000
-        )
+        // const transactionId = {
+        //   chainId: transaction.chainId,
+        //   hash
+        // }
+        // if (tx?.status === Status.CANCEL_TRANSACTION_SUCCESSFUL && window.fathom) {
+        //   window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
+        // }
+        // if (!previouslyCompleted) {
+        //   updateTransaction(transactionId, {
+        //     transaction: transaction.transaction,
+        //     message: transaction.message,
+        //     status: transaction.status,
+        //     updatedAt: new Date().getTime()
+        //   })
+        //   if (transaction.status === Status.SUCCESSFUL_TRANSACTION && window.fathom) {
+        //     window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+        //   }
+        //   addPopup(
+        //     {
+        //       txn: {
+        //         hash,
+        //         summary,
+        //         ...transactionResToastStatus(transaction)
+        //       }
+        //     },
+        //     hash,
+        //     60000
+        //   )
+        //}
       }
     })
 
     socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
-      // console.log('- log transaction diagnosis', diagnosis)
-      const hash = keccak256(diagnosis.transaction.serializedSwap)
-
-      const transactionId = {
-        chainId: diagnosis.transaction.chainId,
-        hash
-      }
-
-      updateTransaction(transactionId, {
-        blockNumber: diagnosis.blockNumber,
-        flashbotsResolution: diagnosis.flashbotsResolution,
-        mistxDiagnosis: diagnosis.mistxDiagnosis,
-        updatedAt: new Date().getTime()
-      })
+      // // console.log('- log transaction diagnosis', diagnosis)
+      // const hash = keccak256(diagnosis.transaction.serializedSwap)
+      // const transactionId = {
+      //   chainId: diagnosis.transaction.chainId,
+      //   hash
+      // }
+      // updateTransaction(transactionId, {
+      //   blockNumber: diagnosis.blockNumber,
+      //   flashbotsResolution: diagnosis.flashbotsResolution,
+      //   mistxDiagnosis: diagnosis.mistxDiagnosis,
+      //   updatedAt: new Date().getTime()
+      // })
     })
 
     return () => {
@@ -296,51 +389,51 @@ export default function Sockets(): null {
   ])
 
   // Check each pending transaction every 5 seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
-  useEffect(() => {
-    let interval: any
-    clearInterval(interval)
-    if (pendingTransactions) {
-      interval = setInterval(() => {
-        if (!webSocketConnected) return
-        const timeNow = new Date().getTime()
-        Object.keys(pendingTransactions).forEach(hash => {
-          const tx = pendingTransactions[hash]
-          let isDead = false
-          if (tx.processed?.swap?.deadline) {
-            const deadline = BigNumber.from(tx.processed?.swap?.deadline).toNumber() * 1000
-            if (deadline <= timeNow - MANUAL_CHECK_TX_STATUS_INTERVAL * 1000) isDead = true
-          }
-          if (tx.processed && isDead) {
-            const transactionId = {
-              chainId: tx.processed.chainId,
-              hash
-            }
-            updateTransaction(transactionId, {
-              transaction: tx.processed,
-              message: 'TX is detected as expired on FE',
-              status: Status.FAILED_TRANSACTION,
-              updatedAt: timeNow
-            })
-          } else if (tx.updatedAt) {
-            const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
-            if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
-              const transactionReq: TransactionProcessed = tx.processed
-              socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
-            }
-          }
-        })
-      }, 5000)
-    } else {
-      clearInterval(interval)
-    }
-    return () => clearInterval(interval)
-  }, [pendingTransactions, updateTransaction, webSocketConnected])
+  // useEffect(() => {
+  //   let interval: any
+  //   clearInterval(interval)
+  //   if (pendingTransactions) {
+  //     interval = setInterval(() => {
+  //       if (!webSocketConnected) return
+  //       const timeNow = new Date().getTime()
+  //       Object.keys(pendingTransactions).forEach(hash => {
+  //         const tx = pendingTransactions[hash]
+  //         let isDead = false
+  //         if (tx.processed?.swap?.deadline) {
+  //           const deadline = BigNumber.from(tx.processed?.swap?.deadline).toNumber() * 1000
+  //           if (deadline <= timeNow - MANUAL_CHECK_TX_STATUS_INTERVAL * 1000) isDead = true
+  //         }
+  //         if (tx.processed && isDead) {
+  //           const transactionId = {
+  //             chainId: tx.processed.chainId,
+  //             hash
+  //           }
+  //           updateTransaction(transactionId, {
+  //             transaction: tx.processed,
+  //             message: 'TX is detected as expired on FE',
+  //             status: Status.FAILED_TRANSACTION,
+  //             updatedAt: timeNow
+  //           })
+  //         } else if (tx.updatedAt) {
+  //           const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
+  //           if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
+  //             const transactionReq: TransactionProcessed = tx.processed
+  //             socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
+  //           }
+  //         }
+  //       })
+  //     }, 5000)
+  //   } else {
+  //     clearInterval(interval)
+  //   }
+  //   return () => clearInterval(interval)
+  // }, [pendingTransactions, updateTransaction, webSocketConnected])
 
   return null
 }
 
-export function emitTransactionRequest(transaction: TransactionReq) {
-  socket.emit(Event.TRANSACTION_REQUEST, transaction)
+export function emitTransactionRequest(bundle: BundleReq) {
+  socket.emit(Event.MISTX_BUNDLE_REQUEST, bundle)
 }
 
 export function emitTransactionCancellation(transaction: TransactionProcessed) {
