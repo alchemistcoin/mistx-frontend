@@ -89,10 +89,10 @@ export default function Transaction({ hash }: { hash: string }) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
-
+  console.log('allTransactions', allTransactions)
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
-  const isCancelled = tx?.cancel === Status.CANCEL_TRANSACTION_SUCCESSFUL
+  const isCancelled = tx?.cancel === Status.CANCEL_BUNDLE_SUCCESSFUL
   const pending = !isCancelled && tx && isPendingTransaction(tx)
   const canCancel = pending && typeof tx?.status !== 'undefined'
   const success = tx && isSuccessfulTransaction(tx)

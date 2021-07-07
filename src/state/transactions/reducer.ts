@@ -39,9 +39,9 @@ export interface TransactionDetails {
   from: string
   swap?: SwapReq
   blockNumber?: number // from transaction diagnosis
-  status?: Status
+  status?: Status | string
   message?: string
-  cancel?: Status
+  cancel?: Status | string
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
   updatedAt?: number
