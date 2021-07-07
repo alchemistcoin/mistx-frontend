@@ -195,11 +195,10 @@ export function useSwapCallback(
               {
                 summary: withRecipient,
                 trade
-                //relay
               }
             )
 
-            emitTransactionRequest(bundleReq) // change ?
+            emitTransactionRequest(bundleReq) // change to emitBundleRequest ?
 
             return hash
           } catch (error) {
