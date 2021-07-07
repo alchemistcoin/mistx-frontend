@@ -47,8 +47,8 @@ export const removeTransaction = createAction<{
 export const updateTransaction = createAction<{
   chainId: ChainId
   hash: string
-  cancel?: Status | undefined
-  status?: Status
+  cancel?: Status | string | undefined
+  status?: Status | string
   blockNumber?: number
   message?: string
   flashbotsResolution?: string

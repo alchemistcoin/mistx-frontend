@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import { ChainId, CurrencyAmount, Trade } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
@@ -9,7 +8,6 @@ import { TransactionDetails } from './reducer'
 import { useAddPopup } from '../application/hooks'
 import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from '../../websocket'
 import { WrapType } from '../../hooks/useWrapCallback'
-
 interface TransactionResponseIdentifier {
   chainId: ChainId
   hash: string
@@ -98,11 +96,19 @@ export function useTransactionAdder(): (
   )
 }
 
+// export function useTransactionAdder() {
+//   return useCallback((test, test2) => {
+//       if (!account) return
+//     if (!chainId) return
+//     console.log('- log custom', test, test2)
+//   }, [])
+// }
+
 export function useTransactionUpdater(): (
   response: TransactionResponseIdentifier,
   customData?: {
     transaction?: TransactionProcessed
-    status?: Status
+    status?: Status | string
     message?: string
     blockNumber?: number
     flashbotsResolution?: string
@@ -126,7 +132,7 @@ export function useTransactionUpdater(): (
       }: {
         transaction?: TransactionProcessed
         message?: string
-        status?: Status
+        status?: Status | string
         blockNumber?: number
         flashbotsResolution?: string
         mistxDiagnosis?: Diagnosis
