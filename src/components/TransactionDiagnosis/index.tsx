@@ -144,7 +144,7 @@ export default function TransactionDiagnosis() {
   const canCancel = typeof tx?.status !== 'undefined'
   const [cancelIntent, setCancelIntent] = useState(false)
   const [cancelClicked, setCancelClicked] = useState(false)
-
+  console.log('--- tx', tx)
   // console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
 
   function handleCancelIntent() {
