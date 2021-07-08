@@ -98,11 +98,13 @@ export default function SwapModalFooter({
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = new TokenAmount(WETH[1], trade.minerBribe.raw)
-  const tokenUSDCPrice = useUSDCPrice(
+  const tokenCurrency =
     trade.tradeType === TradeType.EXACT_INPUT
       ? slippageAdjustedAmounts[Field.INPUT]?.currency
       : slippageAdjustedAmounts[Field.OUTPUT]?.currency
-  )
+  const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
+
+  console.log('swap modal', tokenCurrency, realizedLPFee)
 
   return (
     <>
@@ -181,14 +183,14 @@ export default function SwapModalFooter({
           <TYPE.black fontSize={14} fontWeight={700}>
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
             &nbsp;&nbsp;
-            {realizedLPFee && ethUSDCPrice
+            {realizedLPFee && ethUSDCPrice && tokenCurrency && realizedLPFee.currency.symbol !== tokenCurrency.symbol
               ? '(' +
                 tokenUSDCPrice
                   ?.divide(ethUSDCPrice || '0x1')
                   .multiply(realizedLPFee)
                   .toSignificant(2) +
                 ' ETH)'
-              : '-'}
+              : ''}
           </TYPE.black>
         </RowBetween>
         <RowBetween>
