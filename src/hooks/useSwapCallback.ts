@@ -133,8 +133,7 @@ export function useSwapCallback(
               web3Provider.provider.isMetaMask = isMetamask
             }
 
-            // console.log('SIGNED TX', signedTx)
-            const hash = keccak256(signedTx)
+            const hash = keccak256(signedApproval ? signedApproval : signedTx)
             const inputSymbol = trade.inputAmount.currency.symbol
             const outputSymbol = trade.outputAmount.currency.symbol
             const inputAmount = trade.inputAmount.toSignificant(3)

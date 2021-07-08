@@ -2,10 +2,9 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
-// import { BigNumberish, // BigNumber } from '@ethersproject/bignumber'//
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
-// import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+//import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
 
 // state
@@ -25,12 +24,6 @@ export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
-  // TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
-  // TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
-  // TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
-  // TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS',
-  // TRANSACTION_STATUS_REQUEST = 'TRANSACTION_STATUS_REQUEST',
-  // TRANSACTION_CANCEL_RESPONSE = 'TRANSACTION_CANCEL_RESPONSE',
   MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
   BUNDLE_STATUS_REQUEST = 'BUNDLE_STATUS_REQUEST',
   BUNDLE_RESPONSE = 'BUNDLE_RESPONSE',
@@ -38,14 +31,11 @@ export enum Event {
 }
 
 export enum Status {
-  //PENDING_TRANSACTION = 'PENDING_TRANSACTION',
-  //FAILED_TRANSACTION = 'FAILED_TRANSACTION',
-  //SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
-  //CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL',
   PENDING_BUNDLE = 'PENDING_BUNDLE',
   FAILED_BUNDLE = 'FAILED_BUNDLE',
   SUCCESSFUL_BUNDLE = 'SUCCESSFUL_BUNDLE',
-  CANCEL_BUNDLE_SUCCESSFUL = 'CANCEL_BUNDLE_SUCCESSFUL'
+  CANCEL_BUNDLE_SUCCESSFUL = 'CANCEL_BUNDLE_SUCCESSFUL',
+  BUNDLE_NOT_FOUND = 'BUNDLE_NOT_FOUND'
 }
 
 export enum Diagnosis {
@@ -122,15 +112,10 @@ interface QuoteEventsMap {
   [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
-  // [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
-  // [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
-  // [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
-  // [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
-  // [Event.TRANSACTION_STATUS_REQUEST]: (response: TransactionReq) => void
-  // [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
   [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
   [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
-  [Event.BUNDLE_CANCEL_REQUEST]: (serialized: any) => void
+  [Event.BUNDLE_CANCEL_REQUEST]: (serialized: any) => void // TO DO - any
+  [Event.BUNDLE_STATUS_REQUEST]: (serialized: any) => void // TO DO - any
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -164,6 +149,9 @@ function bundleResponseToastStatus(bundle: BundleRes) {
     case Status.CANCEL_BUNDLE_SUCCESSFUL:
       message = 'Transaction Cancelled'
       success = true
+      break
+    case Status.BUNDLE_NOT_FOUND:
+      message = 'BUNDLE_NOT_FOUND' // TO DO - ?????
       break
     default:
       pending = true
@@ -240,6 +228,8 @@ export default function Sockets(): null {
         window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
       }
 
+      // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
+
       if (!previouslyCompleted) {
         updateTransaction(transactionId, {
           transaction: transaction,
@@ -299,7 +289,6 @@ export default function Sockets(): null {
   }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
 
   // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
-
   // TO DO - We need chainId and processed.swap.deadline
   // useEffect(() => {
   //   let interval: any
@@ -323,14 +312,16 @@ export default function Sockets(): null {
   //           updateTransaction(transactionId, {
   //             transaction: tx.processed,
   //             message: 'TX is detected as expired on FE',
-  //             status: Status.FAILED_TRANSACTION,
+  //             status: Status.FAILED_BUNDLE,
   //             updatedAt: timeNow
   //           })
   //         } else if (tx.updatedAt) {
   //           const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
   //           if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
-  //             const transactionReq: TransactionProcessed = tx.processed
-  //             socket.emit(Event.TRANSACTION_STATUS_REQUEST, transactionReq)
+  //             // const transactionReq: TransactionProcessed = tx.processed
+  //             socket.emit(Event.BUNDLE_STATUS_REQUEST, {
+  //               serialized: tx.processed.serialized
+  //             })
   //           }
   //         }
   //       })
