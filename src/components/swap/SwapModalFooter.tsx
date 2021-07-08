@@ -104,8 +104,6 @@ export default function SwapModalFooter({
       : slippageAdjustedAmounts[Field.OUTPUT]?.currency
   const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
 
-  console.log('swap modal', tokenCurrency, realizedLPFee)
-
   return (
     <>
       <PriceWrapper>
