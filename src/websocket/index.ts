@@ -26,22 +26,23 @@ export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
   SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
-  TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
-  TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
-  TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
-  TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS',
-  TRANSACTION_STATUS_REQUEST = 'TRANSACTION_STATUS_REQUEST',
-  TRANSACTION_CANCEL_RESPONSE = 'TRANSACTION_CANCEL_RESPONSE',
+  // TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
+  // TRANSACTION_CANCEL_REQUEST = 'TRANSACTION_CANCEL_REQUEST',
+  // TRANSACTION_RESPONSE = 'TRANSACTION_RESPONSE',
+  // TRANSACTION_DIAGNOSIS = 'TRANSACTION_DIAGNOSIS',
+  // TRANSACTION_STATUS_REQUEST = 'TRANSACTION_STATUS_REQUEST',
+  // TRANSACTION_CANCEL_RESPONSE = 'TRANSACTION_CANCEL_RESPONSE',
   MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
+  BUNDLE_STATUS_REQUEST = 'BUNDLE_STATUS_REQUEST',
   BUNDLE_RESPONSE = 'BUNDLE_RESPONSE',
   BUNDLE_CANCEL_REQUEST = 'BUNDLE_CANCEL_REQUEST'
 }
 
 export enum Status {
-  PENDING_TRANSACTION = 'PENDING_TRANSACTION',
-  FAILED_TRANSACTION = 'FAILED_TRANSACTION',
-  SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
-  CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL',
+  //PENDING_TRANSACTION = 'PENDING_TRANSACTION',
+  //FAILED_TRANSACTION = 'FAILED_TRANSACTION',
+  //SUCCESSFUL_TRANSACTION = 'SUCCESSFUL_TRANSACTION',
+  //CANCEL_TRANSACTION_SUCCESSFUL = 'CANCEL_TRANSACTION_SUCCESSFUL',
   PENDING_BUNDLE = 'PENDING_BUNDLE',
   FAILED_BUNDLE = 'FAILED_BUNDLE',
   SUCCESSFUL_BUNDLE = 'SUCCESSFUL_BUNDLE',
@@ -127,12 +128,12 @@ interface QuoteEventsMap {
   [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
-  [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
-  [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
-  [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
-  [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
-  [Event.TRANSACTION_STATUS_REQUEST]: (response: TransactionReq) => void
-  [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
+  // [Event.TRANSACTION_REQUEST]: (response: TransactionReq) => void
+  // [Event.TRANSACTION_CANCEL_REQUEST]: (response: TransactionReq) => void
+  // [Event.TRANSACTION_RESPONSE]: (response: TransactionRes) => void
+  // [Event.TRANSACTION_DIAGNOSIS]: (response: TransactionDiagnosisRes) => void
+  // [Event.TRANSACTION_STATUS_REQUEST]: (response: TransactionReq) => void
+  // [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
   [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
   [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
   [Event.BUNDLE_CANCEL_REQUEST]: (response: any) => void
@@ -156,7 +157,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
   let message = bundle.message
 
   switch (bundle.status) {
-    case Status.FAILED_TRANSACTION:
+    case Status.FAILED_BUNDLE:
       message = 'Transaction failed'
       break
     case Status.PENDING_BUNDLE:
@@ -265,34 +266,41 @@ export default function Sockets(): null {
         if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
           window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
         }
-        addPopup(
-          {
-            txn: {
-              hash,
-              summary,
-              ...bundleResponseToastStatus(response)
-            }
-          },
-          hash,
-          60000
-        )
+        if (
+          response.status === Status.SUCCESSFUL_BUNDLE ||
+          response.status === Status.FAILED_BUNDLE ||
+          response.status === Status.CANCEL_BUNDLE_SUCCESSFUL
+        ) {
+          addPopup(
+            {
+              txn: {
+                hash,
+                summary,
+                ...bundleResponseToastStatus(response)
+              }
+            },
+            hash,
+            60000
+          )
+        }
       }
     })
 
-    socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
-      // // console.log('- log transaction diagnosis', diagnosis)
-      // const hash = keccak256(diagnosis.transaction.serializedSwap)
-      // const transactionId = {
-      //   chainId: diagnosis.transaction.chainId,
-      //   hash
-      // }
-      // updateTransaction(transactionId, {
-      //   blockNumber: diagnosis.blockNumber,
-      //   flashbotsResolution: diagnosis.flashbotsResolution,
-      //   mistxDiagnosis: diagnosis.mistxDiagnosis,
-      //   updatedAt: new Date().getTime()
-      // })
-    })
+    // TO DO
+    //socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
+    // // console.log('- log transaction diagnosis', diagnosis)
+    // const hash = keccak256(diagnosis.transaction.serializedSwap)
+    // const transactionId = {
+    //   chainId: diagnosis.transaction.chainId,
+    //   hash
+    // }
+    // updateTransaction(transactionId, {
+    //   blockNumber: diagnosis.blockNumber,
+    //   flashbotsResolution: diagnosis.flashbotsResolution,
+    //   mistxDiagnosis: diagnosis.mistxDiagnosis,
+    //   updatedAt: new Date().getTime()
+    // })
+    //})
 
     return () => {
       socket.off('connect')
@@ -300,8 +308,9 @@ export default function Sockets(): null {
       socket.off(Event.SOCKET_ERR)
       socket.off(Event.SOCKET_SESSION_RESPONSE)
       socket.off(Event.GAS_CHANGE)
-      socket.off(Event.TRANSACTION_RESPONSE)
-      socket.off(Event.TRANSACTION_DIAGNOSIS)
+      socket.off(Event.BUNDLE_RESPONSE)
+      socket.off(Event.BUNDLE_STATUS_REQUEST)
+      // TO DO
     }
   }, [
     addPopup,

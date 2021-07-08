@@ -148,10 +148,10 @@ export function useTransactionUpdater(): (
             transaction,
             cancel: status,
             status:
-              status === Status.CANCEL_TRANSACTION_SUCCESSFUL
-                ? Status.FAILED_TRANSACTION
+              status === Status.CANCEL_BUNDLE_SUCCESSFUL
+                ? Status.FAILED_BUNDLE
                 : message?.includes('already completed') // TO DO - lets not rely on text from the backend
-                ? Status.SUCCESSFUL_TRANSACTION
+                ? Status.SUCCESSFUL_BUNDLE
                 : undefined,
             message,
             updatedAt
@@ -233,13 +233,13 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
   const transaction = transactions[transactionHash]
 
   return (
-    transaction.status === Status.PENDING_TRANSACTION ||
+    transaction.status === Status.PENDING_BUNDLE ||
     (typeof transaction.status === 'undefined' && !transaction.receipt)
   )
 }
 
 export function isPendingTransaction(tx: TransactionDetails): boolean {
-  return !!(tx.status !== Status.FAILED_TRANSACTION && tx.status !== Status.SUCCESSFUL_TRANSACTION && !tx.receipt)
+  return !!(tx.status !== Status.FAILED_BUNDLE && tx.status !== Status.SUCCESSFUL_BUNDLE && !tx.receipt)
 }
 
 export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
@@ -271,7 +271,7 @@ export function useHasPendingTransactions(): boolean {
 }
 
 export function isSuccessfulTransaction(tx: TransactionDetails): boolean {
-  return !!(tx.status === Status.SUCCESSFUL_TRANSACTION || tx.receipt?.status === 1)
+  return !!(tx.status === Status.SUCCESSFUL_BUNDLE || tx.receipt?.status === 1)
 }
 
 /**
