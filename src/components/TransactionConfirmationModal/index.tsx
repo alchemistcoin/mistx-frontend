@@ -206,7 +206,7 @@ export default function TransactionConfirmationModal({
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
-  if (!chainId) return null
+  if (!chainId || hash) return null
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
