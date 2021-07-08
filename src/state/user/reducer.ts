@@ -15,11 +15,11 @@ import {
   updateUserBribeMargin,
   updateUserDeadline,
   toggleURLWarning,
-  updateUserSingleHopOnly
+  updateUserSingleHopOnly,
+  updateFeeDisplayCurrency
 } from './actions'
 
 const currentTimestamp = () => new Date().getTime()
-
 export interface UserState {
   // the timestamp of the last updateVersion action
   lastUpdateVersionTimestamp?: number
@@ -55,6 +55,7 @@ export interface UserState {
 
   timestamp: number
   URLWarningVisible: boolean
+  feeDisplayCurrency: 'ETH' | 'USD'
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -72,7 +73,8 @@ export const initialState: UserState = {
   tokens: {},
   pairs: {},
   timestamp: currentTimestamp(),
-  URLWarningVisible: true
+  URLWarningVisible: true,
+  feeDisplayCurrency: 'USD'
 }
 
 export default createReducer(initialState, builder =>
@@ -162,5 +164,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(toggleURLWarning, state => {
       state.URLWarningVisible = !state.URLWarningVisible
+    })
+    .addCase(updateFeeDisplayCurrency, (state, { payload }) => {
+      state.feeDisplayCurrency = payload
     })
 )
