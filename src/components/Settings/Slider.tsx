@@ -1,11 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
-import { useSelector } from 'react-redux'
 import { BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
-import { AppState } from '../../state'
+import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
 
 type Props = {
   max: number
@@ -48,9 +47,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
   const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
   const ethUSDCPrice = useUSDCPrice(WETH[1])
-  const feeDisplayCurrency = useSelector<AppState, AppState['user']['feeDisplayCurrency']>(
-    state => state.user.feeDisplayCurrency
-  )
+  const feeDisplayCurrency = useFeeDisplayCurrency()
 
   useEffect(() => {
     let label = 'Fetching price...'

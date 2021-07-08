@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react'
 import { X } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { lighten, rem, darken } from 'polished'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
@@ -15,7 +15,6 @@ import {
   useUserSlippageTolerance,
   useUserSingleHopOnly
 } from '../../state/user/hooks'
-import { AppState } from '../../state'
 import { TYPE } from '../../theme'
 // components
 import { SettingsHeader, SettingsHeaderEnd } from '../shared/header/styled'
@@ -28,6 +27,7 @@ import Toggle from '../Toggle'
 import MinerBribeSlider from './MinerBribeSlider'
 import TransactionSettings from '../TransactionSettings'
 import { Cog, Close } from '../Icons'
+import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
 
 const StyledCloseIcon = styled(X)`
   height: 20px;
@@ -209,9 +209,7 @@ export default function SettingsTab() {
 
   useOnClickOutside(node, open ? toggle : undefined)
 
-  const feeDisplayCurrency = useSelector<AppState, AppState['user']['feeDisplayCurrency']>(
-    state => state.user.feeDisplayCurrency
-  )
+  const feeDisplayCurrency = useFeeDisplayCurrency()
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
