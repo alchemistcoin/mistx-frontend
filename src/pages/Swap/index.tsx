@@ -382,6 +382,7 @@ export default function Swap({ history }: RouteComponentProps) {
     swapCallback()
       .then(hash => {
         setShowInfoModal(false)
+        setShowConfirmModal(false)
         setSwapState({ tradeToConfirm, swapErrorMessage: undefined, attemptingTxn: false, txHash: hash })
 
         ReactGA.event({
