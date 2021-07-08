@@ -136,7 +136,7 @@ interface QuoteEventsMap {
   // [Event.TRANSACTION_CANCEL_RESPONSE]: (response: any) => void
   [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
   [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
-  [Event.BUNDLE_CANCEL_REQUEST]: (response: any) => void
+  [Event.BUNDLE_CANCEL_REQUEST]: (serialized: any) => void
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -372,6 +372,7 @@ export function emitTransactionRequest(bundle: BundleReq) {
   socket.emit(Event.MISTX_BUNDLE_REQUEST, bundle)
 }
 
-export function emitTransactionCancellation(transaction: TransactionProcessed) {
-  socket.emit(Event.BUNDLE_CANCEL_REQUEST, transaction)
+export function emitTransactionCancellation(serialized: any) {
+  // TO DO any
+  socket.emit(Event.BUNDLE_CANCEL_REQUEST, { serialized })
 }

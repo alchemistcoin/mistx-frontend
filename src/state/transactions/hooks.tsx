@@ -194,7 +194,7 @@ export function useTransactionCanceller() {
       }
     ) => {
       if (!account) return
-      emitTransactionCancellation(transaction)
+      emitTransactionCancellation(transaction.serialized)
     },
     [account]
   )
