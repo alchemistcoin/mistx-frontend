@@ -6,6 +6,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { YellowCard } from '../Card'
 import Menu from '../Menu'
 import Web3Status from '../Web3Status'
+import MistBalance from '../MistBalance'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -129,7 +130,7 @@ export const StyledMenuButton = styled.button`
   }
 `
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
+export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
@@ -151,6 +152,7 @@ export default function Header() {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
+          <MistBalance />
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             <Web3Status />
           </AccountElement>

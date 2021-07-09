@@ -10,6 +10,7 @@ import FATHOM_GOALS from '../constants/fathom'
 // state
 import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
+import { useSocketStatus } from '../state/application/hooks'
 import {
   useAllTransactions,
   useTransactionRemover,
@@ -162,6 +163,7 @@ export default function Sockets(): null {
   const updateTransaction = useTransactionUpdater()
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
+  const webSocketConnected = useSocketStatus()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -268,12 +270,13 @@ export default function Sockets(): null {
     }
   }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
 
-  // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
+  // Check each pending transaction every 5 seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   useEffect(() => {
     let interval: any
     clearInterval(interval)
     if (pendingTransactions) {
       interval = setInterval(() => {
+        if (!webSocketConnected) return
         const timeNow = new Date().getTime()
         Object.keys(pendingTransactions).forEach(hash => {
           const tx = pendingTransactions[hash]
@@ -306,7 +309,7 @@ export default function Sockets(): null {
       clearInterval(interval)
     }
     return () => clearInterval(interval)
-  }, [pendingTransactions, updateTransaction])
+  }, [pendingTransactions, updateTransaction, webSocketConnected])
 
   return null
 }

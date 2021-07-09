@@ -136,7 +136,7 @@ const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
 
   &:before,
   &:after {
-    box-shadow: 0 22px 0 0 ${({ theme }) => theme.primary2};
+    box-shadow: 0 22px 0 0 ${({ error, theme }) => (error ? theme.red1 : theme.primary2)};
     content: '';
     height: 44px;
     position: absolute;
@@ -158,12 +158,12 @@ const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
   &:focus:after,
   &:hover:before,
   &:hover:after {
-    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.05, theme.primary2)};
+    box-shadow: 0 22px 0 0 ${({ error, theme }) => (error ? darken(0.05, theme.red1) : darken(0.05, theme.primary2))};
   }
 
   &:active:before,
   &:active:after {
-    box-shadow: 0 22px 0 0 ${({ theme }) => darken(0.1, theme.primary2)};
+    box-shadow: 0 22px 0 0 ${({ error, theme }) => (error ? darken(0.1, theme.red1) : darken(0.1, theme.primary2))};
   }
 `
 
@@ -173,6 +173,7 @@ const StyledButtonYellow = styled(StyledButtonError)`
 `
 
 // Lazy Load
+const NetworkWarningModal = React.lazy(() => import('components/NetworkWarningModal'))
 const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'))
 const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
@@ -508,6 +509,7 @@ export default function Swap({ history }: RouteComponentProps) {
   return (
     <>
       <Suspense fallback={null}>
+        <NetworkWarningModal />
         <TokenWarningModal
           isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
           tokens={importTokensNotInDefault}
@@ -709,14 +711,13 @@ export default function Swap({ history }: RouteComponentProps) {
                       onClick={swapButtonAction}
                       id="swap-button"
                       disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                      error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
                     >
                       <Text fontSize={20} fontWeight={700}>
                         {swapInputError
                           ? swapInputError
                           : priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
-                          : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                          : `Swap`}
                       </Text>
                     </StyledButtonError>
                   )}

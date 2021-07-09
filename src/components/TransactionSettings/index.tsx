@@ -65,11 +65,13 @@ const Input = styled.input`
 `
 
 const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
-  height: 2rem;
-  position: relative;
-  padding: 0 0.75rem;
+  border: ${({ theme, active, warning }) => (active ? `1px solid ${warning ? theme.red1 : '#35404E'}` : '#35404E')};
+  background-color: #35404e;
   flex: 1;
-  border: ${({ theme, active, warning }) => active && `1px solid ${warning ? theme.red1 : theme.primary2}`};
+  font-weight: 700;
+  height: 2rem;
+  padding: 0 0.75rem;
+  position: relative;
 
   :hover {
     border: ${({ theme, active, warning }) =>
@@ -77,6 +79,7 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
   }
 
   input {
+    background-color: inherit;
     width: 100%;
     height: 100%;
     border: 0px;
@@ -89,7 +92,7 @@ const OptionCustomTime = styled(FancyButton)<{ active?: boolean; warning?: boole
   position: relative;
   flex: 1;
   border: ${({ theme, active, warning }) => (active ? `1px solid ${warning ? theme.red1 : '#35404E'}` : '#35404E')};
-  background: #35404e;
+  background-color: #35404e;
   font-weight: 700;
   margin-right: 0.5rem;
 
@@ -104,7 +107,7 @@ const OptionCustomTime = styled(FancyButton)<{ active?: boolean; warning?: boole
     border: 0px;
     border-radius: 12px;
     font-weight: 700;
-    background: #35404e;
+    background-color: inherit;
   }
 `
 
@@ -114,6 +117,8 @@ const SlippageEmojiContainer = styled.span`
     display: none;  
   `}
 `
+
+const slippageDefaults = [10, 50, 100]
 
 export interface SlippageTabsProps {
   rawSlippage: number
@@ -127,7 +132,9 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
 
   const inputRef = useRef<HTMLInputElement>()
 
-  const [slippageInput, setSlippageInput] = useState('')
+  const [slippageInput, setSlippageInput] = useState(
+    !slippageDefaults.includes(rawSlippage) ? `${rawSlippage / 100}` : ''
+  )
   const [deadlineInput, setDeadlineInput] = useState('')
 
   const slippageInputIsValid =
@@ -184,33 +191,18 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           <QuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
         </StyledRowFixed>
         <RowBetween>
-          <Option
-            onClick={() => {
-              setSlippageInput('')
-              setRawSlippage(10)
-            }}
-            active={rawSlippage === 10}
-          >
-            0.1%
-          </Option>
-          <Option
-            onClick={() => {
-              setSlippageInput('')
-              setRawSlippage(50)
-            }}
-            active={rawSlippage === 50}
-          >
-            0.5%
-          </Option>
-          <Option
-            onClick={() => {
-              setSlippageInput('')
-              setRawSlippage(100)
-            }}
-            active={rawSlippage === 100}
-          >
-            1%
-          </Option>
+          {slippageDefaults.map((slippageValue: number) => (
+            <Option
+              onClick={() => {
+                setSlippageInput('')
+                setRawSlippage(slippageValue)
+              }}
+              active={rawSlippage === slippageValue}
+              key={slippageValue}
+            >
+              {slippageValue / 100}%
+            </Option>
+          ))}
           <OptionCustom active={![10, 50, 100].includes(rawSlippage)} warning={!slippageInputIsValid} tabIndex={-1}>
             <RowBetween>
               {!!slippageInput &&

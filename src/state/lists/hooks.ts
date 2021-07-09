@@ -148,3 +148,15 @@ export function useIsListActive(url: string): boolean {
   const activeListUrls = useActiveListUrls()
   return Boolean(activeListUrls?.includes(url))
 }
+
+// return the alchemist token
+export function useAlchmeistToken(chainId: ChainId): any {
+  const list = listToTokenMap(DEFAULT_TOKEN_LIST)
+  const alchemistList = list[chainId]
+  if (!alchemistList) return null
+  const key = Object.keys(alchemistList).find(key => alchemistList[key].token.symbol === 'MIST')
+  if (key && alchemistList[key]) {
+    return alchemistList[key]
+  }
+  return null
+}

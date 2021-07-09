@@ -4,6 +4,7 @@ import { ThemeContext } from 'styled-components'
 import { BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
+import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
 
 type Props = {
   max: number
@@ -46,17 +47,25 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
   const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
   const ethUSDCPrice = useUSDCPrice(WETH[1])
+  const feeDisplayCurrency = useFeeDisplayCurrency()
+
   useEffect(() => {
-    let label = '.....'
+    let label = 'Fetching price...'
     if (bribeEstimate && ethUSDCPrice) {
       const minBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.minBribe.raw)
       const maxBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.maxBribe.raw)
-      label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
-        .quote(maxBribeTokenAmount)
-        .toSignificant(2)}`
+
+      if (feeDisplayCurrency === 'USD') {
+        label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
+          .quote(maxBribeTokenAmount)
+          .toSignificant(2)}`
+      } else {
+        label = `${Number(minBribeTokenAmount.toSignificant(2))} - ${Number(maxBribeTokenAmount.toSignificant(2))}`
+      }
     }
     setSliderThumbLabel(label)
-  }, [bribeEstimate, ethUSDCPrice])
+  }, [bribeEstimate, ethUSDCPrice, feeDisplayCurrency])
+
   const onSliderChange = (values: any) => {
     setSliderValue(values)
     onChange(values[0])
@@ -171,7 +180,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 top: '16px',
                 zIndex: 1,
                 borderRadius: '4px',
-                background: '#192431'
+                background: '#192431',
+                cursor: 'pointer'
               }}
             />
           </div>
@@ -200,15 +210,29 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 fontWeight: 700,
                 fontSize: '14px',
                 borderRadius: '4px',
-                backgroundColor: '#FFF',
-                color: theme.text5,
+                backgroundColor: '#222e3b',
+                border: '1px solid #ffbf01',
+                color: theme.text1,
                 padding: '0.25rem 0.5rem',
                 cursor: 'pointer',
-                width: '100px',
+                minWidth: '150px',
                 textAlign: 'center',
                 zIndex: 3
               }}
             >
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '-7px',
+                  left: '50%',
+                  marginLeft: '-8px',
+                  fontWeight: 700,
+                  zIndex: 2,
+                  borderLeft: '8px solid transparent',
+                  borderTop: '7px solid #ffbf01',
+                  borderRight: '8px solid transparent'
+                }}
+              />
               {sliderThumbLabel}
             </div>
             <div
