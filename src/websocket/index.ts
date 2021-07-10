@@ -179,8 +179,13 @@ export default function Sockets(): null {
   const updateTransaction = useTransactionUpdater()
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
+<<<<<<< HEAD
   const webSocketConnected = useSocketStatus()
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
+=======
+  // const webSocketConnected = useSocketStatus()
+  console.log('pendingTransactions', pendingTransactions)
+>>>>>>> 1c1a0d3... handle ispendingtransaction state for legacy statuses. add bunle_not_found case.
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -259,7 +264,8 @@ export default function Sockets(): null {
         if (
           response.status === Status.SUCCESSFUL_BUNDLE ||
           response.status === Status.FAILED_BUNDLE ||
-          response.status === Status.CANCEL_BUNDLE_SUCCESSFUL
+          response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
+          response.status === Status.BUNDLE_NOT_FOUND
         ) {
           addPopup(
             {
@@ -335,7 +341,7 @@ export default function Sockets(): null {
   //           }
   //           updateTransaction(transactionId, {
   //             transaction: tx.processed,
-  //             message: 'TX is detected as expired on FE',
+  //             message: 'Transaction Expired',
   //             status: Status.FAILED_BUNDLE,
   //             updatedAt: timeNow
   //           })
