@@ -233,13 +233,18 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
   const transaction = transactions[transactionHash]
 
   return (
-    transaction.status === Status.PENDING_BUNDLE ||
-    (typeof transaction.status === 'undefined' && !transaction.receipt)
+    transaction.status === Status.PENDING_BUNDLE || (typeof transaction.status === 'undefined' && !transaction.receipt)
   )
 }
 
 export function isPendingTransaction(tx: TransactionDetails): boolean {
-  return !!(tx.status !== Status.FAILED_BUNDLE && tx.status !== Status.SUCCESSFUL_BUNDLE && !tx.receipt)
+  if (tx.receipt) return false
+
+  if (Object.values<string>(Status).includes(tx.status || '')) {
+    return !!(tx.status !== Status.FAILED_BUNDLE && tx.status !== Status.SUCCESSFUL_BUNDLE)
+  }
+
+  return false
 }
 
 export function usePendingTransactions(): { [txHash: string]: TransactionDetails } {
