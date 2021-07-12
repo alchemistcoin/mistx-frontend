@@ -64,13 +64,6 @@ const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: bool
   }
 `
 
-// const StatusText = styled.div<{ cancelled?: boolean }>`
-//   color: ${({ theme }) => theme.text2}
-//   font-size: .75rem;
-//   font-weight: 600;
-//   margin: 0 .5rem;
-// `
-
 const CancelButton = styled.button`
   background-color: transparent;
   border: 1px solid ${({ theme }) => theme.primary2};
@@ -165,7 +158,6 @@ export default function Transaction({ hash }: { hash: string }) {
           {t('Cancel')}
         </CancelButton>
       )}
-      {/* {isCancelled && <StatusText>Cancelled</StatusText>} */}
       <IconWrapper pending={pending} success={success}>
         {success ? <CheckCircle size="16" /> : pending ? <Loader /> : <Triangle size="16" />}
       </IconWrapper>
