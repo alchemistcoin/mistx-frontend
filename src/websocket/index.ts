@@ -39,6 +39,14 @@ export enum Status {
   BUNDLE_NOT_FOUND = 'BUNDLE_NOT_FOUND'
 }
 
+export const STATUS_LOCALES: Record<string, string> = {
+  PENDING_BUNDLE: 'Pending',
+  FAILED_BUNDLE: 'Failed',
+  SUCCESSFUL_BUNDLE: 'Success',
+  CANCEL_BUNDLE_SUCCESSFUL: 'Cancelled',
+  BUNDLE_NOT_FOUND: 'BUNDLE_NOT_FOUND'
+}
+
 export enum Diagnosis {
   LOWER_THAN_TAIL = 'LOWER_THAN_TAIL',
   NOT_A_FLASHBLOCK = 'NOT_A_FLASHBLOCK',
