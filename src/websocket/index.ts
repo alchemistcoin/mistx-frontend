@@ -152,7 +152,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
       success = true
       break
     case Status.BUNDLE_NOT_FOUND:
-      message = 'Transaction Expired' // TO DO - ?????
+      pending = true
       break
     default:
       pending = true
