@@ -27,6 +27,7 @@ export interface AmountDetails {
   value: string
 }
 export interface TransactionDetails {
+  chainId?: ChainId
   hash: string
   approval?: { tokenAddress: string; spender: string }
   summary?: string
@@ -36,6 +37,7 @@ export interface TransactionDetails {
   lastCheckedBlockNumber?: number
   addedTime: number
   confirmedTime?: number
+  deadline?: number
   from: string
   swap?: SwapReq
   blockNumber?: number // from transaction diagnosis
@@ -64,7 +66,7 @@ export default createReducer(initialState, builder =>
       addTransaction,
       (
         transactions,
-        { payload: { chainId, from, hash, summary, claim, trade, wrapType, inputAmount, outputAmount } }
+        { payload: { chainId, from, hash, summary, claim, trade, wrapType, inputAmount, outputAmount, deadline } }
       ) => {
         const tx = transactions[chainId]?.[hash] as TransactionDetails
         if (tx && isPendingTransaction(tx)) {
@@ -76,9 +78,11 @@ export default createReducer(initialState, builder =>
 
         const txs = transactions[chainId] ?? {}
         txs[hash] = {
+          chainId,
           hash,
           summary,
           claim,
+          deadline,
           from,
           addedTime: now(),
           wrapType,

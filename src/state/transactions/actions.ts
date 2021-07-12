@@ -25,6 +25,7 @@ export const addTransaction = createAction<{
   wrapType?: WrapType
   inputAmount?: CurrencyAmount<Currency>
   outputAmount?: CurrencyAmount<Currency>
+  deadline?: number
 }>('transactions/addTransaction')
 export const clearCompletedTransactions = createAction<{ chainId: ChainId }>('transactions/clearCompletedTransactions')
 export const clearAllTransactions = createAction<{ chainId: ChainId }>('transactions/clearAllTransactions')

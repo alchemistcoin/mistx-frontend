@@ -5,7 +5,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import PJSON from '../../package.json'
-// import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
 
 // state
@@ -18,8 +18,9 @@ import {
   useTransactionUpdater,
   usePendingTransactions
 } from 'state/transactions/hooks'
-// import { ChainId } from '@alchemistcoin/sdk'
+
 import { useAddPopup } from 'state/application/hooks'
+import { BigNumber } from 'ethers'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
@@ -157,7 +158,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
       success = true
       break
     case Status.BUNDLE_NOT_FOUND:
-      message = 'BUNDLE_NOT_FOUND' // TO DO - ?????
+      message = 'Transaction Expired' // TO DO - ?????
       break
     default:
       pending = true
@@ -180,10 +181,14 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
 <<<<<<< HEAD
+<<<<<<< HEAD
   const webSocketConnected = useSocketStatus()
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 =======
   // const webSocketConnected = useSocketStatus()
+=======
+  const webSocketConnected = useSocketStatus()
+>>>>>>> 6bf7258... handle bundle not found response like an expired transaction.g
   console.log('pendingTransactions', pendingTransactions)
 >>>>>>> 1c1a0d3... handle ispendingtransaction state for legacy statuses. add bunle_not_found case.
 
@@ -234,52 +239,52 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.BUNDLE_RESPONSE, response => {
-      const [transaction] = response.bundle.transactions
-
-      const hash = keccak256(response.bundle.serialized)
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
-      const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
-      const transactionId = {
-        chainId: response.bundle.chainId,
-        hash
-      }
-
-      if (response.status === Status.CANCEL_BUNDLE_SUCCESSFUL && window.fathom) {
-        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
-      }
-
-      // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
-
-      if (!previouslyCompleted) {
-        updateTransaction(transactionId, {
-          transaction: transaction,
-          message: response.message,
-          status: response.status,
-          updatedAt: new Date().getTime()
-        })
-        if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
-          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+      response.bundle.transactions.forEach(transaction => {
+        const hash = keccak256(transaction.serialized)
+        const tx = allTransactions?.[hash]
+        const summary = tx?.summary
+        const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+        const transactionId = {
+          chainId: response.bundle.chainId,
+          hash
         }
-        if (
-          response.status === Status.SUCCESSFUL_BUNDLE ||
-          response.status === Status.FAILED_BUNDLE ||
-          response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
-          response.status === Status.BUNDLE_NOT_FOUND
-        ) {
-          addPopup(
-            {
-              txn: {
-                hash,
-                summary,
-                ...bundleResponseToastStatus(response)
-              }
-            },
-            hash,
-            60000
-          )
+
+        if (response.status === Status.CANCEL_BUNDLE_SUCCESSFUL && window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
         }
-      }
+
+        // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
+
+        if (!previouslyCompleted) {
+          updateTransaction(transactionId, {
+            transaction: transaction,
+            message: response.message,
+            status: response.status,
+            updatedAt: new Date().getTime()
+          })
+          if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
+            window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+          }
+          if (
+            response.status === Status.SUCCESSFUL_BUNDLE ||
+            response.status === Status.FAILED_BUNDLE ||
+            response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
+            response.status === Status.BUNDLE_NOT_FOUND
+          ) {
+            addPopup(
+              {
+                txn: {
+                  hash,
+                  summary,
+                  ...bundleResponseToastStatus(response)
+                }
+              },
+              hash,
+              60000
+            )
+          }
+        }
+      })
     })
 
     // TO DO
@@ -320,47 +325,48 @@ export default function Sockets(): null {
 
   // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   // TO DO - We need chainId and processed.swap.deadline
-  // useEffect(() => {
-  //   let interval: any
-  //   clearInterval(interval)
-  //   if (pendingTransactions) {
-  //     interval = setInterval(() => {
-  //       if (!webSocketConnected) return
-  //       const timeNow = new Date().getTime()
-  //       Object.keys(pendingTransactions).forEach(hash => {
-  //         const tx = pendingTransactions[hash]
-  //         let isDead = false
-  //         if (tx.processed?.swap?.deadline) {
-  //           const deadline = BigNumber.from(tx.processed?.swap?.deadline).toNumber() * 1000
-  //           if (deadline <= timeNow - MANUAL_CHECK_TX_STATUS_INTERVAL * 1000) isDead = true
-  //         }
-  //         if (tx.processed && isDead) {
-  //           const transactionId = {
-  //             chainId: tx.processed.chainId,
-  //             hash
-  //           }
-  //           updateTransaction(transactionId, {
-  //             transaction: tx.processed,
-  //             message: 'Transaction Expired',
-  //             status: Status.FAILED_BUNDLE,
-  //             updatedAt: timeNow
-  //           })
-  //         } else if (tx.updatedAt) {
-  //           const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
-  //           if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
-  //             // const transactionReq: TransactionProcessed = tx.processed
-  //             socket.emit(Event.BUNDLE_STATUS_REQUEST, {
-  //               serialized: tx.processed.serialized
-  //             })
-  //           }
-  //         }
-  //       })
-  //     }, 5000)
-  //   } else {
-  //     clearInterval(interval)
-  //   }
-  //   return () => clearInterval(interval)
-  // }, [pendingTransactions, updateTransaction, webSocketConnected])
+  useEffect(() => {
+    let interval: any
+    clearInterval(interval)
+    if (pendingTransactions) {
+      interval = setInterval(() => {
+        if (!webSocketConnected) return
+        const timeNow = new Date().getTime()
+        Object.keys(pendingTransactions).forEach(hash => {
+          const tx = pendingTransactions[hash]
+          let isDead = false
+          if (tx.deadline) {
+            const deadline = BigNumber.from(tx.deadline || 1200).toNumber() * 1000
+            if (deadline <= timeNow - MANUAL_CHECK_TX_STATUS_INTERVAL * 1000) isDead = true
+          }
+          if (tx.processed && isDead && tx.chainId) {
+            const transactionId = {
+              chainId: tx.chainId,
+              hash
+            }
+            updateTransaction(transactionId, {
+              transaction: tx.processed,
+              message: 'Transaction Expired',
+              status: Status.FAILED_BUNDLE,
+              updatedAt: timeNow
+            })
+          } else if (tx.updatedAt) {
+            console.log('CHECK STATUS', tx)
+            const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
+            if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
+              // const transactionReq: TransactionProcessed = tx.processed
+              socket.emit(Event.BUNDLE_STATUS_REQUEST, {
+                serialized: tx.processed.serialized
+              })
+            }
+          }
+        })
+      }, 5000)
+    } else {
+      clearInterval(interval)
+    }
+    return () => clearInterval(interval)
+  }, [pendingTransactions, updateTransaction, webSocketConnected])
 
   return null
 }
