@@ -36,7 +36,7 @@ const TransactionStatusText = styled.div`
   font-size: 0.825rem;
   margin-right: 0.5rem;
   margin-bottom: 0.25rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #6c7383;
   padding-bottom: 1rem;
   margin-bottom: 0.5rem;
 `
