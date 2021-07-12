@@ -89,7 +89,6 @@ export default function Transaction({ hash }: { hash: string }) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
-  console.log('allTransactions', allTransactions)
   const tx = allTransactions?.[hash]
   const summary = tx?.summary
   const isCancelled = tx?.cancel === Status.CANCEL_BUNDLE_SUCCESSFUL

@@ -45,6 +45,7 @@ export function useTransactionAdder(): (
       {
         summary,
         claim,
+        deadline,
         trade,
         inputAmount,
         outputAmount,
@@ -53,6 +54,7 @@ export function useTransactionAdder(): (
         summary?: string
         claim?: { recipient: string }
         approval?: { tokenAddress: string; spender: string }
+        deadline?: number
         trade?: Trade
         inputAmount?: CurrencyAmount
         outputAmount?: CurrencyAmount
@@ -76,7 +78,8 @@ export function useTransactionAdder(): (
           trade,
           inputAmount,
           outputAmount,
-          wrapType
+          wrapType,
+          deadline
         })
       )
       addPopup(
@@ -238,10 +241,16 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
 }
 
 export function isPendingTransaction(tx: TransactionDetails): boolean {
-  if (tx.receipt) return false
-
+  if (tx.receipt) return false // If there is a receipt, we know the transaction has completed
+  if (!tx.receipt && !!tx.wrapType) return true // if transaction is a wrap, ignore the tx.status and return true since receipt is required to be true
+  if (tx.status === Status.PENDING_BUNDLE) return true // if Status set to pending, return true
+  // check if status is included in Enum, for legacy transactions
   if (Object.values<string>(Status).includes(tx.status || '')) {
-    return !!(tx.status !== Status.FAILED_BUNDLE && tx.status !== Status.SUCCESSFUL_BUNDLE)
+    return !!(
+      tx.status !== Status.FAILED_BUNDLE &&
+      tx.status !== Status.SUCCESSFUL_BUNDLE &&
+      tx.status !== Status.BUNDLE_NOT_FOUND
+    )
   }
 
   return false
