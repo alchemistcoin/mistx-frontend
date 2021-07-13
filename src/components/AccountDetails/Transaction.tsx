@@ -113,8 +113,6 @@ export default function Transaction({ hash }: { hash: string }) {
   const cancelTransaction = useTransactionCanceller()
   const [cancelClicked, setCancelClicked] = useState(false)
 
-  console.log(tx)
-
   const Row = (
     <RowFixed flex="1" align="left" flexDirection="column">
       <TransactionHeaderText className="transaction-status-text">
@@ -122,7 +120,8 @@ export default function Transaction({ hash }: { hash: string }) {
         {success ? ' ↗' : ''}
       </TransactionHeaderText>
       <TransactionStatusText className="transaction-status-text">
-        {tx.status && STATUS_LOCALES[tx.status]} - {tx.message}
+        {tx.status && STATUS_LOCALES[tx.status]}
+        {tx.status !== (Status.PENDING_BUNDLE || Status.BUNDLE_NOT_FOUND) && ` - ${tx.message}`}
       </TransactionStatusText>
     </RowFixed>
   )

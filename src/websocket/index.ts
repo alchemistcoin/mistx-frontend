@@ -41,11 +41,11 @@ export enum Status {
 }
 
 export const STATUS_LOCALES: Record<string, string> = {
-  PENDING_BUNDLE: 'Pending',
+  PENDING_BUNDLE: 'Flashbots working on including your swap',
   FAILED_BUNDLE: 'Failed',
   SUCCESSFUL_BUNDLE: 'Success',
   CANCEL_BUNDLE_SUCCESSFUL: 'Cancelled',
-  BUNDLE_NOT_FOUND: 'BUNDLE_NOT_FOUND'
+  BUNDLE_NOT_FOUND: 'Failed'
 }
 
 export enum Diagnosis {
@@ -152,7 +152,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
 
   switch (bundle.status) {
     case Status.FAILED_BUNDLE:
-      // message = 'Transaction failed'
+      message = 'Transaction failed - No Fee Taken'
       break
     case Status.PENDING_BUNDLE:
       pending = true
@@ -162,11 +162,11 @@ function bundleResponseToastStatus(bundle: BundleRes) {
       success = true
       break
     case Status.CANCEL_BUNDLE_SUCCESSFUL:
-      message = 'Transaction Cancelled'
+      message = 'Transaction Cancelled - For Free'
       success = true
       break
     case Status.BUNDLE_NOT_FOUND:
-      pending = true
+      message = 'Transaction failed - No Fee Taken'
       break
     default:
       pending = true
@@ -188,17 +188,9 @@ export default function Sockets(): null {
   const updateTransaction = useTransactionUpdater()
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
-<<<<<<< HEAD
-<<<<<<< HEAD
   const webSocketConnected = useSocketStatus()
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
-=======
-  // const webSocketConnected = useSocketStatus()
-=======
-  const webSocketConnected = useSocketStatus()
->>>>>>> 6bf7258... handle bundle not found response like an expired transaction.g
   console.log('pendingTransactions', pendingTransactions)
->>>>>>> 1c1a0d3... handle ispendingtransaction state for legacy statuses. add bunle_not_found case.
 
   useEffect(() => {
     socket.on('connect', () => {
