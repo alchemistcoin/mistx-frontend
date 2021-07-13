@@ -146,7 +146,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
 
   switch (bundle.status) {
     case Status.FAILED_BUNDLE:
-      message = 'Transaction failed'
+      // message = 'Transaction failed'
       break
     case Status.PENDING_BUNDLE:
       pending = true
