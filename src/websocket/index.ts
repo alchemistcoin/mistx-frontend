@@ -40,11 +40,11 @@ export enum Status {
 }
 
 export const STATUS_LOCALES: Record<string, string> = {
-  PENDING_BUNDLE: 'Pending',
+  PENDING_BUNDLE: 'Flashbots working on including your swap',
   FAILED_BUNDLE: 'Failed',
   SUCCESSFUL_BUNDLE: 'Success',
   CANCEL_BUNDLE_SUCCESSFUL: 'Cancelled',
-  BUNDLE_NOT_FOUND: 'BUNDLE_NOT_FOUND'
+  BUNDLE_NOT_FOUND: 'Failed'
 }
 
 export enum Diagnosis {
@@ -146,7 +146,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
 
   switch (bundle.status) {
     case Status.FAILED_BUNDLE:
-      // message = 'Transaction failed'
+      message = 'Transaction failed - No Fee Taken'
       break
     case Status.PENDING_BUNDLE:
       pending = true
@@ -156,11 +156,11 @@ function bundleResponseToastStatus(bundle: BundleRes) {
       success = true
       break
     case Status.CANCEL_BUNDLE_SUCCESSFUL:
-      message = 'Transaction Cancelled'
+      message = 'Transaction Cancelled - For Free'
       success = true
       break
     case Status.BUNDLE_NOT_FOUND:
-      pending = true
+      message = 'Transaction failed - No Fee Taken'
       break
     default:
       pending = true
@@ -183,7 +183,6 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
-  console.log('pendingTransactions', pendingTransactions)
 
   useEffect(() => {
     socket.on('connect', () => {
