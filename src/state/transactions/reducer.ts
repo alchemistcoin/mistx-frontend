@@ -1,7 +1,7 @@
 import { ChainId, Token } from '@alchemistcoin/sdk'
 import { createReducer } from '@reduxjs/toolkit'
 import { WrapType } from 'hooks/useWrapCallback'
-import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, BundleProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -33,7 +33,7 @@ export interface TransactionDetails {
   summary?: string
   claim?: { recipient: string }
   receipt?: SerializableTransactionReceipt
-  processed?: TransactionProcessed // swaps
+  processed?: BundleProcessed // swaps
   lastCheckedBlockNumber?: number
   addedTime: number
   confirmedTime?: number
@@ -130,7 +130,7 @@ export default createReducer(initialState, builder =>
         {
           payload: {
             chainId,
-            transaction,
+            bundle,
             hash,
             blockNumber,
             flashbotsResolution,
@@ -147,7 +147,7 @@ export default createReducer(initialState, builder =>
           return
         }
         // todo: update the transaction
-        if (transaction) tx.processed = transaction
+        if (bundle) tx.processed = bundle
         if (status) tx.status = status
         if (blockNumber) tx.blockNumber = blockNumber
         if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution

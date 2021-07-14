@@ -98,7 +98,7 @@ export interface SwapReq {
   path: Array<string>
   to: string
 }
-interface BundleProcessed {
+export interface BundleProcessed {
   serialized: string
   transactions: TransactionProcessed[]
   bribe: BigNumberish
@@ -221,52 +221,50 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.BUNDLE_RESPONSE, response => {
-      response.bundle.transactions.forEach(transaction => {
-        const hash = keccak256(transaction.serialized)
-        const tx = allTransactions?.[hash]
-        const summary = tx?.summary
-        const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
-        const transactionId = {
-          chainId: response.bundle.chainId,
-          hash
-        }
+      const hash = keccak256(response.bundle.serialized)
+      const tx = allTransactions?.[hash]
+      const summary = tx?.summary
+      const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+      const transactionId = {
+        chainId: response.bundle.chainId,
+        hash
+      }
 
-        if (response.status === Status.CANCEL_BUNDLE_SUCCESSFUL && window.fathom) {
-          window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
-        }
+      if (response.status === Status.CANCEL_BUNDLE_SUCCESSFUL && window.fathom) {
+        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
+      }
 
-        // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
+      // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
 
-        if (!previouslyCompleted) {
-          updateTransaction(transactionId, {
-            transaction: transaction,
-            message: response.message,
-            status: response.status,
-            updatedAt: new Date().getTime()
-          })
-          if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
-            window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
-          }
-          if (
-            response.status === Status.SUCCESSFUL_BUNDLE ||
-            response.status === Status.FAILED_BUNDLE ||
-            response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
-            response.status === Status.BUNDLE_NOT_FOUND
-          ) {
-            addPopup(
-              {
-                txn: {
-                  hash,
-                  summary,
-                  ...bundleResponseToastStatus(response)
-                }
-              },
-              hash,
-              60000
-            )
-          }
+      if (!previouslyCompleted) {
+        updateTransaction(transactionId, {
+          bundle: response.bundle,
+          message: response.message,
+          status: response.status,
+          updatedAt: new Date().getTime()
+        })
+        if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
         }
-      })
+        if (
+          response.status === Status.SUCCESSFUL_BUNDLE ||
+          response.status === Status.FAILED_BUNDLE ||
+          response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
+          response.status === Status.BUNDLE_NOT_FOUND
+        ) {
+          addPopup(
+            {
+              txn: {
+                hash,
+                summary,
+                ...bundleResponseToastStatus(response)
+              }
+            },
+            hash,
+            60000
+          )
+        }
+      }
     })
 
     // TO DO
@@ -319,7 +317,7 @@ export default function Sockets(): null {
               hash
             }
             updateTransaction(transactionId, {
-              transaction: tx.processed,
+              bundle: tx.processed,
               message: 'Transaction Expired',
               status: Status.FAILED_BUNDLE,
               updatedAt: timeNow
