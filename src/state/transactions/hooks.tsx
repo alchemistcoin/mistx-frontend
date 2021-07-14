@@ -6,7 +6,7 @@ import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from '../application/hooks'
-import { Diagnosis, emitTransactionCancellation, Status, TransactionProcessed } from '../../websocket'
+import { Diagnosis, emitTransactionCancellation, Status, BundleProcessed } from '../../websocket'
 import { WrapType } from '../../hooks/useWrapCallback'
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -111,7 +111,7 @@ export function useTransactionAdder(): (
 export function useTransactionUpdater(): (
   response: TransactionResponseIdentifier,
   customData?: {
-    transaction?: TransactionProcessed
+    bundle?: BundleProcessed
     status?: Status | string
     message?: string
     blockNumber?: number
@@ -126,7 +126,7 @@ export function useTransactionUpdater(): (
     async (
       response: TransactionResponseIdentifier,
       {
-        transaction,
+        bundle,
         message,
         status,
         blockNumber,
@@ -134,7 +134,7 @@ export function useTransactionUpdater(): (
         mistxDiagnosis,
         updatedAt
       }: {
-        transaction?: TransactionProcessed
+        bundle?: BundleProcessed
         message?: string
         status?: Status | string
         blockNumber?: number
@@ -149,7 +149,7 @@ export function useTransactionUpdater(): (
           updateTransaction({
             hash: response.hash,
             chainId: response.chainId,
-            transaction,
+            bundle,
             cancel: status,
             status:
               status === Status.CANCEL_BUNDLE_SUCCESSFUL
@@ -167,7 +167,7 @@ export function useTransactionUpdater(): (
           updateTransaction({
             hash: response.hash,
             chainId: response.chainId,
-            transaction,
+            bundle,
             status,
             message,
             blockNumber,
@@ -188,17 +188,17 @@ export function useTransactionCanceller() {
     async (
       response: TransactionResponseIdentifier,
       {
-        transaction,
+        bundle,
         message,
         status
       }: {
-        transaction: TransactionProcessed
+        bundle: BundleProcessed
         message?: string
         status?: string
       }
     ) => {
       if (!account) return
-      emitTransactionCancellation(transaction.serialized)
+      emitTransactionCancellation(bundle.serialized)
     },
     [account]
   )

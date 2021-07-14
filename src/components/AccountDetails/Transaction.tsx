@@ -136,7 +136,7 @@ export default function Transaction({ hash }: { hash: string }) {
         hash
       },
       {
-        transaction: tx.processed
+        bundle: tx.processed
       }
     )
   }

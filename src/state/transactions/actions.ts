@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
-import { Diagnosis, Status, SwapReq, TransactionProcessed } from '../../websocket/index'
+import { Diagnosis, Status, SwapReq, BundleProcessed } from '../../websocket/index'
 import { WrapType } from 'hooks/useWrapCallback'
 
 export interface SerializableTransactionReceipt {
@@ -54,7 +54,7 @@ export const updateTransaction = createAction<{
   message?: string
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
-  transaction?: TransactionProcessed
+  bundle?: BundleProcessed
   updatedAt?: number
 }>('transactions/updateTransaction')
 

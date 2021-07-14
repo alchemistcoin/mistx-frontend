@@ -137,7 +137,6 @@ export default function TransactionDiagnosis() {
   const cancelTransaction = useTransactionCanceller()
   const hash = Object.keys(pendingTransactions)[0]
   const tx = pendingTransactions[hash]
-  // const path = tx.processed?.swap.path;
   const tokenInput = tx?.inputAmount
   const tokenOutput = tx?.outputAmount
 
@@ -160,7 +159,7 @@ export default function TransactionDiagnosis() {
         hash
       },
       {
-        transaction: tx.processed
+        bundle: tx.processed
       }
     )
   }
