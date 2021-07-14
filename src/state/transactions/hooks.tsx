@@ -88,7 +88,8 @@ export function useTransactionAdder(): (
             hash,
             pending: true,
             success: false,
-            summary
+            summary,
+            message: 'Transaction Submitted'
           }
         },
         hash,
