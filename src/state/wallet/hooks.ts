@@ -130,24 +130,3 @@ export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<
   const balances = useTokenBalances(account ?? undefined, allTokensArray)
   return balances ?? {}
 }
-
-// get the total owned, unclaimed, and unharvested UNI for account
-// export function useAggregateUniBalance(): TokenAmount | undefined {
-//   const { account, chainId } = useActiveWeb3React()
-
-//   const uni = chainId ? UNI[chainId] : undefined
-
-//   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
-//   const uniUnclaimed: TokenAmount | undefined = useUserUnclaimedAmount(account)
-//   const uniUnHarvested: TokenAmount | undefined = useTotalUniEarned()
-
-//   if (!uni) return undefined
-
-//   return new TokenAmount(
-//     uni,
-//     JSBI.add(
-//       JSBI.add(uniBalance?.raw ?? JSBI.BigInt(0), uniUnclaimed?.raw ?? JSBI.BigInt(0)),
-//       uniUnHarvested?.raw ?? JSBI.BigInt(0)
-//     )
-//   )
-// }
