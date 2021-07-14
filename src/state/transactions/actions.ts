@@ -58,6 +58,10 @@ export const updateTransaction = createAction<{
   updatedAt?: number
 }>('transactions/updateTransaction')
 
+export const serializeLegacyTransaction = createAction<{
+  legacyTransaction: any
+}>('transactions/serializeLegacyTransaction')
+
 export const transactionError = createAction<{
   event: string
   message?: string
