@@ -1,32 +1,29 @@
-# Uniswap Interface
+# MistX Interface
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/0a896031-c171-4032-8b00-f0104c10005a/deploy-status)](https://app.netlify.com/sites/alchemist-mistx-0523/deploys)
-[![Unit Tests](https://github.com/Uniswap/uniswap-interface/actions/workflows/unit-tests.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/unit-tests.yaml)
-[![Integration Tests](https://github.com/Uniswap/uniswap-interface/actions/workflows/integration-tests.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/integration-tests.yaml)
-[![Lint](https://github.com/Uniswap/uniswap-interface/actions/workflows/lint.yml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/lint.yml)
-[![Release](https://github.com/Uniswap/uniswap-interface/actions/workflows/release.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/release.yaml)
+[![Unit Tests](https://github.com/alchemistcoin/mistx-frontend/actions/workflows/unit-tests.yaml/badge.svg)](https://github.com/alchemistcoin/mistx-frontend/actions/workflows/unit-tests.yaml)
+[![Lint](https://github.com/alchemistcoin/mistx-frontend/actions/actions/workflows/lint.yml/badge.svg)](https://github.com/alchemistcoin/mistx-frontend/actions/workflows/lint.yml)
 
-An open source interface for Uniswap -- a protocol for decentralized exchange of Ethereum tokens.
+An open source interface for MistX -- a protocol for decentralized exchange of Ethereum tokens.
 
-- Website: [uniswap.org](https://uniswap.org/)
-- Interface: [app.uniswap.org](https://app.uniswap.org)
-- Docs: [uniswap.org/docs/](https://uniswap.org/docs/)
-- Twitter: [@UniswapProtocol](https://twitter.com/UniswapProtocol)
-- Reddit: [/r/Uniswap](https://www.reddit.com/r/Uniswap/)
+- Website: [mistx.io](https://mistx.io/)
+- Interface: [app.mistx.io](https://app.mistx.io)
+- Docs: [docs.alchemist.wtf/mist](https://docs.alchemist.wtf/mist/)
+- Twitter: [@_alchemistcoin_](https://twitter.com/_alchemistcoin)
+- Reddit: [/r/alchemistcoin](https://www.reddit.com/r/Uniswap/)
 - Email: [contact@uniswap.org](mailto:contact@uniswap.org)
-- Discord: [Uniswap](https://discord.gg/FCfyBSbCU5)
-- Whitepaper: [Link](https://hackmd.io/C-DvwDSfSxuh-Gd4WKE_ig)
+- Discord: [Alchemist](https://discord.gg/4CEvN6ZBnt)
 
-## Accessing the Uniswap Interface
+## Accessing the MistX Interface
 
-To access the Uniswap Interface, use an IPFS gateway link from the
+To access the MistX Interface, use an IPFS gateway link from the
 [latest release](https://github.com/Uniswap/uniswap-interface/releases/latest), 
-or visit [app.uniswap.org](https://app.uniswap.org).
+or visit [app.uniswap.org](https://app.mistx.io).
 
 ## Listing a token
 
 Please see the
-[@uniswap/default-token-list](https://github.com/uniswap/default-token-list) 
+[@alchemistcoin/default-token-list](https://github.com/alchemistcoin/default-token-list) 
 repository.
 
 ## Development
@@ -58,11 +55,5 @@ The interface will not work on other networks.
 
 ## Contributions
 
-**Please open all pull requests against the `main` branch.** 
+**Please open all pull requests against the `dev` branch.** 
 CI checks will run against all PRs.
-
-## Accessing Uniswap Interface V1
-
-The Uniswap Interface supports swapping against, and migrating or removing liquidity from Uniswap V1. However,
-if you would like to use Uniswap V1, the Uniswap V1 interface for mainnet and testnets is accessible via IPFS gateways 
-linked from the [v1.0.0 release](https://github.com/Uniswap/uniswap-interface/releases/tag/v1.0.0).
