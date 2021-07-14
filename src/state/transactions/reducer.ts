@@ -1,7 +1,7 @@
 import { ChainId, Token } from '@alchemistcoin/sdk'
 import { createReducer } from '@reduxjs/toolkit'
 import { WrapType } from 'hooks/useWrapCallback'
-import { Diagnosis, Status, SwapReq, BundleProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, BundleProcessed, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -10,7 +10,8 @@ import {
   finalizeTransaction,
   removeTransaction,
   updateTransaction,
-  SerializableTransactionReceipt
+  SerializableTransactionReceipt,
+  serializeLegacyTransaction
 } from './actions'
 import { isPendingTransaction } from './hooks'
 
@@ -50,11 +51,93 @@ export interface TransactionDetails {
   inputAmount?: AmountDetails
   outputAmount?: AmountDetails
   wrapType?: WrapType
+  legacyRawV1?: any
 }
 
 export interface TransactionState {
   [chainId: number]: {
     [txHash: string]: TransactionDetails
+  }
+}
+
+const LegacyStatusMap: { [key: string]: string } = {
+  PENDING_TRANSACTION: 'PENDING_BUNDLE',
+  FAILED_TRANSACTION: 'FAILED_BUNDLE',
+  SUCCESSFUL_TRANSACTION: 'SUCCESSFUL_BUNDLE',
+  CANCEL_TRANSACTION_SUCCESSFUL: 'CANCEL_BUNDLE_SUCCESSFUL',
+  BUNDLE_NOT_FOUND: 'BUNDLE_NOT_FOUND'
+}
+
+const LegacyMessageMap: { [key: string]: string } = {
+  PENDING_BUNDLE: '',
+  FAILED_BUNDLE: '',
+  SUCCESSFUL_BUNDLE: '',
+  CANCEL_TRANSACTION_SUCCESSFUL: 'Bundle canceled successfully'
+}
+
+function SerializeLegacyTransaction(transaction: any): TransactionDetails | undefined {
+  const { processed } = transaction
+  if (processed && processed.serializedSwap) {
+    const transactions: TransactionProcessed[] = []
+    const bundleSerialized = processed.serializedApprove ? processed.serializedApprove : processed.serializedSwap
+    const raw = {
+      amount0: processed.swap.amount0,
+      amount1: processed.swap.amount1,
+      path: processed.swap.path,
+      to: processed.swap.to
+    }
+    if (processed.serializedApprove) {
+      transactions.push({
+        bundle: bundleSerialized,
+        estimatedEffectiveGasPrice: 0,
+        estimatedGas: 25000,
+        serialized: processed.serializedApprove,
+        raw: raw
+      })
+    }
+    transactions.push({
+      bundle: bundleSerialized,
+      estimatedEffectiveGasPrice: processed.estimatedEffectiveGasPrice,
+      estimatedGas: processed.estimatedGas,
+      serialized: processed.serializedSwap,
+      raw: raw
+    })
+    const serialized: TransactionDetails = {
+      chainId: 1,
+      hash: transaction.hash,
+      summary: transaction.summary,
+      addedTime: transaction.addedTime,
+      updatedAt: transaction.updatedAt,
+      from: transaction.from,
+      status: LegacyStatusMap[transaction.status],
+      inputAmount: transaction.inputAmount,
+      outputAmount: transaction.outputAmount,
+      lastCheckedBlockNumber: transaction.lastCheckedBlockNumber,
+      message: LegacyMessageMap[LegacyStatusMap[transaction.status]],
+      processed: {
+        bribe: processed.bribe,
+        serialized: bundleSerialized,
+        chainId: 1,
+        deadline: processed.swap.deadline,
+        from: processed.from,
+        sessionToken: processed.sessionToken,
+        simulateOnly: false,
+        timestamp: processed.timestamp,
+        totalEstimatedEffectiveGasPrice: processed.estimatedEffectiveGasPrice,
+        totalEstimatedGas: processed.estimatedGas,
+        transactions: transactions
+      },
+      legacyRawV1: transaction
+    }
+    if (transaction.cancel) {
+      serialized.cancel = LegacyStatusMap[transaction.cancel]
+    }
+    if (transaction.receipt) {
+      serialized.receipt = transaction.receipt
+    }
+    return serialized
+  } else {
+    return undefined
   }
 }
 
@@ -164,6 +247,18 @@ export default createReducer(initialState, builder =>
         transactions[chainId] = txs
       }
     )
+    .addCase(serializeLegacyTransaction, (transactions, { payload: { legacyTransaction } }) => {
+      const transaction = SerializeLegacyTransaction(legacyTransaction)
+      if (transaction && transaction.chainId && transaction.hash) {
+        const tx = transactions[transaction.chainId]?.[transaction.hash]
+        if (!tx) {
+          return
+        }
+        const txs = transactions[transaction.chainId] ?? {}
+        txs[transaction.hash] = transaction
+        transactions[transaction.chainId] = txs
+      }
+    })
     .addCase(clearCompletedTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return
       let currentTransaction
