@@ -80,19 +80,13 @@ function SerializeLegacyTransaction(transaction: any): TransactionDetails | unde
   if (processed && processed.serializedSwap) {
     const transactions: TransactionProcessed[] = []
     const bundleSerialized = processed.serializedApprove ? processed.serializedApprove : processed.serializedSwap
-    const raw = {
-      amount0: processed.swap.amount0,
-      amount1: processed.swap.amount1,
-      path: processed.swap.path,
-      to: processed.swap.to
-    }
     if (processed.serializedApprove) {
       transactions.push({
         bundle: bundleSerialized,
         estimatedEffectiveGasPrice: 0,
         estimatedGas: 25000,
         serialized: processed.serializedApprove,
-        raw: raw
+        raw: undefined
       })
     }
     transactions.push({
@@ -100,7 +94,12 @@ function SerializeLegacyTransaction(transaction: any): TransactionDetails | unde
       estimatedEffectiveGasPrice: processed.estimatedEffectiveGasPrice,
       estimatedGas: processed.estimatedGas,
       serialized: processed.serializedSwap,
-      raw: raw
+      raw: {
+        amount0: processed.swap.amount0,
+        amount1: processed.swap.amount1,
+        path: processed.swap.path,
+        to: processed.swap.to
+      }
     })
     const serialized: TransactionDetails = {
       chainId: 1,

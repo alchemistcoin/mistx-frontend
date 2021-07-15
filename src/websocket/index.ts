@@ -28,6 +28,7 @@ export enum Event {
   SOCKET_ERR = 'SOCKET_ERR',
   MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
   BUNDLE_STATUS_REQUEST = 'BUNDLE_STATUS_REQUEST',
+  BUNDLE_STATUS_RESPONSE = 'BUNDLE_STATUS_RESPONSE',
   BUNDLE_RESPONSE = 'BUNDLE_RESPONSE',
   BUNDLE_CANCEL_REQUEST = 'BUNDLE_CANCEL_REQUEST'
 }
@@ -78,15 +79,15 @@ export interface TransactionDiagnosisRes {
   mistxDiagnosis: Diagnosis
 }
 export interface TransactionReq {
-  serialized: string // serialized transactions
+  serialized: string // serialized transaction
   raw: SwapReq | undefined // raw def. of each type of trade
   estimatedGas?: number
   estimatedEffectiveGasPrice?: number
 }
 export interface TransactionProcessed {
-  serialized: string
+  serialized: string // serialized transaction
   bundle: string // bundle.serialized
-  raw: SwapReq
+  raw: SwapReq | undefined // raw def. of each type of trade
   estimatedGas: number
   estimatedEffectiveGasPrice: number
 }
@@ -123,6 +124,13 @@ interface BundleRes {
   message: string
   error: string
 }
+
+interface BundleStatusRes {
+  bundle: string // BundleProcessed.serialized
+  status: string
+  message: string
+  error: string
+}
 interface QuoteEventsMap {
   [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
@@ -131,6 +139,7 @@ interface QuoteEventsMap {
   [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
   [Event.BUNDLE_CANCEL_REQUEST]: (serialized: any) => void // TO DO - any
   [Event.BUNDLE_STATUS_REQUEST]: (serialized: any) => void // TO DO - any
+  [Event.BUNDLE_STATUS_RESPONSE]: (serialized: BundleStatusRes) => void // TO DO - any
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -209,7 +218,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.SOCKET_ERR, err => {
-      console.log('websocket err', err)
+      // console.log('websocket err', err)
       if (err.event === Event.MISTX_BUNDLE_REQUEST) {
         const bundleResponse = err.data as BundleRes
         const hash = keccak256(bundleResponse.bundle.serialized)
@@ -238,6 +247,28 @@ export default function Sockets(): null {
       dispatch(updateGas(gas))
     })
 
+    socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
+      const { bundle, status } = response
+      const hash = keccak256(bundle)
+      const tx = allTransactions?.[hash]
+      const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+
+      if (!tx || !tx.chainId || previouslyCompleted) return
+      const transactionId = {
+        chainId: tx.chainId,
+        hash
+      }
+      let message = response.message
+      if (status === Status.BUNDLE_NOT_FOUND) {
+        message = ''
+      }
+      updateTransaction(transactionId, {
+        status: status,
+        message: message,
+        updatedAt: new Date().getTime()
+      })
+    })
+
     socket.on(Event.BUNDLE_RESPONSE, response => {
       const hash = keccak256(response.bundle.serialized)
       const tx = allTransactions?.[hash]
@@ -253,7 +284,6 @@ export default function Sockets(): null {
       }
 
       // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
-
       if (!previouslyCompleted) {
         updateTransaction(transactionId, {
           bundle: response.bundle,
@@ -349,7 +379,7 @@ export default function Sockets(): null {
               updatedAt: timeNow
             })
           } else if (tx.updatedAt) {
-            console.log('CHECK STATUS', tx)
+            // console.log('CHECK STATUS', tx)
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               // const transactionReq: TransactionProcessed = tx.processed
