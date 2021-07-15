@@ -126,7 +126,7 @@ interface BundleRes {
 }
 
 interface BundleStatusRes {
-  bundle: string // BundleProcessed.serialized
+  bundle: string | BundleProcessed // BundleProcessed.serialized
   status: string
   message: string
   error: string
@@ -249,10 +249,10 @@ export default function Sockets(): null {
 
     socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
       const { bundle, status } = response
-      const hash = keccak256(bundle)
+      const serialized = bundle && typeof bundle === 'string' ? bundle : (bundle as BundleProcessed).serialized
+      const hash = keccak256(serialized)
       const tx = allTransactions?.[hash]
       const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
-
       if (!tx || !tx.chainId || previouslyCompleted) return
       const transactionId = {
         chainId: tx.chainId,
