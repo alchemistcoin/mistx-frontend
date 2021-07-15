@@ -15,7 +15,9 @@ export default function Updater(): null {
       // the users tip setting needs to be updated if the default settings change
       const closestSettingValue = tipValueToSetting(state.userBribeMargin)
       const newBribeMargin = tipSettingToValue(closestSettingValue)
-      dispatch(updateUserBribeMargin({ userBribeMargin: newBribeMargin }))
+      if (newBribeMargin !== state.userBribeMargin){
+        dispatch(updateUserBribeMargin({ userBribeMargin: newBribeMargin }))
+      }
     }
     setUpdatedDefaultUserSettings(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
