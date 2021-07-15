@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, WETH } from '@alchemistcoin/sdk'
 import { Web3Provider } from '@ethersproject/providers'
 // components
 import AppBody from '../AppBody'
@@ -33,7 +33,8 @@ import {
   FeeInnerLeft,
   FeeInnerRight
 } from '../../components/swap/styleds'
-import QuestionHelper from '../../components/QuestionHelper'
+// import QuestionHelper from '../../components/QuestionHelper'
+import { Info } from '../../components/Icons'
 // import TradePrice from '../../components/swap/TradePrice'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
@@ -74,6 +75,8 @@ import { isTradeBetter } from 'utils/trades'
 import { darken } from 'polished'
 import { LinkStyledButton, TYPE } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
+import { MouseoverTooltipContent } from '../../components/Tooltip'
+import TradeDetails from '../../components/TradeDetails'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -222,7 +225,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
-
+  console.log('allowedSlippage', allowedSlippage)
   // get user transaction deadline TTL, in minutes
   // const [transactionTTL] = useUserTransactionTTL()
 
@@ -629,18 +632,14 @@ export default function Swap({ history }: RouteComponentProps) {
                   <>
                     <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
                       <FeeWrapper>
-                        <FeeInnerLeft>
-                          Transaction fee:
-                          <span>
-                            {ethUSDCPrice
-                              ? `$ ${ethUSDCPrice
-                                  .quote(new TokenAmount(WETH[1], trade.minerBribe.raw))
-                                  .toSignificant(4)} (${trade.minerBribe.toSignificant(2)} ETH)`
-                              : `${trade.minerBribe.toSignificant(2)} ETH`}
-                          </span>
-                        </FeeInnerLeft>
+                        <FeeInnerLeft></FeeInnerLeft>
                         <FeeInnerRight>
-                          <QuestionHelper text="A tip for the miner to accept the transaction. You can change this in the settings." />
+                          {/* <QuestionHelper text="A tip for the miner to accept the transaction. You can change this in the settings." /> */}
+                          <MouseoverTooltipContent
+                            content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}
+                          >
+                            <Info />
+                          </MouseoverTooltipContent>
                         </FeeInnerRight>
                       </FeeWrapper>
                     </AutoRow>

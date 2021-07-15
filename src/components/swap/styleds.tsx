@@ -238,4 +238,8 @@ export const FeeInnerRight = styled.div`
   justify-content: space-around;
   position: relative;
   margin-top: -2px;
+
+  > div {
+    display: flex;
+  }
 `

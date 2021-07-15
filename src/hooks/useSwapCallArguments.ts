@@ -74,7 +74,7 @@ export function useSwapCallArguments(
         }
       }
     }
-
+    console.log('allowedSlippage', new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE))
     return pendingCall
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
 }

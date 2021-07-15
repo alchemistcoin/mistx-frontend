@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, ReactNode } from 'react'
 import styled from 'styled-components'
 import Popover, { PopoverProps } from '../Popover'
 
@@ -27,5 +27,30 @@ export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show
         {children}
       </div>
     </Tooltip>
+  )
+}
+
+interface TooltipContentProps extends Omit<PopoverProps, 'content'> {
+  content: ReactNode
+}
+
+function TooltipContent({ content, ...rest }: TooltipContentProps) {
+  return <Popover content={<TooltipContainer>{content}</TooltipContainer>} {...rest} />
+}
+
+export function MouseoverTooltipContent({ content, children, ...rest }: Omit<TooltipContentProps, 'show'>) {
+  const [show, setShow] = useState(false)
+  const open = useCallback(() => setShow(true), [setShow])
+  const close = useCallback(() => setShow(false), [setShow])
+  return (
+    <TooltipContent {...rest} show={show} content={content}>
+      <div
+        style={{ display: 'inline-block', lineHeight: 0, padding: '0.25rem' }}
+        onMouseEnter={open}
+        onMouseLeave={close}
+      >
+        {children}
+      </div>
+    </TooltipContent>
   )
 }
