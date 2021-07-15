@@ -18,7 +18,14 @@ const MinderBribeSlider = () => {
 
   return (
     <Wrapper>
-      <Slider min={1} max={TipSettingsSteps} step={1} value={tipValueToSetting(userBribeMargin)} onChange={onChange} />
+      <Slider
+        min={1}
+        max={TipSettingsSteps}
+        step={1}
+        value={tipValueToSetting(userBribeMargin)}
+        onChange={onChange}
+        name="miner-tip"
+      />
     </Wrapper>
   )
 }
