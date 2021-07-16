@@ -202,7 +202,6 @@ export default function Sockets(): null {
     socket.on(Event.SOCKET_SESSION, session => {
       const { token, version } = session
       localStorage.setItem(tokenKey, token)
-      console.log('session', session)
       // check client version and notify user to refresh page
       // if the client version is not equal to the version.client
       // received in the session payload
