@@ -4,7 +4,8 @@ import { io, Socket } from 'socket.io-client'
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
-import { MANUAL_CHECK_TX_STATUS_INTERVAL, APP_VERSION } from '../constants'
+import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+import PJSON from '../../package.json'
 import FATHOM_GOALS from '../constants/fathom'
 
 // state
@@ -206,7 +207,7 @@ export default function Sockets(): null {
       // check client version and notify user to refresh page
       // if the client version is not equal to the version.client
       // received in the session payload
-      if (!newAppVersionAvailable && version && APP_VERSION && version.client !== APP_VERSION) {
+      if (!newAppVersionAvailable && version && PJSON && version.client !== PJSON.version) {
         setNewAppVersionAvailable(true)
       } else if (newAppVersionAvailable) {
         setNewAppVersionAvailable(false)
