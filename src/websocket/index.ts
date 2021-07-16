@@ -48,8 +48,13 @@ export enum Diagnosis {
   ERROR_UNKNOWN = 'ERROR_UNKNOWN'
 }
 
+export interface MistXVersion {
+  api: string
+  client: string
+}
 export interface SocketSession {
   token: string
+  version: MistXVersion | undefined
 }
 export interface SwapReq {
   amount0: BigNumberish
@@ -194,7 +199,13 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
-      localStorage.setItem(tokenKey, session.token)
+      const { token, version } = session
+      localStorage.setItem(tokenKey, token)
+
+      // check client version and notify user to refresh page
+      // if the client version is not equal to the version.client
+      // received in the session payload
+      console.log('Session Response Version', version)
     })
 
     socket.on(Event.GAS_CHANGE, gas => {
