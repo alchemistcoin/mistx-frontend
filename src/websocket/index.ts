@@ -5,12 +5,13 @@ import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+import PJSON from '../../package.json'
 import FATHOM_GOALS from '../constants/fathom'
 
 // state
 import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
-import { useSocketStatus } from '../state/application/hooks'
+import { useSocketStatus, useNewAppVersionAvailable } from '../state/application/hooks'
 import {
   useAllTransactions,
   useTransactionRemover,
@@ -48,8 +49,13 @@ export enum Diagnosis {
   ERROR_UNKNOWN = 'ERROR_UNKNOWN'
 }
 
+export interface MistXVersion {
+  api: string
+  client: string
+}
 export interface SocketSession {
   token: string
+  version: MistXVersion | undefined
 }
 export interface SwapReq {
   amount0: BigNumberish
@@ -164,6 +170,7 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
+  const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -194,7 +201,17 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
-      localStorage.setItem(tokenKey, session.token)
+      const { token, version } = session
+      localStorage.setItem(tokenKey, token)
+
+      // check client version and notify user to refresh page
+      // if the client version is not equal to the version.client
+      // received in the session payload
+      if (!newAppVersionAvailable && version && PJSON && version.client !== PJSON.version) {
+        setNewAppVersionAvailable(true)
+      } else if (newAppVersionAvailable) {
+        setNewAppVersionAvailable(false)
+      }
     })
 
     socket.on(Event.GAS_CHANGE, gas => {
@@ -268,7 +285,15 @@ export default function Sockets(): null {
       socket.off(Event.TRANSACTION_RESPONSE)
       socket.off(Event.TRANSACTION_DIAGNOSIS)
     }
-  }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
+  }, [
+    addPopup,
+    dispatch,
+    allTransactions,
+    removeTransaction,
+    updateTransaction,
+    newAppVersionAvailable,
+    setNewAppVersionAvailable
+  ])
 
   // Check each pending transaction every 5 seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   useEffect(() => {
