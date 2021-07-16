@@ -98,9 +98,10 @@ export default function SwapModalFooter({
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
-  const tokenCurrency = trade.tradeType === TradeType.EXACT_INPUT
-    ? slippageAdjustedAmounts[Field.INPUT]?.currency
-    : slippageAdjustedAmounts[Field.OUTPUT]?.currency
+  const tokenCurrency =
+    trade.tradeType === TradeType.EXACT_INPUT
+      ? slippageAdjustedAmounts[Field.INPUT]?.currency
+      : slippageAdjustedAmounts[Field.OUTPUT]?.currency
   const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
 
   return (
