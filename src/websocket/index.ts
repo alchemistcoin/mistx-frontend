@@ -206,7 +206,6 @@ export default function Sockets(): null {
       // check client version and notify user to refresh page
       // if the client version is not equal to the version.client
       // received in the session payload
-      console.log('Session Response Version', version)
       if (!newAppVersionAvailable && version && APP_VERSION && version.client !== APP_VERSION) {
         setNewAppVersionAvailable(true)
       } else if (newAppVersionAvailable) {
