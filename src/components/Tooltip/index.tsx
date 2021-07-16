@@ -45,7 +45,7 @@ export function MouseoverTooltipContent({ content, children, ...rest }: Omit<Too
   return (
     <TooltipContent {...rest} show={show} content={content}>
       <div
-        style={{ display: 'inline-block', lineHeight: 0, padding: '0.25rem' }}
+        style={{ display: 'flex', lineHeight: 0, padding: '0.25rem', alignItems: 'center' }}
         onMouseEnter={open}
         onMouseLeave={close}
       >

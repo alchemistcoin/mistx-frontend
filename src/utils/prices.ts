@@ -74,3 +74,13 @@ export function formatExecutionPrice(trade?: Trade, inverted?: boolean): string 
         trade.outputAmount.currency.symbol
       }`
 }
+
+export function getLPFeePercentage(trade: Trade): Percent {
+  const percent: Percent = ONE_HUNDRED_PERCENT.subtract(
+    trade.route.pairs.reduce<Percent>(
+      (currentFee: Percent): Percent => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
+      ONE_HUNDRED_PERCENT
+    )
+  )
+  return new Percent(percent.numerator, percent.denominator)
+}
