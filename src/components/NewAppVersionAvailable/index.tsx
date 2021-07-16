@@ -58,9 +58,7 @@ export default function TokenWarningModal() {
               manually refresh.
             </Text>
             <ButtonWrapper>
-              <Button onClick={() => refresh()}>
-                Refresh
-              </Button>
+              <Button onClick={() => refresh()}>Refresh</Button>
             </ButtonWrapper>
           </AutoColumn>
         </Section>
