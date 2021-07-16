@@ -43,3 +43,4 @@ export const addPopup = createAction<{ key?: string; removeAfterMs?: number | nu
 )
 export const removePopup = createAction<{ key: string }>('application/removePopup')
 export const updateSocketStatus = createAction<boolean>('application/updateSocketStatus')
+export const updateNewAppVersionAvailable = createAction<boolean>('application/updateNewAppVersionAvailable')

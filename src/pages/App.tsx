@@ -9,6 +9,7 @@ import Polling from '../components/Header/Polling'
 import ConnectionStatus from '../components/ConnectionStatus'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
+import NewAppVersionAvailable from '../components/NewAppVersionAvailable'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
@@ -80,6 +81,7 @@ export default function App() {
         </BodyWrapper>
       </AppWrapper>
       <Popups />
+      <NewAppVersionAvailable />
     </Suspense>
   )
 }

@@ -2,6 +2,8 @@ import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemistcoin/sd
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected, ledger, walletconnect } from '../connectors'
 
+export const APP_VERSION = '0.1.4'
+
 export const MISTX_ROUTER_ADDRESS: { [chainId in ChainId]?: { [exchange in Exchange]?: string } } = {
   [ChainId.MAINNET]: {
     [Exchange.UNI]: '0xA58f22e0766B3764376c92915BA545d583c19DBc',

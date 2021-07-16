@@ -4,13 +4,13 @@ import { io, Socket } from 'socket.io-client'
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
-import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
+import { MANUAL_CHECK_TX_STATUS_INTERVAL, APP_VERSION } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
 
 // state
 import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
-import { useSocketStatus } from '../state/application/hooks'
+import { useSocketStatus, useNewAppVersionAvailable } from '../state/application/hooks'
 import {
   useAllTransactions,
   useTransactionRemover,
@@ -169,6 +169,7 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
+  const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -206,6 +207,11 @@ export default function Sockets(): null {
       // if the client version is not equal to the version.client
       // received in the session payload
       console.log('Session Response Version', version)
+      if (!newAppVersionAvailable && version && APP_VERSION && version.client !== APP_VERSION) {
+        setNewAppVersionAvailable(true)
+      } else if (newAppVersionAvailable) {
+        setNewAppVersionAvailable(false)
+      }
     })
 
     socket.on(Event.GAS_CHANGE, gas => {
@@ -279,7 +285,15 @@ export default function Sockets(): null {
       socket.off(Event.TRANSACTION_RESPONSE)
       socket.off(Event.TRANSACTION_DIAGNOSIS)
     }
-  }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
+  }, [
+    addPopup,
+    dispatch,
+    allTransactions,
+    removeTransaction,
+    updateTransaction,
+    newAppVersionAvailable,
+    setNewAppVersionAvailable
+  ])
 
   // Check each pending transaction every 5 seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   useEffect(() => {
