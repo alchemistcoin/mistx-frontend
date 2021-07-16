@@ -1,6 +1,7 @@
 {
-  "name": "@uniswap/interface",
-  "description": "Uniswap Interface",
+  "name": "@alchemistcoin/mistx-frontend",
+  "version": "0.1.5",
+  "description": "mistX Frontend",
   "homepage": ".",
   "private": true,
   "devDependencies": {

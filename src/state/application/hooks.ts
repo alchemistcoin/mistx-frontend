@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { Gas } from './reducer'
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
+import {
+  addPopup,
+  ApplicationModal,
+  PopupContent,
+  removePopup,
+  setOpenModal,
+  updateNewAppVersionAvailable
+} from './actions'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
@@ -87,4 +94,18 @@ export function useActivePopups(): AppState['application']['popupList'] {
 
 export function useSocketStatus(): AppState['application']['socketStatus'] {
   return useSelector<AppState, AppState['application']['socketStatus']>(state => state.application.socketStatus)
+}
+
+export function useNewAppVersionAvailable(): [boolean, (newAppVersionAvailable: boolean) => void] {
+  const dispatch = useDispatch<AppDispatch>()
+  const newAppVersionAvailable = useSelector<AppState, AppState['application']['newAppVersionAvailable']>(
+    state => state.application.newAppVersionAvailable
+  )
+
+  const setnewAppVersionAvailable = useCallback(
+    (newAppVersionAvailable: boolean) => dispatch(updateNewAppVersionAvailable(newAppVersionAvailable)),
+    [dispatch]
+  )
+
+  return [newAppVersionAvailable, setnewAppVersionAvailable]
 }
