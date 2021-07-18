@@ -643,7 +643,6 @@ export default function Swap({ history }: RouteComponentProps) {
                           />
                         </FeeInnerLeft>
                         <FeeInnerRight>
-                          {/* <QuestionHelper text="A tip for the miner to accept the transaction. You can change this in the settings." /> */}
                           <MouseoverTooltipContent
                             content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}
                           >

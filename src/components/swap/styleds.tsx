@@ -207,14 +207,14 @@ export const TokenHandImage = styled.img`
 export const FeeWrapper = styled.div`
   height: 2.5rem;
   font-size: 0.875rem;
-  padding: 0 1.25rem;
+  padding: 0 0.25rem;
   width: 100%;
   display: flex;
   flex-direction: row;
   border-radius: 1.25rem;
-  background-color: ${({ theme }) => theme.bg5};
   line-height: 2.5rem;
   color: ${({ theme }) => theme.text3};
+  z-index: 9;
   span {
     color: ${({ theme }) => theme.white};
   }

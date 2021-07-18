@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { TradeType, Percent, JSBI } from '@alchemistcoin/sdk'
+import { Trade, TradeType, Percent, JSBI } from '@alchemistcoin/sdk'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { BIPS_BASE } from '../../constants'
@@ -8,9 +8,9 @@ import { RowBetween, RowFixed } from '../Row'
 import SwapPath from './swapPath'
 import { computeTradePriceBreakdown } from '../../utils/prices'
 import FormattedPriceImpact from '../swap/FormattedPriceImpact'
-
+import MinerTipPrice from '../swap/MinerTipPrice'
 interface TradeDetailsProps {
-  trade?: any
+  trade: Trade
   allowedSlippage: number
 }
 
@@ -20,11 +20,13 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
 
+  console.log('trade', trade.minerBribe.toSignificant(2))
+
   return !trade ? null : (
-    <AutoColumn gap="12px">
+    <AutoColumn gap="6px">
       <RowBetween>
-        <RowFixed paddingRight={25}>
-          <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Liquidity Provider Fee
           </TYPE.black>
         </RowFixed>
@@ -36,7 +38,18 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
 
       <RowBetween>
-        <RowFixed paddingRight={25}>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Miner Tip
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          <MinerTipPrice trade={trade} />
+        </TYPE.black>
+      </RowBetween>
+
+      <RowBetween>
+        <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Swap
           </TYPE.black>
@@ -47,7 +60,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
 
       <RowBetween>
-        <RowFixed paddingRight={25}>
+        <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Price Impact
           </TYPE.black>
@@ -58,7 +71,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
 
       <RowBetween>
-        <RowFixed paddingRight={25}>
+        <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             {trade.tradeType === TradeType.EXACT_INPUT ? `Min received` : `Max sent`}
           </TYPE.black>
@@ -71,7 +84,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
 
       <RowBetween>
-        <RowFixed paddingRight={25}>
+        <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Slippage tolerance
           </TYPE.black>
