@@ -52,10 +52,11 @@ const CurrencyName = styled.div`
   margin-left: 1rem;
 `
 
-const TransactionAmount = styled.div`
-  font-size: 32px;
+const TransactionAmount = styled.div<{ size?: number }>`
+  font-size: ${({ size = 32 }) => `${size}px`};
   font-weight: 700;
   line-height: 44px;
+  padding-left: 1rem;
   text-align: right;
 `
 
@@ -200,8 +201,16 @@ export default function TransactionDiagnosis() {
               </TokenAmountWrapper>
               <PendingTransactionIcon />
               <TokenAmountWrapper>
-                <TransactionAmount>{tokenInput?.value}</TransactionAmount>
-                <TransactionAmount>{tokenOutput?.value}</TransactionAmount>
+                {tokenInput && (
+                  <TransactionAmount size={tokenInput.value?.length >= 8 ? 24 : 32}>
+                    {tokenInput.value}
+                  </TransactionAmount>
+                )}
+                {tokenOutput && (
+                  <TransactionAmount size={tokenOutput.value?.length >= 8 ? 24 : 32}>
+                    {tokenOutput.value}
+                  </TransactionAmount>
+                )}
               </TokenAmountWrapper>
             </>
           )}
