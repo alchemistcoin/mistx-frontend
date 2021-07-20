@@ -100,8 +100,12 @@ function TokenTags({ currency }: { currency: Currency }) {
 
 const mistFirst = (currencies: Currency[]): Currency[] =>
   currencies.reduce((arr: Currency[], currency: Currency) => {
+    if (currency.symbol === 'ETH') {
+      arr.splice(0, 0, currency)
+      return arr
+    }
     if (currency.symbol === 'MIST') {
-      arr.unshift(currency)
+      arr.splice(1, 0, currency)
       return arr
     }
     arr.push(currency)
@@ -206,7 +210,7 @@ export default function CurrencyList({
     if (otherListTokens && otherListTokens?.length > 0) {
       return [...(showMIST ? mistFirst(currencies) : currencies), BREAK_LINE, ...otherListTokens]
     }
-    return currencies
+    return showMIST ? mistFirst(currencies) : currencies
   }, [currencies, otherListTokens, showMIST])
 
   const { chainId } = useActiveWeb3React()
