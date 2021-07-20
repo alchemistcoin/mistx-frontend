@@ -199,7 +199,6 @@ export default function Sockets(): null {
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
-  console.log('pendingTransactions', pendingTransactions)
 
   useEffect(() => {
     socket.on('connect', () => {
