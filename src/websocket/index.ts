@@ -24,7 +24,7 @@ import { BigNumber } from 'ethers'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
-  SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
+  SOCKET_SESSION = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
   BUNDLE_STATUS_REQUEST = 'BUNDLE_STATUS_REQUEST',
@@ -132,7 +132,7 @@ interface BundleStatusRes {
   error: string
 }
 interface QuoteEventsMap {
-  [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
+  [Event.SOCKET_SESSION]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
   [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
@@ -228,10 +228,9 @@ export default function Sockets(): null {
       }
     })
 
-    socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
+    socket.on(Event.SOCKET_SESSION, session => {
       const { token, version } = session
       localStorage.setItem(tokenKey, token)
-
       // check client version and notify user to refresh page
       // if the client version is not equal to the version.client
       // received in the session payload
@@ -334,7 +333,7 @@ export default function Sockets(): null {
       socket.off('connect')
       socket.off('connect_error')
       socket.off(Event.SOCKET_ERR)
-      socket.off(Event.SOCKET_SESSION_RESPONSE)
+      socket.off(Event.SOCKET_SESSION)
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.BUNDLE_RESPONSE)
       socket.off(Event.BUNDLE_STATUS_REQUEST)

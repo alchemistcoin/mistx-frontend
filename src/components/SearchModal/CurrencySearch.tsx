@@ -99,7 +99,7 @@ export function CurrencySearch({
 
   const [showMIST] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()
-    return [s === '' || s === 'm' || s === 'mi' || s === 'mis' || s === 'mist']
+    return [!s || s === 'm' || s === 'mi' || s === 'mis' || s === 'mist']
   }, [debouncedQuery])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
