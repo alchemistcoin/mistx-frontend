@@ -76,11 +76,11 @@ const MistBalance = () => {
   const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
   const mistBalance = balance?.greaterThan('1')
     ? balance?.greaterThan('100')
-      ? balance?.toFixed(0)
+      ? balance?.toFixed(0) // ex. 100
       : balance?.greaterThan('10')
-      ? balance?.toFixed(1)
-      : balance?.toFixed(2)
-    : balance?.toSignificant(2)
+      ? balance?.toFixed(1) // ex. 11.0
+      : balance?.toFixed(2) // ex. 1.00
+    : balance?.toSignificant(2) // ex. .00012
   const handleOutputSelect = () => onCurrencySelection(Field.OUTPUT, alchemistToken.token)
   if (!account) return null
   return (
