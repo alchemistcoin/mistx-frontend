@@ -1,5 +1,5 @@
 import React from 'react'
-import { Price } from '@alchemistcoin/sdk'
+import { Price, Currency } from '@alchemistcoin/sdk'
 import { useContext } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
@@ -7,7 +7,7 @@ import { ThemeContext } from 'styled-components'
 import { StyledBalanceMaxMini } from './styleds'
 
 interface TradePriceProps {
-  price?: Price
+  price?: Price<Currency, Currency>
   showInverted: boolean
   setShowInverted: (showInverted: boolean) => void
 }

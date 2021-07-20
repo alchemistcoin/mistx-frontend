@@ -1,7 +1,7 @@
 import { ChainId, Token } from '@alchemistcoin/sdk'
 import { createReducer } from '@reduxjs/toolkit'
 import { WrapType } from 'hooks/useWrapCallback'
-import { Diagnosis, Status, SwapReq, TransactionProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, BundleProcessed, TransactionProcessed } from 'websocket'
 import {
   addTransaction,
   checkedTransaction,
@@ -10,7 +10,8 @@ import {
   finalizeTransaction,
   removeTransaction,
   updateTransaction,
-  SerializableTransactionReceipt
+  SerializableTransactionReceipt,
+  serializeLegacyTransaction
 } from './actions'
 import { isPendingTransaction } from './hooks'
 
@@ -27,32 +28,115 @@ export interface AmountDetails {
   value: string
 }
 export interface TransactionDetails {
+  chainId?: ChainId
   hash: string
   approval?: { tokenAddress: string; spender: string }
   summary?: string
   claim?: { recipient: string }
   receipt?: SerializableTransactionReceipt
-  processed?: TransactionProcessed // swaps
+  processed?: BundleProcessed // swaps
   lastCheckedBlockNumber?: number
   addedTime: number
   confirmedTime?: number
+  deadline?: number
   from: string
   swap?: SwapReq
   blockNumber?: number // from transaction diagnosis
-  status?: Status
+  status?: Status | string
   message?: string
-  cancel?: Status
+  cancel?: Status | string
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
   updatedAt?: number
   inputAmount?: AmountDetails
   outputAmount?: AmountDetails
   wrapType?: WrapType
+  legacyRawV1?: any
 }
 
 export interface TransactionState {
   [chainId: number]: {
     [txHash: string]: TransactionDetails
+  }
+}
+
+const LegacyStatusMap: { [key: string]: string } = {
+  PENDING_TRANSACTION: 'PENDING_BUNDLE',
+  FAILED_TRANSACTION: 'FAILED_BUNDLE',
+  SUCCESSFUL_TRANSACTION: 'SUCCESSFUL_BUNDLE',
+  CANCEL_TRANSACTION_SUCCESSFUL: 'CANCEL_BUNDLE_SUCCESSFUL',
+  BUNDLE_NOT_FOUND: 'BUNDLE_NOT_FOUND'
+}
+
+const LegacyMessageMap: { [key: string]: string } = {
+  PENDING_BUNDLE: '',
+  FAILED_BUNDLE: '',
+  SUCCESSFUL_BUNDLE: '',
+  CANCEL_TRANSACTION_SUCCESSFUL: 'Bundle canceled successfully'
+}
+
+function SerializeLegacyTransaction(transaction: any): TransactionDetails | undefined {
+  const { processed } = transaction
+  if (processed && processed.serializedSwap) {
+    const transactions: TransactionProcessed[] = []
+    const bundleSerialized = processed.serializedApprove ? processed.serializedApprove : processed.serializedSwap
+    if (processed.serializedApprove) {
+      transactions.push({
+        bundle: bundleSerialized,
+        estimatedEffectiveGasPrice: 0,
+        estimatedGas: 25000,
+        serialized: processed.serializedApprove,
+        raw: undefined
+      })
+    }
+    transactions.push({
+      bundle: bundleSerialized,
+      estimatedEffectiveGasPrice: processed.estimatedEffectiveGasPrice,
+      estimatedGas: processed.estimatedGas,
+      serialized: processed.serializedSwap,
+      raw: {
+        amount0: processed.swap.amount0,
+        amount1: processed.swap.amount1,
+        path: processed.swap.path,
+        to: processed.swap.to
+      }
+    })
+    const serialized: TransactionDetails = {
+      chainId: 1,
+      hash: transaction.hash,
+      summary: transaction.summary,
+      addedTime: transaction.addedTime,
+      updatedAt: transaction.updatedAt,
+      from: transaction.from,
+      status: LegacyStatusMap[transaction.status],
+      inputAmount: transaction.inputAmount,
+      outputAmount: transaction.outputAmount,
+      lastCheckedBlockNumber: transaction.lastCheckedBlockNumber,
+      message: LegacyMessageMap[LegacyStatusMap[transaction.status]],
+      processed: {
+        bribe: processed.bribe,
+        serialized: bundleSerialized,
+        chainId: 1,
+        deadline: processed.swap.deadline,
+        from: processed.from,
+        sessionToken: processed.sessionToken,
+        simulateOnly: false,
+        timestamp: processed.timestamp,
+        totalEstimatedEffectiveGasPrice: processed.estimatedEffectiveGasPrice,
+        totalEstimatedGas: processed.estimatedGas,
+        transactions: transactions
+      },
+      legacyRawV1: transaction
+    }
+    if (transaction.cancel) {
+      serialized.cancel = LegacyStatusMap[transaction.cancel]
+    }
+    if (transaction.receipt) {
+      serialized.receipt = transaction.receipt
+    }
+    return serialized
+  } else {
+    return undefined
   }
 }
 
@@ -64,7 +148,7 @@ export default createReducer(initialState, builder =>
       addTransaction,
       (
         transactions,
-        { payload: { chainId, from, hash, summary, claim, trade, wrapType, inputAmount, outputAmount } }
+        { payload: { chainId, from, hash, summary, claim, trade, wrapType, inputAmount, outputAmount, deadline } }
       ) => {
         const tx = transactions[chainId]?.[hash] as TransactionDetails
         if (tx && isPendingTransaction(tx)) {
@@ -76,9 +160,11 @@ export default createReducer(initialState, builder =>
 
         const txs = transactions[chainId] ?? {}
         txs[hash] = {
+          chainId,
           hash,
           summary,
           claim,
+          deadline,
           from,
           addedTime: now(),
           wrapType,
@@ -126,7 +212,7 @@ export default createReducer(initialState, builder =>
         {
           payload: {
             chainId,
-            transaction,
+            bundle,
             hash,
             blockNumber,
             flashbotsResolution,
@@ -143,7 +229,7 @@ export default createReducer(initialState, builder =>
           return
         }
         // todo: update the transaction
-        if (transaction) tx.processed = transaction
+        if (bundle) tx.processed = bundle
         if (status) tx.status = status
         if (blockNumber) tx.blockNumber = blockNumber
         if (flashbotsResolution) tx.flashbotsResolution = flashbotsResolution
@@ -160,6 +246,18 @@ export default createReducer(initialState, builder =>
         transactions[chainId] = txs
       }
     )
+    .addCase(serializeLegacyTransaction, (transactions, { payload: { legacyTransaction } }) => {
+      const transaction = SerializeLegacyTransaction(legacyTransaction)
+      if (transaction && transaction.chainId && transaction.hash) {
+        const tx = transactions[transaction.chainId]?.[transaction.hash]
+        if (!tx) {
+          return
+        }
+        const txs = transactions[transaction.chainId] ?? {}
+        txs[transaction.hash] = transaction
+        transactions[transaction.chainId] = txs
+      }
+    })
     .addCase(clearCompletedTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return
       let currentTransaction

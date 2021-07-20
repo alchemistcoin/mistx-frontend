@@ -10,7 +10,7 @@ export type PopupContent =
         success: boolean
         pending: boolean
         summary?: string
-        status?: Status
+        status?: Status | string
         message?: string
         transaction?: TransactionProcessed
       }

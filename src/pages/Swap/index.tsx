@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { CurrencyAmount, JSBI, Token, Trade, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, WETH, Currency, TradeType } from '@alchemistcoin/sdk'
 import { Web3Provider } from '@ethersproject/providers'
 // components
 import AppBody from '../AppBody'
@@ -19,7 +19,6 @@ import CurrencySelect from 'components/CurrencySelect'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import TransactionDiagnosis from 'components/TransactionDiagnosis'
 // import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
-import BetterTradeLink, { DefaultVersionLink } from '../../components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import {
   ArrowWrapper,
@@ -38,14 +37,12 @@ import QuestionHelper from '../../components/QuestionHelper'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
 // hooks
-import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 // import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
-import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useSocketStatus, useWalletModalToggle } from '../../state/application/hooks'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
@@ -69,7 +66,6 @@ import { useHasPendingTransactions } from 'state/transactions/hooks'
 // utils
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import { isTradeBetter } from 'utils/trades'
 // theme
 import { darken } from 'polished'
 import { LinkStyledButton, TYPE } from '../../theme'
@@ -232,7 +228,6 @@ export default function Swap({ history }: RouteComponentProps) {
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
   const {
-    v1Trade,
     v2Trade,
     currencyBalances,
     parsedAmount,
@@ -248,17 +243,8 @@ export default function Swap({ history }: RouteComponentProps) {
   )
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
-  const toggledVersion = useToggledVersion()
-  const tradesByVersion = {
-    [Version.v1]: v1Trade,
-    [Version.v2]: v2Trade
-  }
 
-  const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
-  const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
-
-  const betterTradeLinkV2: Version | undefined =
-    toggledVersion === Version.v1 && isTradeBetter(v1Trade, v2Trade) ? Version.v2 : undefined
+  const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
     ? {
@@ -295,7 +281,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // modal and loading
   const [{ tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
-    tradeToConfirm: Trade | undefined
+    tradeToConfirm: Trade<Currency, Currency, TradeType> | undefined
     swapErrorMessage: string | undefined
     attemptingTxn: boolean
     txHash: string | undefined
@@ -355,7 +341,7 @@ export default function Swap({ history }: RouteComponentProps) {
   //   }
   // }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT], wrapType)
+  const maxAmountInput: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT], wrapType)
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
@@ -383,6 +369,7 @@ export default function Swap({ history }: RouteComponentProps) {
     swapCallback()
       .then(hash => {
         setShowInfoModal(false)
+        setShowConfirmModal(false)
         setSwapState({ tradeToConfirm, swapErrorMessage: undefined, attemptingTxn: false, txHash: hash })
 
         ReactGA.event({
@@ -393,11 +380,7 @@ export default function Swap({ history }: RouteComponentProps) {
               : (recipientAddress ?? recipient) === account
               ? 'Swap w/o Send + recipient'
               : 'Swap w/ Send',
-          label: [
-            trade?.inputAmount?.currency?.symbol,
-            trade?.outputAmount?.currency?.symbol,
-            getTradeVersion(trade)
-          ].join('/')
+          label: [trade?.inputAmount?.currency?.symbol, trade?.outputAmount?.currency?.symbol, 'v2'].join('/')
         })
         ReactGA.event({
           category: 'Routing',
@@ -633,7 +616,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           <span>
                             {ethUSDCPrice
                               ? `$ ${ethUSDCPrice
-                                  .quote(new TokenAmount(WETH[1], trade.minerBribe.raw))
+                                  .quote(CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient))
                                   .toSignificant(4)} (${trade.minerBribe.toSignificant(2)} ETH)`
                               : `${trade.minerBribe.toSignificant(2)} ETH`}
                           </span>
@@ -722,11 +705,6 @@ export default function Swap({ history }: RouteComponentProps) {
                     </StyledButtonError>
                   )}
                   {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-                  {betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (
-                    <BetterTradeLink version={betterTradeLinkV2} />
-                  ) : toggledVersion !== DEFAULT_VERSION && defaultTrade ? (
-                    <DefaultVersionLink />
-                  ) : null}
                 </BottomGrouping>
               )}
             </SwapWrapper>

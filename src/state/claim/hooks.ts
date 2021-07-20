@@ -1,5 +1,5 @@
 import { UNI } from './../../constants/index'
-import { TokenAmount, JSBI, ChainId } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, ChainId, Token } from '@alchemistcoin/sdk'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useMerkleDistributorContract } from '../../hooks/useContract'
@@ -71,7 +71,7 @@ export function useUserHasAvailableClaim(account: string | null | undefined): bo
   return Boolean(userClaimData && !isClaimedResult.loading && isClaimedResult.result?.[0] === false)
 }
 
-export function useUserUnclaimedAmount(account: string | null | undefined): TokenAmount | undefined {
+export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
   const { chainId } = useActiveWeb3React()
   const userClaimData = useUserClaimData(account)
   const canClaim = useUserHasAvailableClaim(account)
@@ -79,7 +79,7 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Toke
   const uni = chainId ? UNI[chainId] : undefined
   if (!uni) return undefined
   if (!canClaim || !userClaimData) {
-    return new TokenAmount(uni, JSBI.BigInt(0))
+    return CurrencyAmount.fromRawAmount(uni, JSBI.BigInt(0))
   }
-  return new TokenAmount(uni, JSBI.BigInt(userClaimData.amount))
+  return CurrencyAmount.fromRawAmount(uni, JSBI.BigInt(userClaimData.amount))
 }

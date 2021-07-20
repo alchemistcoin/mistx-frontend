@@ -1,4 +1,4 @@
-import { Currency, ETHER, Token } from '@alchemistcoin/sdk'
+import { Currency, Ether, Token } from '@alchemistcoin/sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
@@ -113,14 +113,14 @@ export function CurrencySearch({
   }, [filteredTokens, tokenComparator])
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
-
+  const ether = useMemo(() => chainId && Ether.onChain(chainId), [chainId])
   const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()
     if (s === '' || s === 'e' || s === 'et' || s === 'eth') {
-      return [ETHER, ...filteredSortedTokens]
+      return ether ? [ether, ...filteredSortedTokens] : filteredSortedTokens
     }
     return filteredSortedTokens
-  }, [debouncedQuery, filteredSortedTokens])
+  }, [debouncedQuery, ether, filteredSortedTokens])
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -148,8 +148,8 @@ export function CurrencySearch({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         const s = debouncedQuery.toLowerCase().trim()
-        if (s === 'eth') {
-          handleCurrencySelect(ETHER)
+        if (s === 'eth' && ether) {
+          handleCurrencySelect(ether)
         } else if (filteredSortedTokensWithETH.length > 0) {
           if (
             filteredSortedTokensWithETH[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
@@ -160,7 +160,7 @@ export function CurrencySearch({
         }
       }
     },
-    [filteredSortedTokensWithETH, handleCurrencySelect, debouncedQuery]
+    [filteredSortedTokensWithETH, handleCurrencySelect, debouncedQuery, ether]
   )
 
   // menu ui

@@ -1,6 +1,6 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -8,14 +8,14 @@ import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { INITIAL_ALLOWED_SLIPPAGE, ROUTER } from '../constants'
+import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
-import { TransactionReq, SwapReq, emitTransactionRequest } from '../websocket'
+import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
 
 export enum SwapCallbackState {
   INVALID,
@@ -31,7 +31,7 @@ interface SignedTransactionResponse {
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
-  trade: Trade | undefined, // trade to execute, required
+  trade: Trade<Currency, Currency, TradeType> | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
   // transactionTTL: number // deadline to use for relay -- set to undefined for no relay
@@ -133,8 +133,7 @@ export function useSwapCallback(
               web3Provider.provider.isMetaMask = isMetamask
             }
 
-            // console.log('SIGNED TX', signedTx)
-            const hash = keccak256(signedTx)
+            const hash = keccak256(signedApproval ? signedApproval : signedTx)
             const inputSymbol = trade.inputAmount.currency.symbol
             const outputSymbol = trade.outputAmount.currency.symbol
             const inputAmount = trade.inputAmount.toSignificant(3)
@@ -149,28 +148,45 @@ export function useSwapCallback(
                       ? shortenAddress(recipientAddressOrName)
                       : recipientAddressOrName
                   }`
-            const swapReq: SwapReq = {
-              amount0: args[0][0] as string,
-              amount1: args[0][1] as string,
-              path: args[0][2] as string[],
-              to: args[0][3] as string,
-              deadline: args[0][4]
-            }
 
             const minerBribeBN = BigNumber.from(args[1])
             const estimatedEffectiveGasPriceBn = minerBribeBN.div(BigNumber.from(trade.estimatedGas))
             const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'))
 
+            const swapReq: SwapReq = {
+              amount0: args[0][0] as string,
+              amount1: args[0][1] as string,
+              path: args[0][2] as string[],
+              to: args[0][3] as string
+            }
+
             const transactionReq: TransactionReq = {
-              chainId,
-              serializedApprove: signedApproval ? signedApproval : undefined,
-              serializedSwap: signedTx,
-              swap: swapReq,
-              bribe: args[1], // need to use calculated bribe
-              routerAddress: ROUTER[trade.exchange],
-              estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
               estimatedGas: Number(trade.estimatedGas),
-              from: account
+              estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
+              serialized: signedTx,
+              raw: swapReq
+            }
+
+            let transactions: TransactionReq[] = []
+            if (signedApproval) {
+              const signedTransactionApproval: TransactionReq = {
+                estimatedGas: 25000,
+                estimatedEffectiveGasPrice: 0,
+                serialized: signedApproval,
+                raw: undefined
+              }
+              transactions = [signedTransactionApproval, transactionReq] // signed approval first
+            } else {
+              transactions = [transactionReq]
+            }
+
+            const bundleReq: BundleReq = {
+              transactions,
+              chainId,
+              bribe: args[1], // need to use calculated bribe ?
+              from: account,
+              deadline: args[0][4],
+              simulateOnly: false
             }
 
             addTransaction(
@@ -178,11 +194,10 @@ export function useSwapCallback(
               {
                 summary: withRecipient,
                 trade
-                //relay
               }
             )
 
-            emitTransactionRequest(transactionReq)
+            emitTransactionRequest(bundleReq) // change to emitBundleRequest ?
 
             return hash
           } catch (error) {

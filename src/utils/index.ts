@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as MISTX_ROUTER_ABI } from '../constants/abis/mistx-router.json'
 import { MISTX_ROUTER_ADDRESS } from '../constants'
-import { ChainId, JSBI, Percent, Token, Trade, CurrencyAmount, Currency, ETHER, Exchange } from '@alchemistcoin/sdk'
+import { ChainId, JSBI, Percent, Token, Trade, CurrencyAmount, Currency, Exchange, TradeType } from '@alchemistcoin/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
@@ -69,13 +69,13 @@ export function basisPointsToPercent(num: number): Percent {
   return new Percent(JSBI.BigInt(num), JSBI.BigInt(10000))
 }
 
-export function calculateSlippageAmount(value: CurrencyAmount, slippage: number): [JSBI, JSBI] {
+export function calculateSlippageAmount(value: CurrencyAmount<Currency>, slippage: number): [JSBI, JSBI] {
   if (slippage < 0 || slippage > 10000) {
     throw Error(`Unexpected slippage value: ${slippage}`)
   }
   return [
-    JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000)),
-    JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 + slippage)), JSBI.BigInt(10000))
+    JSBI.divide(JSBI.multiply(value.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000)),
+    JSBI.divide(JSBI.multiply(value.quotient, JSBI.BigInt(10000 + slippage)), JSBI.BigInt(10000))
   ]
 }
 
@@ -99,7 +99,12 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(chainId: ChainId, library: Web3Provider, trade: Trade, account?: string): Contract {
+export function getRouterContract(
+  chainId: ChainId,
+  library: Web3Provider,
+  trade: Trade<Currency, Currency, TradeType>,
+  account?: string
+): Contract {
   const routerAddress = MISTX_ROUTER_ADDRESS[chainId]
     ? MISTX_ROUTER_ADDRESS[chainId]?.[trade.exchange || Exchange.UNI]
     : MISTX_ROUTER_ADDRESS[ChainId.MAINNET]?.[trade.exchange || Exchange.UNI]
@@ -111,6 +116,6 @@ export function escapeRegExp(string: string): string {
 }
 
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
-  if (currency === ETHER) return true
+  if (currency?.isNative) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
 }
