@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Trade, BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { Trade, BribeEstimate, WETH, CurrencyAmount, Currency, TradeType } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
 
 interface MinerTipPriceProps {
-  trade: Trade
+  trade: Trade<Currency, Currency, TradeType>
 }
 
 const MinerTipPrice = ({ trade }: MinerTipPriceProps) => {
@@ -17,7 +17,7 @@ const MinerTipPrice = ({ trade }: MinerTipPriceProps) => {
   useEffect(() => {
     let label = '...'
     if (trade.minerBribe && ethUSDCPrice) {
-      const minerTipAmount = new TokenAmount(WETH[1], trade.minerBribe.raw)
+      const minerTipAmount = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
       if (feeDisplayCurrency === 'USD') {
         label = `$${ethUSDCPrice.quote(minerTipAmount).toSignificant(2)}`
       } else {

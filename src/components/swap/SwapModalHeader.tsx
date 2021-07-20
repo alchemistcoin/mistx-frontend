@@ -1,4 +1,4 @@
-import { CurrencyAmount, Trade, TradeType } from '@alchemistcoin/sdk'
+import { CurrencyAmount, Trade, TradeType, Currency } from '@alchemistcoin/sdk'
 import React, { useContext, useMemo } from 'react'
 import { AlertTriangle, ArrowDownCircle } from 'react-feather'
 import { Text } from 'rebass'
@@ -29,7 +29,7 @@ const ArrowDivider = styled(AutoRow)`
   }
 `
 
-const CurrencyDisplay = ({ amount }: { amount: CurrencyAmount }) => (
+const CurrencyDisplay = ({ amount }: { amount: CurrencyAmount<Currency> }) => (
   <>
     <CurrencyLogo currency={amount.currency} size={'24px'} />
     <Text fontSize={14} fontWeight={400} style={{ marginLeft: '1rem' }}>
@@ -45,7 +45,7 @@ export default function SwapModalHeader({
   showAcceptChanges,
   onAcceptChanges
 }: {
-  trade: Trade
+  trade: Trade<Currency, Currency, TradeType>
   allowedSlippage: number
   recipient: string | null
   showAcceptChanges: boolean

@@ -4,13 +4,14 @@ import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
+import PJSON from '../../package.json'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
 
 // state
 import { updateGas } from '../state/application/actions'
 import { Gas } from '../state/application/reducer'
-import { useSocketStatus } from '../state/application/hooks'
+import { useSocketStatus, useNewAppVersionAvailable } from '../state/application/hooks'
 import {
   useAllTransactions,
   useTransactionRemover,
@@ -23,10 +24,11 @@ import { BigNumber } from 'ethers'
 
 export enum Event {
   GAS_CHANGE = 'GAS_CHANGE',
-  SOCKET_SESSION_RESPONSE = 'SOCKET_SESSION',
+  SOCKET_SESSION = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
   BUNDLE_STATUS_REQUEST = 'BUNDLE_STATUS_REQUEST',
+  BUNDLE_STATUS_RESPONSE = 'BUNDLE_STATUS_RESPONSE',
   BUNDLE_RESPONSE = 'BUNDLE_RESPONSE',
   BUNDLE_CANCEL_REQUEST = 'BUNDLE_CANCEL_REQUEST'
 }
@@ -56,8 +58,13 @@ export enum Diagnosis {
   ERROR_UNKNOWN = 'ERROR_UNKNOWN'
 }
 
+export interface MistXVersion {
+  api: string
+  client: string
+}
 export interface SocketSession {
   token: string
+  version: MistXVersion | undefined
 }
 export interface TransactionRes {
   transaction: TransactionProcessed
@@ -72,15 +79,15 @@ export interface TransactionDiagnosisRes {
   mistxDiagnosis: Diagnosis
 }
 export interface TransactionReq {
-  serialized: string // serialized transactions
+  serialized: string // serialized transaction
   raw: SwapReq | undefined // raw def. of each type of trade
   estimatedGas?: number
   estimatedEffectiveGasPrice?: number
 }
 export interface TransactionProcessed {
-  serialized: string
+  serialized: string // serialized transaction
   bundle: string // bundle.serialized
-  raw: SwapReq
+  raw: SwapReq | undefined // raw def. of each type of trade
   estimatedGas: number
   estimatedEffectiveGasPrice: number
 }
@@ -117,14 +124,22 @@ interface BundleRes {
   message: string
   error: string
 }
+
+interface BundleStatusRes {
+  bundle: string | BundleProcessed // BundleProcessed.serialized
+  status: string
+  message: string
+  error: string
+}
 interface QuoteEventsMap {
-  [Event.SOCKET_SESSION_RESPONSE]: (response: SocketSession) => void
+  [Event.SOCKET_SESSION]: (response: SocketSession) => void
   [Event.SOCKET_ERR]: (err: any) => void
   [Event.GAS_CHANGE]: (response: Gas) => void
   [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
   [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
   [Event.BUNDLE_CANCEL_REQUEST]: (serialized: any) => void // TO DO - any
   [Event.BUNDLE_STATUS_REQUEST]: (serialized: any) => void // TO DO - any
+  [Event.BUNDLE_STATUS_RESPONSE]: (serialized: BundleStatusRes) => void // TO DO - any
 }
 
 const tokenKey = `SESSION_TOKEN`
@@ -183,6 +198,7 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
+  const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -201,7 +217,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.SOCKET_ERR, err => {
-      console.log('websocket err', err)
+      // console.log('websocket err', err)
       if (err.event === Event.MISTX_BUNDLE_REQUEST) {
         const bundleResponse = err.data as BundleRes
         const hash = keccak256(bundleResponse.bundle.serialized)
@@ -212,12 +228,43 @@ export default function Sockets(): null {
       }
     })
 
-    socket.on(Event.SOCKET_SESSION_RESPONSE, session => {
-      localStorage.setItem(tokenKey, session.token)
+    socket.on(Event.SOCKET_SESSION, session => {
+      const { token, version } = session
+      localStorage.setItem(tokenKey, token)
+      // check client version and notify user to refresh page
+      // if the client version is not equal to the version.client
+      // received in the session payload
+      if (!newAppVersionAvailable && version && PJSON && version.client !== PJSON.version) {
+        setNewAppVersionAvailable(true)
+      } else if (newAppVersionAvailable) {
+        setNewAppVersionAvailable(false)
+      }
     })
 
     socket.on(Event.GAS_CHANGE, gas => {
       dispatch(updateGas(gas))
+    })
+
+    socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
+      const { bundle, status } = response
+      const serialized = bundle && typeof bundle === 'string' ? bundle : (bundle as BundleProcessed).serialized
+      const hash = keccak256(serialized)
+      const tx = allTransactions?.[hash]
+      const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+      if (!tx || !tx.chainId || previouslyCompleted) return
+      const transactionId = {
+        chainId: tx.chainId,
+        hash
+      }
+      let message = response.message
+      if (status === Status.BUNDLE_NOT_FOUND) {
+        message = ''
+      }
+      updateTransaction(transactionId, {
+        status: status,
+        message: message,
+        updatedAt: new Date().getTime()
+      })
     })
 
     socket.on(Event.BUNDLE_RESPONSE, response => {
@@ -235,7 +282,6 @@ export default function Sockets(): null {
       }
 
       // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
-
       if (!previouslyCompleted) {
         updateTransaction(transactionId, {
           bundle: response.bundle,
@@ -287,13 +333,21 @@ export default function Sockets(): null {
       socket.off('connect')
       socket.off('connect_error')
       socket.off(Event.SOCKET_ERR)
-      socket.off(Event.SOCKET_SESSION_RESPONSE)
+      socket.off(Event.SOCKET_SESSION)
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.BUNDLE_RESPONSE)
       socket.off(Event.BUNDLE_STATUS_REQUEST)
       // TO DO
     }
-  }, [addPopup, dispatch, allTransactions, removeTransaction, updateTransaction])
+  }, [
+    addPopup,
+    dispatch,
+    allTransactions,
+    removeTransaction,
+    updateTransaction,
+    newAppVersionAvailable,
+    setNewAppVersionAvailable
+  ])
 
   // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   // TO DO - We need chainId and processed.swap.deadline
@@ -323,7 +377,7 @@ export default function Sockets(): null {
               updatedAt: timeNow
             })
           } else if (tx.updatedAt) {
-            console.log('CHECK STATUS', tx)
+            // console.log('CHECK STATUS', tx)
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               // const transactionReq: TransactionProcessed = tx.processed

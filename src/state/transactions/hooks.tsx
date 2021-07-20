@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ChainId, CurrencyAmount, Trade } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
@@ -24,10 +24,10 @@ interface TransactionResponseUnsentData {
   claim?: {
     recipient: string
   }
-  trade?: Trade
+  trade?: Trade<Currency, Currency, TradeType>
   wrapType?: WrapType
-  inputAmount?: CurrencyAmount
-  outputAmount?: CurrencyAmount
+  inputAmount?: CurrencyAmount<Currency>
+  outputAmount?: CurrencyAmount<Currency>
 }
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
@@ -55,9 +55,9 @@ export function useTransactionAdder(): (
         claim?: { recipient: string }
         approval?: { tokenAddress: string; spender: string }
         deadline?: number
-        trade?: Trade
-        inputAmount?: CurrencyAmount
-        outputAmount?: CurrencyAmount
+        trade?: Trade<Currency, Currency, TradeType>
+        inputAmount?: CurrencyAmount<Currency>
+        outputAmount?: CurrencyAmount<Currency>
         wrapType?: WrapType
       } = {}
     ) => {
@@ -244,7 +244,7 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
 export function isPendingTransaction(tx: TransactionDetails): boolean {
   if (tx.receipt) return false // If there is a receipt, we know the transaction has completed
   if (!tx.receipt && !!tx.wrapType) return true // if transaction is a wrap, ignore the tx.status and return true since receipt is required to be true
-  if (tx.status === Status.PENDING_BUNDLE || tx.status === Status.PENDING_BUNDLE) return true // if Status set to pending, return true
+  if (tx.status === Status.PENDING_BUNDLE) return true // if Status set to pending, return true
   // check if status is included in Enum, for legacy transactions
   if (Object.values<string>(Status).includes(tx.status || '')) {
     return !!(

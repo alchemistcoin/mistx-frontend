@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { BribeEstimate, WETH, CurrencyAmount } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
@@ -13,8 +13,8 @@ const MinerBribePrice = () => {
   useEffect(() => {
     let label = 'Fetching price...'
     if (bribeEstimate && ethUSDCPrice) {
-      const minBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.minBribe.raw)
-      const maxBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.maxBribe.raw)
+      const minBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.minBribe.quotient)
+      const maxBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.maxBribe.quotient)
       if (feeDisplayCurrency === 'USD') {
         label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
           .quote(maxBribeTokenAmount)

@@ -9,6 +9,7 @@ type Props = {
   onChange: any
   value: number
   step: number
+  name: string
 }
 
 type ITrackProps = {
@@ -34,7 +35,7 @@ type IMarkProps = {
 
 const SLIDER_VALUE_TO_LABEL_MAP: string[] = ['min success', 'med success', 'high success', 'max success']
 
-const Slider = ({ max, min, onChange, value, step }: Props) => {
+const Slider = ({ max, min, onChange, value, step, name }: Props) => {
   const theme = useContext(ThemeContext)
   const [sliderValue, setSliderValue] = useState<number>(value)
 
@@ -59,7 +60,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
         max={max}
         onChange={values => onSliderChange(values)}
         renderMark={(props: IMarkProps) => (
-          <>
+          <div key={`slider-range-${name}-${props.index}`}>
             <div
               {...props.props}
               style={{
@@ -111,7 +112,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
         renderTrack={(props: ITrackProps) => (
           <div

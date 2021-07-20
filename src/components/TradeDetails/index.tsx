@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Trade, TradeType, Percent, JSBI } from '@alchemistcoin/sdk'
+import { Trade, TradeType, Percent, JSBI, Currency } from '@alchemistcoin/sdk'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { BIPS_BASE } from '../../constants'
@@ -10,7 +10,7 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import FormattedPriceImpact from '../swap/FormattedPriceImpact'
 import MinerTipPrice from '../swap/MinerTipPrice'
 interface TradeDetailsProps {
-  trade: Trade
+  trade: Trade<Currency, Currency, TradeType>
   allowedSlippage: number
 }
 

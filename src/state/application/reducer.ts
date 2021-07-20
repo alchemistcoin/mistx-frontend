@@ -7,7 +7,8 @@ import {
   updateGas,
   ApplicationModal,
   setOpenModal,
-  updateSocketStatus
+  updateSocketStatus,
+  updateNewAppVersionAvailable
 } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
@@ -25,6 +26,7 @@ export interface ApplicationState {
   readonly openModal: ApplicationModal | null
   readonly gas: Gas | undefined
   readonly socketStatus: boolean
+  readonly newAppVersionAvailable: boolean
 }
 
 const initialState: ApplicationState = {
@@ -32,7 +34,8 @@ const initialState: ApplicationState = {
   popupList: [],
   openModal: null,
   gas: undefined,
-  socketStatus: true
+  socketStatus: true,
+  newAppVersionAvailable: false
 }
 
 export default createReducer(initialState, builder =>
@@ -71,5 +74,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateSocketStatus, (state, action) => {
       state.socketStatus = action.payload
+    })
+    .addCase(updateNewAppVersionAvailable, (state, action) => {
+      state.newAppVersionAvailable = action.payload
     })
 )

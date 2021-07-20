@@ -121,7 +121,7 @@ export default function Transaction({ hash }: { hash: string }) {
       </TransactionHeaderText>
       <TransactionStatusText className="transaction-status-text">
         {tx.status && STATUS_LOCALES[tx.status]}
-        {tx.status !== (Status.PENDING_BUNDLE || Status.BUNDLE_NOT_FOUND) && ` - ${tx.message}`}
+        {tx.status !== (Status.PENDING_BUNDLE || Status.BUNDLE_NOT_FOUND) && tx.message && ` - ${tx.message}`}
       </TransactionStatusText>
     </RowFixed>
   )

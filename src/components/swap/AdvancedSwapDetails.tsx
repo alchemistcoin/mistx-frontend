@@ -1,4 +1,4 @@
-import { Trade, TradeType } from '@alchemistcoin/sdk'
+import { Trade, TradeType, Currency } from '@alchemistcoin/sdk'
 import React, { useContext } from 'react'
 import { /* styled, */ ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'
@@ -21,7 +21,13 @@ import SwapRoute from './SwapRoute'
 //   color: ${({ theme }) => theme.text1};
 // `
 
-function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
+function TradeSummary({
+  trade,
+  allowedSlippage
+}: {
+  trade: Trade<Currency, Currency, TradeType>
+  allowedSlippage: number
+}) {
   const theme = useContext(ThemeContext)
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
@@ -74,7 +80,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
 }
 
 export interface AdvancedSwapDetailsProps {
-  trade?: Trade
+  trade?: Trade<Currency, Currency, TradeType>
 }
 
 export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {

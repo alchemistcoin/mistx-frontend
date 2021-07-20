@@ -1,11 +1,11 @@
 import React from 'react'
-import { Price } from '@alchemistcoin/sdk'
+import { Price, Currency } from '@alchemistcoin/sdk'
 import { useContext } from 'react'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 
 interface SwapPriceProps {
-  price?: Price
+  price?: Price<Currency, Currency>
   showInverted: boolean
   setShowInverted: (showInverted: boolean) => void
 }
