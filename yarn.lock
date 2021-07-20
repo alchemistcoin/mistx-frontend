@@ -110,7 +110,7 @@
 
 "@alchemistcoin/sdk@git+https://github.com/alchemistcoin/alchemist-sdk.git#refactor-entities":
   version "3.1.1"
-  resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#5a00a8b5de407deee1d5dd865df8500221a68b5d"
+  resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#5e6490b22fed87ebc2ab25b0df70cdaa670476a5"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
