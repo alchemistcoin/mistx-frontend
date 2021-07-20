@@ -74,7 +74,13 @@ const MistBalance = () => {
   const { onCurrencySelection } = useSwapActionHandlers()
   const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
   const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
-  const mistBalance = balance?.toSignificant(2)
+  const mistBalance = balance?.greaterThan('1')
+    ? balance?.greaterThan('100')
+      ? balance?.toFixed(0)
+      : balance?.greaterThan('10')
+      ? balance?.toFixed(1)
+      : balance?.toFixed(2)
+    : balance?.toSignificant(2)
   const handleOutputSelect = () => onCurrencySelection(Field.OUTPUT, alchemistToken.token)
   if (!account) return null
   return (
