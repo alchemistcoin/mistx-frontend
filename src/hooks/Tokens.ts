@@ -1,6 +1,6 @@
 import { TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList } from './../state/lists/hooks'
 import { parseBytes32String } from '@ethersproject/strings'
-import { Currency, ETHER, Token, currencyEquals } from '@alchemistcoin/sdk'
+import { Currency, Ether, Token, currencyEquals } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { useAllLists, useCombinedActiveList, useInactiveListUrls } from '../state/lists/hooks'
 import { WrappedTokenInfo } from '../state/lists/wrappedTokenInfo'
@@ -186,5 +186,7 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
   const isETH = currencyId?.toUpperCase() === 'ETH'
   const token = useToken(isETH ? undefined : currencyId)
-  return isETH ? ETHER : token
+  const { chainId } = useActiveWeb3React()
+  if (!chainId) return
+  return isETH ? Ether.onChain(chainId) : token
 }

@@ -9,7 +9,7 @@ import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { PendingTransactionIcon } from 'components/Icons'
 import { TYPE } from 'theme'
-import { ETHER, Token } from '@alchemistcoin/sdk'
+import { Ether, Token } from '@alchemistcoin/sdk'
 import { SettingsHeader } from 'components/shared/header/styled'
 
 const Wrapper = styled.div``
@@ -52,10 +52,11 @@ const CurrencyName = styled.div`
   margin-left: 1rem;
 `
 
-const TransactionAmount = styled.div`
-  font-size: 32px;
+const TransactionAmount = styled.div<{ size?: number }>`
+  font-size: ${({ size = 32 }) => `${size}px`};
   font-weight: 700;
   line-height: 44px;
+  padding-left: 1rem;
   text-align: right;
 `
 
@@ -120,7 +121,7 @@ const CurrencyLabel = ({ amount }: { amount: AmountDetails }) => {
         currency={
           amount.currency.address && amount.currency.chainId
             ? new Token(amount.currency.chainId, amount.currency.address, amount.currency.decimals)
-            : ETHER
+            : Ether.onChain(1) // chainId 1 ok since this is only for display purposes
         }
         size="24px"
       />
@@ -137,14 +138,12 @@ export default function TransactionDiagnosis() {
   const cancelTransaction = useTransactionCanceller()
   const hash = Object.keys(pendingTransactions)[0]
   const tx = pendingTransactions[hash]
-  // const path = tx.processed?.swap.path;
   const tokenInput = tx?.inputAmount
   const tokenOutput = tx?.outputAmount
 
   const canCancel = typeof tx?.status !== 'undefined'
   const [cancelIntent, setCancelIntent] = useState(false)
   const [cancelClicked, setCancelClicked] = useState(false)
-
   // console.log('tokens', tx, tokenInput, tokenOutput, pendingTransactions)
 
   function handleCancelIntent() {
@@ -161,7 +160,7 @@ export default function TransactionDiagnosis() {
         hash
       },
       {
-        transaction: tx.processed
+        bundle: tx.processed
       }
     )
   }
@@ -200,8 +199,16 @@ export default function TransactionDiagnosis() {
               </TokenAmountWrapper>
               <PendingTransactionIcon />
               <TokenAmountWrapper>
-                <TransactionAmount>{tokenInput?.value}</TransactionAmount>
-                <TransactionAmount>{tokenOutput?.value}</TransactionAmount>
+                {tokenInput && (
+                  <TransactionAmount size={tokenInput.value?.length >= 8 ? 24 : 32}>
+                    {tokenInput.value}
+                  </TransactionAmount>
+                )}
+                {tokenOutput && (
+                  <TransactionAmount size={tokenOutput.value?.length >= 8 ? 24 : 32}>
+                    {tokenOutput.value}
+                  </TransactionAmount>
+                )}
               </TokenAmountWrapper>
             </>
           )}

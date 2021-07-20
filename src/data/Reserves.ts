@@ -1,11 +1,9 @@
-import { TokenAmount, Pair, Currency, Exchange } from '@alchemistcoin/sdk'
+import { CurrencyAmount, Pair, Currency, Exchange } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
-import { useActiveWeb3React } from '../hooks'
 
 import { useMultipleContractSingleData } from '../state/multicall/hooks'
-import { wrappedCurrency } from '../utils/wrappedCurrency'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
@@ -20,16 +18,9 @@ export function usePairs(
   currencies: [Currency | undefined, Currency | undefined][],
   exchange: Exchange
 ): [PairState, Pair | null][] {
-  const { chainId } = useActiveWeb3React()
-
-  const tokens = useMemo(
-    () =>
-      currencies.map(([currencyA, currencyB]) => [
-        wrappedCurrency(currencyA, chainId),
-        wrappedCurrency(currencyB, chainId)
-      ]),
-    [chainId, currencies]
-  )
+  const tokens = useMemo(() => currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]), [
+    currencies
+  ])
 
   const pairAddresses = useMemo(
     () =>
@@ -54,7 +45,11 @@ export function usePairs(
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
-        new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()), exchange)
+        new Pair(
+          CurrencyAmount.fromRawAmount(token0, reserve0.toString()),
+          CurrencyAmount.fromRawAmount(token1, reserve1.toString()),
+          exchange
+        )
       ]
     })
   }, [results, tokens, exchange])

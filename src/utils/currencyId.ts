@@ -1,7 +1,7 @@
-import { Currency, ETHER, Token } from '@alchemistcoin/sdk'
+import { Currency } from '@alchemistcoin/sdk'
 
 export function currencyId(currency: Currency): string {
-  if (currency === ETHER) return 'ETH'
-  if (currency instanceof Token) return currency.address
+  if (currency.isNative) return 'ETH'
+  if (currency.isToken) return currency.address
   throw new Error('invalid currency')
 }

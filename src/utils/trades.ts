@@ -1,10 +1,10 @@
 import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from './../constants/index'
-import { Trade, Percent, currencyEquals, ETHER } from '@alchemistcoin/sdk'
+import { Trade, Percent, currencyEquals, Currency, TradeType } from '@alchemistcoin/sdk'
 
 // returns whether tradeB is better than tradeA by at least a threshold percentage amount
 export function isTradeBetter(
-  tradeA: Trade | undefined | null,
-  tradeB: Trade | undefined | null,
+  tradeA: Trade<Currency, Currency, TradeType> | undefined,
+  tradeB: Trade<Currency, Currency, TradeType> | undefined,
   minimumDelta: Percent = ZERO_PERCENT
 ): boolean | undefined {
   if (tradeA && !tradeB) return false
@@ -22,15 +22,17 @@ export function isTradeBetter(
   if (minimumDelta.equalTo(ZERO_PERCENT)) {
     return tradeA.executionPrice.lessThan(tradeB.executionPrice)
   } else {
-    return tradeA.executionPrice.raw.multiply(minimumDelta.add(ONE_HUNDRED_PERCENT)).lessThan(tradeB.executionPrice)
+    return tradeA.executionPrice.asFraction
+      .multiply(minimumDelta.add(ONE_HUNDRED_PERCENT))
+      .lessThan(tradeB.executionPrice)
   }
 }
 
 //returns whether the given trade involves ETH as a Pair
-export function isETHTrade(trade: Trade | undefined | null): boolean | undefined {
+export function isETHTrade(trade: Trade<Currency, Currency, TradeType> | undefined): boolean | undefined {
   if (!trade) {
     return undefined
-  } else if (!currencyEquals(trade.route.input, ETHER) && !currencyEquals(trade.route.output, ETHER)) {
+  } else if (!trade.route.input.isNative && !trade.route.output.isNative) {
     return false
   }
   return true
