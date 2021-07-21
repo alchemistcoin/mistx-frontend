@@ -1,5 +1,13 @@
 import React, { useContext, useMemo } from 'react'
-import { Trade, TradeType, Percent, JSBI, Currency } from '@alchemistcoin/sdk'
+import {
+  Trade,
+  TradeType,
+  Percent,
+  JSBI,
+  Currency
+  // WETH,
+  // Token
+} from '@alchemistcoin/sdk'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { BIPS_BASE } from '../../constants'
@@ -9,6 +17,9 @@ import SwapPath from './swapPath'
 import { computeTradePriceBreakdown } from '../../utils/prices'
 import FormattedPriceImpact from '../swap/FormattedPriceImpact'
 import MinerTipPrice from '../swap/MinerTipPrice'
+// import useUSDCPrice from '../../hooks/useUSDCPrice'
+// import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
+import useEthPrice from '../../hooks/useEthPrice'
 interface TradeDetailsProps {
   trade: Trade<Currency, Currency, TradeType>
   allowedSlippage: number
@@ -20,10 +31,31 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
 
-  console.log('trade', trade.minerBribe.toSignificant(2))
+  const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
+
+  let realizedLPFeeInEth = 0
+  if (ethPrice && realizedLPFee) {
+    realizedLPFeeInEth = Number(ethPrice.quote(realizedLPFee?.wrapped).toSignificant(6))
+    console.log('- log realizedLPFeeInEth', realizedLPFeeInEth)
+  }
+  const totalFeeInEth = Number(trade.minerBribe.toSignificant(6)) + realizedLPFeeInEth
+  console.log('- log minerBribeEth', Number(trade.minerBribe.toSignificant(6)))
+  console.log('- log totalFeeInEth', totalFeeInEth)
+  // const totalFeeInEth = lpFeeUsd + minerTipUsd
 
   return !trade ? null : (
     <AutoColumn gap="6px">
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Total Fee
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          {totalFeeInEth} ETH
+        </TYPE.black>
+      </RowBetween>
+
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
