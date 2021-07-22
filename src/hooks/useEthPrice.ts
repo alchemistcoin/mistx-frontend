@@ -1,10 +1,9 @@
 import { Currency, CurrencyAmount, Price, Token, Exchange, WETH } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
-// import { USDC } from '../constants'
 import { useTradeExactOut } from './Trades'
 import { useActiveWeb3React } from './'
 import { BigNumber } from '@ethersproject/bignumber'
-// USDC amount used when calculating spot price for a given currency.
+// ETH amount used when calculating spot price for a given currency.
 // The amount is large enough to filter low liquidity pairs.
 const ethCurrencyAmount = CurrencyAmount.fromRawAmount(WETH[1], BigNumber.from(100_000e6).toString())
 
@@ -15,8 +14,6 @@ const ethCurrencyAmount = CurrencyAmount.fromRawAmount(WETH[1], BigNumber.from(1
 export default function useETHPrice(currency?: Token): Price<Currency, Token> | undefined {
   const { chainId } = useActiveWeb3React()
 
-  // console.log('- log', WETH)
-
   const v2ETHTrade = useTradeExactOut(
     Exchange.UNI,
     null,
@@ -25,8 +22,6 @@ export default function useETHPrice(currency?: Token): Price<Currency, Token> | 
     BigNumber.from(0),
     BigNumber.from(0)
   )
-
-  console.log('v2ETHTrade', v2ETHTrade)
 
   return useMemo(() => {
     if (!currency || !chainId) {
