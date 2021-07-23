@@ -68,10 +68,12 @@ export default memo(function TradeDetails({ trade, allowedSlippage }: TradeDetai
   const totalFeeInEth = Number(trade.minerBribe.toSignificant(4)) + realizedLPFeeInEth
   // const ethPriceUsd = useUsdPrice(WETH[1])
   const ethTotalFeeCurrencyAmmount = CurrencyAmount.fromFractionalAmount(WETH[1], totalFeeInEth, WETH[1].decimals)
+
   console.log('ethTotalFeeCurrencyAmmount', ethTotalFeeCurrencyAmmount)
   // const totalFeeInUsd = ethPriceUsd ? ethPriceUsd.quote(ethTotalFeeCurrencyAmmount).toSignificant(4) : null
-  const totalFeeInUsd = 1;
+  const totalFeeInUsd = 1
 
+  // test
   return !trade ? null : (
     <AutoColumn gap="6px">
       <RowBetween>
