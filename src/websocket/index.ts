@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
@@ -193,6 +193,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
 }
 
 export default function Sockets(): null {
+  const updateTxReqInterval = useRef<any>(null)
   const dispatch = useDispatch()
   const addPopup = useAddPopup()
   const allTransactions = useAllTransactions()
@@ -354,10 +355,9 @@ export default function Sockets(): null {
   // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   // TO DO - We need chainId and processed.swap.deadline
   useEffect(() => {
-    let interval: any
-    clearInterval(interval)
-    if (pendingTransactions) {
-      interval = setInterval(() => {
+    if (updateTxReqInterval.current) clearInterval(updateTxReqInterval.current)
+    if (pendingTransactions && Object.keys(pendingTransactions).length) {
+      updateTxReqInterval.current = setInterval(() => {
         if (!webSocketConnected) return
         const timeNow = new Date().getTime()
         Object.keys(pendingTransactions).forEach(hash => {
@@ -391,9 +391,11 @@ export default function Sockets(): null {
         })
       }, 5000)
     } else {
-      clearInterval(interval)
+      clearInterval(updateTxReqInterval.current)
     }
-    return () => clearInterval(interval)
+    return () => {
+      if (updateTxReqInterval.current) clearInterval(updateTxReqInterval.current)
+    }
   }, [pendingTransactions, updateTransaction, webSocketConnected])
 
   return null
