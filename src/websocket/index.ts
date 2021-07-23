@@ -353,8 +353,9 @@ export default function Sockets(): null {
   // TO DO - We need chainId and processed.swap.deadline
   useEffect(() => {
     let interval: any
+    console.log('the interval', interval, pendingTransactions)
     clearInterval(interval)
-    if (pendingTransactions) {
+    if (pendingTransactions && Object.keys(pendingTransactions).length) {
       interval = setInterval(() => {
         if (!webSocketConnected) return
         const timeNow = new Date().getTime()
@@ -391,7 +392,10 @@ export default function Sockets(): null {
     } else {
       clearInterval(interval)
     }
-    return () => clearInterval(interval)
+    return () => {
+      console.log('return and clear interval', interval)
+      clearInterval(interval)
+    }
   }, [pendingTransactions, updateTransaction, webSocketConnected])
 
   return null
