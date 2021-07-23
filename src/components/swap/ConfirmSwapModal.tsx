@@ -1,4 +1,4 @@
-import { currencyEquals, Trade, Price } from '@alchemistcoin/sdk'
+import { currencyEquals, Trade, Price, Currency, TradeType, Token } from '@alchemistcoin/sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -12,7 +12,10 @@ import SwapModalHeader from './SwapModalHeader'
  * @param tradeA trade A
  * @param tradeB trade B
  */
-function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
+function tradeMeaningfullyDiffers(
+  tradeA: Trade<Currency, Currency, TradeType>,
+  tradeB: Trade<Currency, Currency, TradeType>
+): boolean {
   return (
     tradeA.tradeType !== tradeB.tradeType ||
     !currencyEquals(tradeA.inputAmount.currency, tradeB.inputAmount.currency) ||
@@ -37,8 +40,8 @@ export default function ConfirmSwapModal({
   ethUSDCPrice
 }: {
   isOpen: boolean
-  trade: Trade | undefined
-  originalTrade: Trade | undefined
+  trade: Trade<Currency, Currency, TradeType> | undefined
+  originalTrade: Trade<Currency, Currency, TradeType> | undefined
   attemptingTxn: boolean
   txHash: string | undefined
   recipient: string | null
@@ -47,7 +50,7 @@ export default function ConfirmSwapModal({
   onConfirm: () => void
   swapErrorMessage: string | undefined
   onDismiss: () => void
-  ethUSDCPrice: Price | undefined
+  ethUSDCPrice: Price<Currency, Token> | undefined
 }) {
   const showAcceptChanges = useMemo(
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),

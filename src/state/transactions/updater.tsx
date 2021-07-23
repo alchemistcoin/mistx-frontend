@@ -1,9 +1,9 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
-import { checkedTransaction, finalizeTransaction } from './actions'
+import { checkedTransaction, finalizeTransaction, serializeLegacyTransaction } from './actions'
 import FATHOM_GOALS from '../../constants/fathom'
 
 export function shouldCheck(
@@ -27,11 +27,17 @@ export function shouldCheck(
   }
 }
 
+function isLegacyTransaction(transaction: any): boolean {
+  if (transaction.processed && transaction.processed.serializedSwap) return true
+  return false
+}
+
 export default function Updater(): null {
   const { chainId, library } = useActiveWeb3React()
 
   const lastBlockNumber = useBlockNumber()
 
+  const [checkedForLegacyTransactions, setCheckedForLegacyTransactions] = useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>()
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
 
@@ -41,6 +47,20 @@ export default function Updater(): null {
 
   // show popup on confirm
   const addPopup = useAddPopup()
+
+  // Serialize legacy transactions to new format once
+  useEffect(() => {
+    if (!checkedForLegacyTransactions && Object.keys(transactions).length) {
+      Object.keys(transactions).forEach(key => {
+        const transaction = transactions[key]
+        if (isLegacyTransaction(transaction)) {
+          dispatch(serializeLegacyTransaction({ legacyTransaction: transaction }))
+        }
+      })
+      setCheckedForLegacyTransactions(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions])
 
   useEffect(() => {
     if (!chainId || !library || !lastBlockNumber) return

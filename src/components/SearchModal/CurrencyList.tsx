@@ -17,7 +17,6 @@ import { MenuItem } from './styleds'
 import Loader from '../Loader'
 import { isTokenOnList } from '../../utils'
 import ImportRow from './ImportRow'
-import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
@@ -56,7 +55,7 @@ const FixedContentRow = styled.div`
   align-items: center;
 `
 
-function Balance({ balance }: { balance: CurrencyAmount }) {
+function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
   return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(4)}</StyledBalanceText>
 }
 
@@ -100,8 +99,12 @@ function TokenTags({ currency }: { currency: Currency }) {
 
 const mistFirst = (currencies: Currency[]): Currency[] =>
   currencies.reduce((arr: Currency[], currency: Currency) => {
+    if (currency.symbol === 'ETH') {
+      arr.splice(0, 0, currency)
+      return arr
+    }
     if (currency.symbol === 'MIST') {
-      arr.unshift(currency)
+      arr.splice(1, 0, currency)
       return arr
     }
     arr.push(currency)
@@ -206,10 +209,8 @@ export default function CurrencyList({
     if (otherListTokens && otherListTokens?.length > 0) {
       return [...(showMIST ? mistFirst(currencies) : currencies), BREAK_LINE, ...otherListTokens]
     }
-    return currencies
+    return showMIST ? mistFirst(currencies) : currencies
   }, [currencies, otherListTokens, showMIST])
-
-  const { chainId } = useActiveWeb3React()
 
   const Row = useCallback(
     ({ data, index, style }) => {
@@ -222,7 +223,7 @@ export default function CurrencyList({
       const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
       const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
       const handleSelect = () => onCurrencySelect(currency)
-      const token = wrappedCurrency(currency, chainId)
+      const token = currency?.wrapped
 
       const showImport = index > currencies.length
 
@@ -248,7 +249,7 @@ export default function CurrencyList({
         )
       }
     },
-    [chainId, currencies.length, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
+    [currencies.length, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
   )
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])

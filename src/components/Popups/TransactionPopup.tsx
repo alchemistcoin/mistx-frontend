@@ -33,7 +33,7 @@ export default function TransactionPopup({
   const { chainId } = useActiveWeb3React()
 
   const theme = useContext(ThemeContext)
-  const cancellation = status === Status.FAILED_TRANSACTION || status === Status.CANCEL_TRANSACTION_SUCCESSFUL
+  const cancellation = status === Status.FAILED_BUNDLE || status === Status.CANCEL_BUNDLE_SUCCESSFUL
 
   return (
     <RowNoFlex>

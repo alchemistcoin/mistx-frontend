@@ -1,4 +1,4 @@
-import { CurrencyAmount, ETHER, JSBI } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Currency, Ether } from '@alchemistcoin/sdk'
 import { WrapType } from 'hooks/useWrapCallback'
 import { MIN_ETH } from '../constants'
 
@@ -6,13 +6,19 @@ import { MIN_ETH } from '../constants'
  * Given some token amount, return the max that can be spent of it
  * @param currencyAmount to return max of
  */
-export function maxAmountSpend(currencyAmount?: CurrencyAmount, wrapType?: WrapType): CurrencyAmount | undefined {
+export function maxAmountSpend(
+  currencyAmount?: CurrencyAmount<Currency>,
+  wrapType?: WrapType
+): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined
-  if (currencyAmount.currency === ETHER && wrapType !== WrapType.NOT_APPLICABLE) {
-    if (JSBI.greaterThan(currencyAmount.raw, MIN_ETH)) {
-      return CurrencyAmount.ether(JSBI.subtract(currencyAmount.raw, MIN_ETH))
+
+  if (currencyAmount.currency.isNative && wrapType !== WrapType.NOT_APPLICABLE) {
+    const ETH = Ether.onChain(currencyAmount.currency.chainId)
+
+    if (JSBI.greaterThan(currencyAmount.quotient, MIN_ETH)) {
+      return CurrencyAmount.fromRawAmount(ETH, JSBI.subtract(currencyAmount.quotient, MIN_ETH))
     } else {
-      return CurrencyAmount.ether(JSBI.BigInt(0))
+      return CurrencyAmount.fromRawAmount(ETH, JSBI.BigInt(0))
     }
   }
   return currencyAmount

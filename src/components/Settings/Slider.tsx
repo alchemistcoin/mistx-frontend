@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
-import { BribeEstimate, WETH, TokenAmount } from '@alchemistcoin/sdk'
+import { BribeEstimate, WETH, CurrencyAmount } from '@alchemistcoin/sdk'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
@@ -12,6 +12,7 @@ type Props = {
   onChange: any
   value: number
   step: number
+  name: string
 }
 
 type ITrackProps = {
@@ -41,7 +42,7 @@ const SLIDER_VALUE_TO_LABEL_MAP: string[] = ['min success', 'med success', 'high
 
 // const SLIDER_VALUE_TO_METHOD_MAP: any = ['minBribe', 'meanBribe', 'maxBribe', 'ASAP']
 
-const Slider = ({ max, min, onChange, value, step }: Props) => {
+const Slider = ({ max, min, onChange, value, step, name }: Props) => {
   const theme = useContext(ThemeContext)
   const [sliderValue, setSliderValue] = useState<number>(value)
   const [sliderThumbLabel, setSliderThumbLabel] = useState<string>('')
@@ -52,8 +53,8 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
   useEffect(() => {
     let label = 'Fetching price...'
     if (bribeEstimate && ethUSDCPrice) {
-      const minBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.minBribe.raw)
-      const maxBribeTokenAmount = new TokenAmount(WETH[1], bribeEstimate.maxBribe.raw)
+      const minBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.minBribe.quotient)
+      const maxBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.maxBribe.quotient)
 
       if (feeDisplayCurrency === 'USD') {
         label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
@@ -87,7 +88,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
         max={max}
         onChange={values => onSliderChange(values)}
         renderMark={(props: IMarkProps) => (
-          <>
+          <div key={`slider-range-${name}-${props.index}`}>
             <div
               {...props.props}
               style={{
@@ -139,7 +140,7 @@ const Slider = ({ max, min, onChange, value, step }: Props) => {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
         renderTrack={(props: ITrackProps) => (
           <div

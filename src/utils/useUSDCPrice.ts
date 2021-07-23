@@ -1,17 +1,16 @@
-import { ChainId, Currency, currencyEquals, Exchange, JSBI, Price, WETH } from '@alchemistcoin/sdk'
+import { ChainId, Currency, Token, currencyEquals, Exchange, JSBI, Price, WETH } from '@alchemistcoin/sdk'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
 import { useActiveWeb3React } from '../hooks'
-import { wrappedCurrency } from './wrappedCurrency'
 
 /**
  * Returns the price in USDC of the input currency (from Uniswap)
  * @param currency currency to compute the USDC price of
  */
-export default function useUSDCPrice(currency?: Currency): Price | undefined {
+export default function useUSDCPrice(currency?: Currency): Price<Currency, Token> | undefined {
   const { chainId } = useActiveWeb3React()
-  const wrapped = wrappedCurrency(currency, chainId)
+  const wrapped = currency?.wrapped
   const tokenPairs: [Currency | undefined, Currency | undefined][] = useMemo(
     () => [
       [
@@ -48,7 +47,9 @@ export default function useUSDCPrice(currency?: Currency): Price | undefined {
 
     const ethPairETHAmount = ethPair?.reserveOf(WETH[chainId])
     const ethPairETHUSDCValue: JSBI =
-      ethPairETHAmount && usdcEthPair ? usdcEthPair.priceOf(WETH[chainId]).quote(ethPairETHAmount).raw : JSBI.BigInt(0)
+      ethPairETHAmount && usdcEthPair
+        ? usdcEthPair.priceOf(WETH[chainId]).quote(ethPairETHAmount).quotient
+        : JSBI.BigInt(0)
 
     // all other tokens
     // first try the usdc pair

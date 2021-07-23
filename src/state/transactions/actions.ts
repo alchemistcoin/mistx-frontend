@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
-import { ChainId, CurrencyAmount, Trade } from '@alchemistcoin/sdk'
-import { Diagnosis, Status, SwapReq, TransactionProcessed } from '../../websocket/index'
+import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Diagnosis, Status, SwapReq, BundleProcessed } from '../../websocket/index'
 import { WrapType } from 'hooks/useWrapCallback'
 
 export interface SerializableTransactionReceipt {
@@ -21,10 +21,11 @@ export const addTransaction = createAction<{
   claim?: { recipient: string }
   summary?: string
   swap?: SwapReq
-  trade?: Trade
+  trade?: Trade<Currency, Currency, TradeType>
   wrapType?: WrapType
-  inputAmount?: CurrencyAmount
-  outputAmount?: CurrencyAmount
+  inputAmount?: CurrencyAmount<Currency>
+  outputAmount?: CurrencyAmount<Currency>
+  deadline?: number
 }>('transactions/addTransaction')
 export const clearCompletedTransactions = createAction<{ chainId: ChainId }>('transactions/clearCompletedTransactions')
 export const clearAllTransactions = createAction<{ chainId: ChainId }>('transactions/clearAllTransactions')
@@ -47,15 +48,19 @@ export const removeTransaction = createAction<{
 export const updateTransaction = createAction<{
   chainId: ChainId
   hash: string
-  cancel?: Status | undefined
-  status?: Status
+  cancel?: Status | string | undefined
+  status?: Status | string
   blockNumber?: number
   message?: string
   flashbotsResolution?: string
   mistxDiagnosis?: Diagnosis
-  transaction?: TransactionProcessed
+  bundle?: BundleProcessed
   updatedAt?: number
 }>('transactions/updateTransaction')
+
+export const serializeLegacyTransaction = createAction<{
+  legacyTransaction: any
+}>('transactions/serializeLegacyTransaction')
 
 export const transactionError = createAction<{
   event: string
