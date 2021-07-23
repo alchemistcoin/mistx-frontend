@@ -205,7 +205,7 @@ const EmptyResults = styled.div`
   font-weight: 500;
 `
 
-function renderTransactions(transactions: string[]) {
+function renderTransactions(transactions: string[]) { console.log('transactions', transactions)
   return (
     <TransactionListWrapper>
       {!!transactions.length ? (
