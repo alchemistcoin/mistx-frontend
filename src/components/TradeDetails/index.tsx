@@ -4,7 +4,8 @@ import {
   TradeType,
   Percent,
   JSBI,
-  Currency
+  Currency,
+  CurrencyAmount
   // WETH,
   // Token
 } from '@alchemistcoin/sdk'
@@ -33,14 +34,16 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
 
   const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
 
-  let realizedLPFeeInEth = 0
+  let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
+  let totalFeeInEth: CurrencyAmount<Currency> | undefined
   if (ethPrice && realizedLPFee) {
-    realizedLPFeeInEth = Number(ethPrice.quote(realizedLPFee?.wrapped).toSignificant(6))
-    console.log('- log realizedLPFeeInEth', realizedLPFeeInEth)
+    realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
+    totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
   }
-  const totalFeeInEth = Number(trade.minerBribe.toSignificant(6)) + realizedLPFeeInEth
-  console.log('- log minerBribeEth', Number(trade.minerBribe.toSignificant(6)))
-  console.log('- log totalFeeInEth', totalFeeInEth)
+
+  console.log('- log realizedLPFeeInEth', realizedLPFeeInEth?.toSignificant(6))
+  console.log('- log minerBribeEth', trade.minerBribe.toSignificant(6))
+  console.log('- log totalFeeInEth', totalFeeInEth?.toSignificant(6))
   // const totalFeeInEth = lpFeeUsd + minerTipUsd
 
   return !trade ? null : (
@@ -52,7 +55,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {totalFeeInEth} ETH
+          {totalFeeInEth?.toSignificant(6)} ETH
         </TYPE.black>
       </RowBetween>
 
