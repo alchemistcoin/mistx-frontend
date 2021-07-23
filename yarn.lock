@@ -108,9 +108,9 @@
   version "1.0.0"
   resolved "git+https://github.com/alchemistcoin/default-token-list.git#0c1f7a71ed492c98766936063289857b94ca3da6"
 
-"@alchemistcoin/sdk@git+https://github.com/alchemistcoin/alchemist-sdk.git#refactor-entities":
+"@alchemistcoin/sdk@git+https://github.com/alchemistcoin/alchemist-sdk.git#dev":
   version "3.1.1"
-  resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#5e6490b22fed87ebc2ab25b0df70cdaa670476a5"
+  resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#c2a47c406a24a7c5d26d134b1bea2b937f40cd19"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
