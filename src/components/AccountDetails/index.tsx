@@ -206,7 +206,6 @@ const EmptyResults = styled.div`
 `
 
 function renderTransactions(transactions: string[]) {
-  console.log('transactions', transactions)
   return (
     <TransactionListWrapper>
       {!!transactions.length ? (

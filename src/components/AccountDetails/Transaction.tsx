@@ -112,7 +112,6 @@ export default function Transaction({ hash }: { hash: string }) {
   const success = tx && isSuccessfulTransaction(tx)
   const cancelTransaction = useTransactionCanceller()
   const [cancelClicked, setCancelClicked] = useState(false)
-  console.log('- allTransactions', allTransactions)
   const Row = (
     <RowFixed flex="1" align="left" flexDirection="column">
       <TransactionHeaderText className="transaction-status-text">

@@ -100,14 +100,6 @@ export function useTransactionAdder(): (
   )
 }
 
-// export function useTransactionAdder() {
-//   return useCallback((test, test2) => {
-//       if (!account) return
-//     if (!chainId) return
-//     console.log('- log custom', test, test2)
-//   }, [])
-// }
-
 export function useTransactionUpdater(): (
   response: TransactionResponseIdentifier,
   customData?: {
@@ -225,7 +217,6 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   const { chainId } = useActiveWeb3React()
 
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
-  // console.log('- log chainId', chainId)
   return chainId ? state[chainId] ?? {} : {}
 }
 
