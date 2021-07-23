@@ -62,10 +62,12 @@ export interface MistXVersion {
   api: string
   client: string
 }
+
 export interface SocketSession {
   token: string
   version: MistXVersion | undefined
 }
+
 export interface TransactionRes {
   transaction: TransactionProcessed
   status: Status
@@ -337,7 +339,7 @@ export default function Sockets(): null {
       socket.off(Event.SOCKET_SESSION)
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.BUNDLE_RESPONSE)
-      socket.off(Event.BUNDLE_STATUS_REQUEST)
+      socket.off(Event.BUNDLE_STATUS_RESPONSE)
       // TO DO
     }
   }, [
