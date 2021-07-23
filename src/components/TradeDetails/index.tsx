@@ -5,8 +5,8 @@ import {
   Percent,
   JSBI,
   Currency,
-  CurrencyAmount
-  // WETH,
+  CurrencyAmount,
+  WETH
   // Token
 } from '@alchemistcoin/sdk'
 import { ThemeContext } from 'styled-components/macro'
@@ -18,7 +18,7 @@ import SwapPath from './swapPath'
 import { computeTradePriceBreakdown } from '../../utils/prices'
 import FormattedPriceImpact from '../swap/FormattedPriceImpact'
 import MinerTipPrice from '../swap/MinerTipPrice'
-// import useUSDCPrice from '../../hooks/useUSDCPrice'
+import useUSDCPrice from '../../hooks/useUSDCPrice'
 // import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import useEthPrice from '../../hooks/useEthPrice'
 interface TradeDetailsProps {
@@ -33,7 +33,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
 
   const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
-
+  const ethUSDCPrice = useUSDCPrice(WETH[1])
   let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
   let totalFeeInEth: CurrencyAmount<Currency> | undefined
   if (ethPrice && realizedLPFee) {
@@ -55,7 +55,9 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {totalFeeInEth?.toSignificant(6)} ETH
+          {totalFeeInEth && ethUSDCPrice
+            ? `$${ethUSDCPrice.quote(totalFeeInEth).toSignificant(3)} (${totalFeeInEth.toSignificant(4)} ETH)`
+            : '-'}
         </TYPE.black>
       </RowBetween>
 
@@ -66,8 +68,10 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {realizedLPFee
-            ? `${realizedLPFee.toSignificant(4)} ${realizedLPFee.currency && realizedLPFee.currency.symbol}`
+          {realizedLPFee && realizedLPFeeInEth && ethUSDCPrice
+            ? `$${ethUSDCPrice.quote(realizedLPFeeInEth).toSignificant(2)} (${realizedLPFee.toSignificant(
+                4
+              )} ${realizedLPFee.currency && realizedLPFee.currency.symbol})`
             : '-'}
         </TYPE.black>
       </RowBetween>
