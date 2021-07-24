@@ -247,7 +247,8 @@ export default function Sockets(): null {
 
     socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
       const { bundle, status } = response
-      const serialized = bundle && typeof bundle === 'string' ? bundle : (bundle as BundleProcessed).transactions[0].serialized
+      const serialized =
+        bundle && typeof bundle === 'string' ? bundle : (bundle as BundleProcessed).transactions[0].serialized
       const hash = keccak256(serialized)
       const tx = allTransactions?.[hash]
       const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
