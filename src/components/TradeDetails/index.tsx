@@ -73,7 +73,7 @@ export default memo(function TradeDetails({ trade, allowedSlippage }: TradeDetai
   // const totalFeeInUsd = ethPriceUsd ? ethPriceUsd.quote(ethTotalFeeCurrencyAmmount).toSignificant(4) : null
   const totalFeeInUsd = 1
 
-  // test
+  // testing
   return !trade ? null : (
     <AutoColumn gap="6px">
       <RowBetween>
