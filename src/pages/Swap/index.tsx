@@ -172,6 +172,15 @@ const StyledButtonYellow = styled(StyledButtonError)`
   font-weight: 700;
 `
 
+const InfoWrapper = styled.div`
+  svg {
+    circle,
+    path {
+      fill: ${({ theme }) => theme.primary2};
+    }
+  }
+`
+
 // Lazy Load
 const NetworkWarningModal = React.lazy(() => import('components/NetworkWarningModal'))
 const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'))
@@ -222,7 +231,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
-  console.log('allowedSlippage', allowedSlippage)
   // get user transaction deadline TTL, in minutes
   // const [transactionTTL] = useUserTransactionTTL()
 
@@ -628,7 +636,9 @@ export default function Swap({ history }: RouteComponentProps) {
                           <MouseoverTooltipContent
                             content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}
                           >
-                            <Info />
+                            <InfoWrapper>
+                              <Info />
+                            </InfoWrapper>
                           </MouseoverTooltipContent>
                         </FeeInnerRight>
                       </FeeWrapper>

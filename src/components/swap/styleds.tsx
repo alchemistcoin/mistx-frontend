@@ -4,6 +4,7 @@ import { AlertTriangle } from 'react-feather'
 import styled, { css } from 'styled-components'
 import { Text } from 'rebass'
 import { AutoColumn } from '../Column'
+import { RowBetween } from '../Row'
 
 export const Wrapper = styled.div`
   padding: 1rem;
@@ -242,4 +243,33 @@ export const FeeInnerRight = styled.div`
   > div {
     display: flex;
   }
+`
+
+export const FeeRowBetween = styled(RowBetween)`
+  position: relative;
+  &:after {
+    content: '';
+    height: 13px;
+    width: 1px;
+    position: absolute;
+    left: 8px;
+    top: 0px;
+    background-color: ${({ theme }) => theme.text2};
+  }
+  &:before {
+    content: '';
+    height: 1px;
+    width: 8px;
+    position: absolute;
+    left: 8px;
+    bottom: 11px;
+    background-color: ${({ theme }) => theme.text2};
+  }
+`
+
+export const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: ${({ theme }) => theme.text3};
+  margin: 10px 0;
 `

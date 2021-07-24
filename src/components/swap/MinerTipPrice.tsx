@@ -18,7 +18,7 @@ const MinerTipPrice = ({ trade }: MinerTipPriceProps) => {
     let label = '...'
     if (trade.minerBribe && ethUSDCPrice) {
       const minerTipAmount = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
-      label = `${Number(minerTipAmount.toSignificant(2))} ETH ($${ethUSDCPrice.quote(minerTipAmount).toSignificant(2)})`
+      label = `$${ethUSDCPrice.quote(minerTipAmount).toFixed(2)} (${Number(minerTipAmount.toSignificant(2))} ETH)`
     }
     setMinerTipPrice(label)
   }, [bribeEstimate, ethUSDCPrice, feeDisplayCurrency, trade.minerBribe])

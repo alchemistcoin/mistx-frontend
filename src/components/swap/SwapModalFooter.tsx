@@ -13,17 +13,25 @@ import {
   formatExecutionPrice,
   warningSeverity
 } from '../../utils/prices'
-import useUSDCPrice from '../../utils/useUSDCPrice'
+// import useUSDCPrice from '../../utils/useUSDCPrice'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
+import useEthPrice from '../../hooks/useEthPrice'
+import { FeeRowBetween } from '../swap/styleds'
 
 const PriceWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg4};
   padding: 1rem 2rem 1rem 1.5rem;
+`
+
+const StyledFeeRowBetween = styled(FeeRowBetween)`
+  &:after {
+    top: -3px;
+  }
 `
 
 const ConfirmButton = styled(ButtonError)`
@@ -98,11 +106,19 @@ export default function SwapModalFooter({
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
-  const tokenCurrency =
-    trade.tradeType === TradeType.EXACT_INPUT
-      ? slippageAdjustedAmounts[Field.INPUT]?.currency
-      : slippageAdjustedAmounts[Field.OUTPUT]?.currency
-  const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
+  // const tokenCurrency =
+  //   trade.tradeType === TradeType.EXACT_INPUT
+  //     ? slippageAdjustedAmounts[Field.INPUT]?.currency
+  //     : slippageAdjustedAmounts[Field.OUTPUT]?.currency
+  // const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
+  const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
+
+  let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
+  let totalFeeInEth: CurrencyAmount<Currency> | undefined
+  if (ethPrice && realizedLPFee) {
+    realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
+    totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
+  }
 
   return (
     <>
@@ -171,39 +187,58 @@ export default function SwapModalFooter({
           </AutoRow>
           <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
         </RowBetween>
+
         <RowBetween>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Liquidity Provider Fee
+              Total Fee
+            </TYPE.black>
+            <QuestionHelper text="Total transaction fee" />
+          </AutoRow>
+          <TYPE.black fontSize={14} fontWeight={700}>
+            {totalFeeInEth && ethUSDCPrice
+              ? `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} (${totalFeeInEth.toSignificant(4)} ETH)`
+              : '-'}
+          </TYPE.black>
+        </RowBetween>
+
+        <StyledFeeRowBetween paddingLeft={20}>
+          <AutoRow width="fit-content">
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Liquidity Provider
             </TYPE.black>
             <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
-            {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
+            {ethUSDCPrice && realizedLPFeeInEth && `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} `}
+            {realizedLPFee
+              ? '(' + realizedLPFee?.toSignificant(4) + ' ' + trade.inputAmount.currency.symbol + ')'
+              : '-'}
             &nbsp;&nbsp;
-            {realizedLPFee && ethUSDCPrice && tokenCurrency && realizedLPFee.currency.symbol !== tokenCurrency.symbol
+            {/* {realizedLPFee && ethUSDCPrice && tokenCurrency && realizedLPFee.currency.symbol !== tokenCurrency.symbol
               ? '(' +
                 tokenUSDCPrice
                   ?.divide(ethUSDCPrice || '0x1')
                   .multiply(realizedLPFee)
                   .toSignificant(2) +
                 ' ETH)'
-              : ''}
+              : ''} */}
           </TYPE.black>
-        </RowBetween>
-        <RowBetween>
+        </StyledFeeRowBetween>
+
+        <StyledFeeRowBetween paddingLeft={20}>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Transaction Fee
+              Miner Tip
             </TYPE.black>
-            <QuestionHelper text="A tip for the miner to accept the transaction." />
+            <QuestionHelper text="A tip for the miner to accept the private transaction to avoid front-running and sandwich attacks." />
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
             {ethUSDCPrice
-              ? `$ ${ethUSDCPrice.quote(minerBribeEth).toSignificant(4)} (${minerBribeEth.toSignificant(2)} ETH)`
+              ? `$ ${ethUSDCPrice.quote(minerBribeEth).toFixed(2)} (${minerBribeEth.toSignificant(4)} ETH)`
               : `Loading...`}
           </TYPE.black>
-        </RowBetween>
+        </StyledFeeRowBetween>
       </AutoColumn>
 
       <AutoRow>
