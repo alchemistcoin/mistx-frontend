@@ -13,7 +13,6 @@ import {
   formatExecutionPrice,
   warningSeverity
 } from '../../utils/prices'
-// import useUSDCPrice from '../../utils/useUSDCPrice'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
@@ -106,11 +105,6 @@ export default function SwapModalFooter({
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
-  // const tokenCurrency =
-  //   trade.tradeType === TradeType.EXACT_INPUT
-  //     ? slippageAdjustedAmounts[Field.INPUT]?.currency
-  //     : slippageAdjustedAmounts[Field.OUTPUT]?.currency
-  // const tokenUSDCPrice = useUSDCPrice(tokenCurrency)
   const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
 
   let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
@@ -214,15 +208,6 @@ export default function SwapModalFooter({
             {realizedLPFee
               ? '(' + realizedLPFee?.toSignificant(4) + ' ' + trade.inputAmount.currency.symbol + ')'
               : '-'}
-            &nbsp;&nbsp;
-            {/* {realizedLPFee && ethUSDCPrice && tokenCurrency && realizedLPFee.currency.symbol !== tokenCurrency.symbol
-              ? '(' +
-                tokenUSDCPrice
-                  ?.divide(ethUSDCPrice || '0x1')
-                  .multiply(realizedLPFee)
-                  .toSignificant(2) +
-                ' ETH)'
-              : ''} */}
           </TYPE.black>
         </StyledFeeRowBetween>
 
