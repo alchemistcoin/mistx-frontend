@@ -16,7 +16,8 @@ import {
   useAllTransactions,
   useTransactionRemover,
   useTransactionUpdater,
-  usePendingTransactions
+  usePendingTransactions,
+  useGetBundleByID
 } from 'state/transactions/hooks'
 
 import { useAddPopup } from 'state/application/hooks'
@@ -198,6 +199,7 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
+  const getBundleByID = useGetBundleByID()
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 
   useEffect(() => {
@@ -220,9 +222,7 @@ export default function Sockets(): null {
       // console.log('websocket err', err)
       if (err.event === Event.MISTX_BUNDLE_REQUEST) {
         const bundleResponse = err.data as BundleRes
-        const hash = keccak256(
-          bundleResponse.bundle.transactions[bundleResponse.bundle.transactions.length - 1].serialized
-        )
+        const hash = keccak256(bundleResponse.bundle.transactions[0].serialized)
         removeTransaction({
           chainId: bundleResponse.bundle.chainId,
           hash
@@ -248,11 +248,13 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
-      const { bundle, status } = response
-      const serialized =
-        bundle && typeof bundle === 'string'
-          ? bundle
-          : (bundle as BundleProcessed).transactions[(bundle as BundleProcessed).transactions.length - 1].serialized
+      const { bundle: b, status } = response
+
+      const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
+      const serialized = bundle && (bundle as BundleProcessed).transactions[0].serialized
+
+      if (!serialized) return
+
       const hash = keccak256(serialized)
       const tx = allTransactions?.[hash]
       const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
@@ -273,7 +275,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.BUNDLE_RESPONSE, response => {
-      const hash = keccak256(response.bundle.transactions[response.bundle.transactions.length - 1].serialized)
+      const hash = keccak256(response.bundle.transactions[0].serialized)
       const tx = allTransactions?.[hash]
       const summary = tx?.summary
       const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
