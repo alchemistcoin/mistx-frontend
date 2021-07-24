@@ -350,6 +350,7 @@ export default function Sockets(): null {
     addPopup,
     dispatch,
     allTransactions,
+    getBundleByID,
     removeTransaction,
     updateTransaction,
     newAppVersionAvailable,
