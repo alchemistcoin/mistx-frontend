@@ -41,7 +41,7 @@ const AlchemistMenu = () => {
       ref={node as any}
     >
       <button>
-        <img src={AlchemistMenuIcon} />
+        <img src={AlchemistMenuIcon} alt="Alchemist Products" />
       </button>
 
       {isOpen && (
