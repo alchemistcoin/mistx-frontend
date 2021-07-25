@@ -5,7 +5,7 @@
   "homepage": ".",
   "private": true,
   "devDependencies": {
-    "@alchemistcoin/sdk": "git+https://github.com/alchemistcoin/alchemist-sdk.git#refactor-entities",
+    "@alchemistcoin/sdk": "git+https://github.com/alchemistcoin/alchemist-sdk.git#dev",
     "@ethersproject/experimental": "^5.0.1",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",
     "@popperjs/core": "^2.4.4",
