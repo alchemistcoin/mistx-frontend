@@ -136,7 +136,6 @@ export function useApproveCallback(
         signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
       } else {
         try {
-          console.log('populated tx', populatedTx)
           const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
             {
               ...populatedTx,
