@@ -232,6 +232,19 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
   )
 }
 
+export function useGetBundleByID() {
+  const transactions = useAllTransactions()
+
+  return useCallback(
+    (id: string) => {
+      return Object.values(transactions).find((transaction: TransactionDetails) => {
+        return transaction.processed?.serialized === id
+      })
+    },
+    [transactions]
+  )
+}
+
 export function isPendingTransaction(tx: TransactionDetails): boolean {
   if (tx.receipt) return false // If there is a receipt, we know the transaction has completed
   if (!tx.receipt && !!tx.wrapType) return true // if transaction is a wrap, ignore the tx.status and return true since receipt is required to be true
