@@ -10,7 +10,7 @@ import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { keccak256 } from '@ethersproject/keccak256'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
@@ -115,12 +115,13 @@ export function useApproveCallback(
       web3Provider.provider.isMetaMask = false
     }
     try {
+      const nonce = await tokenContract.signer.getTransactionCount()
       //use populate instead of broadcasting
       const populatedTx: PopulatedTransaction = await tokenContract.populateTransaction.approve(
         spender,
         amountToApprove.quotient.toString(),
         {
-          nonce: tokenContract.signer.getTransactionCount(),
+          nonce: nonce,
           gasLimit: calculateGasMargin(estimatedGas) //needed?
         }
       )
@@ -136,15 +137,19 @@ export function useApproveCallback(
         signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
       } else {
         try {
-          const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
+          const signPayload = [
             {
               ...populatedTx,
               chainId: undefined,
               gasLimit: populatedTx.gasLimit?.toHexString(),
               gasPrice: '0x0',
-              nonce: BigNumber.from(populatedTx.nonce).toHexString()
+              nonce: `0x${populatedTx.nonce}`
             }
-          ])
+          ]
+          const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc(
+            'eth_signTransaction',
+            signPayload
+          )
 
           signedTx = signedTxRes.raw
         } catch (e) {

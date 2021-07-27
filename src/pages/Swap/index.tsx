@@ -73,7 +73,7 @@ import { LinkStyledButton, TYPE } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import { MouseoverTooltipContent } from '../../components/Tooltip'
 import TradeDetails from '../../components/TradeDetails'
-import SwapPrice from '../../components/swap/SwapPrice'
+import SwapFooter from '../../components/swap/SwapFooter'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -501,8 +501,6 @@ export default function Swap({ history }: RouteComponentProps) {
   //   bribeEstimate?.maxBribe.toSignificant(6)
   // )
 
-  const [showInverted, setShowInverted] = useState<boolean>(false)
-
   return (
     <>
       <Suspense fallback={null}>
@@ -626,11 +624,13 @@ export default function Swap({ history }: RouteComponentProps) {
                     <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
                       <FeeWrapper>
                         <FeeInnerLeft>
-                          <SwapPrice
+                          <SwapFooter trade={trade} />
+                          {/* <SwapPrice
                             price={trade?.executionPrice}
                             showInverted={showInverted}
                             setShowInverted={setShowInverted}
                           />
+                          <MinerTipPrice trade={trade} /> */}
                         </FeeInnerLeft>
                         <FeeInnerRight>
                           <MouseoverTooltipContent

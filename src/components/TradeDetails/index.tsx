@@ -8,6 +8,7 @@ import { RowBetween, RowFixed } from '../Row'
 import SwapPath from './swapPath'
 import { computeTradePriceBreakdown } from '../../utils/prices'
 import FormattedPriceImpact from '../swap/FormattedPriceImpact'
+import SwapPrice from '../swap/SwapPrice'
 import MinerTipPrice from '../swap/MinerTipPrice'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useEthPrice from '../../hooks/useEthPrice'
@@ -81,6 +82,16 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
           <SwapPath trade={trade} />
+        </TYPE.black>
+      </RowBetween>
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Swap Price
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          <SwapPrice trade={trade} />
         </TYPE.black>
       </RowBetween>
 
