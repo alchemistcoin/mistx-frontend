@@ -87,14 +87,15 @@ export function useSwapCallback(
           }
 
           try {
+            const nonce =
+              signedApproval === undefined
+                ? await contract.signer.getTransactionCount()
+                : await contract.signer.getTransactionCount().then(nonce => {
+                    return nonce + 1
+                  })
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
-              nonce:
-                signedApproval === undefined
-                  ? contract.signer.getTransactionCount()
-                  : contract.signer.getTransactionCount().then(nonce => {
-                      return nonce + 1
-                    }),
+              nonce: nonce,
               gasLimit: calculateGasMargin(BigNumber.from(500000)),
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
@@ -116,7 +117,7 @@ export function useSwapCallback(
               // basically does everything that AD does with hexlify etc. - kek
               signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
             } else {
-              const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
+              const payload = [
                 {
                   ...populatedTx,
                   gas: populatedTx.gasLimit?.toHexString(),
@@ -124,7 +125,11 @@ export function useSwapCallback(
                   gasPrice: '0x0',
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
-              ])
+              ]
+              const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc(
+                'eth_signTransaction',
+                payload
+              )
               signedTx = signedTxRes.raw
             }
 
