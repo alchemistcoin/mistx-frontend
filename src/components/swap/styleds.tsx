@@ -4,6 +4,7 @@ import { AlertTriangle } from 'react-feather'
 import styled, { css } from 'styled-components'
 import { Text } from 'rebass'
 import { AutoColumn } from '../Column'
+import { RowBetween } from '../Row'
 
 export const Wrapper = styled.div`
   padding: 1rem;
@@ -207,14 +208,14 @@ export const TokenHandImage = styled.img`
 export const FeeWrapper = styled.div`
   height: 2.5rem;
   font-size: 0.875rem;
-  padding: 0 1.25rem;
+  padding: 0 0.25rem;
   width: 100%;
   display: flex;
   flex-direction: row;
   border-radius: 1.25rem;
-  background-color: ${({ theme }) => theme.bg5};
   line-height: 2.5rem;
   color: ${({ theme }) => theme.text3};
+  z-index: 9;
   span {
     color: ${({ theme }) => theme.white};
   }
@@ -238,4 +239,37 @@ export const FeeInnerRight = styled.div`
   justify-content: space-around;
   position: relative;
   margin-top: -2px;
+
+  > div {
+    display: flex;
+  }
+`
+
+export const FeeRowBetween = styled(RowBetween)`
+  position: relative;
+  &:after {
+    content: '';
+    height: 13px;
+    width: 1px;
+    position: absolute;
+    left: 8px;
+    top: 0px;
+    background-color: ${({ theme }) => theme.text2};
+  }
+  &:before {
+    content: '';
+    height: 1px;
+    width: 8px;
+    position: absolute;
+    left: 8px;
+    bottom: 11px;
+    background-color: ${({ theme }) => theme.text2};
+  }
+`
+
+export const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: ${({ theme }) => theme.text3};
+  margin: 10px 0;
 `

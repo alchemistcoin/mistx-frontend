@@ -32,7 +32,8 @@ import {
   FeeInnerLeft,
   FeeInnerRight
 } from '../../components/swap/styleds'
-import QuestionHelper from '../../components/QuestionHelper'
+// import QuestionHelper from '../../components/QuestionHelper'
+import { Info } from '../../components/Icons'
 // import TradePrice from '../../components/swap/TradePrice'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
@@ -70,6 +71,9 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { darken } from 'polished'
 import { LinkStyledButton, TYPE } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
+import { MouseoverTooltipContent } from '../../components/Tooltip'
+import TradeDetails from '../../components/TradeDetails'
+import SwapPrice from '../../components/swap/SwapPrice'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -168,6 +172,15 @@ const StyledButtonYellow = styled(StyledButtonError)`
   font-weight: 700;
 `
 
+const InfoWrapper = styled.div`
+  svg {
+    circle,
+    path {
+      fill: ${({ theme }) => theme.primary2};
+    }
+  }
+`
+
 // Lazy Load
 const NetworkWarningModal = React.lazy(() => import('components/NetworkWarningModal'))
 const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'))
@@ -218,7 +231,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
-
   // get user transaction deadline TTL, in minutes
   // const [transactionTTL] = useUserTransactionTTL()
 
@@ -489,6 +501,8 @@ export default function Swap({ history }: RouteComponentProps) {
   //   bribeEstimate?.maxBribe.toSignificant(6)
   // )
 
+  const [showInverted, setShowInverted] = useState<boolean>(false)
+
   return (
     <>
       <Suspense fallback={null}>
@@ -612,17 +626,20 @@ export default function Swap({ history }: RouteComponentProps) {
                     <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
                       <FeeWrapper>
                         <FeeInnerLeft>
-                          Transaction fee:
-                          <span>
-                            {ethUSDCPrice
-                              ? `$ ${ethUSDCPrice
-                                  .quote(CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient))
-                                  .toSignificant(4)} (${trade.minerBribe.toSignificant(2)} ETH)`
-                              : `${trade.minerBribe.toSignificant(2)} ETH`}
-                          </span>
+                          <SwapPrice
+                            price={trade?.executionPrice}
+                            showInverted={showInverted}
+                            setShowInverted={setShowInverted}
+                          />
                         </FeeInnerLeft>
                         <FeeInnerRight>
-                          <QuestionHelper text="A tip for the miner to accept the transaction. You can change this in the settings." />
+                          <MouseoverTooltipContent
+                            content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}
+                          >
+                            <InfoWrapper>
+                              <Info />
+                            </InfoWrapper>
+                          </MouseoverTooltipContent>
                         </FeeInnerRight>
                       </FeeWrapper>
                     </AutoRow>
