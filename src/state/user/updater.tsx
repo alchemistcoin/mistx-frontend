@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
-import { tipValueToSetting, tipSettingToValue } from './reducer'
+import { tipSettingToValue } from './reducer'
 import { updateMatchesDarkMode, updateUserBribeMargin } from './actions'
 
 export default function Updater(): null {
@@ -13,9 +13,20 @@ export default function Updater(): null {
     if (state) {
       // make sure users tip margin is aligned with the default setting
       // the users tip setting needs to be updated if the default settings change
-      const closestSettingValue = tipValueToSetting(state.userBribeMargin)
-      const newBribeMargin = tipSettingToValue(closestSettingValue)
-      if (newBribeMargin !== state.userBribeMargin) {
+      let newBribeMargin
+      const low = tipSettingToValue(1)
+      const med = tipSettingToValue(2)
+      const high = tipSettingToValue(3)
+      const highest = tipSettingToValue(4)
+      if (
+        state.userBribeMargin !== low &&
+        state.userBribeMargin !== med &&
+        state.userBribeMargin !== high &&
+        state.userBribeMargin !== highest
+      ) {
+        newBribeMargin = med
+      }
+      if (newBribeMargin && newBribeMargin !== state.userBribeMargin) {
         dispatch(updateUserBribeMargin({ userBribeMargin: newBribeMargin }))
       }
     }

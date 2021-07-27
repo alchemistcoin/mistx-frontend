@@ -266,9 +266,9 @@ export const BLOCKED_ADDRESSES: string[] = [
 
 // Miner Bribe Margin
 // default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 44
-export const MINER_BRIBE_MIN = 44
-export const MINER_BRIBE_MAX = 154
+export const INITIAL_BRIBE_MARGIN = 79
+export const MINER_BRIBE_MIN = 43
+export const MINER_BRIBE_MAX = 153
 
 // The interval for manual transaction status checks are emitted if no update has been received for x seconds
 export const MANUAL_CHECK_TX_STATUS_INTERVAL = 30 // seconds
