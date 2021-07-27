@@ -9,6 +9,7 @@ import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { useDarkModeManager } from '../../state/user/hooks'
+import AlchemistMenu from './AlchemistMenu'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -64,7 +65,9 @@ const LogoWrapperMobile = styled.div`
 
   > a {
     position: relative;
-    right: 5rem;
+    height: auto;
+    width: 70px;
+    right: 10px;
   }
 
   > svg {
@@ -76,6 +79,11 @@ const LogoWrapperMobile = styled.div`
 const LogoLink = styled(Link)`
   display: flex;
   flex-direction: column;
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
 `
 
 const HideSmall = styled.div`
@@ -233,12 +241,10 @@ export default function Header() {
       </HideLarge>
       <HeaderRow align="start">
         <HeaderLinks>
+          <AlchemistMenu />
           <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
           </StyledNavLink>
-          <StyledExternalLink id={`crucible-nav-link`} rel="" href={'https://crucible.alchemist.wtf'}>
-            {t('crucible')} <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
-          </StyledExternalLink>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
             Sandwiched.wtf <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
