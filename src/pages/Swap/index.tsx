@@ -191,6 +191,8 @@ const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletMo
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
+  console.log('SWAP IS RENDERED')
+
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),

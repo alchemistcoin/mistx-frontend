@@ -25,7 +25,7 @@ export enum CurrencyModalView {
   importList
 }
 
-export default function CurrencySearchModal({
+export default React.memo(function CurrencySearchModal({
   isOpen,
   onDismiss,
   onCurrencySelect,
@@ -35,7 +35,7 @@ export default function CurrencySearchModal({
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
-
+  console.log('CurrencySearchModal is RENDERED')
   useEffect(() => {
     if (isOpen && !lastOpen) {
       setModalView(CurrencyModalView.search)
@@ -101,4 +101,4 @@ export default function CurrencySearchModal({
       )}
     </Modal>
   )
-}
+})
