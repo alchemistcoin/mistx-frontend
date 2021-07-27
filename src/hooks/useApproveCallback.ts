@@ -10,7 +10,7 @@ import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { keccak256 } from '@ethersproject/keccak256'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
@@ -135,15 +135,22 @@ export function useApproveCallback(
         const signature: SignatureLike = await library.jsonRpcFetchFunc('eth_sign', [account, hash])
         signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
       } else {
-        const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
-          {
-            ...populatedTx,
-            gasLimit: populatedTx.gasLimit?.toHexString(),
-            gasPrice: '0x0'
-          }
-        ])
+        try {
+          const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
+            {
+              ...populatedTx,
+              chainId: undefined,
+              gasLimit: populatedTx.gasLimit?.toHexString(),
+              gasPrice: '0x0',
+              nonce: BigNumber.from(populatedTx.nonce).toHexString()
+            }
+          ])
 
-        signedTx = signedTxRes.raw
+          signedTx = signedTxRes.raw
+        } catch (e) {
+          console.error('jsonRpcFetch error', e)
+          throw e
+        }
       }
 
       if (web3Provider) {

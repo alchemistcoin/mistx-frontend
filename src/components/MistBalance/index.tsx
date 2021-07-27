@@ -89,7 +89,7 @@ const MistBalance = () => {
         {account && !mistBalance ? (
           <StyledLoader stroke="#fff" size="20px" />
         ) : (
-          <> {mistBalance ? mistBalance : '0'} MIST</>
+          `${mistBalance ? mistBalance : '0'} MIST`
         )}
       </Wrapper>
     </Container>
