@@ -72,7 +72,6 @@ export function useSwapCallArguments(
         }
       }
     }
-
     return pendingCall
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
@@ -16,7 +16,8 @@ import {
   useAllTransactions,
   useTransactionRemover,
   useTransactionUpdater,
-  usePendingTransactions
+  usePendingTransactions,
+  useGetBundleByID
 } from 'state/transactions/hooks'
 
 import { useAddPopup } from 'state/application/hooks'
@@ -62,10 +63,12 @@ export interface MistXVersion {
   api: string
   client: string
 }
+
 export interface SocketSession {
   token: string
   version: MistXVersion | undefined
 }
+
 export interface TransactionRes {
   transaction: TransactionProcessed
   status: Status
@@ -191,6 +194,7 @@ function bundleResponseToastStatus(bundle: BundleRes) {
 }
 
 export default function Sockets(): null {
+  const updateTxReqInterval = useRef<any>(null)
   const dispatch = useDispatch()
   const addPopup = useAddPopup()
   const allTransactions = useAllTransactions()
@@ -198,6 +202,7 @@ export default function Sockets(): null {
   const removeTransaction = useTransactionRemover()
   const pendingTransactions = usePendingTransactions()
   const webSocketConnected = useSocketStatus()
+  const getBundleByID = useGetBundleByID()
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 
   useEffect(() => {
@@ -220,7 +225,7 @@ export default function Sockets(): null {
       // console.log('websocket err', err)
       if (err.event === Event.MISTX_BUNDLE_REQUEST) {
         const bundleResponse = err.data as BundleRes
-        const hash = keccak256(bundleResponse.bundle.serialized)
+        const hash = keccak256(bundleResponse.bundle.transactions[0].serialized)
         removeTransaction({
           chainId: bundleResponse.bundle.chainId,
           hash
@@ -246,8 +251,13 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
-      const { bundle, status } = response
-      const serialized = bundle && typeof bundle === 'string' ? bundle : (bundle as BundleProcessed).serialized
+      const { bundle: b, status } = response
+
+      const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
+      const serialized = bundle && (bundle as BundleProcessed).transactions[0].serialized
+
+      if (!serialized) return
+
       const hash = keccak256(serialized)
       const tx = allTransactions?.[hash]
       const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
@@ -268,7 +278,7 @@ export default function Sockets(): null {
     })
 
     socket.on(Event.BUNDLE_RESPONSE, response => {
-      const hash = keccak256(response.bundle.serialized)
+      const hash = keccak256(response.bundle.transactions[0].serialized)
       const tx = allTransactions?.[hash]
       const summary = tx?.summary
       const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
@@ -336,13 +346,14 @@ export default function Sockets(): null {
       socket.off(Event.SOCKET_SESSION)
       socket.off(Event.GAS_CHANGE)
       socket.off(Event.BUNDLE_RESPONSE)
-      socket.off(Event.BUNDLE_STATUS_REQUEST)
+      socket.off(Event.BUNDLE_STATUS_RESPONSE)
       // TO DO
     }
   }, [
     addPopup,
     dispatch,
     allTransactions,
+    getBundleByID,
     removeTransaction,
     updateTransaction,
     newAppVersionAvailable,
@@ -352,10 +363,9 @@ export default function Sockets(): null {
   // Check each pending transaction every x seconds and fetch an update if the time passed since the last update is more than MANUAL_CHECK_TX_STATUS_INTERVAL (seconds)
   // TO DO - We need chainId and processed.swap.deadline
   useEffect(() => {
-    let interval: any
-    clearInterval(interval)
-    if (pendingTransactions) {
-      interval = setInterval(() => {
+    if (updateTxReqInterval.current) clearInterval(updateTxReqInterval.current)
+    if (pendingTransactions && Object.keys(pendingTransactions).length) {
+      updateTxReqInterval.current = setInterval(() => {
         if (!webSocketConnected) return
         const timeNow = new Date().getTime()
         Object.keys(pendingTransactions).forEach(hash => {
@@ -389,9 +399,11 @@ export default function Sockets(): null {
         })
       }, 5000)
     } else {
-      clearInterval(interval)
+      clearInterval(updateTxReqInterval.current)
     }
-    return () => clearInterval(interval)
+    return () => {
+      if (updateTxReqInterval.current) clearInterval(updateTxReqInterval.current)
+    }
   }, [pendingTransactions, updateTransaction, webSocketConnected])
 
   return null

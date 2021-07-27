@@ -115,12 +115,13 @@ export function useApproveCallback(
       web3Provider.provider.isMetaMask = false
     }
     try {
+      const nonce = await tokenContract.signer.getTransactionCount()
       //use populate instead of broadcasting
       const populatedTx: PopulatedTransaction = await tokenContract.populateTransaction.approve(
         spender,
         amountToApprove.quotient.toString(),
         {
-          nonce: tokenContract.signer.getTransactionCount(),
+          nonce: nonce,
           gasLimit: calculateGasMargin(estimatedGas) //needed?
         }
       )
@@ -135,15 +136,26 @@ export function useApproveCallback(
         const signature: SignatureLike = await library.jsonRpcFetchFunc('eth_sign', [account, hash])
         signedTx = ethers.utils.serializeTransaction(populatedTx, signature)
       } else {
-        const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc('eth_signTransaction', [
-          {
-            ...populatedTx,
-            gasLimit: populatedTx.gasLimit?.toHexString(),
-            gasPrice: '0x0'
-          }
-        ])
+        try {
+          const signPayload = [
+            {
+              ...populatedTx,
+              chainId: undefined,
+              gasLimit: populatedTx.gasLimit?.toHexString(),
+              gasPrice: '0x0',
+              nonce: `0x${populatedTx.nonce}`
+            }
+          ]
+          const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc(
+            'eth_signTransaction',
+            signPayload
+          )
 
-        signedTx = signedTxRes.raw
+          signedTx = signedTxRes.raw
+        } catch (e) {
+          console.error('jsonRpcFetch error', e)
+          throw e
+        }
       }
 
       if (web3Provider) {
