@@ -116,7 +116,6 @@ export function useDerivedSwapInfo(): {
   minAmountError?: boolean
 } {
   const { account, chainId } = useActiveWeb3React()
-
   const {
     independentField,
     typedValue,

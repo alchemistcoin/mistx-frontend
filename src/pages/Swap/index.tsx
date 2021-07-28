@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { CurrencyAmount, JSBI, Token, Trade, WETH, Currency, TradeType } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
 import { Web3Provider } from '@ethersproject/providers'
 // components
 import AppBody from '../AppBody'
@@ -40,7 +40,6 @@ import SwapHeader from '../../components/swap/SwapHeader'
 // hooks
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
-import useUSDCPrice from '../../hooks/useUSDCPrice'
 // import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
@@ -234,9 +233,6 @@ export default function Swap({ history }: RouteComponentProps) {
   // get user transaction deadline TTL, in minutes
   // const [transactionTTL] = useUserTransactionTTL()
 
-  // ETH/USDC Price
-  const ethUSDCPrice = useUSDCPrice(WETH[1])
-
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
   const {
@@ -248,6 +244,7 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: swapInputError,
     minAmountError: swapMinAmountError
   } = useDerivedSwapInfo()
+
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -530,7 +527,6 @@ export default function Swap({ history }: RouteComponentProps) {
           onConfirm={handleSwap}
           swapErrorMessage={swapErrorMessage}
           onDismiss={handleConfirmDismiss}
-          ethUSDCPrice={ethUSDCPrice}
         />
         <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
       </Suspense>

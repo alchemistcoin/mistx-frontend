@@ -25,7 +25,7 @@ export enum CurrencyModalView {
   importList
 }
 
-export default function CurrencySearchModal({
+export default React.memo(function CurrencySearchModal({
   isOpen,
   onDismiss,
   onCurrencySelect,
@@ -101,4 +101,4 @@ export default function CurrencySearchModal({
       )}
     </Modal>
   )
-}
+})

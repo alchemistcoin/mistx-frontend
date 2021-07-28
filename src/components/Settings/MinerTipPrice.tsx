@@ -11,19 +11,25 @@ const MinerBribePrice = () => {
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
   useEffect(() => {
+    let mounted = true
     let label = 'Fetching price...'
-    if (bribeEstimate && ethUSDCPrice) {
-      const minBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.minBribe.quotient)
-      const maxBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.maxBribe.quotient)
-      if (feeDisplayCurrency === 'USD') {
-        label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
-          .quote(maxBribeTokenAmount)
-          .toSignificant(2)}`
-      } else {
-        label = `${Number(minBribeTokenAmount.toSignificant(2))} - ${Number(maxBribeTokenAmount.toSignificant(2))}`
+    if (mounted) {
+      if (bribeEstimate && ethUSDCPrice) {
+        const minBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.minBribe.quotient)
+        const maxBribeTokenAmount = CurrencyAmount.fromRawAmount(WETH[1], bribeEstimate.maxBribe.quotient)
+        if (feeDisplayCurrency === 'USD') {
+          label = `$${ethUSDCPrice.quote(minBribeTokenAmount).toSignificant(2)} - $${ethUSDCPrice
+            .quote(maxBribeTokenAmount)
+            .toSignificant(2)}`
+        } else {
+          label = `${Number(minBribeTokenAmount.toSignificant(2))} - ${Number(maxBribeTokenAmount.toSignificant(2))}`
+        }
       }
+      setMinerBribePrice(label)
     }
-    setMinerBribePrice(label)
+    return () => {
+      mounted = false
+    }
   }, [bribeEstimate, ethUSDCPrice, feeDisplayCurrency])
   return <>{minerBribePrice}</>
 }
