@@ -104,18 +104,18 @@
     ethers "~4.0.4"
     lodash "^4.17.11"
 
-"@alchemist-coin/mistx-connect@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-connect/-/mistx-connect-4.0.1.tgz#e271ff9701afcf746c6a160cc732371d878c192e"
-  integrity sha512-xOH+jxBv9Y0jBFWxZpwRboA1PFhdSILHNMTt8ReefFBUPSTCUW0mPIrNDbOG9XIb6b2af7+iNe+Z+oh4H4qNNA==
+"@alchemist-coin/mistx-connect@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-connect/-/mistx-connect-4.0.3.tgz#f54b598d12105c5a6023ccfb7d86455d96def55b"
+  integrity sha512-SlvwuR7ZhF4OVaTr+5M5DIMfQEnmREaanbWEQYcbFpXN84bXQd24vzYegbpnLgNVA3E3kIHS129S5QMWI0JnWg==
   dependencies:
     "@ethersproject/bignumber" "^5.4.0"
     socket.io-client "^4.1.2"
 
-"@alchemist-coin/mistx-core@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-core/-/mistx-core-4.0.1.tgz#60d7754a954d62daff6566586eada956df0a2682"
-  integrity sha512-7f0RM8aAZ+fvKPAz/LLcWlyNK3Fg874E5yfGgVvD7XW/Es5oXdnIheRhGGQQIiHncyEzZtE4hhA0d9VBOCiaKQ==
+"@alchemist-coin/mistx-core@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-core/-/mistx-core-4.0.2.tgz#29e2580a28efc66c86cd670b6ddf33453e128269"
+  integrity sha512-D5vgZQm12Ijr1XnnTXP/lYkGE/du0zCtDv9b9hPeLUEJMZQ8qeJCMQHg/JQQrJ7WIFboKIBPbsolETjtksEmpA==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
@@ -128,18 +128,6 @@
 "@alchemistcoin/default-token-list@git+https://github.com/alchemistcoin/default-token-list.git#main":
   version "1.0.0"
   resolved "git+https://github.com/alchemistcoin/default-token-list.git#0c1f7a71ed492c98766936063289857b94ca3da6"
-
-"@alchemistcoin/sdk@git+https://github.com/alchemistcoin/alchemist-sdk.git#dev":
-  version "3.1.1"
-  resolved "git+https://github.com/alchemistcoin/alchemist-sdk.git#c2a47c406a24a7c5d26d134b1bea2b937f40cd19"
-  dependencies:
-    "@uniswap/v2-core" "^1.0.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
 
 "@babel/code-frame@7.8.3":
   version "7.8.3"
@@ -2785,6 +2773,7 @@
 
 "@types/node@*":
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "16.4.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.5.tgz#eac95d4e52775190c405f0b9061ddcfb0304f7fc"
   integrity sha512-+0GPv/hIFNoy8r5MFf7vRpBjnqNYNrlHdetoy23E7TYc7JB2ctwyi3GMKpviozaHQ/Sy2kBNUTvG9ywN66zV1g==
@@ -2793,6 +2782,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.4.tgz#bb0744c1dcc1fc374f51d3fd41d028331a2420d4"
   integrity sha512-BH/jX0HjzElFCQdAwaEMwuGBQwm6ViDZ00X6LKdnRRmGWOzkWugEH4+7a0BwfHQ8DfPPCSd/mdsm3Nu8FKFu0w==
 >>>>>>> 789ee07... use alchemist-coin/misxt-core package.
+=======
+  version "16.4.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.5.tgz#eac95d4e52775190c405f0b9061ddcfb0304f7fc"
+  integrity sha512-+0GPv/hIFNoy8r5MFf7vRpBjnqNYNrlHdetoy23E7TYc7JB2ctwyi3GMKpviozaHQ/Sy2kBNUTvG9ywN66zV1g==
+>>>>>>> 7e74067... use alchemist-coin/mistx-connect package
 
 "@types/node@^10.11.7":
   version "10.17.60"

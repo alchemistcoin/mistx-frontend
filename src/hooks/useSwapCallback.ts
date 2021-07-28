@@ -164,27 +164,33 @@ export function useSwapCallback(
               path: args[0][2] as string[],
               to: args[0][3] as string
             }
-
+            
+            // Create the transaction body with the serialized tx
             const transactionReq: TransactionReq = {
               estimatedGas: Number(trade.estimatedGas),
               estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
               serialized: signedTx,
               raw: swapReq
             }
+            
+            // Create the transactions array with the serialized tx object
+            const transactions: TransactionReq[] = [transactionReq]
 
-            let transactions: TransactionReq[] = []
+            // Check if there is a signed approval with this tx
+            // (token -> eth & token -> token transactions require signed approval)
             if (signedApproval) {
+              // if there is an approval, create the Approval tx object
               const signedTransactionApproval: TransactionReq = {
                 estimatedGas: 25000,
                 estimatedEffectiveGasPrice: 0,
                 serialized: signedApproval,
                 raw: undefined
               }
-              transactions = [signedTransactionApproval, transactionReq] // signed approval first
-            } else {
-              transactions = [transactionReq]
+              // Add the approval to the transactions array
+              transactions.unshift(signedTransactionApproval) // signed approval first
             }
 
+            // Creat the bundle request object
             const bundleReq: BundleReq = {
               transactions,
               chainId,
@@ -194,6 +200,7 @@ export function useSwapCallback(
               simulateOnly: false
             }
 
+            // dispatch "add transaction" action
             addTransaction(
               { chainId, hash },
               {
@@ -202,9 +209,10 @@ export function useSwapCallback(
               }
             )
 
+            // emit transaction request socket event
             emitTransactionRequest(bundleReq) // change to emitBundleRequest ?
 
-            return hash
+            return hash // return the hash of the transaction (transaction identifier)
           } catch (error) {
             // if the user rejected the tx, pass this along
             if (error?.code === 4001) {
