@@ -1,4 +1,4 @@
-import { currencyEquals, Trade, Price, Currency, TradeType, Token } from '@alchemistcoin/sdk'
+import { currencyEquals, Trade, Currency, TradeType, WETH } from '@alchemistcoin/sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -6,6 +6,7 @@ import TransactionConfirmationModal, {
 } from '../TransactionConfirmationModal'
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
+import useUSDCPrice from '../../hooks/useUSDCPrice'
 
 /**
  * Returns true if the trade requires a confirmation of details before we can submit it
@@ -36,8 +37,7 @@ export default function ConfirmSwapModal({
   swapErrorMessage,
   isOpen,
   attemptingTxn,
-  txHash,
-  ethUSDCPrice
+  txHash
 }: {
   isOpen: boolean
   trade: Trade<Currency, Currency, TradeType> | undefined
@@ -50,12 +50,14 @@ export default function ConfirmSwapModal({
   onConfirm: () => void
   swapErrorMessage: string | undefined
   onDismiss: () => void
-  ethUSDCPrice: Price<Currency, Token> | undefined
 }) {
   const showAcceptChanges = useMemo(
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),
     [originalTrade, trade]
   )
+
+  // ETH/USDC Price
+  const ethUSDCPrice = useUSDCPrice(WETH[1])
 
   const modalHeader = useCallback(() => {
     return trade ? (
