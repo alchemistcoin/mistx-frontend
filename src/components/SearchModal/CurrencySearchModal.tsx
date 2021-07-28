@@ -35,7 +35,7 @@ export default React.memo(function CurrencySearchModal({
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
-  console.log('CurrencySearchModal is RENDERED')
+
   useEffect(() => {
     if (isOpen && !lastOpen) {
       setModalView(CurrencyModalView.search)
