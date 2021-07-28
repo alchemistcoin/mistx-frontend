@@ -1,4 +1,4 @@
-import { Currency } from '@alchemistcoin/sdk'
+import { Currency } from '@alchemist-coin/mistx-core'
 
 export function currencyId(currency: Currency): string {
   if (currency.isNative) return 'ETH'

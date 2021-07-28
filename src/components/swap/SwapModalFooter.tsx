@@ -1,4 +1,4 @@
-import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemistcoin/sdk'
+import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemist-coin/mistx-core'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
 import React, { useContext, useMemo, useState } from 'react'

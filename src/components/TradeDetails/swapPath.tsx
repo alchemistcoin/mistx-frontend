@@ -1,4 +1,4 @@
-import { Trade } from '@alchemistcoin/sdk'
+import { Trade } from '@alchemist-coin/mistx-core'
 import React, { Fragment, memo, useContext } from 'react'
 import { Flex } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'

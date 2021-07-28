@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
-import { Token, ChainId, Percent, JSBI, CurrencyAmount, Ether, Currency } from '@alchemistcoin/sdk'
+import { Token, ChainId, Percent, JSBI, CurrencyAmount, Ether, Currency } from '@alchemist-coin/mistx-core'
 
 import {
   getEtherscanLink,

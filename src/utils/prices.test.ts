@@ -1,4 +1,4 @@
-import { ChainId, CurrencyAmount, Exchange, JSBI, Pair, Route, Token, Trade, TradeType } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount, Exchange, JSBI, Pair, Route, Token, Trade, TradeType } from '@alchemist-coin/mistx-core'
 import { computeTradePriceBreakdown } from './prices'
 
 describe('prices', () => {

@@ -1,6 +1,6 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'

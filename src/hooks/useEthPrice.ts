@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Price, Token, Exchange, WETH } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, Price, Token, Exchange, WETH } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import { useTradeExactOut } from './Trades'
 import { useActiveWeb3React } from './'

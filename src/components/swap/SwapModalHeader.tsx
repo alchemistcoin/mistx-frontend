@@ -1,4 +1,4 @@
-import { CurrencyAmount, Trade, TradeType, Currency } from '@alchemistcoin/sdk'
+import { CurrencyAmount, Trade, TradeType, Currency } from '@alchemist-coin/mistx-core'
 import React, { useContext, useMemo } from 'react'
 import { AlertTriangle, ArrowDownCircle } from 'react-feather'
 import { Text } from 'rebass'

@@ -5,6 +5,8 @@
   "homepage": ".",
   "private": true,
   "devDependencies": {
+    "@alchemist-coin/mistx-connect": "^4.0.1",
+    "@alchemist-coin/mistx-core": "^4.0.1",
     "@alchemistcoin/sdk": "git+https://github.com/alchemistcoin/alchemist-sdk.git#dev",
     "@ethersproject/experimental": "^5.0.1",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",

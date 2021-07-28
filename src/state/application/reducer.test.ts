@@ -1,4 +1,4 @@
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId } from '@alchemist-coin/mistx-core'
 import { createStore, Store } from 'redux'
 import { addPopup, ApplicationModal, removePopup, setOpenModal, updateBlockNumber } from './actions'
 import reducer, { ApplicationState } from './reducer'

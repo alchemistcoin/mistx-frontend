@@ -1,4 +1,4 @@
-import { Percent } from '@alchemistcoin/sdk'
+import { Percent } from '@alchemist-coin/mistx-core'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from '../../constants'
 
 /**

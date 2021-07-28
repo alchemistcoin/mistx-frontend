@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import DEFAULT_TOKEN_LIST from '@alchemistcoin/default-token-list'
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId } from '@alchemist-coin/mistx-core'
 import { TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'

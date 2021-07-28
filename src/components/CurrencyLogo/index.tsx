@@ -1,4 +1,4 @@
-import { Currency, Token, ChainId } from '@alchemistcoin/sdk'
+import { Currency, Token, ChainId } from '@alchemist-coin/mistx-core'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 

@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Trade, TradeType, Percent, JSBI, Currency, CurrencyAmount, WETH } from '@alchemistcoin/sdk'
+import { Trade, TradeType, Percent, JSBI, Currency, CurrencyAmount, WETH } from '@alchemist-coin/mistx-core'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { BIPS_BASE } from '../../constants'

@@ -1,5 +1,5 @@
 import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from './../constants/index'
-import { Trade, Percent, currencyEquals, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Percent, currencyEquals, Currency, TradeType } from '@alchemist-coin/mistx-core'
 
 // returns whether tradeB is better than tradeA by at least a threshold percentage amount
 export function isTradeBetter(

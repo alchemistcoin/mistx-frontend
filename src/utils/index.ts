@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as MISTX_ROUTER_ABI } from '../constants/abis/mistx-router.json'
 import { MISTX_ROUTER_ADDRESS } from '../constants'
-import { ChainId, JSBI, Percent, Token, Trade, CurrencyAmount, Currency, Exchange, TradeType } from '@alchemistcoin/sdk'
+import { ChainId, JSBI, Percent, Token, Trade, CurrencyAmount, Currency, Exchange, TradeType } from '@alchemist-coin/mistx-core'
 import { TokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false

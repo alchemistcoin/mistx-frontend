@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Text } from 'rebass'
-import { ChainId, Currency, Ether, currencyEquals, Token } from '@alchemistcoin/sdk'
+import { ChainId, Currency, Ether, currencyEquals, Token } from '@alchemist-coin/mistx-core'
 import styled from 'styled-components'
 
 import { SUGGESTED_BASES } from '../../constants'

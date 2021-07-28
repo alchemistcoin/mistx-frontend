@@ -1,5 +1,5 @@
 import { UNI } from './../../constants/index'
-import { CurrencyAmount, JSBI, ChainId, Token } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, ChainId, Token } from '@alchemist-coin/mistx-core'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useMerkleDistributorContract } from '../../hooks/useContract'

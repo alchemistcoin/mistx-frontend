@@ -1,7 +1,7 @@
 import React from 'react'
 import { useContext } from 'react'
 import { Text } from 'rebass'
-import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { ThemeContext } from 'styled-components'
 import MinerTipPrice from './MinerTipPrice'
 

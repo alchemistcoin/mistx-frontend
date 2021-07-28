@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Trade, BribeEstimate, WETH, CurrencyAmount, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, BribeEstimate, WETH, CurrencyAmount, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'

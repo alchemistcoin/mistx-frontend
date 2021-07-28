@@ -1,4 +1,4 @@
-import { Currency, Ether, Token } from '@alchemistcoin/sdk'
+import { Currency, Ether, Token } from '@alchemist-coin/mistx-core'
 import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'

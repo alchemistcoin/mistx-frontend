@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { CurrencyAmount, JSBI, Token, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { Web3Provider } from '@ethersproject/providers'
 // components
 import AppBody from '../AppBody'

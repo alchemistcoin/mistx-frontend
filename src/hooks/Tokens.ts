@@ -1,6 +1,6 @@
 import { TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList } from './../state/lists/hooks'
 import { parseBytes32String } from '@ethersproject/strings'
-import { Currency, Ether, Token, currencyEquals } from '@alchemistcoin/sdk'
+import { Currency, Ether, Token, currencyEquals } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import { useAllLists, useCombinedActiveList, useInactiveListUrls } from '../state/lists/hooks'
 import { WrappedTokenInfo } from '../state/lists/wrappedTokenInfo'
