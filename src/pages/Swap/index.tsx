@@ -187,7 +187,7 @@ const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoMod
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
 const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletModal'))
 
-export default React.memo(function Swap({ history }: RouteComponentProps) {
+export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
@@ -729,4 +729,4 @@ export default React.memo(function Swap({ history }: RouteComponentProps) {
       )}
     </>
   )
-})
+}
