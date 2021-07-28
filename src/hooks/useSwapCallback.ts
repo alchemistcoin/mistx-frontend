@@ -164,7 +164,7 @@ export function useSwapCallback(
               path: args[0][2] as string[],
               to: args[0][3] as string
             }
-            
+
             // Create the transaction body with the serialized tx
             const transactionReq: TransactionReq = {
               estimatedGas: Number(trade.estimatedGas),
@@ -172,7 +172,7 @@ export function useSwapCallback(
               serialized: signedTx,
               raw: swapReq
             }
-            
+
             // Create the transactions array with the serialized tx object
             const transactions: TransactionReq[] = [transactionReq]
 
