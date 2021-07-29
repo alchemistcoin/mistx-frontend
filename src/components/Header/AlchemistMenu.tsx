@@ -36,7 +36,6 @@ const AlchemistMenu = () => {
   return (
     <StyledAlchemistLinks
       onClick={() => {
-        console.log('onclick isOpen', isOpen)
         setIsOpen(!isOpen)
       }}
       ref={node as any}
