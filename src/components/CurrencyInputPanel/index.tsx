@@ -1,4 +1,4 @@
-import { Currency, Pair, Token } from '@alchemistcoin/sdk'
+import { Currency, Pair, Token } from '@alchemist-coin/mistx-core'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'

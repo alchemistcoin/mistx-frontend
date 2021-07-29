@@ -1,5 +1,5 @@
 import { getTokenLogoURL } from './../components/CurrencyLogo/index'
-import { Currency, Token } from '@alchemistcoin/sdk'
+import { Currency, Token } from '@alchemist-coin/mistx-core'
 import { useCallback, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 

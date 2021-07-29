@@ -1,4 +1,4 @@
-import { Token, CurrencyAmount } from '@alchemistcoin/sdk'
+import { Token, CurrencyAmount } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 
 import { useTokenContract } from '../hooks/useContract'

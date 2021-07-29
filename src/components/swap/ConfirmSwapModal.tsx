@@ -1,4 +1,4 @@
-import { currencyEquals, Trade, Currency, TradeType, WETH } from '@alchemistcoin/sdk'
+import { currencyEquals, Trade, Currency, TradeType, WETH } from '@alchemist-coin/mistx-core'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,

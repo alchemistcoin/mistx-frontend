@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, currencyEquals, Token } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, currencyEquals, Token } from '@alchemist-coin/mistx-core'
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'

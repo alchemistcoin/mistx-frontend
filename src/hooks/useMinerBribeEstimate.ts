@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useUserBribeMargin } from '../state/user/hooks'
 import useLatestGasPrice from './useLatestGasPrice'
-import { BribeEstimate, Trade } from '@alchemistcoin/sdk'
+import { BribeEstimate, Trade } from '@alchemist-coin/mistx-core'
 
 export default function useMinerBribeEstimate(): BribeEstimate | null {
   const [userBribeMargin] = useUserBribeMargin()

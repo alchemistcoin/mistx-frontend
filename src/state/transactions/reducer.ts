@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@alchemistcoin/sdk'
+import { ChainId, Token } from '@alchemist-coin/mistx-core'
 import { createReducer } from '@reduxjs/toolkit'
 import { WrapType } from 'hooks/useWrapCallback'
 import { Diagnosis, Status, SwapReq, BundleProcessed, TransactionProcessed } from 'websocket'

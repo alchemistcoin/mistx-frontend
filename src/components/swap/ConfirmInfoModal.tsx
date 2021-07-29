@@ -1,4 +1,4 @@
-import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import TransactionInformationModal from '../TransactionInformationModal'
 import ConfirmationPendingContent from './ConfirmationPendingContent'

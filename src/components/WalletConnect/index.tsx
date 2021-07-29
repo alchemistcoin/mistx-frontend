@@ -1,4 +1,4 @@
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import styled from 'styled-components'
 // import { rem } from 'polished'

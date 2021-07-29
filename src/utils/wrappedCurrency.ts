@@ -1,4 +1,4 @@
-import { Currency, Ether, WETH } from '@alchemistcoin/sdk'
+import { Currency, Ether, WETH } from '@alchemist-coin/mistx-core'
 
 export function unwrappedToken(currency: Currency): Currency {
   if (currency.isNative) return currency

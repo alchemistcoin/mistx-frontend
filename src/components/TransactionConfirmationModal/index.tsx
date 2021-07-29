@@ -1,4 +1,4 @@
-import { Currency } from '@alchemistcoin/sdk'
+import { Currency } from '@alchemist-coin/mistx-core'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import Modal from '../Modal'

@@ -1,4 +1,4 @@
-import { Currency } from '@alchemistcoin/sdk'
+import { Currency } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import { darken, transparentize } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'

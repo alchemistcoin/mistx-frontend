@@ -1,4 +1,4 @@
-import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemistcoin/sdk'
+import { ChainId, Exchange, JSBI, Percent, Token, WETH } from '@alchemist-coin/mistx-core'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected, ledger, walletconnect } from '../connectors'
 

@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, WETH } from '@alchemistcoin/sdk'
+import { Currency, currencyEquals, WETH } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import { tryParseAmount } from '../state/swap/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'

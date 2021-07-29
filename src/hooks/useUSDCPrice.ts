@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Price, Token, Exchange } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, Price, Token, Exchange } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { useTradeExactOut } from './Trades'

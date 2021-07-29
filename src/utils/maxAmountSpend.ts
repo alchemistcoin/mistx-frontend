@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Currency, Ether } from '@alchemistcoin/sdk'
+import { CurrencyAmount, JSBI, Currency, Ether } from '@alchemist-coin/mistx-core'
 import { WrapType } from 'hooks/useWrapCallback'
 import { MIN_ETH } from '../constants'
 

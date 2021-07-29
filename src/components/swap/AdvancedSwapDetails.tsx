@@ -1,4 +1,4 @@
-import { Trade, TradeType, Currency } from '@alchemistcoin/sdk'
+import { Trade, TradeType, Currency } from '@alchemist-coin/mistx-core'
 import React, { useContext } from 'react'
 import { /* styled, */ ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'

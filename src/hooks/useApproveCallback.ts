@@ -1,4 +1,4 @@
-import { Trade, CurrencyAmount, Currency, ChainId, Exchange, TradeType } from '@alchemistcoin/sdk'
+import { Trade, CurrencyAmount, Currency, ChainId, Exchange, TradeType } from '@alchemist-coin/mistx-core'
 import { useCallback, useMemo } from 'react'
 import { MISTX_ROUTER_ADDRESS } from '../constants'
 import { useTokenAllowance } from '../data/Allowances'

@@ -1,5 +1,14 @@
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Exchange, Pair, Token, Trade, MinTradeEstimate, TradeType } from '@alchemistcoin/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  Exchange,
+  Pair,
+  Token,
+  Trade,
+  MinTradeEstimate,
+  TradeType
+} from '@alchemist-coin/mistx-core'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
