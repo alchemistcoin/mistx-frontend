@@ -13,6 +13,7 @@ import NewAppVersionAvailable from '../components/NewAppVersionAvailable'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
+import Stats from './Stats'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 
 const AppWrapper = styled.div`
@@ -72,6 +73,7 @@ export default function App() {
             <Switch>
               <Route exact strict path="/exchange" component={Swap} />
               <Route exact strict path="/exchange/:outputCurrency" component={RedirectToSwap} />
+              <Route exact strict path="/stats" component={Stats} />
               <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

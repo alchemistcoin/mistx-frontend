@@ -245,6 +245,9 @@ export default function Header() {
           <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
           </StyledNavLink>
+          <StyledNavLink id={`stats-nav-link`} to={'/stats'}>
+            {t('Stats')}
+          </StyledNavLink>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
             Sandwiched.wtf <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
