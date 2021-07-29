@@ -4,7 +4,7 @@ import CrucibleIcon from '../../assets/svg/crucible-icon.svg'
 import CopperIcon from '../../assets/svg/copper-icon.svg'
 import MistxIcon from '../../assets/svg/mistx-icon.svg'
 import StyledAlchemistLinks, { StyledList, StyledListItem } from './AlchemistMenu.styled'
-// import { useOnClickOutside } from '../../hooks/useOnClickOutside'
+import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 
 interface ListItemsProps {
   imageSrc: string
@@ -29,9 +29,9 @@ const ListItem = ({ imageSrc, title, description, link }: ListItemsProps) => {
 
 const AlchemistMenu = () => {
   const [isOpen, setIsOpen] = useState(false)
-  // const closeMenu = () => setIsOpen(false)
+  const closeMenu = () => setIsOpen(false)
   const node = useRef<HTMLDivElement>()
-  // useOnClickOutside(node, isOpen ? closeMenu : undefined)
+  useOnClickOutside(node, isOpen ? closeMenu : undefined)
 
   return (
     <StyledAlchemistLinks
