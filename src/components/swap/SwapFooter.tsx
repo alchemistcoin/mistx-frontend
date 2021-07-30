@@ -113,11 +113,7 @@ export default function SwapFooter({
 
   const { account } = useActiveWeb3React()
   const { independentField, typedValue } = useSwapState()
-  const {
-    currencies,
-    inputError: swapInputError,
-    minAmountError: swapMinAmountError
-  } = useDerivedSwapInfo()
+  const { currencies, inputError: swapInputError, minAmountError: swapMinAmountError } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],

@@ -149,7 +149,7 @@ export default function TransactionConfirmationModal({
   isOpen,
   onDismiss,
   attemptingTxn,
-  pendingText,
+  pendingText
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
