@@ -87,9 +87,8 @@ export function useSwapCallback(
           }
 
           const blockNumber = await library.getBlockNumber()
-          const eip1559 = EIP_1559_ACTIVATION_BLOCK[chainId] == undefined
-            ? false
-            : blockNumber >= EIP_1559_ACTIVATION_BLOCK[chainId]
+          const eip1559ActivationBlock = EIP_1559_ACTIVATION_BLOCK[chainId]
+          const eip1559 = eip1559ActivationBlock === undefined ? false : blockNumber >= eip1559ActivationBlock
 
           try {
             const nonce =
