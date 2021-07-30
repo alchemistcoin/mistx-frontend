@@ -135,21 +135,21 @@ export function TransactionErrorContent({ message, onDismiss }: { message: strin
 }
 
 interface ConfirmationModalProps {
+  children: React.ReactNode
   isOpen: boolean
   onDismiss: () => void
   hash: string | undefined
-  content: () => React.ReactNode
   attemptingTxn: boolean
   pendingText: string
   currencyToAdd?: Currency | undefined
 }
 
 export default function TransactionConfirmationModal({
+  children,
   isOpen,
   onDismiss,
   attemptingTxn,
   pendingText,
-  content
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
@@ -157,7 +157,7 @@ export default function TransactionConfirmationModal({
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
-      {attemptingTxn ? <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} /> : content()}
+      {attemptingTxn ? <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} /> : children}
     </Modal>
   )
 }

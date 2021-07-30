@@ -51,10 +51,6 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
-const Marginer = styled.div`
-  margin-top: 2.5rem;
-`
-
 export default function App() {
   return (
     <Suspense fallback={null}>
@@ -76,8 +72,7 @@ export default function App() {
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
           </Web3ReactManager>
-          <Marginer />
-          <Footer />
+          <Footer style={{ marginTop: '2.5rem' }} />
         </BodyWrapper>
       </AppWrapper>
       <Popups />
