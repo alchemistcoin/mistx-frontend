@@ -8,7 +8,7 @@ import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { EIP_1559_ACTIVATION_BLOCK, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -86,6 +86,11 @@ export function useSwapCallback(
             web3Provider.provider.isMetaMask = false
           }
 
+          const blockNumber = await library.getBlockNumber()
+          const eip1559 = EIP_1559_ACTIVATION_BLOCK[chainId] == undefined
+            ? false
+            : blockNumber >= EIP_1559_ACTIVATION_BLOCK[chainId]
+
           try {
             const nonce =
               signedApproval === undefined
@@ -122,7 +127,7 @@ export function useSwapCallback(
                   ...populatedTx,
                   gas: populatedTx.gasLimit?.toHexString(),
                   gasLimit: populatedTx.gasLimit?.toHexString(),
-                  gasPrice: '0x0',
+                  ...(!eip1559 ? { gasPrice: '0x0' } : {}),
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ]
