@@ -14,6 +14,7 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import { ChatWidget } from 'components/ChatWidget'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -77,6 +78,7 @@ export default function App() {
       </AppWrapper>
       <Popups />
       <NewAppVersionAvailable />
+      <ChatWidget />
     </Suspense>
   )
 }
