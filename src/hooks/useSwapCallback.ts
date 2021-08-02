@@ -15,6 +15,7 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
+import useLatestBaseFeePerGas, { getMaxBaseFeeInFutureBlock } from './useLatestBaseFeePerGas'
 import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
 
 export enum SwapCallbackState {
@@ -43,6 +44,7 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const baseFeePerGas = useLatestBaseFeePerGas()
 
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
@@ -87,9 +89,8 @@ export function useSwapCallback(
           }
 
           const blockNumber = await library.getBlockNumber()
-          const eip1559 = EIP_1559_ACTIVATION_BLOCK[chainId] == undefined
-            ? false
-            : blockNumber >= EIP_1559_ACTIVATION_BLOCK[chainId]
+          const eip1559ActivationBlock = EIP_1559_ACTIVATION_BLOCK[chainId]
+          const eip1559 = eip1559ActivationBlock === undefined ? false : blockNumber >= eip1559ActivationBlock
 
           try {
             const nonce =
@@ -102,12 +103,18 @@ export function useSwapCallback(
               //modify nonce if we also have an approval
               nonce: nonce,
               gasLimit: calculateGasMargin(BigNumber.from(500000)),
+              ...(eip1559
+                ? {
+                    type: 2,
+                    maxFeePerGas: getMaxBaseFeeInFutureBlock(BigNumber.from(baseFeePerGas), 2),
+                    maxPriorityFeePerGas: '0x0'
+                  }
+                : {}),
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
 
             //delete for serialize necessary
             populatedTx.chainId = chainId
-
             // HANDLE METAMASK
             // MetaMask does not support eth_signTransaction so we must use eth_sign as a workaround.
             // For other wallets, use eth_signTransaction
@@ -239,5 +246,16 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve, addTransaction])
+  }, [
+    trade,
+    library,
+    account,
+    chainId,
+    recipient,
+    recipientAddressOrName,
+    swapCall,
+    approve,
+    addTransaction,
+    baseFeePerGas
+  ])
 }

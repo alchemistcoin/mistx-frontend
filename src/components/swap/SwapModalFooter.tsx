@@ -1,4 +1,5 @@
 import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemist-coin/mistx-core'
+import { useActiveWeb3React } from '../../hooks'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
 import React, { useContext, useMemo, useState } from 'react'
@@ -96,6 +97,7 @@ export default function SwapModalFooter({
   disabledConfirm: boolean
   ethUSDCPrice: Price<Currency, Token> | undefined
 }) {
+  const { chainId } = useActiveWeb3React()
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
   const slippageAdjustedAmounts = useMemo(() => computeSlippageAdjustedAmounts(trade, allowedSlippage), [
@@ -104,7 +106,7 @@ export default function SwapModalFooter({
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
-  const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[1], trade.minerBribe.quotient)
+  const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], trade.minerBribe.quotient)
   const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
 
   let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined

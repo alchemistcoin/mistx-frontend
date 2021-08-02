@@ -30,19 +30,13 @@ export default function useETHPrice(currency?: Token): Price<Currency, Token> | 
 
     // return some fake price data for non-mainnet
     if (chainId !== 1) {
-      const fakeUSDC = new Token(chainId, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'fUSDC', 'Fake USDC')
       return new Price(
         currency,
-        fakeUSDC,
+        WETH[chainId],
         BigNumber.from(10 ** Math.max(0, currency.decimals - 6)).toString(),
         BigNumber.from(15 * 10 ** Math.max(6 - currency.decimals, 0)).toString()
       )
     }
-
-    // handle usdc
-    // if (currency === USDC) {
-    //   return new Price(USDC, USDC, '1', '1')
-    // }
 
     // use v2 price if available, v3 as fallback
     if (v2ETHTrade) {

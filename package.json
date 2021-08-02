@@ -7,7 +7,7 @@
   "devDependencies": {
     "@alchemist-coin/mistx-connect": "^4.0.3",
     "@alchemist-coin/mistx-core": "^4.0.2",
-    "@ethersproject/experimental": "^5.0.1",
+    "@ethersproject/experimental": "^5.4.0",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",
     "@popperjs/core": "^2.4.4",
     "@reach/dialog": "^0.10.3",

@@ -141,7 +141,8 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
 export const EIP_1559_ACTIVATION_BLOCK: { [chainId in ChainId]?: number } = {
   [ChainId.ROPSTEN]: 10499401,
   [ChainId.GÖRLI]: 5062605,
-  [ChainId.RINKEBY]: 8897988
+  [ChainId.RINKEBY]: 8897988,
+  [ChainId.MAINNET]: 12965000
 }
 
 export interface WalletInfo {

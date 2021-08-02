@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { Trade, TradeType, Percent, JSBI, Currency, CurrencyAmount, WETH } from '@alchemist-coin/mistx-core'
+import { useActiveWeb3React } from '../../hooks'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { BIPS_BASE } from '../../constants'
@@ -19,11 +20,12 @@ interface TradeDetailsProps {
 }
 
 export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsProps) {
+  const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
   const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
-  const ethUSDCPrice = useUSDCPrice(WETH[1])
+  const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
   let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
   let totalFeeInEth: CurrencyAmount<Currency> | undefined
   if (ethPrice && realizedLPFee) {
