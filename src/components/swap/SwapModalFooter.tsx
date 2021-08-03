@@ -1,4 +1,5 @@
 import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemist-coin/mistx-core'
+import { BigNumber } from '@ethersproject/bignumber'
 import { useActiveWeb3React } from '../../hooks'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
@@ -21,6 +22,8 @@ import { AutoRow, RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
 import useEthPrice from '../../hooks/useEthPrice'
+import useIsEIP1559 from '../../hooks/useIsEIP1559'
+import useBaseFeePerGas from '../../hooks/useBaseFeePerGas'
 import { FeeRowBetween } from '../swap/styleds'
 
 const PriceWrapper = styled.div`
@@ -108,12 +111,23 @@ export default function SwapModalFooter({
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], trade.minerBribe.quotient)
   const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
-
+  const eip1559 = useIsEIP1559()
+  const baseFeePerGas = useBaseFeePerGas()
+  let baseFeeInEth: CurrencyAmount<Currency> | undefined
   let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
   let totalFeeInEth: CurrencyAmount<Currency> | undefined
   if (ethPrice && realizedLPFee) {
     realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
     totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
+    if (eip1559 && baseFeePerGas) {
+      baseFeeInEth = CurrencyAmount.fromRawAmount(
+        WETH[chainId || 1],
+        BigNumber.from(trade.estimatedGas)
+          .mul(baseFeePerGas)
+          .toString()
+      )
+      totalFeeInEth = totalFeeInEth.add(baseFeeInEth)
+    }
   }
 
   return (
@@ -226,6 +240,21 @@ export default function SwapModalFooter({
               : `Loading...`}
           </TYPE.black>
         </StyledFeeRowBetween>
+        {eip1559 && baseFeeInEth && ethUSDCPrice ? (
+          <StyledFeeRowBetween paddingLeft={20}>
+            <AutoRow width="fit-content">
+              <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+                Base Fee
+              </TYPE.black>
+              <QuestionHelper text="The London hard fork (EIP 1559) requires a base fee for every transaction. The value shown is the maximum base fee you will pay for your transaction." />
+            </AutoRow>
+            <TYPE.black fontSize={14} fontWeight={700}>
+              {`$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
+            </TYPE.black>
+          </StyledFeeRowBetween>
+        ) : (
+          <></>
+        )}
       </AutoColumn>
 
       <AutoRow>

@@ -6,12 +6,11 @@ import { Field } from '../state/swap/actions'
 import { useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
-import { EIP_1559_ACTIVATION_BLOCK } from '../constants'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
-import useLatestBaseFeePerGas, { getMaxBaseFeeInFutureBlock } from './useLatestBaseFeePerGas'
+import useBaseFeePerGas from './useBaseFeePerGas'
+import useIsEIP1559 from './useIsEIP1559'
 import { PopulatedTransaction } from '@ethersproject/contracts'
-import { BigNumber } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { ethers } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -37,7 +36,8 @@ export function useApproveCallback(
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
-  const baseFeePerGas = useLatestBaseFeePerGas()
+  const baseFeePerGas = useBaseFeePerGas()
+  const eip1559 = useIsEIP1559()
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
@@ -104,9 +104,6 @@ export function useApproveCallback(
     // })
     //we always useExact
     const estimatedGas = await tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
-    const blockNumber = await library.getBlockNumber()
-    const eip1559ActivationBlock = EIP_1559_ACTIVATION_BLOCK[chainId]
-    const eip1559 = eip1559ActivationBlock === undefined ? false : blockNumber >= eip1559ActivationBlock
 
     if (!(tokenContract.signer instanceof JsonRpcSigner)) {
       throw new Error(`Cannot sign transactions with this wallet type`)
@@ -132,7 +129,7 @@ export function useApproveCallback(
           ...(eip1559
             ? {
                 type: 2,
-                maxFeePerGas: getMaxBaseFeeInFutureBlock(BigNumber.from(baseFeePerGas), 2),
+                maxFeePerGas: baseFeePerGas,
                 maxPriorityFeePerGas: '0x0'
               }
             : {})
@@ -182,7 +179,7 @@ export function useApproveCallback(
       }
       throw error
     }
-  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, baseFeePerGas])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, baseFeePerGas, eip1559])
 
   return [approvalState, approve]
 }

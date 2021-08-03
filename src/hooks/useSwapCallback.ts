@@ -8,14 +8,15 @@ import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { EIP_1559_ACTIVATION_BLOCK, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
-import useLatestBaseFeePerGas, { getMaxBaseFeeInFutureBlock } from './useLatestBaseFeePerGas'
+import useBaseFeePerGas from './useBaseFeePerGas'
+import useIsEIP1559 from './useIsEIP1559'
 import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
 
 export enum SwapCallbackState {
@@ -44,8 +45,8 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-  const baseFeePerGas = useLatestBaseFeePerGas()
-
+  const baseFeePerGas = useBaseFeePerGas()
+  const eip1559 = useIsEIP1559()
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -88,10 +89,6 @@ export function useSwapCallback(
             web3Provider.provider.isMetaMask = false
           }
 
-          const blockNumber = await library.getBlockNumber()
-          const eip1559ActivationBlock = EIP_1559_ACTIVATION_BLOCK[chainId]
-          const eip1559 = eip1559ActivationBlock === undefined ? false : blockNumber >= eip1559ActivationBlock
-
           try {
             const nonce =
               signedApproval === undefined
@@ -106,7 +103,7 @@ export function useSwapCallback(
               ...(eip1559
                 ? {
                     type: 2,
-                    maxFeePerGas: getMaxBaseFeeInFutureBlock(BigNumber.from(baseFeePerGas), 2),
+                    maxFeePerGas: baseFeePerGas,
                     maxPriorityFeePerGas: '0x0'
                   }
                 : {}),
@@ -256,6 +253,7 @@ export function useSwapCallback(
     swapCall,
     approve,
     addTransaction,
-    baseFeePerGas
+    baseFeePerGas,
+    eip1559
   ])
 }
