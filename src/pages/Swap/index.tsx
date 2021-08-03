@@ -45,6 +45,7 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import { LinkStyledButton } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import SwapFooter from '../../components/swap/SwapFooter'
+import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -160,19 +161,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
-  const handleTypeInput = useCallback(
-    (value: string) => {
-      onUserInput(Field.INPUT, value)
-    },
-    [onUserInput]
-  )
-  const handleTypeOutput = useCallback(
-    (value: string) => {
-      onUserInput(Field.OUTPUT, value)
-    },
-    [onUserInput]
-  )
-
   // reset if they close warning without tokens in params
   const handleDismissTokenWarning = useCallback(() => {
     setDismissTokenWarning(true)
@@ -247,6 +235,21 @@ export default function Swap({ history }: RouteComponentProps) {
     allowedSlippage,
     recipient
     //transactionTTL
+  )
+
+  const [typeInputValue, handleTypeInput] = useDebouncedChangeHandler(
+    formattedAmounts[Field.INPUT],
+    (value: string) => {
+      onUserInput(Field.INPUT, value)
+    },
+    500
+  )
+  const [typeOutputValue, handleTypeOutput] = useDebouncedChangeHandler(
+    formattedAmounts[Field.OUTPUT],
+    (value: string) => {
+      onUserInput(Field.OUTPUT, value)
+    },
+    500
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
@@ -398,7 +401,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <InputWrapper>
                 {currencies[Field.INPUT] ? (
                   <CurrencyInputPanel
-                    value={formattedAmounts[Field.INPUT]}
+                    value={typeInputValue}
                     showMaxButton={!atMaxAmountInput}
                     currency={currencies[Field.INPUT]}
                     onUserInput={handleTypeInput}
@@ -436,7 +439,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 <OutputWrapper>
                   <RelativeWrapper>
                     <CurrencyInputPanel
-                      value={formattedAmounts[Field.OUTPUT]}
+                      value={typeOutputValue}
                       onUserInput={handleTypeOutput}
                       showMaxButton={false}
                       currency={currencies[Field.OUTPUT]}

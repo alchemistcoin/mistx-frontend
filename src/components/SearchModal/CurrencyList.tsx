@@ -256,7 +256,16 @@ export default function CurrencyList({
         )
       }
     },
-    [currencies.length, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
+    [
+      account,
+      currencies.length,
+      onCurrencySelect,
+      otherCurrency,
+      selectedCurrency,
+      selectedTokenList,
+      setImportToken,
+      showImportView
+    ]
   )
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])
