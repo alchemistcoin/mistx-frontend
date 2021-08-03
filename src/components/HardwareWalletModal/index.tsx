@@ -57,20 +57,23 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
         <Section>
           <RowBetween>
             <Text fontWeight={500} fontSize={20}>
-              MetaMask Hardware Support
+              Warning - Hardware Wallets
             </Text>
             <CloseIcon onClick={hideModal} />
           </RowBetween>
           <RowBetween margin="0.5rem 0 0" flexDirection="column">
             <Text fontWeight={300} fontSize={16}>
               <div style={{ marginBottom: '1em' }}>
-                mistX will <b style={{ fontWeight: 600 }}>not work with hardware wallets connected with MetaMask</b> due
-                to their lack of support for eth_signTransaction.
+                mistX{' '}
+                <b style={{ fontWeight: 600 }}>
+                  does not currently support hardware wallets (Ledger, Trezor) connected through MetaMask
+                </b>
+                .
               </div>
               <div>
                 <span>You can:</span>
                 <ul>
-                  <li>Connect your Ledger directly</li>
+                  <li>Connect your Ledger directly to mistX</li>
                   <li>Use Wallet Connect</li>
                   <li>Use a standard MetaMask wallet</li>
                 </ul>

@@ -58,9 +58,11 @@ function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions): C
     () =>
       JSON.stringify(
         calls
-          ?.filter((c): c is Call => Boolean(c))
-          ?.map(toCallKey)
-          ?.sort() ?? []
+          ?.reduce((arr, c): string[] => {
+            if (Boolean(c)) arr.push(toCallKey(c as Call))
+            return arr
+          }, [] as string[])
+          ?.sort() || []
       ),
     [calls]
   )
@@ -70,6 +72,7 @@ function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions): C
     const callKeys: string[] = JSON.parse(serializedCallKeys)
     if (!chainId || callKeys.length === 0) return undefined
     const calls = callKeys.map(key => parseCallKey(key))
+
     dispatch(
       addMulticallListeners({
         chainId,
