@@ -188,6 +188,19 @@ export default function SwapModalFooter({
             )}
           </RowFixed>
         </RowBetween>
+        <StyledFeeRowBetween paddingLeft={20}>
+          <RowFixed>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Slippage Tolerance
+            </TYPE.black>
+            <QuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
+          </RowFixed>
+          <RowFixed>
+            <TYPE.black fontSize={14} fontWeight={700}>
+              {`${(allowedSlippage / 100).toFixed(2)}%`}
+            </TYPE.black>
+          </RowFixed>
+        </StyledFeeRowBetween>
         <RowBetween>
           <AutoRow width="fit-content">
             <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>

@@ -91,21 +91,6 @@ export default function ConfirmSwapModal({
     trade?.inputAmount?.currency?.symbol
   } for ${trade?.outputAmount?.toSignificant(6)} ${trade?.outputAmount?.currency?.symbol}`
 
-  const confirmationContent = useCallback(
-    () =>
-      swapErrorMessage ? (
-        <TransactionErrorContent onDismiss={onDismiss} message={swapErrorMessage} />
-      ) : (
-        <ConfirmationModalContent
-          title="Confirm Swap"
-          onDismiss={onDismiss}
-          topContent={modalHeader}
-          bottomContent={modalBottom}
-        />
-      ),
-    [onDismiss, modalBottom, modalHeader, swapErrorMessage]
-  )
-
   // console.log('--- log, attemptingTxn, hash', attemptingTxn, txHash)
 
   return (
@@ -114,9 +99,19 @@ export default function ConfirmSwapModal({
       onDismiss={onDismiss}
       attemptingTxn={attemptingTxn}
       hash={txHash}
-      content={confirmationContent}
       pendingText={pendingText}
       currencyToAdd={trade?.outputAmount.currency}
-    />
+    >
+      {swapErrorMessage ? (
+        <TransactionErrorContent onDismiss={onDismiss} message={swapErrorMessage} />
+      ) : (
+        <ConfirmationModalContent
+          title="Confirm Swap"
+          onDismiss={onDismiss}
+          topContent={modalHeader}
+          bottomContent={modalBottom}
+        />
+      )}
+    </TransactionConfirmationModal>
   )
 }

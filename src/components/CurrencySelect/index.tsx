@@ -57,7 +57,6 @@ const TokenSelectButtonWrapper = styled.div`
 interface CurrencySelectProps {
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
-  disableCurrencySelect?: boolean
   otherCurrency?: Currency | null
   showCommonBases?: boolean
 }
@@ -65,7 +64,6 @@ interface CurrencySelectProps {
 export default function CurrencySelect({
   onCurrencySelect,
   currency,
-  disableCurrencySelect = false,
   otherCurrency,
   showCommonBases
 }: CurrencySelectProps) {
@@ -80,9 +78,7 @@ export default function CurrencySelect({
       <TokenSelectButton
         className="open-currency-select-button"
         onClick={() => {
-          if (!disableCurrencySelect) {
-            setModalOpen(true)
-          }
+          setModalOpen(true)
         }}
       >
         <TokenSelectButtonWrapper>
@@ -93,7 +89,7 @@ export default function CurrencySelect({
           <StyledDropDown />
         </DownArrow>
       </TokenSelectButton>
-      {!disableCurrencySelect && onCurrencySelect && (
+      {onCurrencySelect && (
         <CurrencySearchModal
           isOpen={modalOpen}
           onDismiss={handleDismissSearch}
