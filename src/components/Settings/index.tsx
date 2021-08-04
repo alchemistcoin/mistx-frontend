@@ -218,7 +218,7 @@ export default function SettingsTab() {
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
   const handleDismiss = () => {
-    if (stateBribeMargin != userBribeMargin) {
+    if (stateBribeMargin !== userBribeMargin) {
       setUserBribeMargin(stateBribeMargin)
       setShowConfirmation(false)
     }
