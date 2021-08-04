@@ -11,9 +11,6 @@ const Container = styled.div<{ open?: boolean }>`
   max-height: 100vh;
   background: #2a3645;
   color: inherit;
-  /* box-shadow: var(--chakra-shadows-dark-lg);
-  max-width: var(--chakra-sizes-xs); */
-  // right: 0px;
   width: 320px;
   left: 100%;
   top: 0px;
