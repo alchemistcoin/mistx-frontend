@@ -3,10 +3,12 @@ import { BribeEstimate, WETH, CurrencyAmount } from '@alchemist-coin/mistx-core'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
-
-const MinerBribePrice = () => {
+type Props = {
+  customTipMargin?: number
+}
+const MinerBribePrice = ({ customTipMargin }: Props) => {
   const [minerBribePrice, setMinerBribePrice] = useState<string>('')
-  const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
+  const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate(customTipMargin)
   const ethUSDCPrice = useUSDCPrice(WETH[1])
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
