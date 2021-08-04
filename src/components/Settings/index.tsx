@@ -1,6 +1,5 @@
 import React, { useContext, useRef, useState } from 'react'
 import { X } from 'react-feather'
-import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { useDispatch } from 'react-redux'
 import { lighten, rem, darken } from 'polished'
@@ -344,10 +343,11 @@ export default function SettingsTab() {
                     id="toggle-disable-multihop-button"
                     isActive={singleHopOnly}
                     toggle={() => {
-                      ReactGA.event({
-                        category: 'Routing',
-                        action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                      })
+                      // TODO: replace will alternative tracking
+                      // ReactGA.event({
+                      //   category: 'Routing',
+                      //   action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                      // })
                       setSingleHopOnly(!singleHopOnly)
                     }}
                   />
