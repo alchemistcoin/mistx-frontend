@@ -37,3 +37,13 @@ export function isETHTrade(trade: Trade<Currency, Currency, TradeType> | undefin
   }
   return true
 }
+
+//returns whether the given trade involves ETH as a Pair
+export function isETHOutTrade(trade: Trade<Currency, Currency, TradeType> | undefined): boolean | undefined {
+  if (!trade) {
+    return undefined
+  } else if (trade.route.output.isNative) {
+    return true
+  }
+  return false
+}

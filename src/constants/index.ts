@@ -138,6 +138,13 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   ]
 }
 
+export const EIP_1559_ACTIVATION_BLOCK: { [chainId in ChainId]?: number } = {
+  [ChainId.ROPSTEN]: 10499401,
+  [ChainId.GÖRLI]: 5062605,
+  [ChainId.RINKEBY]: 8897988,
+  [ChainId.MAINNET]: 12965000
+}
+
 export interface WalletInfo {
   connector?: AbstractConnector
   name: string
@@ -225,7 +232,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
 export const NetworkContextName = 'NETWORK'
 
 // default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 50
+export const INITIAL_ALLOWED_SLIPPAGE = 100
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 // default min trade margin, in bips
@@ -264,11 +271,14 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C'
 ]
 
-// Miner Bribe Margin
+// Miner Tip Margin
 // default bribe margin, in bips
 export const INITIAL_BRIBE_MARGIN = 79
 export const MINER_BRIBE_MIN = 43
 export const MINER_BRIBE_MAX = 153
+
+// Base fee, future block to calculate
+export const BASE_FEE_BLOCKS_IN_FUTURE = 2
 
 // The interval for manual transaction status checks are emitted if no update has been received for x seconds
 export const MANUAL_CHECK_TX_STATUS_INTERVAL = 30 // seconds

@@ -248,6 +248,26 @@ export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?:
   return false
 }
 
+function minTradeEstimateForPair(
+  pairs: Pair[],
+  currencyIn?: Currency,
+  currencyOut?: Currency,
+  gasPriceToBeat?: BigNumber,
+  minerBribeMargin?: BigNumber,
+  minTradeMargin?: BigNumber
+) {
+  if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin || !pairs.length)
+    return null
+  return Trade.estimateMinTradeAmounts(
+    pairs,
+    currencyIn,
+    currencyOut,
+    gasPriceToBeat.toString(),
+    minerBribeMargin.toString(),
+    minTradeMargin.toString()
+  )
+}
+
 export function useMinTradeAmount(
   currencyIn?: Currency,
   currencyOut?: Currency,
@@ -258,31 +278,16 @@ export function useMinTradeAmount(
   const SUSHIPairs = useAllCommonPairs(Exchange.SUSHI, currencyIn, currencyOut)
   const UNIPairs = useAllCommonPairs(Exchange.UNI, currencyIn, currencyOut)
 
-  const uniMinTradeEstimate = useMemo(() => {
-    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin || !UNIPairs.length)
-      return null
-    return Trade.estimateMinTradeAmounts(
-      UNIPairs,
-      currencyIn,
-      currencyOut,
-      gasPriceToBeat.toString(),
-      minerBribeMargin.toString(),
-      minTradeMargin.toString()
-    )
-  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, UNIPairs])
+  const uniMinTradeEstimate = useMemo(
+    () => minTradeEstimateForPair(UNIPairs, currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin),
+    [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, UNIPairs]
+  )
 
-  const sushiMinTradeEstimate = useMemo(() => {
-    if (!currencyIn || !currencyOut || !gasPriceToBeat || !minerBribeMargin || !minTradeMargin || !SUSHIPairs.length)
-      return null
-    return Trade.estimateMinTradeAmounts(
-      SUSHIPairs,
-      currencyIn,
-      currencyOut,
-      gasPriceToBeat.toString(),
-      minerBribeMargin.toString(),
-      minTradeMargin.toString()
-    )
-  }, [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, SUSHIPairs])
+  const sushiMinTradeEstimate = useMemo(
+    () =>
+      minTradeEstimateForPair(SUSHIPairs, currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin),
+    [currencyIn, currencyOut, gasPriceToBeat, minerBribeMargin, minTradeMargin, SUSHIPairs]
+  )
   return {
     [Exchange.UNI]: uniMinTradeEstimate,
     [Exchange.SUSHI]: sushiMinTradeEstimate,

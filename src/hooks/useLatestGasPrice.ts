@@ -1,29 +1,39 @@
 import { useEffect, useState, useMemo } from 'react'
-import { useBlockNumber } from '../state/application/hooks'
-import { useActiveWeb3React } from './index'
 import { BigNumber } from '@ethersproject/bignumber'
+import useLatestBlockWithTransactions from './useLatestBlockWithTransactions'
 
 export default function useLatestGasPrice(): BigNumber | undefined {
-  const { library } = useActiveWeb3React()
   const [gasPrice, setGasPrice] = useState<string | undefined>(undefined)
-  const currentBlock = useBlockNumber()
+  const block = useLatestBlockWithTransactions()
 
   useEffect(() => {
-    async function calculateMinerBribe(): Promise<void> {
-      if (!library || !currentBlock) {
-        setGasPrice(undefined)
-        return
+    if (!block) {
+      setGasPrice(undefined)
+    } else {
+      // final tx of block
+      const tx = block.transactions[block.transactions.length - 1]
+      let gasPrice: BigNumber | undefined
+      if (!tx) {
+        gasPrice = undefined
+      } else if (!tx.type || tx.type < 2) {
+        gasPrice = tx.gasPrice
+      } else if (tx.type && tx.type > 1 && block.baseFeePerGas && tx.maxFeePerGas) {
+        gasPrice = block.baseFeePerGas
+        if (tx.maxPriorityFeePerGas) {
+          const maxFeeBaseFeeDiff = tx.maxFeePerGas.sub(block.baseFeePerGas)
+          const priorityFeePerGas = tx.maxPriorityFeePerGas.lt(maxFeeBaseFeeDiff)
+            ? tx.maxPriorityFeePerGas
+            : maxFeeBaseFeeDiff
+          gasPrice = gasPrice.add(priorityFeePerGas)
+        }
       }
-      const block = await library.getBlockWithTransactions(currentBlock)
-      const finalTransaction = block.transactions && block.transactions[block.transactions.length - 1]
-      if (!finalTransaction) {
-        setGasPrice(undefined)
+      if (gasPrice) {
+        setGasPrice(gasPrice?.toString())
       } else {
-        setGasPrice(finalTransaction.gasPrice?.toString())
+        setGasPrice(undefined)
       }
     }
-    calculateMinerBribe()
-  }, [library, currentBlock])
+  }, [block])
   return useMemo(() => {
     if (!gasPrice) return undefined
     return BigNumber.from(gasPrice)

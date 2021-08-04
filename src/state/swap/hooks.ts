@@ -1,6 +1,16 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, Ether, Exchange, JSBI, Token, Trade, TradeType } from '@alchemist-coin/mistx-core'
+import {
+  Currency,
+  CurrencyAmount,
+  Ether,
+  Exchange,
+  JSBI,
+  Token,
+  Trade,
+  TradeType,
+  WETH
+} from '@alchemist-coin/mistx-core'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,8 +19,10 @@ import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut, useMinTradeAmount, MinTradeEstimates } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import useLatestGasPrice from '../../hooks/useLatestGasPrice'
+import useBaseFeePerGas from '../../hooks/useBaseFeePerGas'
+import useIsEIP1559 from '../../hooks/useIsEIP1559'
 import { isAddress } from '../../utils'
-import { isETHTrade, isTradeBetter } from '../../utils/trades'
+import { isETHTrade, isETHOutTrade, isTradeBetter } from '../../utils/trades'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalance, useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
@@ -123,6 +135,8 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
+  const eip1559 = useIsEIP1559()
+  const baseFeePerGas = useBaseFeePerGas()
   const [userBribeMargin] = useUserBribeMargin()
   const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)
@@ -268,11 +282,30 @@ export function useDerivedSwapInfo(): {
     inputError = 'Min trade amount not met'
   }
 
-  // check if the user has ETH to pay the bribe for token -> token swap
+  // check if the user has ETH to pay the bribe for token -> token swap & token -> ETH
   // what do we display if we have multiple inputErrors? (order)
   const ethTrade = isETHTrade(v2Trade)
-  if (ethTrade !== undefined && !ethTrade && JSBI.LT(ethBalance?.quotient, v2Trade?.minerBribe.quotient)) {
-    inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (tip)'
+  const ethOutTrade = isETHOutTrade(v2Trade)
+  let requiredEthBalance: CurrencyAmount<Currency> | undefined
+  if (ethTrade !== undefined && (!ethTrade || (ethOutTrade && eip1559))) {
+    // after eip 1559 the user eth balance must cover the base fee
+    if (eip1559 && baseFeePerGas && requiredEthBalance) {
+      const baseFeeInEth = CurrencyAmount.fromRawAmount(
+        WETH[chainId || 1],
+        BigNumber.from(v2Trade?.estimatedGas)
+          .mul(baseFeePerGas)
+          .toString()
+      )
+      requiredEthBalance = baseFeeInEth
+    }
+    // For Token -> Token trades the user eth balance must cover the tip/bribe
+    if (!ethOutTrade) {
+      requiredEthBalance =
+        requiredEthBalance && v2Trade?.minerBribe ? requiredEthBalance.add(v2Trade.minerBribe) : v2Trade?.minerBribe
+    }
+    if (JSBI.LT(ethBalance?.quotient, requiredEthBalance?.quotient)) {
+      inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (fees)'
+    }
   }
 
   return {
