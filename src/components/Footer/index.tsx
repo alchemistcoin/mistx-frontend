@@ -17,9 +17,9 @@ const FooterRow = styled.div`
   display: flex;
 `
 
-export default function Header() {
+export default function Footer({ style }: { style?: object }) {
   return (
-    <FooterFrame>
+    <FooterFrame style={style}>
       <FooterRow>
         <NavExternalLinks header={false} />
       </FooterRow>
