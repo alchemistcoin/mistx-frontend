@@ -14,6 +14,7 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import { ChatWidget } from 'components/ChatWidget'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -51,6 +52,16 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
+const ConnectionsWrapper = styled.div`
+  position: fixed;
+  left: 0;
+  bottom: 0;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    bottom: 72px;
+  `};
+`
+
 export default function App() {
   return (
     <Suspense fallback={null}>
@@ -62,8 +73,10 @@ export default function App() {
           <Header />
         </HeaderWrapper>
         <BodyWrapper>
-          <Polling />
-          <ConnectionStatus />
+          <ConnectionsWrapper>
+            <Polling />
+            <ConnectionStatus />
+          </ConnectionsWrapper>
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/exchange" component={Swap} />
@@ -77,6 +90,7 @@ export default function App() {
       </AppWrapper>
       <Popups />
       <NewAppVersionAvailable />
+      <ChatWidget />
     </Suspense>
   )
 }
