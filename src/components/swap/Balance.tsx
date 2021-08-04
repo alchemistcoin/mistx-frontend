@@ -1,4 +1,4 @@
-import { Currency } from '@alchemistcoin/sdk'
+import { Currency } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import { darken, transparentize } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
@@ -66,14 +66,7 @@ const StyledBalanceAmount = styled.span`
 interface SwapLabelProps {
   onMax?: () => void
   showMaxButton: boolean
-  label?: string
   currency?: Currency | null
-  disableCurrencySelect?: boolean
-  hideBalance?: boolean
-  hideInput?: boolean
-  otherCurrency?: Currency | null
-  showCommonBases?: boolean
-  customBalanceText?: string
 }
 
 export default function Balance({ currency, onMax, showMaxButton }: SwapLabelProps) {

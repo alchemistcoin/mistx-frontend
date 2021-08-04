@@ -1,4 +1,4 @@
-import { Token } from '@alchemistcoin/sdk'
+import { Token } from '@alchemist-coin/mistx-core'
 import { Tags, TokenInfo } from '@uniswap/token-lists'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 import { getAddress } from '@ethersproject/address'

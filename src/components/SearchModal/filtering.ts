@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { isAddress } from '../../utils'
-import { Token } from '@alchemistcoin/sdk'
+import { Token } from '@alchemist-coin/mistx-core'
 import { TokenInfo } from '@uniswap/token-lists'
 
 export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {

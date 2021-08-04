@@ -27,7 +27,7 @@ const Button = styled(ButtonYellow)`
   border-radius: 8px;
 `
 
-export default function TokenWarningModal() {
+export default function NewAppVersionAvailableModal() {
   const [newAppVersionAvailable] = useNewAppVersionAvailable()
   const refresh = () => window.location.reload()
 

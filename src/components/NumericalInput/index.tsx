@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
+import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler'
 import { escapeRegExp } from '../../utils'
 
 const StyledInput = styled.input<{
@@ -61,19 +62,24 @@ export const Input = React.memo(function InnerInput({
   fontWeight?: string
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
-  const enforcer = (nextUserInput: string) => {
-    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput(nextUserInput)
-    }
-  }
+  const enforcer = useCallback(
+    (nextUserInput: string) => {
+      if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+        onUserInput(nextUserInput)
+      }
+    },
+    [onUserInput]
+  )
+
+  const [defaultValue, onChange] = useDebouncedChangeHandler(`${value}`, enforcer, 400)
 
   return (
     <StyledInput
       {...rest}
-      value={value}
+      defaultValue={defaultValue}
       onChange={event => {
         // replace commas with periods, because uniswap exclusively uses period as the decimal separator
-        enforcer(event.target.value.replace(/,/g, '.'))
+        onChange(event.target.value.replace(/,/g, '.'))
       }}
       // universal input options
       inputMode="decimal"

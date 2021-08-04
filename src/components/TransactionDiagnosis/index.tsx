@@ -9,7 +9,7 @@ import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { PendingTransactionIcon } from 'components/Icons'
 import { TYPE } from 'theme'
-import { Ether, Token } from '@alchemistcoin/sdk'
+import { Ether, Token } from '@alchemist-coin/mistx-core'
 import { SettingsHeader } from 'components/shared/header/styled'
 
 const Wrapper = styled.div``

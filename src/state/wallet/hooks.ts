@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Ether, JSBI, Token } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, Ether, JSBI, Token } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useAllTokens } from '../../hooks/Tokens'

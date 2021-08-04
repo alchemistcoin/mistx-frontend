@@ -1,12 +1,13 @@
 {
   "name": "@alchemistcoin/mistx-frontend",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "mistX Frontend",
   "homepage": ".",
   "private": true,
   "devDependencies": {
-    "@alchemistcoin/sdk": "git+https://github.com/alchemistcoin/alchemist-sdk.git#dev",
-    "@ethersproject/experimental": "^5.0.1",
+    "@alchemist-coin/mistx-connect": "^4.0.3",
+    "@alchemist-coin/mistx-core": "^4.0.2",
+    "@ethersproject/experimental": "^5.4.0",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",
     "@popperjs/core": "^2.4.4",
     "@reach/dialog": "^0.10.3",

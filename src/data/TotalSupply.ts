@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token, CurrencyAmount } from '@alchemistcoin/sdk'
+import { Token, CurrencyAmount } from '@alchemist-coin/mistx-core'
 import { useTokenContract } from '../hooks/useContract'
 import { useSingleCallResult } from '../state/multicall/hooks'
 

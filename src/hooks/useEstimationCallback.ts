@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useSwapCallArguments, SuccessfulCall, FailedCall, PendingCall } from './useSwapCallArguments'
-import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import isZero from '../utils/isZero'
 

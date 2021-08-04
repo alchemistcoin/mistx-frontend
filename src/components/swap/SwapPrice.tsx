@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 interface SwapPriceProps {
   trade: Trade<Currency, Currency, TradeType>
 }

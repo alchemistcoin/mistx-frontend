@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import DEFAULT_TOKEN_LIST from '@alchemistcoin/default-token-list'
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId } from '@alchemist-coin/mistx-core'
 import { TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -13,17 +13,21 @@ export type TokenAddressMap = Readonly<
   { [chainId in ChainId | number]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }> }
 >
 
+type Mutable<T> = {
+  -readonly [P in keyof T]: Mutable<T[P]>
+}
+
 /**
  * An empty result, useful as a default.
  */
-const EMPTY_LIST: TokenAddressMap = {
-  [ChainId.KOVAN]: {},
-  [ChainId.RINKEBY]: {},
-  [ChainId.ROPSTEN]: {},
-  [ChainId.GÖRLI]: {},
-  [ChainId.MAINNET]: {},
-  [ChainId.HARDHAT]: {}
-}
+// const EMPTY_LIST: TokenAddressMap = {
+//   [ChainId.KOVAN]: {},
+//   [ChainId.RINKEBY]: {},
+//   [ChainId.ROPSTEN]: {},
+//   [ChainId.GÖRLI]: {},
+//   [ChainId.MAINNET]: {},
+//   [ChainId.HARDHAT]: {}
+// }
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null
@@ -32,43 +36,53 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   const result = listCache?.get(list)
   if (result) return result
 
-  const map = list.tokens.reduce<TokenAddressMap>(
-    (tokenMap, tokenInfo) => {
-      const token = new WrappedTokenInfo(tokenInfo, list)
-      if (tokenMap[token.chainId][token.address] !== undefined) {
-        console.error(new Error(`Duplicate token! ${token.address}`))
-        return tokenMap
-      }
-      return {
-        ...tokenMap,
-        [token.chainId]: {
-          ...tokenMap[token.chainId as ChainId],
-          [token.address]: {
-            token,
-            list
-          }
-        }
-      }
-    },
-    { ...EMPTY_LIST }
-  )
+  const map = list.tokens.reduce<Mutable<TokenAddressMap>>((tokenMap, tokenInfo) => {
+    const token = new WrappedTokenInfo(tokenInfo, list)
+    if (tokenMap[token.chainId]?.[token.address] !== undefined) {
+      console.error(new Error(`Duplicate token! ${token.address}`))
+      return tokenMap
+    }
+    if (!tokenMap[token.chainId]) tokenMap[token.chainId] = {}
+    tokenMap[token.chainId][token.address] = {
+      token,
+      list
+    }
+    return tokenMap
+  }, {}) as TokenAddressMap
   listCache?.set(list, map)
   return map
 }
+
+const TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(DEFAULT_TOKEN_LIST)
+const TRANSFORMED_UNSUPPORTED_TOKEN_LIST = listToTokenMap(UNSUPPORTED_TOKEN_LIST)
 
 export function useAllLists(): AppState['lists']['byUrl'] {
   return useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
 }
 
-function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
-  return {
-    1: { ...map1[1], ...map2[1] },
-    3: { ...map1[3], ...map2[3] },
-    4: { ...map1[4], ...map2[4] },
-    5: { ...map1[5], ...map2[5] },
-    42: { ...map1[42], ...map2[42] },
-    1337: { ...map1[1337], ...map2[1337] }
-  }
+/**
+ * Combine the tokens in map2 with the tokens on map1, where tokens on map1 take precedence
+ * @param map1 the base token map
+ * @param map2 the map of additioanl tokens to add to the base map
+ */
+export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
+  const chainIds = Object.keys(
+    Object.keys(map1)
+      .concat(Object.keys(map2))
+      .reduce<{ [chainId: string]: true }>((memo, value) => {
+        memo[value] = true
+        return memo
+      }, {})
+  ).map(id => parseInt(id))
+
+  return chainIds.reduce<Mutable<TokenAddressMap>>((memo, chainId) => {
+    memo[chainId] = {
+      ...map2[chainId],
+      // map1 takes precedence
+      ...map1[chainId]
+    }
+    return memo
+  }, {}) as TokenAddressMap
 }
 
 // merge tokens contained within lists from urls
@@ -76,7 +90,7 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
   const lists = useAllLists()
 
   return useMemo(() => {
-    if (!urls) return EMPTY_LIST
+    if (!urls) return {}
 
     return (
       urls
@@ -92,7 +106,7 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
             console.error('Could not show token list due to error', error)
             return allTokens
           }
-        }, EMPTY_LIST)
+        }, {})
     )
   }, [lists, urls])
 }
@@ -114,7 +128,7 @@ export function useInactiveListUrls(): string[] {
 export function useCombinedActiveList(): TokenAddressMap {
   const activeListUrls = useActiveListUrls()
   const activeTokens = useCombinedTokenMapFromUrls(activeListUrls)
-  const defaultTokenMap = listToTokenMap(DEFAULT_TOKEN_LIST)
+  const defaultTokenMap = TRANSFORMED_DEFAULT_TOKEN_LIST
   return combineMaps(activeTokens, defaultTokenMap)
 }
 
@@ -126,13 +140,13 @@ export function useCombinedInactiveList(): TokenAddressMap {
 
 // used to hide warnings on import for default tokens
 export function useDefaultTokenList(): TokenAddressMap {
-  return listToTokenMap(DEFAULT_TOKEN_LIST)
+  return TRANSFORMED_DEFAULT_TOKEN_LIST
 }
 
 // list of tokens not supported on interface, used to show warnings and prevent swaps and adds
 export function useUnsupportedTokenList(): TokenAddressMap {
   // get hard coded unsupported tokens
-  const localUnsupportedListMap = listToTokenMap(UNSUPPORTED_TOKEN_LIST)
+  const localUnsupportedListMap = TRANSFORMED_UNSUPPORTED_TOKEN_LIST
 
   // get any loaded unsupported tokens
   const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS)
@@ -151,7 +165,7 @@ export function useIsListActive(url: string): boolean {
 
 // return the alchemist token
 export function useAlchmeistToken(chainId: ChainId): any {
-  const list = listToTokenMap(DEFAULT_TOKEN_LIST)
+  const list = TRANSFORMED_DEFAULT_TOKEN_LIST
   const alchemistList = list[chainId]
   if (!alchemistList) return null
   const key = Object.keys(alchemistList).find(key => alchemistList[key].token.symbol === 'MIST')

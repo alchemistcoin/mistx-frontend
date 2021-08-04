@@ -1,6 +1,5 @@
 import React, { useContext, useRef, useState } from 'react'
 import { X } from 'react-feather'
-import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { useDispatch } from 'react-redux'
 import { lighten, rem, darken } from 'polished'
@@ -8,6 +7,8 @@ import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { updateFeeDisplayCurrency } from '../../state/user/actions'
+import { useUserBribeMargin } from '../../state/user/hooks'
+import { TipSettingsSteps, tipSettingToValue, tipValueToSetting } from '../../state/user/reducer'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
 import {
   useExpertModeManager,
@@ -194,10 +195,14 @@ export default function SettingsTab() {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
-
+  const [userBribeMargin, setUserBribeMargin] = useUserBribeMargin()
+  const [stateBribeMargin, setStateBribeMargin] = useState<number>(userBribeMargin)
   const theme = useContext(ThemeContext)
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
 
+  const onTipChange = (setting: number) => {
+    setStateBribeMargin(tipSettingToValue(setting))
+  }
   const [ttl, setTtl] = useUserTransactionTTL()
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
@@ -211,11 +216,24 @@ export default function SettingsTab() {
 
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
+  const handleDismiss = () => {
+    setUserBribeMargin(stateBribeMargin)
+    setShowConfirmation(false)
+  }
+  const handleToggle = () => {
+    if (open) {
+      toggle()
+    } else {
+      setUserBribeMargin(stateBribeMargin)
+    }
+  }
+  useOnClickOutside(node, handleToggle)
+
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
     <>
       <StyledMenu>
-        <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
+        <Modal isOpen={showConfirmation} onDismiss={handleDismiss} maxHeight={100}>
           <ModalContentWrapper>
             <AutoColumn gap="lg">
               <RowBetween style={{ padding: '0 2rem' }}>
@@ -288,7 +306,11 @@ export default function SettingsTab() {
                   </SettingsHeaderEnd>
                 </SettingsHeader>
               </StyledRowFixed>
-              <MinerBribeSlider />
+              <MinerBribeSlider
+                value={tipValueToSetting(stateBribeMargin)}
+                steps={TipSettingsSteps}
+                onChange={onTipChange}
+              />
             </SettingWrapper>
             <SettingWrapper darkBg>
               <SettingsHeader>
@@ -321,10 +343,11 @@ export default function SettingsTab() {
                     id="toggle-disable-multihop-button"
                     isActive={singleHopOnly}
                     toggle={() => {
-                      ReactGA.event({
-                        category: 'Routing',
-                        action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                      })
+                      // TODO: replace will alternative tracking
+                      // ReactGA.event({
+                      //   category: 'Routing',
+                      //   action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                      // })
                       setSingleHopOnly(!singleHopOnly)
                     }}
                   />

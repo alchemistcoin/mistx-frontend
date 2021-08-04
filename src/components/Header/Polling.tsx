@@ -7,37 +7,31 @@ import { getEtherscanLink } from '../../utils'
 import { useActiveWeb3React } from '../../hooks'
 
 const StyledPolling = styled.div`
-  position: fixed;
-  display: flex;
-  right: 115px;
-  bottom: 0;
-  padding: 1rem;
-  color: white;
-  transition: opacity 0.25s ease;
   color: ${({ theme }) => theme.green1};
+  display: flex;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  transition: opacity 0.25s ease;
+
   :hover {
     opacity: 1;
   }
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    bottom: 68px;
-    right: 0;
-  `}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `}
 `
+
 const StyledPollingDot = styled.div`
-  width: 8px;
+  background-color: ${({ theme }) => theme.green1};
+  border-radius: 50%;
   height: 8px;
-  min-height: 8px;
-  min-width: 8px;
   margin-left: 0.5rem;
   margin-top: 4px;
-  border-radius: 50%;
+  min-height: 8px;
+  min-width: 8px;
   position: relative;
-  background-color: ${({ theme }) => theme.green1};
+  width: 8px;
 `
 
 const rotate360 = keyframes`
@@ -51,19 +45,17 @@ const rotate360 = keyframes`
 
 const Spinner = styled.div`
   animation: ${rotate360} 1s cubic-bezier(0.83, 0, 0.17, 1) infinite;
-  transform: translateZ(0);
-
-  border-top: 1px solid transparent;
-  border-right: 1px solid transparent;
+  background: transparent;
   border-bottom: 1px solid transparent;
   border-left: 2px solid ${({ theme }) => theme.green1};
-  background: transparent;
-  width: 14px;
-  height: 14px;
   border-radius: 50%;
-  position: relative;
-
+  border-right: 1px solid transparent;
+  border-top: 1px solid transparent;
+  height: 14px;
   left: -3px;
+  width: 14px;
+  position: relative;
+  transform: translateZ(0);
   top: -3px;
 `
 
@@ -90,9 +82,7 @@ export default function Polling() {
   return (
     <ExternalLink href={chainId && blockNumber ? getEtherscanLink(chainId, blockNumber.toString(), 'block') : ''}>
       <StyledPolling>
-        <TYPE.small>
-          {blockNumber && 'Block'} {blockNumber}
-        </TYPE.small>
+        <TYPE.small>{blockNumber ? `Block ${blockNumber}` : 'Loading Block...'}</TYPE.small>
         <StyledPollingDot>{!isMounted && <Spinner />}</StyledPollingDot>
       </StyledPolling>
     </ExternalLink>

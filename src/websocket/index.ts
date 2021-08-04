@@ -1,16 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
-import { io, Socket } from 'socket.io-client'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import PJSON from '../../package.json'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
+import { BundleRes, MistxSocket } from '@alchemist-coin/mistx-connect'
 
 // state
 import { updateGas } from '../state/application/actions'
-import { Gas } from '../state/application/reducer'
 import { useSocketStatus, useNewAppVersionAvailable } from '../state/application/hooks'
 import {
   useAllTransactions,
@@ -69,18 +68,6 @@ export interface SocketSession {
   version: MistXVersion | undefined
 }
 
-export interface TransactionRes {
-  transaction: TransactionProcessed
-  status: Status
-  message: string
-  error: string
-}
-export interface TransactionDiagnosisRes {
-  transaction: TransactionProcessed
-  blockNumber: number
-  flashbotsResolution: string
-  mistxDiagnosis: Diagnosis
-}
 export interface TransactionReq {
   serialized: string // serialized transaction
   raw: SwapReq | undefined // raw def. of each type of trade
@@ -121,41 +108,6 @@ export interface BundleProcessed {
   deadline: BigNumberish
   simulateOnly: boolean
 }
-interface BundleRes {
-  bundle: BundleProcessed
-  status: string
-  message: string
-  error: string
-}
-
-interface BundleStatusRes {
-  bundle: string | BundleProcessed // BundleProcessed.serialized
-  status: string
-  message: string
-  error: string
-}
-interface QuoteEventsMap {
-  [Event.SOCKET_SESSION]: (response: SocketSession) => void
-  [Event.SOCKET_ERR]: (err: any) => void
-  [Event.GAS_CHANGE]: (response: Gas) => void
-  [Event.MISTX_BUNDLE_REQUEST]: (response: any) => void
-  [Event.BUNDLE_RESPONSE]: (response: BundleRes) => void
-  [Event.BUNDLE_CANCEL_REQUEST]: (serialized: any) => void // TO DO - any
-  [Event.BUNDLE_STATUS_REQUEST]: (serialized: any) => void // TO DO - any
-  [Event.BUNDLE_STATUS_RESPONSE]: (serialized: BundleStatusRes) => void // TO DO - any
-}
-
-const tokenKey = `SESSION_TOKEN`
-const token = localStorage.getItem(tokenKey)
-const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
-
-const socket: Socket<QuoteEventsMap, QuoteEventsMap> = io(serverUrl, {
-  transports: ['websocket'],
-  auth: { token },
-  reconnection: true,
-  reconnectionDelay: 5000,
-  autoConnect: true
-})
 
 function bundleResponseToastStatus(bundle: BundleRes) {
   let pending = false
@@ -193,6 +145,10 @@ function bundleResponseToastStatus(bundle: BundleRes) {
   }
 }
 
+const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
+
+const socket = new MistxSocket(serverUrl)
+
 export default function Sockets(): null {
   const updateTxReqInterval = useRef<any>(null)
   const dispatch = useDispatch()
@@ -206,148 +162,118 @@ export default function Sockets(): null {
   const [newAppVersionAvailable, setNewAppVersionAvailable] = useNewAppVersionAvailable()
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // console.log('websocket connected')
-      dispatch(updateSocketStatus(true))
-    })
+    const disconnect = socket.init({
+      onConnect: () => {
+        // console.log('websocket connected')
+        dispatch(updateSocketStatus(true))
+      },
+      onConnectError: err => {
+        // console.log('websocket connect error', err)
+        dispatch(updateSocketStatus(false))
+      },
+      onDisconnect: err => {
+        // console.log('websocket disconnect', err)
+        dispatch(updateSocketStatus(false))
+      },
+      onError: err => {
+        // console.log('websocket err', err)
+        if (err.event === Event.MISTX_BUNDLE_REQUEST) {
+          const bundleResponse = err.data as BundleRes
+          const hash = keccak256(bundleResponse.bundle.transactions[0].serialized)
+          removeTransaction({
+            chainId: bundleResponse.bundle.chainId,
+            hash
+          })
+        }
+      },
+      onSocketSession: session => {
+        const { version } = session
+        // check client version and notify user to refresh page
+        // if the client version is not equal to the version.client
+        // received in the session payload
+        if (!newAppVersionAvailable && version && PJSON && version.client !== PJSON.version) {
+          setNewAppVersionAvailable(true)
+        } else if (newAppVersionAvailable) {
+          setNewAppVersionAvailable(false)
+        }
+      },
+      onGasChange: gas => {
+        dispatch(updateGas(gas))
+      },
+      onTransactionUpdate: response => {
+        const { bundle: b, status } = response
 
-    socket.on('connect_error', err => {
-      // console.log('websocket connect error', err)
-      dispatch(updateSocketStatus(false))
-    })
+        const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
+        const serialized = bundle && (bundle as BundleProcessed).transactions[0].serialized
 
-    socket.on('disconnect', err => {
-      // console.log('websocket disconnect', err)
-      dispatch(updateSocketStatus(false))
-    })
+        if (!serialized) return
 
-    socket.on(Event.SOCKET_ERR, err => {
-      // console.log('websocket err', err)
-      if (err.event === Event.MISTX_BUNDLE_REQUEST) {
-        const bundleResponse = err.data as BundleRes
-        const hash = keccak256(bundleResponse.bundle.transactions[0].serialized)
-        removeTransaction({
-          chainId: bundleResponse.bundle.chainId,
+        const hash = keccak256(serialized)
+        const tx = allTransactions?.[hash]
+        const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+        if (!tx || !tx.chainId || previouslyCompleted) return
+        const transactionId = {
+          chainId: tx.chainId,
           hash
-        })
-      }
-    })
-
-    socket.on(Event.SOCKET_SESSION, session => {
-      const { token, version } = session
-      localStorage.setItem(tokenKey, token)
-      // check client version and notify user to refresh page
-      // if the client version is not equal to the version.client
-      // received in the session payload
-      if (!newAppVersionAvailable && version && PJSON && version.client !== PJSON.version) {
-        setNewAppVersionAvailable(true)
-      } else if (newAppVersionAvailable) {
-        setNewAppVersionAvailable(false)
-      }
-    })
-
-    socket.on(Event.GAS_CHANGE, gas => {
-      dispatch(updateGas(gas))
-    })
-
-    socket.on(Event.BUNDLE_STATUS_RESPONSE, response => {
-      const { bundle: b, status } = response
-
-      const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
-      const serialized = bundle && (bundle as BundleProcessed).transactions[0].serialized
-
-      if (!serialized) return
-
-      const hash = keccak256(serialized)
-      const tx = allTransactions?.[hash]
-      const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
-      if (!tx || !tx.chainId || previouslyCompleted) return
-      const transactionId = {
-        chainId: tx.chainId,
-        hash
-      }
-      let message = response.message
-      if (status === Status.BUNDLE_NOT_FOUND) {
-        message = ''
-      }
-      updateTransaction(transactionId, {
-        status: status,
-        message: message,
-        updatedAt: new Date().getTime()
-      })
-    })
-
-    socket.on(Event.BUNDLE_RESPONSE, response => {
-      const hash = keccak256(response.bundle.transactions[0].serialized)
-      const tx = allTransactions?.[hash]
-      const summary = tx?.summary
-      const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
-      const transactionId = {
-        chainId: response.bundle.chainId,
-        hash
-      }
-
-      if (response.status === Status.CANCEL_BUNDLE_SUCCESSFUL && window.fathom) {
-        window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
-      }
-
-      // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
-      if (!previouslyCompleted) {
+        }
+        let message = response.message
+        if (status === Status.BUNDLE_NOT_FOUND) {
+          message = ''
+        }
         updateTransaction(transactionId, {
-          bundle: response.bundle,
-          message: response.message,
-          status: response.status,
+          status: status,
+          message: message,
           updatedAt: new Date().getTime()
         })
-        if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
-          window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+      },
+      onTransactionResponse: response => {
+        const hash = keccak256(response.bundle.transactions[0].serialized)
+        const tx = allTransactions?.[hash]
+        const summary = tx?.summary
+        const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+        const transactionId = {
+          chainId: response.bundle.chainId,
+          hash
         }
-        if (
-          response.status === Status.SUCCESSFUL_BUNDLE ||
-          response.status === Status.FAILED_BUNDLE ||
-          response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
-          response.status === Status.BUNDLE_NOT_FOUND
-        ) {
-          addPopup(
-            {
-              txn: {
-                hash,
-                summary,
-                ...bundleResponseToastStatus(response)
-              }
-            },
-            hash,
-            60000
-          )
+
+        if (response.status === Status.CANCEL_BUNDLE_SUCCESSFUL && window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.CANCEL_COMPLETE, 0)
+        }
+
+        // TO DO - Handle response.status === BUNDLE_NOT_FOUND - ??
+        if (!previouslyCompleted) {
+          updateTransaction(transactionId, {
+            bundle: response.bundle,
+            message: response.message,
+            status: response.status,
+            updatedAt: new Date().getTime()
+          })
+          if (response.status === Status.SUCCESSFUL_BUNDLE && window.fathom) {
+            window.fathom.trackGoal(FATHOM_GOALS.SWAP_COMPLETE, 0)
+          }
+          if (
+            response.status === Status.SUCCESSFUL_BUNDLE ||
+            response.status === Status.FAILED_BUNDLE ||
+            response.status === Status.CANCEL_BUNDLE_SUCCESSFUL ||
+            response.status === Status.BUNDLE_NOT_FOUND
+          ) {
+            addPopup(
+              {
+                txn: {
+                  hash,
+                  summary,
+                  ...bundleResponseToastStatus(response)
+                }
+              },
+              hash,
+              60000
+            )
+          }
         }
       }
     })
-
-    // TO DO
-    //socket.on(Event.TRANSACTION_DIAGNOSIS, diagnosis => {
-    // // console.log('- log transaction diagnosis', diagnosis)
-    // const hash = keccak256(diagnosis.transaction.serializedSwap)
-    // const transactionId = {
-    //   chainId: diagnosis.transaction.chainId,
-    //   hash
-    // }
-    // updateTransaction(transactionId, {
-    //   blockNumber: diagnosis.blockNumber,
-    //   flashbotsResolution: diagnosis.flashbotsResolution,
-    //   mistxDiagnosis: diagnosis.mistxDiagnosis,
-    //   updatedAt: new Date().getTime()
-    // })
-    //})
-
     return () => {
-      socket.off('connect')
-      socket.off('connect_error')
-      socket.off(Event.SOCKET_ERR)
-      socket.off(Event.SOCKET_SESSION)
-      socket.off(Event.GAS_CHANGE)
-      socket.off(Event.BUNDLE_RESPONSE)
-      socket.off(Event.BUNDLE_STATUS_RESPONSE)
-      // TO DO
+      disconnect()
     }
   }, [
     addPopup,
@@ -391,9 +317,7 @@ export default function Sockets(): null {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               // const transactionReq: TransactionProcessed = tx.processed
-              socket.emit(Event.BUNDLE_STATUS_REQUEST, {
-                serialized: tx.processed.serialized
-              })
+              socket.emitStatusRequest(tx.processed.serialized)
             }
           }
         })
@@ -410,10 +334,10 @@ export default function Sockets(): null {
 }
 
 export function emitTransactionRequest(bundle: BundleReq) {
-  socket.emit(Event.MISTX_BUNDLE_REQUEST, bundle)
+  socket.emitTransactionRequest(bundle)
 }
 
-export function emitTransactionCancellation(serialized: any) {
+export function emitTransactionCancellation(serialized: string) {
   // TO DO any
-  socket.emit(Event.BUNDLE_CANCEL_REQUEST, { serialized })
+  socket.emitTransactionCancellation(serialized)
 }

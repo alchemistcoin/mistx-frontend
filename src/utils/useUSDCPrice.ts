@@ -1,4 +1,4 @@
-import { ChainId, Currency, Token, currencyEquals, Exchange, JSBI, Price, WETH } from '@alchemistcoin/sdk'
+import { ChainId, Currency, Token, currencyEquals, Exchange, JSBI, Price, WETH } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'

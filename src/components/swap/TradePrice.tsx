@@ -1,5 +1,5 @@
 import React from 'react'
-import { Price, Currency } from '@alchemistcoin/sdk'
+import { Price, Currency } from '@alchemist-coin/mistx-core'
 import { useContext } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'

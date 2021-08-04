@@ -1,9 +1,8 @@
-import { Currency, Pair, Token } from '@alchemistcoin/sdk'
-import React, { useState, useCallback } from 'react'
+import React, { Suspense, useState, useCallback } from 'react'
+import { Currency, Pair, Token } from '@alchemist-coin/mistx-core'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
@@ -17,8 +16,11 @@ import { Field } from '../../state/swap/actions'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
+function getShortSymbol(symbol: string) {
+  return `${symbol.slice(0, 4)}...${symbol.slice(symbol.length - 5, symbol.length)}`
+}
+
 const InputRow = styled.div<{
-  selected: boolean
   value: string
 }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -186,7 +188,7 @@ const InputPanelContainer = styled.div<{ hideInput?: boolean }>`
   background: #242d3d;
 `
 
-const Container = styled.div<{ hideInput: boolean }>`
+const Container = styled.div`
   align-items: center;
   background-color: inherit;
   display: flex;
@@ -228,6 +230,8 @@ const StyledBalanceMax = styled.button`
   `};
 `
 
+const CurrencySearchModal = React.lazy(() => import('../SearchModal/CurrencySearchModal'))
+
 const StyledNumericalInput = styled(NumericalInput)`
   // padding-left: 0.25rem;
 `
@@ -238,7 +242,6 @@ interface CurrencyInputPanelProps {
   showMaxButton: boolean
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
-  disableCurrencySelect?: boolean
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
@@ -256,7 +259,6 @@ export default function CurrencyInputPanel({
   showMaxButton,
   onCurrencySelect,
   currency,
-  disableCurrencySelect = false,
   hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
@@ -301,15 +303,13 @@ export default function CurrencyInputPanel({
           </RowBetween>
         </LabelRow>
       )}
-      <Container hideInput={hideInput}>
+      <Container>
         <CurrencySelectWrapper>
           <CurrencySelect
             selected={!!currency}
             className="open-currency-select-button"
             onClick={() => {
-              if (!disableCurrencySelect) {
-                setModalOpen(true)
-              }
+              setModalOpen(true)
             }}
           >
             <Aligner>
@@ -323,21 +323,17 @@ export default function CurrencyInputPanel({
               ) : currency ? (
                 <CurrencyLogo currency={currency} size={'36px'} />
               ) : null}
-              {!disableCurrencySelect && (
-                <StyledDropDownContainer>
-                  <StyledDropDown selected={!!currency} />
-                </StyledDropDownContainer>
-              )}
+              <StyledDropDownContainer>
+                <StyledDropDown selected={!!currency} />
+              </StyledDropDownContainer>
             </Aligner>
           </CurrencySelect>
           <CurrencyDisplay>
             {currency && currency instanceof Token ? (
               <StyledExternalLink id={`stake-nav-link`} href={`https://etherscan.io/address/${currency.address}`}>
                 <StyledExternalWrapper>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? currency.symbol.slice(0, 4) +
-                      '...' +
-                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                  {(currency?.symbol && currency.symbol.length > 20
+                    ? getShortSymbol(currency.symbol)
                     : currency?.symbol) || t('selectToken')}{' '}
                   <StyledExternalLinkEl>
                     <IconArrowWrapper>
@@ -348,7 +344,7 @@ export default function CurrencyInputPanel({
               </StyledExternalLink>
             ) : (
               <StyledExternalWrapper>
-                {(currency && currency.symbol && currency.symbol.length > 20
+                {(currency?.symbol && currency.symbol.length > 20
                   ? currency.symbol.slice(0, 4) +
                     '...' +
                     currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
@@ -359,7 +355,7 @@ export default function CurrencyInputPanel({
         </CurrencySelectWrapper>
         <InputPanelWapper>
           <InputPanelContainer>
-            <InputRow style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect} value={value}>
+            <InputRow style={hideInput ? { padding: '0' } : {}} value={value}>
               {!hideInput && (
                 <>
                   <StyledNumericalInput
@@ -375,15 +371,17 @@ export default function CurrencyInputPanel({
               )}
             </InputRow>
             {account && <Balance currency={currency} onMax={onMax} showMaxButton={type === Field.INPUT} />}
-            {!disableCurrencySelect && onCurrencySelect && (
-              <CurrencySearchModal
-                isOpen={modalOpen}
-                onDismiss={handleDismissSearch}
-                onCurrencySelect={onCurrencySelect}
-                selectedCurrency={currency}
-                otherSelectedCurrency={otherCurrency}
-                showCommonBases={showCommonBases}
-              />
+            {onCurrencySelect && (
+              <Suspense fallback={null}>
+                <CurrencySearchModal
+                  isOpen={modalOpen}
+                  onDismiss={handleDismissSearch}
+                  onCurrencySelect={onCurrencySelect}
+                  selectedCurrency={currency}
+                  otherSelectedCurrency={otherCurrency}
+                  showCommonBases={showCommonBases}
+                />
+              </Suspense>
             )}
           </InputPanelContainer>
         </InputPanelWapper>

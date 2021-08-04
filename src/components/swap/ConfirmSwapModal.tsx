@@ -1,5 +1,6 @@
-import { currencyEquals, Trade, Currency, TradeType, WETH } from '@alchemistcoin/sdk'
+import { currencyEquals, Trade, Currency, TradeType, WETH } from '@alchemist-coin/mistx-core'
 import React, { useCallback, useMemo } from 'react'
+import { useActiveWeb3React } from '../../hooks'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
   TransactionErrorContent
@@ -51,13 +52,14 @@ export default function ConfirmSwapModal({
   swapErrorMessage: string | undefined
   onDismiss: () => void
 }) {
+  const { chainId } = useActiveWeb3React()
   const showAcceptChanges = useMemo(
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),
     [originalTrade, trade]
   )
 
   // ETH/USDC Price
-  const ethUSDCPrice = useUSDCPrice(WETH[1])
+  const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
 
   const modalHeader = useCallback(() => {
     return trade ? (
@@ -89,21 +91,6 @@ export default function ConfirmSwapModal({
     trade?.inputAmount?.currency?.symbol
   } for ${trade?.outputAmount?.toSignificant(6)} ${trade?.outputAmount?.currency?.symbol}`
 
-  const confirmationContent = useCallback(
-    () =>
-      swapErrorMessage ? (
-        <TransactionErrorContent onDismiss={onDismiss} message={swapErrorMessage} />
-      ) : (
-        <ConfirmationModalContent
-          title="Confirm Swap"
-          onDismiss={onDismiss}
-          topContent={modalHeader}
-          bottomContent={modalBottom}
-        />
-      ),
-    [onDismiss, modalBottom, modalHeader, swapErrorMessage]
-  )
-
   // console.log('--- log, attemptingTxn, hash', attemptingTxn, txHash)
 
   return (
@@ -112,9 +99,19 @@ export default function ConfirmSwapModal({
       onDismiss={onDismiss}
       attemptingTxn={attemptingTxn}
       hash={txHash}
-      content={confirmationContent}
       pendingText={pendingText}
       currencyToAdd={trade?.outputAmount.currency}
-    />
+    >
+      {swapErrorMessage ? (
+        <TransactionErrorContent onDismiss={onDismiss} message={swapErrorMessage} />
+      ) : (
+        <ConfirmationModalContent
+          title="Confirm Swap"
+          onDismiss={onDismiss}
+          topContent={modalHeader}
+          bottomContent={modalBottom}
+        />
+      )}
+    </TransactionConfirmationModal>
   )
 }

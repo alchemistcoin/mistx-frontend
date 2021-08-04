@@ -1,6 +1,6 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -15,6 +15,8 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
+import useBaseFeePerGas from './useBaseFeePerGas'
+import useIsEIP1559 from './useIsEIP1559'
 import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
 
 export enum SwapCallbackState {
@@ -43,7 +45,8 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-
+  const baseFeePerGas = useBaseFeePerGas()
+  const eip1559 = useIsEIP1559()
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -97,12 +100,18 @@ export function useSwapCallback(
               //modify nonce if we also have an approval
               nonce: nonce,
               gasLimit: calculateGasMargin(BigNumber.from(500000)),
+              ...(eip1559
+                ? {
+                    type: 2,
+                    maxFeePerGas: baseFeePerGas,
+                    maxPriorityFeePerGas: '0x0'
+                  }
+                : {}),
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
 
             //delete for serialize necessary
             populatedTx.chainId = chainId
-
             // HANDLE METAMASK
             // MetaMask does not support eth_signTransaction so we must use eth_sign as a workaround.
             // For other wallets, use eth_signTransaction
@@ -122,7 +131,7 @@ export function useSwapCallback(
                   ...populatedTx,
                   gas: populatedTx.gasLimit?.toHexString(),
                   gasLimit: populatedTx.gasLimit?.toHexString(),
-                  gasPrice: '0x0',
+                  ...(!eip1559 ? { gasPrice: '0x0' } : {}),
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ]
@@ -165,6 +174,7 @@ export function useSwapCallback(
               to: args[0][3] as string
             }
 
+            // Create the transaction body with the serialized tx
             const transactionReq: TransactionReq = {
               estimatedGas: Number(trade.estimatedGas),
               estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
@@ -172,19 +182,24 @@ export function useSwapCallback(
               raw: swapReq
             }
 
-            let transactions: TransactionReq[] = []
+            // Create the transactions array with the serialized tx object
+            const transactions: TransactionReq[] = [transactionReq]
+
+            // Check if there is a signed approval with this tx
+            // (token -> eth & token -> token transactions require signed approval)
             if (signedApproval) {
+              // if there is an approval, create the Approval tx object
               const signedTransactionApproval: TransactionReq = {
                 estimatedGas: 25000,
                 estimatedEffectiveGasPrice: 0,
                 serialized: signedApproval,
                 raw: undefined
               }
-              transactions = [signedTransactionApproval, transactionReq] // signed approval first
-            } else {
-              transactions = [transactionReq]
+              // Add the approval to the transactions array
+              transactions.unshift(signedTransactionApproval) // signed approval first
             }
 
+            // Creat the bundle request object
             const bundleReq: BundleReq = {
               transactions,
               chainId,
@@ -194,6 +209,7 @@ export function useSwapCallback(
               simulateOnly: false
             }
 
+            // dispatch "add transaction" action
             addTransaction(
               { chainId, hash },
               {
@@ -202,9 +218,10 @@ export function useSwapCallback(
               }
             )
 
+            // emit transaction request socket event
             emitTransactionRequest(bundleReq) // change to emitBundleRequest ?
 
-            return hash
+            return hash // return the hash of the transaction (transaction identifier)
           } catch (error) {
             // if the user rejected the tx, pass this along
             if (error?.code === 4001) {
@@ -226,5 +243,17 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve, addTransaction])
+  }, [
+    trade,
+    library,
+    account,
+    chainId,
+    recipient,
+    recipientAddressOrName,
+    swapCall,
+    approve,
+    addTransaction,
+    baseFeePerGas,
+    eip1559
+  ])
 }

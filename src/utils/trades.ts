@@ -1,5 +1,5 @@
 import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from './../constants/index'
-import { Trade, Percent, currencyEquals, Currency, TradeType } from '@alchemistcoin/sdk'
+import { Trade, Percent, currencyEquals, Currency, TradeType } from '@alchemist-coin/mistx-core'
 
 // returns whether tradeB is better than tradeA by at least a threshold percentage amount
 export function isTradeBetter(
@@ -36,4 +36,14 @@ export function isETHTrade(trade: Trade<Currency, Currency, TradeType> | undefin
     return false
   }
   return true
+}
+
+//returns whether the given trade involves ETH as a Pair
+export function isETHOutTrade(trade: Trade<Currency, Currency, TradeType> | undefined): boolean | undefined {
+  if (!trade) {
+    return undefined
+  } else if (trade.route.output.isNative) {
+    return true
+  }
+  return false
 }

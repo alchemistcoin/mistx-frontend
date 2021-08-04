@@ -1,4 +1,4 @@
-import { Token } from '@alchemistcoin/sdk'
+import { Token } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import Modal from '../Modal'
 import { ImportToken } from 'components/SearchModal/ImportToken'

@@ -4,11 +4,10 @@ import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
-import { ReactComponent as LogoLight } from '../../assets/svg/logo_light.svg'
+import { ReactComponent as LogoMobile } from '../../assets/svg/logo_mobile.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
-import { useDarkModeManager } from '../../state/user/hooks'
 import AlchemistMenu from './AlchemistMenu'
 
 const HeaderFrame = styled.div`
@@ -49,6 +48,11 @@ const LogoWrapper = styled.div`
   flex-direction: row;
   margin: 1rem 0 0.1rem 0;
   height: ${rem(80)};
+  width: ${rem(80)};
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: none;
+  `};
 
   > svg {
     height: 100%;
@@ -84,13 +88,6 @@ const LogoLink = styled(Link)`
     height: 100%;
     width: auto;
   }
-`
-
-const HideSmall = styled.div`
-  display: flex;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    display: none;
-  `};
 `
 
 const HideLarge = styled.div`
@@ -228,14 +225,12 @@ export const SocialLink = styled(ExternalLink)`
 
 export default function Header() {
   const { t } = useTranslation()
-  const [darkMode] = useDarkModeManager()
-
   return (
     <HeaderFrame>
       <HideLarge>
         <LogoWrapperMobile>
           <LogoLink to="/" title={t('mistx')}>
-            {darkMode ? <Logo /> : <LogoLight />}
+            <LogoMobile />
           </LogoLink>
         </LogoWrapperMobile>
       </HideLarge>
@@ -250,13 +245,11 @@ export default function Header() {
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
-      <HideSmall>
-        <LogoWrapper>
-          <LogoLink to="/" title={t('mistx')}>
-            {darkMode ? <Logo /> : <LogoLight />}
-          </LogoLink>
-        </LogoWrapper>
-      </HideSmall>
+      <LogoWrapper>
+        <LogoLink to="/" title={t('mistx')}>
+          <Logo />
+        </LogoLink>
+      </LogoWrapper>
       <HeaderRow align="end" justify="flex-end">
         <WalletConnect />
       </HeaderRow>

@@ -10,10 +10,12 @@ import ConnectionStatus from '../components/ConnectionStatus'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import NewAppVersionAvailable from '../components/NewAppVersionAvailable'
+import EIP1559InfoModal from '../components/EIP1559InfoModal'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import { ChatWidget } from 'components/ChatWidget'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -51,8 +53,14 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
-const Marginer = styled.div`
-  margin-top: 2.5rem;
+const ConnectionsWrapper = styled.div`
+  position: fixed;
+  left: 0;
+  bottom: 0;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    bottom: 72px;
+  `};
 `
 
 export default function App() {
@@ -66,8 +74,10 @@ export default function App() {
           <Header />
         </HeaderWrapper>
         <BodyWrapper>
-          <Polling />
-          <ConnectionStatus />
+          <ConnectionsWrapper>
+            <Polling />
+            <ConnectionStatus />
+          </ConnectionsWrapper>
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/exchange" component={Swap} />
@@ -76,12 +86,13 @@ export default function App() {
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
           </Web3ReactManager>
-          <Marginer />
-          <Footer />
+          <Footer style={{ marginTop: '2.5rem' }} />
         </BodyWrapper>
       </AppWrapper>
       <Popups />
+      <EIP1559InfoModal />
       <NewAppVersionAvailable />
+      <ChatWidget />
     </Suspense>
   )
 }

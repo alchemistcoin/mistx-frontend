@@ -1,4 +1,4 @@
-import { ChainId, Exchange, Pair, Token } from '@alchemistcoin/sdk'
+import { ChainId, Exchange, Pair, Token } from '@alchemist-coin/mistx-core'
 import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'

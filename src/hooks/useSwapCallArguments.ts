@@ -1,5 +1,5 @@
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType, Currency } from '@alchemistcoin/sdk'
+import { JSBI, Percent, Router, SwapParameters, Trade, TradeType, Currency } from '@alchemist-coin/mistx-core'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { getRouterContract } from '../utils'

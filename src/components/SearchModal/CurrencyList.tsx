@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, currencyEquals, Token } from '@alchemistcoin/sdk'
+import { Currency, CurrencyAmount, currencyEquals, Token } from '@alchemist-coin/mistx-core'
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
@@ -137,22 +137,23 @@ function BreakLineComponent({ style }: { style: CSSProperties }) {
 }
 
 function CurrencyRow({
+  account,
   currency,
   onSelect,
+  isOnSelectedList,
   isSelected,
   otherSelected,
   style
 }: {
+  account: string | null | undefined
   currency: Currency
   onSelect: () => void
+  isOnSelectedList: boolean
   isSelected: boolean
   otherSelected: boolean
   style: CSSProperties
 }) {
-  const { account } = useActiveWeb3React()
   const key = currencyKey(currency)
-  const selectedTokenList = useCombinedActiveList()
-  const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
   const customAdded = useIsUserAddedToken(currency)
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
@@ -205,6 +206,9 @@ export default function CurrencyList({
   showImportView: () => void
   setImportToken: (token: Token) => void
 }) {
+  const { account } = useActiveWeb3React()
+  const selectedTokenList = useCombinedActiveList()
+
   const itemData: (Currency | BreakLine)[] = useMemo(() => {
     if (otherListTokens && otherListTokens?.length > 0) {
       return [...(showMIST ? mistFirst(currencies) : currencies), BREAK_LINE, ...otherListTokens]
@@ -219,6 +223,7 @@ export default function CurrencyList({
       if (isBreakLine(row)) {
         return <BreakLineComponent style={style} />
       }
+
       const currency = row
       const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
       const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
@@ -240,8 +245,10 @@ export default function CurrencyList({
       } else {
         return (
           <CurrencyRow
+            account={account}
             style={style}
             currency={currency}
+            isOnSelectedList={isTokenOnList(selectedTokenList, currency)}
             isSelected={isSelected}
             onSelect={handleSelect}
             otherSelected={otherSelected}
@@ -249,7 +256,16 @@ export default function CurrencyList({
         )
       }
     },
-    [currencies.length, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
+    [
+      account,
+      currencies.length,
+      onCurrencySelect,
+      otherCurrency,
+      selectedCurrency,
+      selectedTokenList,
+      setImportToken,
+      showImportView
+    ]
   )
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])

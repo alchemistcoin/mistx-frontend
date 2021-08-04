@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Token, Currency } from '@alchemistcoin/sdk'
+import { Token, Currency } from '@alchemist-coin/mistx-core'
 import styled from 'styled-components'
 import { TYPE, CloseIcon } from 'theme'
 import Card from 'components/Card'

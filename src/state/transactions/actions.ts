@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemistcoin/sdk'
+import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { Diagnosis, Status, SwapReq, BundleProcessed } from '../../websocket/index'
 import { WrapType } from 'hooks/useWrapCallback'
 

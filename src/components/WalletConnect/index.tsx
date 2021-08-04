@@ -1,4 +1,4 @@
-import { ChainId } from '@alchemistcoin/sdk'
+import { ChainId } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import styled from 'styled-components'
 // import { rem } from 'polished'
@@ -140,7 +140,6 @@ export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-
   return (
     <HeaderFrame>
       <HeaderControls>
@@ -153,7 +152,7 @@ export default function Header() {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
-          <MistBalance />
+          {chainId && chainId === ChainId.MAINNET && <MistBalance />}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             <Web3Status />
           </AccountElement>
