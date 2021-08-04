@@ -5,10 +5,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoMobile } from '../../assets/svg/logo_mobile.svg'
+import { ReactComponent as AlchemistLogo } from '../../assets/images/alchemist_logo.svg'
+import { ReactComponent as MenuIcon } from '../../assets/images/menu_icon.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
-import AlchemistMenu from './AlchemistMenu'
+import { ButtonIcon } from '../../components/Button'
+// import AlchemistMenu from './AlchemistMenu'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -41,6 +44,17 @@ const HeaderLinks = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0.5rem 0 0.5rem 0;
 `};
+`
+
+const MistLogoWrapper = styled.div`
+  display: flex;
+  width: 32px;
+  margin: 0 25px 0 0;
+
+  svg {
+    display: flex;
+    width: 100%;
+  }
 `
 
 const LogoWrapper = styled.div`
@@ -77,6 +91,15 @@ const LogoWrapperMobile = styled.div`
   > svg {
     height: 100%;
     width: auto;
+  }
+`
+
+const MenuWrapper = styled.div`
+  display: flex;
+
+  svg {
+    height: 24px;
+    width: 100%;
   }
 `
 
@@ -223,7 +246,11 @@ export const SocialLink = styled(ExternalLink)`
   }
 `
 
-export default function Header() {
+export interface HeaderProps {
+  toggleSideBar: any
+}
+
+export default function Header({ toggleSideBar }: HeaderProps) {
   const { t } = useTranslation()
   return (
     <HeaderFrame>
@@ -236,7 +263,10 @@ export default function Header() {
       </HideLarge>
       <HeaderRow align="start">
         <HeaderLinks>
-          <AlchemistMenu />
+          <MistLogoWrapper>
+            <AlchemistLogo />
+          </MistLogoWrapper>
+          {/* <AlchemistMenu /> */}
           <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
           </StyledNavLink>
@@ -252,6 +282,11 @@ export default function Header() {
       </LogoWrapper>
       <HeaderRow align="end" justify="flex-end">
         <WalletConnect />
+        <MenuWrapper>
+          <ButtonIcon onClick={() => toggleSideBar()}>
+            <MenuIcon />
+          </ButtonIcon>
+        </MenuWrapper>
       </HeaderRow>
     </HeaderFrame>
   )

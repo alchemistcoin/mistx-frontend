@@ -1,7 +1,6 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useState } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -14,6 +13,8 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import SideBar from '../components/SideBar'
+import Overlay from '../components/SideBar/overlay'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -56,14 +57,22 @@ const Marginer = styled.div`
 `
 
 export default function App() {
+  const [sideBarOpen, setSideBarOpen] = useState<boolean>(false)
+
+  const toggleSideBar = () => {
+    setSideBarOpen(!sideBarOpen)
+  }
+
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
+      <Overlay open={sideBarOpen} toggleSideBar={toggleSideBar} />
       <AppWrapper>
         {/* <URLWarning /> */}
+        <SideBar open={sideBarOpen} toggleSideBar={toggleSideBar} />
         <HeaderWrapper>
-          <Header />
+          <Header toggleSideBar={toggleSideBar} />
         </HeaderWrapper>
         <BodyWrapper>
           <Polling />

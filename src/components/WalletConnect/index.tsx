@@ -4,7 +4,7 @@ import styled from 'styled-components'
 // import { rem } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
 import { YellowCard } from '../Card'
-import Menu from '../Menu'
+// import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 import MistBalance from '../MistBalance'
 
@@ -144,9 +144,9 @@ export default function Header() {
   return (
     <HeaderFrame>
       <HeaderControls>
-        <HeaderElementWrap>
+        {/* <HeaderElementWrap>
           <Menu />
-        </HeaderElementWrap>
+        </HeaderElementWrap> */}
         <HeaderElement>
           <HideSmall>
             {chainId && chainId !== ChainId.MAINNET && NETWORK_LABELS[chainId] && (
@@ -158,6 +158,7 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
+        <HeaderElementWrap></HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>
   )
