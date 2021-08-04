@@ -10,11 +10,27 @@ export default function useLatestGasPrice(): BigNumber | undefined {
     if (!block) {
       setGasPrice(undefined)
     } else {
-      const finalTransaction = block.transactions[block.transactions.length - 1]
-      if (!finalTransaction) {
-        setGasPrice(undefined)
+      // final tx of block
+      const tx = block.transactions[block.transactions.length - 1]
+      let gasPrice: BigNumber | undefined
+      if (!tx) {
+        gasPrice = undefined
+      } else if (!tx.type || tx.type < 2) {
+        gasPrice = tx.gasPrice
+      } else if (tx.type && tx.type > 1 && block.baseFeePerGas && tx.maxFeePerGas) {
+        gasPrice = block.baseFeePerGas
+        if (tx.maxPriorityFeePerGas) {
+          const maxFeeBaseFeeDiff = tx.maxFeePerGas.sub(block.baseFeePerGas)
+          const priorityFeePerGas = tx.maxPriorityFeePerGas.lt(maxFeeBaseFeeDiff)
+            ? tx.maxPriorityFeePerGas
+            : maxFeeBaseFeeDiff
+          gasPrice = gasPrice.add(priorityFeePerGas)
+        }
+      }
+      if (gasPrice) {
+        setGasPrice(gasPrice?.toString())
       } else {
-        setGasPrice(finalTransaction.gasPrice?.toString())
+        setGasPrice(undefined)
       }
     }
   }, [block])
