@@ -54,62 +54,6 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Total Fee
-          </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {totalFeeInEth && ethUSDCPrice
-            ? `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} (${totalFeeInEth.toSignificant(4)} ETH)`
-            : '-'}
-        </TYPE.black>
-      </RowBetween>
-
-      <FeeRowBetween paddingLeft={20}>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Liquidity Provider
-          </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {realizedLPFee && realizedLPFeeInEth && ethUSDCPrice
-            ? `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} (${realizedLPFee.toSignificant(
-                4
-              )} ${realizedLPFee.currency && realizedLPFee.currency.symbol})`
-            : '-'}
-        </TYPE.black>
-      </FeeRowBetween>
-
-      <FeeRowBetween paddingLeft={20}>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Miner Tip
-          </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          <MinerTipPrice trade={trade} />
-        </TYPE.black>
-      </FeeRowBetween>
-
-      {eip1559 && baseFeeInEth && ethUSDCPrice ? (
-        <FeeRowBetween paddingLeft={20}>
-          <RowFixed marginRight={20}>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Base Fee
-            </TYPE.black>
-          </RowFixed>
-          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {`$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
-          </TYPE.black>
-        </FeeRowBetween>
-      ) : (
-        <></>
-      )}
-
-      <Divider />
-
-      <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Swap
           </TYPE.black>
         </RowFixed>
@@ -162,6 +106,60 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
           {(allowedSlippage / 100).toFixed(2)}%
         </TYPE.black>
       </RowBetween>
+      <Divider />
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Total Fee
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          {totalFeeInEth && ethUSDCPrice
+            ? `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} (${totalFeeInEth.toSignificant(4)} ETH)`
+            : '-'}
+        </TYPE.black>
+      </RowBetween>
+
+      <FeeRowBetween paddingLeft={20}>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Liquidity Provider
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          {realizedLPFee && realizedLPFeeInEth && ethUSDCPrice
+            ? `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} (${realizedLPFee.toSignificant(
+                4
+              )} ${realizedLPFee.currency && realizedLPFee.currency.symbol})`
+            : '-'}
+        </TYPE.black>
+      </FeeRowBetween>
+
+      <FeeRowBetween paddingLeft={20}>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Miner Tip
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          <MinerTipPrice trade={trade} />
+        </TYPE.black>
+      </FeeRowBetween>
+
+      {eip1559 && baseFeeInEth && ethUSDCPrice ? (
+        <FeeRowBetween paddingLeft={20}>
+          <RowFixed marginRight={20}>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Base Fee
+            </TYPE.black>
+          </RowFixed>
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            {`$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
+          </TYPE.black>
+        </FeeRowBetween>
+      ) : (
+        <></>
+      )}
     </AutoColumn>
   )
 }
