@@ -1,9 +1,5 @@
 import React from 'react'
-import { NavLink, Link } from 'react-router-dom'
-import { darken, rem } from 'polished'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAllTransactions } from '../../state/transactions/hooks'
 import Transactions from './transactions'
 
 const Container = styled.div<{ open?: boolean }>`
@@ -12,7 +8,6 @@ const Container = styled.div<{ open?: boolean }>`
   flex-direction: column;
   outline: transparent solid 2px;
   outline-offset: 2px;
-  /* z-index: var(--chakra-zIndices-modal); */
   max-height: 100vh;
   background: #2a3645;
   color: inherit;
@@ -25,7 +20,6 @@ const Container = styled.div<{ open?: boolean }>`
   bottom: 0px;
   transition: transform 0.25s ease;
   will-change: transform;
-  // transform: translateX(-100%);
   transform: translateX(0);
   overflow-y: scroll;
   z-index: 9999;
@@ -52,14 +46,11 @@ export interface SideBarProps {
 }
 
 export default function SideBar({ open }: SideBarProps) {
-  const allTransactions = useAllTransactions()
-  console.log('allTransactions', allTransactions)
   return (
     <Container open={open}>
       <Wrapper>
-        <Transactions transactions={allTransactions} />
+        <Transactions />
       </Wrapper>
     </Container>
   )
 }
-

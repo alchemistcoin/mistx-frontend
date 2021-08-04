@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled, { css } from 'styled-components'
-import { Info } from 'react-feather'
-import { TransactionDetails } from '../../state/transactions/reducer'
+import { useDispatch } from 'react-redux'
 import { Status } from '../../websocket'
+import { useActiveWeb3React } from '../../hooks'
 import { ButtonText } from '../../components/Button'
 import QuestionHelper from '../QuestionHelper'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import { clearCompletedTransactions } from '../../state/transactions/actions'
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -35,7 +37,6 @@ const StyledTransaction = styled.div`
 const StyledStatusWapper = styled.div`
   display: flex;
   align-items: center;
-  // justify-content: space-between;
   width: 100%;
   margin: 0 0 10px 0;
 
@@ -60,12 +61,12 @@ const StyledTransactionStatus = styled.div<{ success?: boolean; failed?: boolean
   ${props =>
     props.success &&
     css`
-      color: #4fc56a;
+      color: ${({ theme }) => theme.green1};
     `}
   ${props =>
     props.failed &&
     css`
-      color: #d25346;
+      color: ${({ theme }) => theme.red3};
     `}
 `
 
@@ -79,7 +80,7 @@ const StyledHeading = styled.div`
     width: auto;
     font-size: 15px;
   }
-  h4 {
+  h3 {
     margin: 0;
   }
   > * {
@@ -87,49 +88,59 @@ const StyledHeading = styled.div`
   }
 `
 
-export interface OverlayProps {
-  transactions: any
-}
+export default function Transactions() {
+  const dispatch = useDispatch()
+  const { chainId } = useActiveWeb3React()
+  const allTransactions = useAllTransactions()
 
-export default function Overlay({ transactions }: OverlayProps) {
-  const txs = Object.keys(transactions)
-    .map((key: string) => transactions[key])
+  const txs = Object.keys(allTransactions)
+    .map((key: string) => allTransactions[key])
     .sort((a, b) => {
+      if (!a.updatedAt || !b.updatedAt) return 0
       if (a.updatedAt > b.updatedAt) return -1
       if (a.updatedAt < b.updatedAt) return 1
       return 0
     })
-  console.log('txs', txs)
+
+  const clearAllTransactionsCallback = useCallback(() => {
+    if (chainId) dispatch(clearCompletedTransactions({ chainId }))
+  }, [dispatch, chainId])
+
   return (
     <StyledContainer>
       <StyledHeading>
-        <h4>Transactions</h4>
-        <ButtonText>clear</ButtonText>
+        <h3>Transactions</h3>
+        {txs && txs.length > 0 && <ButtonText onClick={clearAllTransactionsCallback}>clear</ButtonText>}
       </StyledHeading>
-      <StyledWrapper>
-        {txs.map((tx: any) => (
-          <StyledTransaction key={tx.hash}>
-            {tx.status === Status.SUCCESSFUL_BUNDLE && (
-              <StyledStatusWapper>
-                <StyledTransactionStatus success={true}>Success</StyledTransactionStatus>
-              </StyledStatusWapper>
-            )}
-            {tx.cancel && tx.cancel === 'CANCEL_BUNDLE_SUCCESSFUL' && (
-              <StyledStatusWapper>
-                <StyledTransactionStatus>Cancelled</StyledTransactionStatus>
-                <QuestionHelper text="Transaction cancelled for free" placement="top" />
-              </StyledStatusWapper>
-            )}
-            {tx.status === Status.FAILED_BUNDLE && !tx.cancel && (
-              <StyledStatusWapper>
-                <StyledTransactionStatus failed={true}>Failed</StyledTransactionStatus>
-                <QuestionHelper text={tx.message} placement="top" />
-              </StyledStatusWapper>
-            )}
-            <div>{tx.summary}</div>
-          </StyledTransaction>
-        ))}
-      </StyledWrapper>
+
+      {txs && txs.length ? (
+        <StyledWrapper>
+          {txs.map((tx: any) => (
+            <StyledTransaction key={tx.hash}>
+              {tx.status === Status.SUCCESSFUL_BUNDLE && (
+                <StyledStatusWapper>
+                  <StyledTransactionStatus success={true}>Success</StyledTransactionStatus>
+                </StyledStatusWapper>
+              )}
+              {tx.cancel && tx.cancel === Status.CANCEL_BUNDLE_SUCCESSFUL && (
+                <StyledStatusWapper>
+                  <StyledTransactionStatus>Cancelled</StyledTransactionStatus>
+                  <QuestionHelper text="Transaction cancelled for free" placement="top" />
+                </StyledStatusWapper>
+              )}
+              {tx.status === Status.FAILED_BUNDLE && !tx.cancel && (
+                <StyledStatusWapper>
+                  <StyledTransactionStatus failed={true}>Failed</StyledTransactionStatus>
+                  <QuestionHelper text={tx.message} placement="top" />
+                </StyledStatusWapper>
+              )}
+              <div>{tx.summary}</div>
+            </StyledTransaction>
+          ))}
+        </StyledWrapper>
+      ) : (
+        <div>No Transactions</div>
+      )}
     </StyledContainer>
   )
 }
