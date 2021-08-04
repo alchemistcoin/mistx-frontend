@@ -218,11 +218,17 @@ export default function SettingsTab() {
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
   const handleDismiss = () => {
-    if (stateBribeMargin !== userBribeMargin) {
+    setUserBribeMargin(stateBribeMargin)
+    setShowConfirmation(false)
+  }
+  const handleToggle = () => {
+    if (open) {
+      toggle()
+    } else {
       setUserBribeMargin(stateBribeMargin)
-      setShowConfirmation(false)
     }
   }
+  useOnClickOutside(node, handleToggle)
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
