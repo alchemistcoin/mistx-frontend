@@ -8,6 +8,8 @@ import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { updateFeeDisplayCurrency } from '../../state/user/actions'
+import { useUserBribeMargin } from '../../state/user/hooks'
+import { TipSettingsSteps, tipSettingToValue, tipValueToSetting } from '../../state/user/reducer'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
 import {
   useExpertModeManager,
@@ -194,10 +196,14 @@ export default function SettingsTab() {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
-
+  const [userBribeMargin, setUserBribeMargin] = useUserBribeMargin()
+  const [stateBribeMargin, setStateBribeMargin] = useState<number>(userBribeMargin)
   const theme = useContext(ThemeContext)
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
 
+  const onTipChange = (setting: number) => {
+    setStateBribeMargin(tipSettingToValue(setting))
+  }
   const [ttl, setTtl] = useUserTransactionTTL()
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
@@ -211,11 +217,18 @@ export default function SettingsTab() {
 
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
+  const handleDismiss = () => {
+    if (stateBribeMargin != userBribeMargin) {
+      setUserBribeMargin(stateBribeMargin)
+      setShowConfirmation(false)
+    }
+  }
+
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
     <>
       <StyledMenu>
-        <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
+        <Modal isOpen={showConfirmation} onDismiss={handleDismiss} maxHeight={100}>
           <ModalContentWrapper>
             <AutoColumn gap="lg">
               <RowBetween style={{ padding: '0 2rem' }}>
@@ -288,7 +301,11 @@ export default function SettingsTab() {
                   </SettingsHeaderEnd>
                 </SettingsHeader>
               </StyledRowFixed>
-              <MinerBribeSlider />
+              <MinerBribeSlider
+                value={tipValueToSetting(stateBribeMargin)}
+                steps={TipSettingsSteps}
+                onChange={onTipChange}
+              />
             </SettingWrapper>
             <SettingWrapper darkBg>
               <SettingsHeader>
