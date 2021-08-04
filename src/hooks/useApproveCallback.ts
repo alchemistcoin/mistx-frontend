@@ -8,6 +8,8 @@ import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
+import useBaseFeePerGas from './useBaseFeePerGas'
+import useIsEIP1559 from './useIsEIP1559'
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { keccak256 } from '@ethersproject/keccak256'
 import { ethers } from 'ethers'
@@ -34,7 +36,8 @@ export function useApproveCallback(
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
-
+  const baseFeePerGas = useBaseFeePerGas()
+  const eip1559 = useIsEIP1559()
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
@@ -122,7 +125,14 @@ export function useApproveCallback(
         amountToApprove.quotient.toString(),
         {
           nonce: nonce,
-          gasLimit: calculateGasMargin(estimatedGas) //needed?
+          gasLimit: calculateGasMargin(estimatedGas), //needed?
+          ...(eip1559
+            ? {
+                type: 2,
+                maxFeePerGas: baseFeePerGas,
+                maxPriorityFeePerGas: '0x0'
+              }
+            : {})
         }
       )
       populatedTx.chainId = chainId
@@ -169,7 +179,7 @@ export function useApproveCallback(
       }
       throw error
     }
-  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, baseFeePerGas, eip1559])
 
   return [approvalState, approve]
 }

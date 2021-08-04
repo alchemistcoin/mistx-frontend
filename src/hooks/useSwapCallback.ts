@@ -15,6 +15,8 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
+import useBaseFeePerGas from './useBaseFeePerGas'
+import useIsEIP1559 from './useIsEIP1559'
 import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
 
 export enum SwapCallbackState {
@@ -43,7 +45,8 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-
+  const baseFeePerGas = useBaseFeePerGas()
+  const eip1559 = useIsEIP1559()
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -97,12 +100,18 @@ export function useSwapCallback(
               //modify nonce if we also have an approval
               nonce: nonce,
               gasLimit: calculateGasMargin(BigNumber.from(500000)),
+              ...(eip1559
+                ? {
+                    type: 2,
+                    maxFeePerGas: baseFeePerGas,
+                    maxPriorityFeePerGas: '0x0'
+                  }
+                : {}),
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
 
             //delete for serialize necessary
             populatedTx.chainId = chainId
-
             // HANDLE METAMASK
             // MetaMask does not support eth_signTransaction so we must use eth_sign as a workaround.
             // For other wallets, use eth_signTransaction
@@ -122,7 +131,7 @@ export function useSwapCallback(
                   ...populatedTx,
                   gas: populatedTx.gasLimit?.toHexString(),
                   gasLimit: populatedTx.gasLimit?.toHexString(),
-                  gasPrice: '0x0',
+                  ...(!eip1559 ? { gasPrice: '0x0' } : {}),
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ]
@@ -234,5 +243,17 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCall, approve, addTransaction])
+  }, [
+    trade,
+    library,
+    account,
+    chainId,
+    recipient,
+    recipientAddressOrName,
+    swapCall,
+    approve,
+    addTransaction,
+    baseFeePerGas,
+    eip1559
+  ])
 }

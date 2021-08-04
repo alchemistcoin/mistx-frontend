@@ -1,5 +1,6 @@
 import { currencyEquals, Trade, Currency, TradeType, WETH } from '@alchemist-coin/mistx-core'
 import React, { useCallback, useMemo } from 'react'
+import { useActiveWeb3React } from '../../hooks'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
   TransactionErrorContent
@@ -51,13 +52,14 @@ export default function ConfirmSwapModal({
   swapErrorMessage: string | undefined
   onDismiss: () => void
 }) {
+  const { chainId } = useActiveWeb3React()
   const showAcceptChanges = useMemo(
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),
     [originalTrade, trade]
   )
 
   // ETH/USDC Price
-  const ethUSDCPrice = useUSDCPrice(WETH[1])
+  const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
 
   const modalHeader = useCallback(() => {
     return trade ? (
