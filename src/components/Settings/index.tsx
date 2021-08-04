@@ -200,7 +200,7 @@ export default function SettingsTab() {
   const [stateBribeMargin, setStateBribeMargin] = useState<number>(userBribeMargin)
   const theme = useContext(ThemeContext)
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
-  
+
   const onTipChange = (setting: number) => {
     setStateBribeMargin(tipSettingToValue(setting))
   }
