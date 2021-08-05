@@ -65,12 +65,9 @@ export default function Popups() {
       </FixedPopupColumn>
       <MobilePopupWrapper height={activePopups?.length > 0 ? 'fit-content' : 0}>
         <MobilePopupInner>
-          {activePopups // reverse so new items up front
-            .slice(0)
-            .reverse()
-            .map(item => (
-              <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
-            ))}
+          {activePopups.map(item => (
+            <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
+          ))}
         </MobilePopupInner>
       </MobilePopupWrapper>
     </>
