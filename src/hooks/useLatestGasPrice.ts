@@ -12,18 +12,18 @@ export default function useLatestGasPrice(): BigNumber | undefined {
     } else {
       // final tx of block
       const tx = block.transactions[block.transactions.length - 1]
+      const blockBaseFee = block.baseFeePerGas ? BigNumber.from(block.baseFeePerGas) : undefined
       let gasPrice: BigNumber | undefined
       if (!tx) {
         gasPrice = undefined
       } else if (!tx.type || tx.type < 2) {
-        gasPrice = tx.gasPrice
-      } else if (tx.type && tx.type > 1 && block.baseFeePerGas) {
-        gasPrice = block.baseFeePerGas
+        gasPrice = BigNumber.from(tx.gasPrice)
+      } else if (tx.type && tx.type > 1 && blockBaseFee) {
+        gasPrice = blockBaseFee
         if (tx.maxFeePerGas && tx.maxPriorityFeePerGas) {
-          console.log('maxPriorityFeePerGas', tx, tx.maxPriorityFeePerGas, tx.maxFeePerGas, block.baseFeePerGas)
           const mfpg = BigNumber.from(tx.maxFeePerGas)
           const mpfpg = BigNumber.from(tx.maxPriorityFeePerGas)
-          const maxFeeBaseFeeDiff = mfpg.sub(block.baseFeePerGas)
+          const maxFeeBaseFeeDiff = mfpg.sub(blockBaseFee)
           const priorityFeePerGas = mpfpg.lt(maxFeeBaseFeeDiff) ? mpfpg : maxFeeBaseFeeDiff
           if (priorityFeePerGas) {
             gasPrice = gasPrice.add(priorityFeePerGas)
@@ -31,6 +31,9 @@ export default function useLatestGasPrice(): BigNumber | undefined {
         }
       }
       if (gasPrice) {
+        // if (blockBaseFee) {
+        //   gasPrice = gasPrice.add(1).sub(blockBaseFee)
+        // }
         setGasPrice(gasPrice?.toString())
       } else {
         setGasPrice(undefined)
