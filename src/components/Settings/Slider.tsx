@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'
 import { Range, getTrackBackground } from 'react-range'
 import { ThemeContext } from 'styled-components'
 import MinerBribePrice from './MinerTipPrice'
-
+import { tipSettingToValue } from '../../state/user/reducer'
 type Props = {
   max: number
   min: number
@@ -206,7 +206,7 @@ const Slider = ({ max, min, onChange, value, step, name }: Props) => {
                   borderRight: '8px solid transparent'
                 }}
               />
-              <MinerBribePrice />
+              <MinerBribePrice customTipMargin={tipSettingToValue(value)} />
             </div>
             <div
               style={{
