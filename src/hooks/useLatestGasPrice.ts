@@ -17,14 +17,16 @@ export default function useLatestGasPrice(): BigNumber | undefined {
         gasPrice = undefined
       } else if (!tx.type || tx.type < 2) {
         gasPrice = tx.gasPrice
-      } else if (tx.type && tx.type > 1 && block.baseFeePerGas && tx.maxFeePerGas) {
+      } else if (tx.type && tx.type > 1 && block.baseFeePerGas) {
         gasPrice = block.baseFeePerGas
-        if (tx.maxPriorityFeePerGas) {
-          const maxFeeBaseFeeDiff = tx.maxFeePerGas.sub(block.baseFeePerGas)
-          const priorityFeePerGas = tx.maxPriorityFeePerGas.lt(maxFeeBaseFeeDiff)
+        if (tx.maxFeePerGas && tx.maxPriorityFeePerGas) {
+          const maxFeeBaseFeeDiff = tx.maxFeePerGas?.sub(block.baseFeePerGas)
+          const priorityFeePerGas = tx.maxPriorityFeePerGas?.lt(maxFeeBaseFeeDiff)
             ? tx.maxPriorityFeePerGas
             : maxFeeBaseFeeDiff
-          gasPrice = gasPrice.add(priorityFeePerGas)
+          if (priorityFeePerGas) {
+            gasPrice = gasPrice.add(priorityFeePerGas)
+          }
         }
       }
       if (gasPrice) {
