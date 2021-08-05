@@ -210,6 +210,15 @@ export function useDerivedSwapInfo(): {
         : bestTradeExactOutSushi
     }
   }
+  let baseFeeInEth: CurrencyAmount<Currency> | undefined
+  if (eip1559 && baseFeePerGas && v2Trade) {
+    baseFeeInEth = CurrencyAmount.fromRawAmount(
+      WETH[chainId || 1],
+      BigNumber.from(v2Trade?.estimatedGas)
+        .mul(baseFeePerGas)
+        .toString()
+    )
+  }
 
   //from here on we already set the right exchange for the trade - just need to set the router contract
   const currencyBalances = {
@@ -258,8 +267,17 @@ export function useDerivedSwapInfo(): {
     slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null
   ]
 
-  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    inputError = 'Insufficient ' + amountIn.currency.symbol + ' balance'
+  let requiredAmountIn = amountIn
+  if (baseFeeInEth && requiredAmountIn && requiredAmountIn.currency.symbol === `ETH`) {
+    requiredAmountIn = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId || 1),
+      BigNumber.from(requiredAmountIn.quotient.toString())
+        .add(baseFeeInEth.quotient.toString())
+        .toString()
+    )
+  }
+  if (balanceIn && requiredAmountIn && balanceIn.lessThan(requiredAmountIn)) {
+    inputError = 'Insufficient ' + requiredAmountIn.currency.symbol + ' balance'
   }
 
   // check if input amount is too low
@@ -290,12 +308,6 @@ export function useDerivedSwapInfo(): {
   if (ethTrade !== undefined && (!ethTrade || (ethOutTrade && eip1559))) {
     // after eip 1559 the user eth balance must cover the base fee
     if (eip1559 && baseFeePerGas && requiredEthBalance) {
-      const baseFeeInEth = CurrencyAmount.fromRawAmount(
-        WETH[chainId || 1],
-        BigNumber.from(v2Trade?.estimatedGas)
-          .mul(baseFeePerGas)
-          .toString()
-      )
       requiredEthBalance = baseFeeInEth
     }
     // For Token -> Token trades the user eth balance must cover the tip/bribe

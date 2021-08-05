@@ -45,7 +45,6 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import { LinkStyledButton } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import SwapFooter from '../../components/swap/SwapFooter'
-import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -237,19 +236,18 @@ export default function Swap({ history }: RouteComponentProps) {
     //transactionTTL
   )
 
-  const [typeInputValue, handleTypeInput] = useDebouncedChangeHandler(
-    formattedAmounts[Field.INPUT],
+  const handleTypeInput = useCallback(
     (value: string) => {
       onUserInput(Field.INPUT, value)
     },
-    500
+    [onUserInput]
   )
-  const [typeOutputValue, handleTypeOutput] = useDebouncedChangeHandler(
-    formattedAmounts[Field.OUTPUT],
+
+  const handleTypeOutput = useCallback(
     (value: string) => {
       onUserInput(Field.OUTPUT, value)
     },
-    500
+    [onUserInput]
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
@@ -401,7 +399,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <InputWrapper>
                 {currencies[Field.INPUT] ? (
                   <CurrencyInputPanel
-                    value={typeInputValue}
+                    value={formattedAmounts[Field.INPUT]}
                     showMaxButton={!atMaxAmountInput}
                     currency={currencies[Field.INPUT]}
                     onUserInput={handleTypeInput}
@@ -439,7 +437,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 <OutputWrapper>
                   <RelativeWrapper>
                     <CurrencyInputPanel
-                      value={typeOutputValue}
+                      value={formattedAmounts[Field.OUTPUT]}
                       onUserInput={handleTypeOutput}
                       showMaxButton={false}
                       currency={currencies[Field.OUTPUT]}
