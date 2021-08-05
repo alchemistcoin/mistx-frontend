@@ -46,7 +46,6 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
 
   useEffect(() => {
     if (gasPrices.length) {
-      console.log('gas prices', gasPrices)
       let total = BigNumber.from(0x0)
       gasPrices.forEach(price => {
         total = total.add(BigNumber.from(price))
@@ -57,7 +56,6 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
 
   return useMemo(() => {
     if (!gasPrice) return undefined
-    console.log('gasPrice', gasPrice)
     return BigNumber.from(gasPrice)
   }, [gasPrice])
 }
