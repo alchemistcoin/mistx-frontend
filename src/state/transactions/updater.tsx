@@ -28,7 +28,7 @@ export function shouldCheck(
 }
 
 function isLegacyTransaction(transaction: any): boolean {
-  if (transaction.processed && transaction.processed.serializedSwap) return true
+  if (transaction.processed && (transaction.processed.serializedSwap || transaction.processed.serialized)) return true
   return false
 }
 
