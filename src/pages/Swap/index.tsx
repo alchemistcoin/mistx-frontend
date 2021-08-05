@@ -303,6 +303,7 @@ export default function Swap({ history }: RouteComponentProps) {
   )
 
   const handleMaxInput = useCallback(() => {
+    console.log('max amount input', maxAmountInput?.toExact())
     maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.toExact())
   }, [maxAmountInput, onUserInput])
 
