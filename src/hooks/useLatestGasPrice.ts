@@ -20,10 +20,11 @@ export default function useLatestGasPrice(): BigNumber | undefined {
       } else if (tx.type && tx.type > 1 && block.baseFeePerGas) {
         gasPrice = block.baseFeePerGas
         if (tx.maxFeePerGas && tx.maxPriorityFeePerGas) {
-          const maxFeeBaseFeeDiff = tx.maxFeePerGas?.sub(block.baseFeePerGas)
-          const priorityFeePerGas = tx.maxPriorityFeePerGas?.lt(maxFeeBaseFeeDiff)
-            ? tx.maxPriorityFeePerGas
-            : maxFeeBaseFeeDiff
+          console.log('maxPriorityFeePerGas', tx, tx.maxPriorityFeePerGas, tx.maxFeePerGas, block.baseFeePerGas)
+          const mfpg = BigNumber.from(tx.maxFeePerGas)
+          const mpfpg = BigNumber.from(tx.maxPriorityFeePerGas)
+          const maxFeeBaseFeeDiff = mfpg.sub(block.baseFeePerGas)
+          const priorityFeePerGas = mpfpg.lt(maxFeeBaseFeeDiff) ? mpfpg : maxFeeBaseFeeDiff
           if (priorityFeePerGas) {
             gasPrice = gasPrice.add(priorityFeePerGas)
           }
