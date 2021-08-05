@@ -123,9 +123,9 @@ export function useSideBarOpen(): any {
         hide_default_launcher: !sideBarOpen
       })
     }
-  }, [dispatch])
+  }, [dispatch, sideBarOpen])
 
-  return useMemo(() => ({ sideBarOpen, toggleSideBar }), [sideBarOpen])
+  return useMemo(() => ({ sideBarOpen, toggleSideBar }), [sideBarOpen, toggleSideBar])
 }
 
 // AppState['application']['sideBarOpen']
