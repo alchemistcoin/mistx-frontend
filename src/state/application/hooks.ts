@@ -9,7 +9,8 @@ import {
   PopupContent,
   removePopup,
   setOpenModal,
-  updateNewAppVersionAvailable
+  updateNewAppVersionAvailable,
+  toggleSideBar as toggleSideBarAction
 } from './actions'
 
 export function useBlockNumber(): number | undefined {
@@ -109,3 +110,42 @@ export function useNewAppVersionAvailable(): [boolean, (newAppVersionAvailable: 
 
   return [newAppVersionAvailable, setnewAppVersionAvailable]
 }
+
+export function useSideBarOpen(): any {
+  const dispatch = useDispatch()
+  const sideBarOpen = useSelector((state: AppState) => state.application.sideBarOpen)
+
+  const toggleSideBar = useCallback(() => {
+    dispatch(toggleSideBarAction())
+    if (window.Intercom) {
+      window.Intercom('hide')
+      window.Intercom('update', {
+        hide_default_launcher: !sideBarOpen
+      })
+    }
+  }, [dispatch])
+
+  return useMemo(() => ({ sideBarOpen, toggleSideBar }), [sideBarOpen])
+}
+
+// AppState['application']['sideBarOpen']
+
+// export function useToggleSidebar(): void {
+//   const dispatch = useDispatch<AppDispatch>()
+//   dispatch(toggleSideBar())
+//   if (window.Intercom) {
+//     window.Intercom('hide')
+//     window.Intercom('update', {
+//       hide_default_launcher: !sideBarOpen
+//     })
+
+// const toggleSideBar = () => {
+//   setSideBarOpen(!sideBarOpen)
+//   if (window.Intercom) {
+//     window.Intercom('hide')
+//     window.Intercom('update', {
+//       hide_default_launcher: !sideBarOpen
+//     })
+//   }
+// }
+//}

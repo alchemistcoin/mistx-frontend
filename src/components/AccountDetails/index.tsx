@@ -1,13 +1,8 @@
-import React, { useCallback, useContext } from 'react'
-import { useDispatch } from 'react-redux'
-import styled, { ThemeContext } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import { useActiveWeb3React } from '../../hooks'
-import { AppDispatch } from '../../state'
-import { clearCompletedTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from '../../utils'
-import { AutoRow } from '../Row'
 import Copy from './Copy'
-import Transaction from './Transaction'
 
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
@@ -18,9 +13,10 @@ import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import PortisIcon from '../../assets/images/portisIcon.png'
 import Identicon from '../Identicon'
-import { ButtonPrimary2Outlined } from '../Button'
+import { ButtonPrimary2Outlined, ButtonOutlined } from '../Button'
 import { ExternalLink as LinkIcon } from 'react-feather'
-import { ExternalLink, LinkStyledButton, TYPE } from '../../theme'
+import { ExternalLink } from '../../theme'
+import { useSideBarOpen } from '../../state/application/hooks'
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -178,10 +174,6 @@ const IconWrapper = styled.div<{ size?: number }>`
   `};
 `
 
-const TransactionListWrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap};
-`
-
 const WalletAction = styled(ButtonPrimary2Outlined)`
   width: fit-content;
   font-weight: 400;
@@ -199,45 +191,34 @@ const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
 `
 
-const EmptyResults = styled.div`
-  color: ${({ theme }) => theme.text3};
-  font-size: 0.825rem;
-  font-weight: 500;
+const TransactionsButton = styled(ButtonOutlined)`
+  width: auto;
+  padding: 8px 16px;
 `
 
-function renderTransactions(transactions: string[]) {
-  return (
-    <TransactionListWrapper>
-      {!!transactions.length ? (
-        transactions.map((hash, i) => {
-          return <Transaction key={i} hash={hash} />
-        })
-      ) : (
-        <EmptyResults>Nothing here yet</EmptyResults>
-      )}
-    </TransactionListWrapper>
-  )
-}
+// function renderTransactions(transactions: string[]) {
+//   return (
+//     <TransactionListWrapper>
+//       {!!transactions.length ? (
+//         transactions.map((hash, i) => {
+//           return <Transaction key={i} hash={hash} />
+//         })
+//       ) : (
+//         <EmptyResults>Nothing here yet</EmptyResults>
+//       )}
+//     </TransactionListWrapper>
+//   )
+// }
 
 interface AccountDetailsProps {
   toggleWalletModal: () => void
-  pendingTransactions: string[]
-  confirmedTransactions: string[]
   ENSName?: string
   openOptions: () => void
 }
 
-export default function AccountDetails({
-  toggleWalletModal,
-  pendingTransactions,
-  confirmedTransactions,
-  ENSName,
-  openOptions
-}: AccountDetailsProps) {
+export default function AccountDetails({ toggleWalletModal, ENSName, openOptions }: AccountDetailsProps) {
   const { chainId, account, connector, deactivate } = useActiveWeb3React()
-  const theme = useContext(ThemeContext)
-  const dispatch = useDispatch<AppDispatch>()
-
+  const { toggleSideBar } = useSideBarOpen()
   function formatConnectorName() {
     const { ethereum } = window
     const isMetaMask = !!(ethereum && ethereum.isMetaMask)
@@ -293,10 +274,6 @@ export default function AccountDetails({
     }
     return null
   }
-
-  const clearAllTransactionsCallback = useCallback(() => {
-    if (chainId) dispatch(clearCompletedTransactions({ chainId }))
-  }, [dispatch, chainId])
 
   return (
     <>
@@ -412,7 +389,10 @@ export default function AccountDetails({
           </YourAccount>
         </AccountSection>
       </UpperSection>
-      {!!pendingTransactions.length || !!confirmedTransactions.length ? (
+      <LowerSection>
+        <TransactionsButton onClick={toggleSideBar}>View Transactions</TransactionsButton>
+      </LowerSection>
+      {/* {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
           <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
             <TYPE.body>Pending Transactions</TYPE.body>
@@ -427,8 +407,9 @@ export default function AccountDetails({
       ) : (
         <LowerSection>
           <TYPE.body color={theme.text1}>Your transactions will appear here...</TYPE.body>
+          <TransactionsButton>View Transactions</TransactionsButton>
         </LowerSection>
-      )}
+      )} */}
     </>
   )
 }

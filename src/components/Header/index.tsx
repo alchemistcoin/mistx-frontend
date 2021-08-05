@@ -11,7 +11,7 @@ import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { ButtonIcon } from '../../components/Button'
-// import AlchemistMenu from './AlchemistMenu'
+import { useSideBarOpen } from '../../state/application/hooks'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -246,12 +246,13 @@ export const SocialLink = styled(ExternalLink)`
   }
 `
 
-export interface HeaderProps {
-  toggleSideBar: any
-}
+// export interface HeaderProps {
+//   toggleSideBar: any
+// }
 
-export default function Header({ toggleSideBar }: HeaderProps) {
+export default function Header() {
   const { t } = useTranslation()
+  const { toggleSideBar } = useSideBarOpen()
   return (
     <HeaderFrame>
       <HideLarge>
@@ -268,14 +269,10 @@ export default function Header({ toggleSideBar }: HeaderProps) {
               <AlchemistLogo />
             </Link>
           </MistLogoWrapper>
-          {/* <AlchemistMenu /> */}
-          {/* <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
-            {t('exchange')}
-          </StyledNavLink> */}
-          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://crucible.alchemist.wtf'}>
             Crucible <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
-          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://copperlaunch.com'}>
             Copper <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>

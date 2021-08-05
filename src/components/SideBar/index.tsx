@@ -5,6 +5,7 @@ import Transactions from './transactions'
 import { useActiveWeb3React } from '../../hooks'
 import { StyledHeading } from './styled'
 import { CloseIcon } from '../../theme'
+import { useSideBarOpen } from '../../state/application/hooks'
 
 const Container = styled.div<{ open?: boolean }>`
   position: fixed;
@@ -61,10 +62,11 @@ export interface SideBarProps {
   toggleSideBar: any
 }
 
-export default function SideBar({ open, toggleSideBar }: SideBarProps) {
+export default function SideBar() {
   const { chainId, account } = useActiveWeb3React()
+  const { toggleSideBar, sideBarOpen } = useSideBarOpen()
   return (
-    <Container open={open}>
+    <Container open={sideBarOpen}>
       <Wrapper>
         <StyledClose>
           <CloseIcon onClick={toggleSideBar} />

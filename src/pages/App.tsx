@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react'
+import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
@@ -65,27 +65,30 @@ const ConnectionsWrapper = styled.div`
 `
 
 export default function App() {
-  const [sideBarOpen, setSideBarOpen] = useState<boolean>(false)
+  // const [sideBarOpen, setSideBarOpen] = useState<boolean>(false)
 
-  const toggleSideBar = () => {
-    setSideBarOpen(!sideBarOpen)
-    if (window.Intercom) {
-      window.Intercom('update', {
-        hide_default_launcher: !sideBarOpen
-      })
-    }
-  }
+  // const { sideBarOpen } = useSideBarOpen()
+
+  // const toggleSideBar = () => {
+  //   setSideBarOpen(!sideBarOpen)
+  //   if (window.Intercom) {
+  //     window.Intercom('hide')
+  //     window.Intercom('update', {
+  //       hide_default_launcher: !sideBarOpen
+  //     })
+  //   }
+  // }
 
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
-      <Overlay open={sideBarOpen} toggleSideBar={toggleSideBar} />
+      <Overlay />
       <AppWrapper>
         {/* <URLWarning /> */}
-        <SideBar open={sideBarOpen} toggleSideBar={toggleSideBar} />
+        <SideBar />
         <HeaderWrapper>
-          <Header toggleSideBar={toggleSideBar} />
+          <Header />
         </HeaderWrapper>
         <BodyWrapper>
           <ConnectionsWrapper>

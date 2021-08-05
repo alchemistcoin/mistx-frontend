@@ -1,5 +1,6 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
+import { useSideBarOpen } from '../../state/application/hooks'
 
 const StyledOverlay = styled.div<{ open?: boolean }>`
   position: absolute;
@@ -24,11 +25,12 @@ const StyledOverlay = styled.div<{ open?: boolean }>`
       : ``};
 `
 
-export interface OverlayProps {
-  toggleSideBar: () => void
-  open: boolean
-}
+// export interface OverlayProps {
+//   // toggleSideBar: () => void
+//   //open: boolean
+// }
 
-export default function Overlay({ open, toggleSideBar }: OverlayProps) {
-  return <StyledOverlay open={open} onClick={toggleSideBar} />
+export default function Overlay() {
+  const { sideBarOpen, toggleSideBar } = useSideBarOpen()
+  return <StyledOverlay open={sideBarOpen} onClick={toggleSideBar} />
 }
