@@ -7,10 +7,11 @@ import { ButtonText } from '../../components/Button'
 import QuestionHelper from '../QuestionHelper'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { clearCompletedTransactions } from '../../state/transactions/actions'
+import {StyledHeading} from './styled'
 
 const StyledContainer = styled.div`
   width: 100%;
-  padding: 0 20px;
+  padding: 0;
   display: flex;
   flex-direction: column;
 `
@@ -68,24 +69,6 @@ const StyledTransactionStatus = styled.div<{ success?: boolean; failed?: boolean
     css`
       color: ${({ theme }) => theme.red3};
     `}
-`
-
-const StyledHeading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 0 10px 0;
-
-  button {
-    width: auto;
-    font-size: 15px;
-  }
-  h3 {
-    margin: 0;
-  }
-  > * {
-    display: flex;
-  }
 `
 
 export default function Transactions() {

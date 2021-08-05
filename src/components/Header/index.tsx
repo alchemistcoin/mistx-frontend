@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -122,49 +122,49 @@ const HideLarge = styled.div`
 
 const activeClassName = 'ACTIVE'
 
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.secondaryText1};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 2.5rem 0 0;
-  font-weight: 500;
-  position: relative;
+// const StyledNavLink = styled(NavLink).attrs({
+//   activeClassName
+// })`
+//   ${({ theme }) => theme.flexRowNoWrap}
+//   align-items: left;
+//   border-radius: 3rem;
+//   outline: none;
+//   cursor: pointer;
+//   text-decoration: none;
+//   color: ${({ theme }) => theme.secondaryText1};
+//   font-size: 1rem;
+//   width: fit-content;
+//   margin: 0 2.5rem 0 0;
+//   font-weight: 500;
+//   position: relative;
 
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 700;
-    color: ${({ theme }) => theme.text1};
+//   &.${activeClassName} {
+//     border-radius: 12px;
+//     font-weight: 700;
+//     color: ${({ theme }) => theme.text1};
 
-    &:after {
-      content: '';
-      width: ${rem(35)};
-      height: ${rem(4)};
-      bottom: -${rem(15)};
-      left: 0;
-      position: absolute;
-      background: ${({ theme }) => theme.secondaryText1};
-      border-radius: 1rem;
+//     &:after {
+//       content: '';
+//       width: ${rem(35)};
+//       height: ${rem(4)};
+//       bottom: -${rem(15)};
+//       left: 0;
+//       position: absolute;
+//       background: ${({ theme }) => theme.secondaryText1};
+//       border-radius: 1rem;
 
-      :hover,
-      :focus {
-        color: ${({ theme }) => darken(0.1, theme.secondaryText1)};
-      }
-    }
-  }
+//       :hover,
+//       :focus {
+//         color: ${({ theme }) => darken(0.1, theme.secondaryText1)};
+//       }
+//     }
+//   }
 
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-`
+//   :hover,
+//   :focus {
+//     color: ${({ theme }) => darken(0.1, theme.text1)};
+//   }
+// `
 
 const StyledExternalLink = styled(ExternalLink).attrs({
   activeClassName
@@ -264,14 +264,22 @@ export default function Header({ toggleSideBar }: HeaderProps) {
       <HeaderRow align="start">
         <HeaderLinks>
           <MistLogoWrapper>
-            <AlchemistLogo />
+            <Link to="/" title={t('mistx')}>
+              <AlchemistLogo />
+            </Link>
           </MistLogoWrapper>
           {/* <AlchemistMenu /> */}
-          <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
+          {/* <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
             {t('exchange')}
-          </StyledNavLink>
+          </StyledNavLink> */}
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
-            Sandwiched.wtf <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+            Crucible <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+          </StyledExternalLink>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
+            Copper <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+          </StyledExternalLink>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
+            Sandwiched <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>

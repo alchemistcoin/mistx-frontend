@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Field } from '../../state/swap/actions'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
+import { useMistBalance } from '../../state/wallet/hooks'
 import { useAlchmeistToken } from '../../state/lists/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { useSwapActionHandlers } from '../../state/swap/hooks'
@@ -73,16 +73,8 @@ const MistBalance = () => {
   const { account } = useActiveWeb3React()
   const { onCurrencySelection } = useSwapActionHandlers()
   const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
-  const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
-  const mistBalance = balance?.greaterThan('1')
-    ? balance?.greaterThan('100')
-      ? balance?.toFixed(0) // ex. 100
-      : balance?.greaterThan('10')
-      ? balance?.toFixed(1) // ex. 11.0
-      : balance?.toFixed(2) // ex. 1.00
-    : balance?.toSignificant(2) // ex. .00012
+  const mistBalance = useMistBalance()
   const handleOutputSelect = () => onCurrencySelection(Field.OUTPUT, alchemistToken.token)
-  if (!account) return null
   return (
     <Container>
       <Wrapper onClick={handleOutputSelect}>
