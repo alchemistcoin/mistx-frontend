@@ -7,7 +7,7 @@ import { ButtonText } from '../../components/Button'
 import QuestionHelper from '../QuestionHelper'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { clearCompletedTransactions } from '../../state/transactions/actions'
-import {StyledHeading} from './styled'
+import { StyledHeading } from './styled'
 
 const StyledContainer = styled.div`
   width: 100%;
