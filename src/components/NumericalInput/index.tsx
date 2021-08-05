@@ -50,7 +50,7 @@ const StyledInput = styled.input<{
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
 export const Input = React.memo(function InnerInput({
-  value,
+  value: valueProp,
   onUserInput,
   placeholder,
   ...rest
@@ -62,24 +62,23 @@ export const Input = React.memo(function InnerInput({
   fontWeight?: string
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
-  const enforcer = useCallback(
+  const handleChange = useCallback(
     (nextUserInput: string) => {
-      if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-        onUserInput(nextUserInput)
-      }
+      onUserInput(nextUserInput)
     },
     [onUserInput]
   )
 
-  const [defaultValue, onChange] = useDebouncedChangeHandler(`${value}`, enforcer, 400)
+  const [value, onChange] = useDebouncedChangeHandler(`${valueProp}`, handleChange, 350)
 
   return (
     <StyledInput
       {...rest}
-      defaultValue={defaultValue}
+      value={value}
       onChange={event => {
         // replace commas with periods, because uniswap exclusively uses period as the decimal separator
-        onChange(event.target.value.replace(/,/g, '.'))
+        const v = event.target.value.replace(/,/g, '.')
+        if (v === '' || inputRegex.test(escapeRegExp(v))) onChange(v)
       }}
       // universal input options
       inputMode="decimal"
@@ -99,5 +98,3 @@ export const Input = React.memo(function InnerInput({
 })
 
 export default Input
-
-// const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
