@@ -33,7 +33,7 @@ const MobilePopupInner = styled.div`
 
 const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
   position: fixed;
-  top: ${({ extraPadding }) => (extraPadding ? '145px' : '135px')};
+  top: ${({ extraPadding }) => (extraPadding ? '171px' : '135px')};
   right: 1rem;
   max-width: 380px !important;
   width: 100%;
@@ -54,7 +54,7 @@ export default function Popups() {
   const activePopups = useActivePopups()
 
   const urlWarningActive = useURLWarningVisible()
-
+  console.log('activePopups', activePopups)
   return (
     <>
       <FixedPopupColumn gap="20px" extraPadding={urlWarningActive}>
