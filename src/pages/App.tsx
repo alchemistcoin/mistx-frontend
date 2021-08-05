@@ -69,6 +69,11 @@ export default function App() {
 
   const toggleSideBar = () => {
     setSideBarOpen(!sideBarOpen)
+    if (window.Intercom) {
+      window.Intercom('update', {
+        hide_default_launcher: !sideBarOpen
+      })
+    }
   }
 
   return (

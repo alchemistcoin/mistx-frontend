@@ -75,6 +75,7 @@ const MistBalance = () => {
   const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
   const mistBalance = useMistBalance()
   const handleOutputSelect = () => onCurrencySelection(Field.OUTPUT, alchemistToken.token)
+  if (!account) return null
   return (
     <Container>
       <Wrapper onClick={handleOutputSelect}>

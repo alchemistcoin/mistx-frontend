@@ -132,11 +132,12 @@ export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<
   return balances ?? {}
 }
 
-export function useMistBalance(): any {
+export function useMistBalance(long?: boolean): any {
   const { account } = useActiveWeb3React()
   const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
   const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
   if (!account) return 0
+  if (long) return balance?.greaterThan('1') ? balance?.toFixed(4) : balance?.toFixed(0)
   const mistBalance = balance?.greaterThan('1')
     ? balance?.greaterThan('100')
       ? balance?.toFixed(0) // ex. 100

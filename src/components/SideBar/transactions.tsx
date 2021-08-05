@@ -14,6 +14,7 @@ const StyledContainer = styled.div`
   padding: 0;
   display: flex;
   flex-direction: column;
+  margin-top: 30px;
 `
 
 const StyledWrapper = styled.div`
@@ -23,7 +24,7 @@ const StyledWrapper = styled.div`
   padding: 20px;
   background: rgb(255 255 255 / 5%);
   border-radius: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 `
 
 const StyledTransaction = styled.div`
@@ -54,7 +55,7 @@ const StyledStatusWapper = styled.div`
 
 const StyledTransactionStatus = styled.div<{ success?: boolean; failed?: boolean }>`
   display: flex;
-  padding: 4px 8px;
+  padding: 2px 8px;
   font-weight: 500;
   font-size: 15px;
   border-radius: 12px;

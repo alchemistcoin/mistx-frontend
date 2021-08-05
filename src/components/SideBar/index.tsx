@@ -1,7 +1,8 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
+import Balance from './Balance'
 import Transactions from './transactions'
-import { useMistBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks'
 import { StyledHeading } from './styled'
 import { CloseIcon } from '../../theme'
 
@@ -14,7 +15,7 @@ const Container = styled.div<{ open?: boolean }>`
   max-height: 100vh;
   background: #2a3645;
   color: inherit;
-  width: 320px;
+  width: 340px;
   left: 100%;
   top: 0px;
   bottom: 0px;
@@ -38,34 +39,40 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  padding: 20px;
+  padding: 40px 20px 20px;
+
+  p {
+    margin-top: 0;
+  }
 `
 
-const StyledBalanceWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledClose = styled.div`
   width: 100%;
-  padding: 20px;
-  background: rgb(255 255 255 / 5%);
-  border-radius: 18px;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+  svg {
+    display: flex;
+    position: relative;
+    top: 10px;
+  }
 `
-
 export interface SideBarProps {
   open: boolean
   toggleSideBar: any
 }
 
 export default function SideBar({ open, toggleSideBar }: SideBarProps) {
-  const mistBalance = useMistBalance()
+  const { chainId, account } = useActiveWeb3React()
   return (
     <Container open={open}>
       <Wrapper>
-        <CloseIcon onClick={toggleSideBar} />
+        <StyledClose>
+          <CloseIcon onClick={toggleSideBar} />
+        </StyledClose>
         <StyledHeading>
           <h3>Balances</h3>
         </StyledHeading>
-        <StyledBalanceWrapper>{mistBalance} MIST</StyledBalanceWrapper>
+        {account ? <Balance chainId={chainId} account={account} /> : <p>Connect a wallet</p>}
         <Transactions />
       </Wrapper>
     </Container>
