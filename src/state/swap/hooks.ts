@@ -1,16 +1,6 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import {
-  Currency,
-  CurrencyAmount,
-  Ether,
-  Exchange,
-  JSBI,
-  Token,
-  Trade,
-  TradeType,
-  WETH
-} from '@alchemist-coin/mistx-core'
+import { Currency, CurrencyAmount, Ether, Exchange, JSBI, Token, Trade, TradeType } from '@alchemist-coin/mistx-core'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,9 +10,8 @@ import { useTradeExactIn, useTradeExactOut, useMinTradeAmount, MinTradeEstimates
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import useBaseFeePerGas from '../../hooks/useBaseFeePerGas'
-import useIsEIP1559 from '../../hooks/useIsEIP1559'
 import { isAddress } from '../../utils'
-import { isETHTrade, isETHOutTrade, isTradeBetter } from '../../utils/trades'
+import { isETHInTrade, isETHOutTrade, isTradeBetter } from '../../utils/trades'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalance, useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
@@ -135,7 +124,6 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
-  const eip1559 = useIsEIP1559()
   const baseFeePerGas = useBaseFeePerGas()
   const [userBribeMargin] = useUserBribeMargin()
   const gasPriceToBeat = useLatestGasPrice()
@@ -210,15 +198,6 @@ export function useDerivedSwapInfo(): {
         : bestTradeExactOutSushi
     }
   }
-  let baseFeeInEth: CurrencyAmount<Currency> | undefined
-  if (eip1559 && baseFeePerGas && v2Trade) {
-    baseFeeInEth = CurrencyAmount.fromRawAmount(
-      WETH[chainId || 1],
-      BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
-        .mul(baseFeePerGas)
-        .toString()
-    )
-  }
 
   //from here on we already set the right exchange for the trade - just need to set the router contract
   const currencyBalances = {
@@ -230,6 +209,23 @@ export function useDerivedSwapInfo(): {
     [Field.INPUT]: inputCurrency ?? undefined,
     [Field.OUTPUT]: outputCurrency ?? undefined
   }
+  const [allowedSlippage] = useUserSlippageTolerance()
+
+  const returnNothing = {
+    currencies: currencies,
+    currencyBalances: currencyBalances,
+    parsedAmount: undefined,
+    v2Trade: undefined,
+    minTradeAmounts: { 0: null, 1: null, 2: null },
+    inputError: undefined,
+    minAmountError: undefined
+  }
+
+  if (!v2Trade) {
+    return returnNothing
+  }
+
+  if (baseFeePerGas === undefined) return returnNothing
 
   let inputError: string | undefined
   if (!account) {
@@ -257,8 +253,6 @@ export function useDerivedSwapInfo(): {
     }
   }
 
-  const [allowedSlippage] = useUserSlippageTolerance()
-
   const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
 
   // compare input balance to max input based on version
@@ -266,18 +260,8 @@ export function useDerivedSwapInfo(): {
     currencyBalances[Field.INPUT],
     slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null
   ]
-
-  let requiredAmountIn = amountIn
-  if (baseFeeInEth && requiredAmountIn && requiredAmountIn.currency.symbol === `ETH`) {
-    requiredAmountIn = CurrencyAmount.fromRawAmount(
-      Ether.onChain(chainId || 1),
-      BigNumber.from(requiredAmountIn.quotient.toString())
-        .add(baseFeeInEth.quotient.toString())
-        .toString()
-    )
-  }
-  if (balanceIn && requiredAmountIn && balanceIn.lessThan(requiredAmountIn)) {
-    inputError = 'Insufficient ' + requiredAmountIn.currency.symbol + ' balance'
+  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
+    inputError = 'Insufficient ' + amountIn.currency.symbol + ' balance'
   }
 
   // check if input amount is too low
@@ -300,25 +284,48 @@ export function useDerivedSwapInfo(): {
     inputError = 'Min trade amount not met'
   }
 
-  // check if the user has ETH to pay the bribe for token -> token swap & token -> ETH
-  // what do we display if we have multiple inputErrors? (order)
-  const ethTrade = isETHTrade(v2Trade)
-  const ethOutTrade = isETHOutTrade(v2Trade)
-  let requiredEthBalance: CurrencyAmount<Currency> | undefined
-  if (ethTrade !== undefined && (!ethTrade || (ethOutTrade && eip1559))) {
-    // after eip 1559 the user eth balance must cover the base fee
-    if (eip1559 && baseFeePerGas && requiredEthBalance) {
-      requiredEthBalance = baseFeeInEth
+  // only proceed to check eth balance for base fee and bribe
+  // if there is not already an input error
+  if (!inputError) {
+    const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId || 1),
+      BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
+        .mul(baseFeePerGas)
+        .toString()
+    )
+
+    // check if the user has ETH to pay the base fee and bribe
+    const ethInTrade = isETHInTrade(v2Trade)
+    const ethOutTrade = isETHOutTrade(v2Trade)
+    let requiredEthInWallet = baseFeeInEth
+    if (amountIn && ethInTrade) {
+      requiredEthInWallet = requiredEthInWallet.add(amountIn)
     }
-    // For Token -> Token trades the user eth balance must cover the tip/bribe
-    if (!ethOutTrade) {
-      requiredEthBalance =
-        requiredEthBalance && v2Trade?.minerBribe ? requiredEthBalance.add(v2Trade.minerBribe) : v2Trade?.minerBribe
-    }
-    if (JSBI.LT(ethBalance?.quotient, requiredEthBalance?.quotient)) {
-      inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (fees)'
+
+    const requiredEthForMinerBribe: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId || 1),
+      v2Trade.minerBribe.quotient.toString()
+    )
+
+    if (requiredEthForMinerBribe === undefined) {
+      inputError = 'Required ETH for miner bribe is undefined'
+    } else if (requiredEthInWallet === undefined) {
+      inputError = 'Required ETH for Wallet is undefined'
+    } else {
+      if (!ethOutTrade && !ethInTrade) {
+        requiredEthInWallet = requiredEthInWallet.add(requiredEthForMinerBribe)
+      }
+      console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
+      console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
+      console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
+      console.log('ETH balance', ethBalance?.toSignificant())
+      if (JSBI.LT(ethBalance?.quotient, requiredEthInWallet?.quotient)) {
+        inputError = 'Insufficient ETH balance'
+      }
     }
   }
+
+  console.log(inputError)
 
   return {
     currencies,
