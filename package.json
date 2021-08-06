@@ -1,12 +1,12 @@
 {
   "name": "@alchemistcoin/mistx-frontend",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "mistX Frontend",
   "homepage": ".",
   "private": true,
   "devDependencies": {
     "@alchemist-coin/mistx-connect": "4.0.3",
-    "@alchemist-coin/mistx-core": "^4.0.2",
+    "@alchemist-coin/mistx-core": "4.2.1",
     "@ethersproject/experimental": "^5.4.0",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",
     "@popperjs/core": "^2.4.4",

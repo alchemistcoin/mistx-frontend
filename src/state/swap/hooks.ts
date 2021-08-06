@@ -19,7 +19,12 @@ import { SwapState } from './reducer'
 import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
-import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD, MISTX_DEFAULT_GAS_LIMIT } from '../../constants'
+import {
+  MIN_TRADE_MARGIN,
+  BETTER_TRADE_LESS_HOPS_THRESHOLD,
+  MISTX_DEFAULT_GAS_LIMIT,
+  MISTX_DEFAULT_APPROVE_GAS_LIMIT
+} from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -293,6 +298,12 @@ export function useDerivedSwapInfo(): {
         .mul(baseFeePerGas)
         .toString()
     )
+    const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId || 1),
+      BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
+        .mul(baseFeePerGas)
+        .toString()
+    )
 
     // check if the user has ETH to pay the base fee and bribe
     const ethInTrade = isETHInTrade(v2Trade)
@@ -300,6 +311,9 @@ export function useDerivedSwapInfo(): {
     let requiredEthInWallet = baseFeeInEth
     if (amountIn && ethInTrade) {
       requiredEthInWallet = requiredEthInWallet.add(amountIn)
+    }
+    if (!ethInTrade) {
+      requiredEthInWallet = requiredEthInWallet.add(approveBaseFeeInEth)
     }
 
     const requiredEthForMinerBribe: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
@@ -317,6 +331,7 @@ export function useDerivedSwapInfo(): {
       }
       // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
       // console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
+      // console.log('Required ETH for approve base fee) ', approveBaseFeeInEth.toSignificant())
       // console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
       // console.log('ETH balance', ethBalance?.toSignificant())
       if (JSBI.LT(ethBalance?.quotient, requiredEthInWallet?.quotient)) {
