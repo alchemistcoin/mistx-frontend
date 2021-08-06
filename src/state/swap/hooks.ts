@@ -331,6 +331,7 @@ export function useDerivedSwapInfo(): {
       }
       // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
       // console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
+      // console.log('Required ETH for approve base fee) ', approveBaseFeeInEth.toSignificant())
       // console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
       // console.log('ETH balance', ethBalance?.toSignificant())
       if (JSBI.LT(ethBalance?.quotient, requiredEthInWallet?.quotient)) {
