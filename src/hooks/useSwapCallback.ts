@@ -123,9 +123,12 @@ export function useSwapCallback(
               const payload = [
                 {
                   ...populatedTx,
-                  gas: populatedTx.gasLimit?.toHexString(),
-                  gasLimit: populatedTx.gasLimit?.toHexString(),
-                  maxFeePerGas: populatedTx.maxFeePerGas?.toHexString(),
+                  chainId: undefined,
+                  gas: `0x${populatedTx.gasLimit?.toNumber().toString(16)}`,
+                  gasLimit: `0x${populatedTx.gasLimit?.toNumber().toString(16)}`,
+                  maxFeePerGas: `0x${populatedTx.maxFeePerGas?.toNumber().toString(18)}`,
+                  maxPriorityFeePerGas: '0x0',
+                  nonce: `0x${populatedTx.nonce?.toString(16)}`,
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ]

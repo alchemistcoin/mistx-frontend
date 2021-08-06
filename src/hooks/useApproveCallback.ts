@@ -145,9 +145,10 @@ export function useApproveCallback(
             {
               ...populatedTx,
               chainId: undefined,
-              gasLimit: populatedTx.gasLimit?.toHexString(),
-              maxFeePerGas: populatedTx.maxFeePerGas?.toHexString(),
-              nonce: `0x${populatedTx.nonce}`
+              gasLimit: `0x${populatedTx.gasLimit?.toNumber().toString(16)}`,
+              maxFeePerGas: `0x${populatedTx.maxFeePerGas?.toNumber().toString(16)}`,
+              maxPriorityFeePerGas: '0x0',
+              nonce: `0x${populatedTx.nonce?.toString(16)}`
             }
           ]
           const signedTxRes: SignedTransactionResponse = await library.jsonRpcFetchFunc(
