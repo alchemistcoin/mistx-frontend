@@ -224,17 +224,18 @@ export function useDerivedSwapInfo(): {
   }
   const [allowedSlippage] = useUserSlippageTolerance()
 
+  const returnNothing = {
+    currencies: currencies,
+    currencyBalances: currencyBalances,
+    parsedAmount: undefined,
+    v2Trade: undefined,
+    minTradeAmounts: { 0: null, 1: null, 2: null },
+    inputError: undefined,
+    minAmountError: undefined
+  }
+
   // let baseFeeInEth: CurrencyAmount<Currency>
-  if (baseFeePerGas === undefined)
-    return {
-      currencies: currencies,
-      currencyBalances: currencyBalances,
-      parsedAmount: undefined,
-      v2Trade: undefined,
-      minTradeAmounts: { 0: null, 1: null, 2: null },
-      inputError: undefined,
-      minAmountError: undefined
-    }
+  if (baseFeePerGas === undefined) return returnNothing
 
   const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
     WETH[chainId || 1],
@@ -330,7 +331,12 @@ export function useDerivedSwapInfo(): {
         requiredEthBalance && v2Trade?.minerBribe ? requiredEthBalance.add(v2Trade.minerBribe) : v2Trade?.minerBribe
     }
 
-    if (!v2Trade) throw new Error('Invalid non v2 trade')
+    if (!v2Trade) {
+      inputError = 'Invalid non v2 trade'
+      console.log(inputError)
+      return returnNothing
+    }
+
     const requiredEthForMinerBribe = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId || 1),
       ethers.utils
@@ -345,9 +351,9 @@ export function useDerivedSwapInfo(): {
     )
 
     if (requiredEthForMinerBribe === undefined) {
-      inputError = 'Insufficient ETH for miner bribe is undefined'
+      inputError = 'Required ETH for miner bribe is undefined'
     } else if (requiredEthForWallet === undefined) {
-      inputError = 'Insufficient ETH for miner bribe is undefined'
+      inputError = 'Required ETH for Wallet is undefined'
     } else {
       const requiredEth = requiredEthForMinerBribe.add(requiredEthForWallet)
       // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
