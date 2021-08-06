@@ -1,7 +1,6 @@
 import { ChainId } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import styled from 'styled-components'
-// import { rem } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
 import { YellowCard } from '../Card'
 // import Menu from '../Menu'
@@ -22,7 +21,7 @@ const HeaderFrame = styled.div`
   `};
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
   `}
 `
 

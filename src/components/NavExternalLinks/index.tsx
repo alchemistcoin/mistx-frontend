@@ -10,7 +10,6 @@ import { useDarkModeManager } from '../../state/user/hooks'
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  // justify-content: space-between;
   align-items: center;
   flex-direction: row;
   width: 100%;
@@ -19,7 +18,7 @@ const Wrapper = styled.div`
   margin-left: auto;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0.5rem 1rem;
+    padding: 0 1rem 1rem;
   `}
 `
 

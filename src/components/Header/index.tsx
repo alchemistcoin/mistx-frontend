@@ -102,11 +102,11 @@ const MenuWrapper = styled.div`
   display: flex;
 
   svg {
-    height: 24px;
-    width: 100%;
+    height: 28px;
+    width: auto;
 
     ${({ theme }) => theme.mediaWidth.upToMedium`
-      height: 36px;
+      height: 28px;
     `};
   }
 `

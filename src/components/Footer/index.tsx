@@ -12,6 +12,9 @@ const FooterFrame = styled.div`
   bottom: 0;
   padding: 1rem 1rem;
   z-index: 0;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    bottom: 75px;
+  `};
 `
 
 const FooterWrapper = styled.div`
@@ -20,6 +23,10 @@ const FooterWrapper = styled.div`
   grid-template-columns: 1fr repeat(3, auto) 1fr;
   grid-column-gap: 5px;
   justify-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    grid-template-columns: 0;
+    display: flex;
+  `};
 `
 
 const Row = styled.div`
