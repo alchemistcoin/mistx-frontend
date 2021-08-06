@@ -145,6 +145,15 @@ function bundleResponseToastStatus(bundle: BundleRes) {
   }
 }
 
+function getHashWithFallback(bundle: BundleProcessed) {
+  const serializedTx = bundle.transactions[bundle.transactions.length - 1].serialized
+  const serializedFallback = bundle.transactions[0].serialized
+
+  if (serializedTx === serializedFallback) return [keccak256(serializedTx)]
+
+  return [keccak256(serializedTx), keccak256(serializedFallback)]
+}
+
 const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
 
 const socket = new MistxSocket(serverUrl)
@@ -179,11 +188,19 @@ export default function Sockets(): null {
         // console.log('websocket err', err)
         if (err.event === Event.MISTX_BUNDLE_REQUEST) {
           const bundleResponse = err.data as BundleRes
-          const hash = keccak256(bundleResponse.bundle.transactions[0].serialized)
-          removeTransaction({
-            chainId: bundleResponse.bundle.chainId,
-            hash
-          })
+          const [hash, hashFallback] = getHashWithFallback(bundleResponse.bundle)
+
+          if (allTransactions?.[hash]) {
+            removeTransaction({
+              chainId: bundleResponse.bundle.chainId,
+              hash
+            })
+          } else if (allTransactions?.[hashFallback]) { // legacy transactions
+            removeTransaction({
+              chainId: bundleResponse.bundle.chainId,
+              hash: hashFallback
+            })
+          }
         }
       },
       onSocketSession: session => {
@@ -204,12 +221,9 @@ export default function Sockets(): null {
         const { bundle: b, status } = response
 
         const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
-        const serialized = bundle && (bundle as BundleProcessed).transactions[0].serialized
+        const [hash, hashFallback] = getHashWithFallback(bundle as BundleProcessed)
+        const tx = allTransactions?.[hash] ?? allTransactions?.[hashFallback]
 
-        if (!serialized) return
-
-        const hash = keccak256(serialized)
-        const tx = allTransactions?.[hash]
         const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
         if (!tx || !tx.chainId || previouslyCompleted) return
         const transactionId = {
@@ -227,10 +241,14 @@ export default function Sockets(): null {
         })
       },
       onTransactionResponse: response => {
-        const hash = keccak256(response.bundle.transactions[0].serialized)
-        const tx = allTransactions?.[hash]
+        const [serializedTxHash, hashFallback] = getHashWithFallback(response.bundle)
+        const tx = allTransactions?.[serializedTxHash] ?? allTransactions?.[hashFallback]
         const summary = tx?.summary
+        const hash = tx?.hash
         const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
+
+        if (!hash) return
+
         const transactionId = {
           chainId: response.bundle.chainId,
           hash
