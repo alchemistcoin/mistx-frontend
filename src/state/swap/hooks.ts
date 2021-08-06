@@ -330,7 +330,14 @@ export function useDerivedSwapInfo(): {
         requiredEthBalance && v2Trade?.minerBribe ? requiredEthBalance.add(v2Trade.minerBribe) : v2Trade?.minerBribe
     }
 
-    const requiredEthForMinerBribe = v2Trade && v2Trade.minerBribe
+    if (!v2Trade) throw new Error('Invalid non v2 trade')
+    const requiredEthForMinerBribe = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId || 1),
+      ethers.utils
+        .parseUnits(v2Trade.minerBribe.toExact(), 18)
+        .toBigInt()
+        .toString()
+    )
     const baseFeeInEth2 = ethers.utils.parseUnits(baseFeeInEth.toExact(), 18)
     const requiredEthForWallet = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId || 1),
@@ -342,16 +349,15 @@ export function useDerivedSwapInfo(): {
     } else if (requiredEthForWallet === undefined) {
       inputError = 'Insufficient ETH for miner bribe is undefined'
     } else {
-      const requiredEth = requiredEthForMinerBribe.greaterThan(requiredEthForWallet)
-        ? requiredEthForMinerBribe
-        : requiredEthForWallet
-      if (!baseFeePerGas && JSBI.LT(ethBalance?.quotient, requiredEth?.quotient)) {
-        inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (fees)'
+      const requiredEth = requiredEthForMinerBribe.add(requiredEthForWallet)
+      // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
+      // console.log('Required ETH for wallet (baseFee) ', requiredEthForWallet.toSignificant())
+      // console.log('Required ETH ALL: ', requiredEth.toExact())
+      // console.log('ETH balance', ethBalance?.toSignificant())
+      if (JSBI.LT(ethBalance?.quotient, requiredEth?.quotient)) {
+        inputError = 'Insufficient ETH balance'
       }
     }
-
-    console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
-    console.log('Required ETH for wallet (baseFee) ', requiredEthForWallet.toSignificant())
     console.log(inputError)
   }
 
