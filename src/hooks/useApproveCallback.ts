@@ -173,7 +173,7 @@ export function useApproveCallback(
       }
       throw error
     }
-  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, baseFeePerGas, eip1559])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, baseFeePerGas])
 
   return [approvalState, approve]
 }
