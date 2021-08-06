@@ -211,15 +211,6 @@ export function useDerivedSwapInfo(): {
     }
   }
 
-  // let baseFeeInEth: CurrencyAmount<Currency>
-  if (baseFeePerGas) {
-  const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-    WETH[chainId || 1],
-    BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
-      .mul(baseFeePerGas)
-      .toString()
-  )
-
   //from here on we already set the right exchange for the trade - just need to set the router contract
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -230,6 +221,26 @@ export function useDerivedSwapInfo(): {
     [Field.INPUT]: inputCurrency ?? undefined,
     [Field.OUTPUT]: outputCurrency ?? undefined
   }
+  const [allowedSlippage] = useUserSlippageTolerance()
+
+  // let baseFeeInEth: CurrencyAmount<Currency>
+  if (baseFeePerGas === undefined)
+    return {
+      currencies: currencies,
+      currencyBalances: currencyBalances,
+      parsedAmount: undefined,
+      v2Trade: undefined,
+      minTradeAmounts: { 0: null, 1: null, 2: null },
+      inputError: undefined,
+      minAmountError: undefined
+    }
+
+  const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+    WETH[chainId || 1],
+    BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
+      .mul(baseFeePerGas)
+      .toString()
+  )
 
   let inputError: string | undefined
   if (!account) {
@@ -260,8 +271,6 @@ export function useDerivedSwapInfo(): {
       inputError = inputError ?? 'Invalid recipient'
     }
   }
-
-  const [allowedSlippage] = useUserSlippageTolerance()
 
   const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
 
@@ -321,11 +330,32 @@ export function useDerivedSwapInfo(): {
     }
 
     const requiredEthForMinerBribe = v2Trade && v2Trade.minerBribe
-    const requiredEthForWallet = baseFeeInEth
+    console.log('baseFee ETH', baseFeeInEth.toSignificant())
+    console.log('baseFee WEI', baseFeeInEth.toExact())
+    const baseFeeInWei = BigNumber.from(baseFeeInEth.toFixed(18))
+    const requiredWeiForWallet = baseFeeInWei.mul(MISTX_DEFAULT_GAS_LIMIT)
+    console.log('required WEI For Wallet', requiredWeiForWallet.toString())
+    const requiredEthForWallet = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId || 1),
+      requiredWeiForWallet.toString()
+    )
 
-    if (!baseFeePerGas && JSBI.LT(ethBalance?.quotient, requiredEthBalance?.quotient)) {
-      inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (fees)'
+    if (requiredEthForMinerBribe === undefined) {
+      inputError = 'Insufficient ETH for miner bribe is undefined'
+    } else if (requiredEthForWallet === undefined) {
+      inputError = 'Insufficient ETH for miner bribe is undefined'
+    } else {
+      const requiredEth = requiredEthForMinerBribe.greaterThan(requiredEthForWallet)
+        ? requiredEthForMinerBribe
+        : requiredEthForWallet
+      if (!baseFeePerGas && JSBI.LT(ethBalance?.quotient, requiredEth?.quotient)) {
+        inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (fees)'
+      }
     }
+
+    console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
+    console.log('Required ETH for wallet (baseFee) ', requiredEthForWallet.toSignificant())
+    console.log(inputError)
   }
 
   return {
