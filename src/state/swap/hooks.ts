@@ -20,7 +20,6 @@ import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
 import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD, MISTX_DEFAULT_GAS_LIMIT } from '../../constants'
-import { ethers } from 'ethers'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -295,9 +294,8 @@ export function useDerivedSwapInfo(): {
         .toString()
     )
 
-    // check if the user has ETH to pay the bribe for token -> token swap & token -> ETH
-    // what do we display if we have multiple inputErrors? (order)
-    const ethInTrade = isETHInTrade(v2Trade) // input or output is ETH
+    // check if the user has ETH to pay the base fee and bribe
+    const ethInTrade = isETHInTrade(v2Trade)
     const ethOutTrade = isETHOutTrade(v2Trade)
     let requiredEthInWallet = baseFeeInEth
     if (amountIn && ethInTrade) {
@@ -306,10 +304,7 @@ export function useDerivedSwapInfo(): {
 
     const requiredEthForMinerBribe: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId || 1),
-      ethers.utils
-        .parseUnits(v2Trade.minerBribe.toExact(), 18)
-        .toBigInt()
-        .toString()
+      v2Trade.minerBribe.quotient.toString()
     )
 
     if (requiredEthForMinerBribe === undefined) {
@@ -320,17 +315,17 @@ export function useDerivedSwapInfo(): {
       if (!ethOutTrade && !ethInTrade) {
         requiredEthInWallet = requiredEthInWallet.add(requiredEthForMinerBribe)
       }
-      // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
-      // console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
-      // console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
-      // console.log('ETH balance', ethBalance?.toSignificant())
+      console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
+      console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
+      console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
+      console.log('ETH balance', ethBalance?.toSignificant())
       if (JSBI.LT(ethBalance?.quotient, requiredEthInWallet?.quotient)) {
         inputError = 'Insufficient ETH balance'
       }
     }
   }
 
-  // console.log(inputError)
+  console.log(inputError)
 
   return {
     currencies,
