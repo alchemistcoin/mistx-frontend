@@ -58,7 +58,7 @@ export function useApproveCallback(
 
   const approve = useCallback(async (): Promise<string | undefined> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
-      console.error('approve was called unnecessarily')
+      console.log('approve was called unnecessarily')
       return undefined
     }
     if (!token) {
