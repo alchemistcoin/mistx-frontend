@@ -1,5 +1,4 @@
 import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemist-coin/mistx-core'
-import { BigNumber } from '@ethersproject/bignumber'
 import { useActiveWeb3React } from '../../hooks'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
@@ -21,10 +20,9 @@ import QuestionHelper from '../QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
-import useEthPrice from '../../hooks/useEthPrice'
 import useIsEIP1559 from '../../hooks/useIsEIP1559'
-import useBaseFeePerGas from '../../hooks/useBaseFeePerGas'
 import { FeeRowBetween } from '../swap/styleds'
+import useTotalFeesForTrade from 'hooks/useTotalFeesForTrade'
 
 const PriceWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg4};
@@ -110,25 +108,9 @@ export default function SwapModalFooter({
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], trade.minerBribe.quotient)
-  const ethPrice = useEthPrice(trade.inputAmount.currency.wrapped)
   const eip1559 = useIsEIP1559()
-  const baseFeePerGas = useBaseFeePerGas()
-  let baseFeeInEth: CurrencyAmount<Currency> | undefined
-  let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
-  let totalFeeInEth: CurrencyAmount<Currency> | undefined
-  if (ethPrice && realizedLPFee) {
-    realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
-    totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
-    if (eip1559 && baseFeePerGas) {
-      baseFeeInEth = CurrencyAmount.fromRawAmount(
-        WETH[chainId || 1],
-        BigNumber.from(trade.estimatedGas)
-          .mul(baseFeePerGas)
-          .toString()
-      )
-      totalFeeInEth = totalFeeInEth.add(baseFeeInEth)
-    }
-  }
+
+  const { baseFeeInEth, realizedLPFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
 
   return (
     <>
@@ -214,7 +196,7 @@ export default function SwapModalFooter({
         <RowBetween>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Total Fee
+              Total Fees
             </TYPE.black>
             <QuestionHelper text="Total transaction fee" />
           </AutoRow>

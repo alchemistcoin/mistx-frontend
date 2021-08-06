@@ -19,11 +19,11 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { ButtonError } from '../Button'
 import { GreyCard } from '../Card'
 import { Info } from '../Icons'
-import MinerTipPrice from './MinerTipPrice'
 import { AutoRow } from '../Row'
 import { BottomGrouping, SwapCallbackError, FeeWrapper, FeeInnerLeft, FeeInnerRight } from './styleds'
 import { MouseoverTooltipContent } from '../Tooltip'
 import TradeDetails from '../TradeDetails'
+import TotalFees from './TotalFees'
 
 const StyledButtonError = styled(ButtonError)<{ disabled: boolean }>`
   border-radius: 0 0 20px 20px;
@@ -159,9 +159,9 @@ export default function SwapFooter({
                   paddingRight: 10
                 }}
               >
-                Miner Tip:&nbsp;
+                Total Fees:&nbsp;
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>
-                  <MinerTipPrice trade={trade} />
+                  <TotalFees trade={trade} />
                 </Text>
               </Text>
             </FeeInnerLeft>
