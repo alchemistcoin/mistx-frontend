@@ -31,6 +31,7 @@ import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
 import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD, MISTX_DEFAULT_GAS_LIMIT } from '../../constants'
+import { ethers } from 'ethers'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -330,14 +331,10 @@ export function useDerivedSwapInfo(): {
     }
 
     const requiredEthForMinerBribe = v2Trade && v2Trade.minerBribe
-    console.log('baseFee ETH', baseFeeInEth.toSignificant())
-    console.log('baseFee WEI', baseFeeInEth.toExact())
-    const baseFeeInWei = BigNumber.from(baseFeeInEth.toFixed(18))
-    const requiredWeiForWallet = baseFeeInWei.mul(MISTX_DEFAULT_GAS_LIMIT)
-    console.log('required WEI For Wallet', requiredWeiForWallet.toString())
+    const baseFeeInEth2 = ethers.utils.parseUnits(baseFeeInEth.toExact(), 18)
     const requiredEthForWallet = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId || 1),
-      requiredWeiForWallet.toString()
+      baseFeeInEth2.toBigInt().toString()
     )
 
     if (requiredEthForMinerBribe === undefined) {
