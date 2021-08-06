@@ -343,7 +343,7 @@ export function emitTransactionRequest(bundle: BundleReq) {
   socket.emitTransactionRequest(bundle)
 }
 
-export function emitTransactionCancellation(serialized: string) {
+export function emitTransactionCancellation(id: string) {
   // TO DO any
-  socket.emitTransactionCancellation(serialized)
+  socket.emitTransactionCancellation(id)
 }
