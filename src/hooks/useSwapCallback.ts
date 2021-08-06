@@ -16,7 +16,6 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import useBaseFeePerGas from './useBaseFeePerGas'
-import useIsEIP1559 from './useIsEIP1559'
 import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
 
 export enum SwapCallbackState {
@@ -46,7 +45,6 @@ export function useSwapCallback(
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const baseFeePerGas = useBaseFeePerGas()
-  const eip1559 = useIsEIP1559()
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -100,13 +98,9 @@ export function useSwapCallback(
               //modify nonce if we also have an approval
               nonce: nonce,
               gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
-              ...(eip1559
-                ? {
-                    type: 2,
-                    maxFeePerGas: baseFeePerGas,
-                    maxPriorityFeePerGas: '0x0'
-                  }
-                : {}),
+              type: 2,
+              maxFeePerGas: baseFeePerGas,
+              maxPriorityFeePerGas: '0x0'
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
 
@@ -131,7 +125,7 @@ export function useSwapCallback(
                   ...populatedTx,
                   gas: populatedTx.gasLimit?.toHexString(),
                   gasLimit: populatedTx.gasLimit?.toHexString(),
-                  ...(!eip1559 ? { gasPrice: '0x0' } : {}),
+                  maxFeePerGas: populatedTx.maxFeePerGas?.toHexString(),
                   ...(value && !isZero(value) ? { value } : { value: '0x0' })
                 }
               ]
