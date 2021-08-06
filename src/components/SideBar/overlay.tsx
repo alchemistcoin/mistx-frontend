@@ -25,11 +25,6 @@ const StyledOverlay = styled.div<{ open?: boolean }>`
       : ``};
 `
 
-// export interface OverlayProps {
-//   // toggleSideBar: () => void
-//   //open: boolean
-// }
-
 export default function Overlay() {
   const { sideBarOpen, toggleSideBar } = useSideBarOpen()
   return <StyledOverlay open={sideBarOpen} onClick={toggleSideBar} />

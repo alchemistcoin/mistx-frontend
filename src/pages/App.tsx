@@ -65,20 +65,6 @@ const ConnectionsWrapper = styled.div`
 `
 
 export default function App() {
-  // const [sideBarOpen, setSideBarOpen] = useState<boolean>(false)
-
-  // const { sideBarOpen } = useSideBarOpen()
-
-  // const toggleSideBar = () => {
-  //   setSideBarOpen(!sideBarOpen)
-  //   if (window.Intercom) {
-  //     window.Intercom('hide')
-  //     window.Intercom('update', {
-  //       hide_default_launcher: !sideBarOpen
-  //     })
-  //   }
-  // }
-
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
