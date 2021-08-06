@@ -277,6 +277,8 @@ export const INITIAL_BRIBE_MARGIN = 79
 export const MINER_BRIBE_MIN = 43
 export const MINER_BRIBE_MAX = 153
 
+export const MISTX_DEFAULT_GAS_LIMIT = 550000
+
 // Base fee, future block to calculate
 export const BASE_FEE_BLOCKS_IN_FUTURE = 2
 

@@ -4,11 +4,11 @@ import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
+import { isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { INITIAL_ALLOWED_SLIPPAGE, MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -99,7 +99,7 @@ export function useSwapCallback(
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
               nonce: nonce,
-              gasLimit: calculateGasMargin(BigNumber.from(500000)),
+              gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
               ...(eip1559
                 ? {
                     type: 2,
@@ -164,9 +164,14 @@ export function useSwapCallback(
                   }`
 
             const minerBribeBN = BigNumber.from(args[1])
-            const estimatedEffectiveGasPriceBn = minerBribeBN.div(BigNumber.from(trade.estimatedGas))
+            const totalFees = minerBribeBN
+            // if (baseFeePerGas && populatedTx.gasLimit) {
+            //   // totalFees = totalFees.add(baseFeePerGas.mul(trade.estimatedGas.toString()))
+            //   const requiredFunds = baseFeePerGas.mul(populatedTx.gasLimit).add(value)
+            //   console.log('requiredFunds', requiredFunds.toString())
+            // }
+            const estimatedEffectiveGasPriceBn = totalFees.div(BigNumber.from(trade.estimatedGas))
             const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'))
-
             const swapReq: SwapReq = {
               amount0: args[0][0] as string,
               amount1: args[0][1] as string,
