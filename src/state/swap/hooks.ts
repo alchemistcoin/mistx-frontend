@@ -30,7 +30,7 @@ import { SwapState } from './reducer'
 import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
-import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../../constants'
+import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD, MISTX_DEFAULT_GAS_LIMIT } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -214,7 +214,7 @@ export function useDerivedSwapInfo(): {
   if (eip1559 && baseFeePerGas && v2Trade) {
     baseFeeInEth = CurrencyAmount.fromRawAmount(
       WETH[chainId || 1],
-      BigNumber.from(v2Trade?.estimatedGas)
+      BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
         .mul(baseFeePerGas)
         .toString()
     )

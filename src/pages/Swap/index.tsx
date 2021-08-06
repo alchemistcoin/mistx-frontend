@@ -39,7 +39,7 @@ import { useHasPendingTransactions } from 'state/transactions/hooks'
 // constants
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 // utils
-import { maxAmountSpend } from '../../utils/maxAmountSpend'
+import { MaxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown } from '../../utils/prices'
 // theme
 import { LinkStyledButton } from '../../theme'
@@ -225,7 +225,7 @@ export default function Swap({ history }: RouteComponentProps) {
   //   }
   // }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT], wrapType)
+  const maxAmountInput: CurrencyAmount<Currency> | undefined = MaxAmountSpend(currencyBalances[Field.INPUT], wrapType)
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
