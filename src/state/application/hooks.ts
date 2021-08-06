@@ -127,25 +127,3 @@ export function useSideBarOpen(): any {
 
   return useMemo(() => ({ sideBarOpen, toggleSideBar }), [sideBarOpen, toggleSideBar])
 }
-
-// AppState['application']['sideBarOpen']
-
-// export function useToggleSidebar(): void {
-//   const dispatch = useDispatch<AppDispatch>()
-//   dispatch(toggleSideBar())
-//   if (window.Intercom) {
-//     window.Intercom('hide')
-//     window.Intercom('update', {
-//       hide_default_launcher: !sideBarOpen
-//     })
-
-// const toggleSideBar = () => {
-//   setSideBarOpen(!sideBarOpen)
-//   if (window.Intercom) {
-//     window.Intercom('hide')
-//     window.Intercom('update', {
-//       hide_default_launcher: !sideBarOpen
-//     })
-//   }
-// }
-//}

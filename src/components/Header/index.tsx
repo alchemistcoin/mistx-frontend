@@ -47,9 +47,13 @@ const HeaderLinks = styled(Row)`
 `
 
 const MistLogoWrapper = styled.div`
-  display: flex;
   width: 32px;
   margin: 0 25px 0 0;
+  display: flex;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+     display: none;
+ `};
 
   svg {
     display: flex;
@@ -100,6 +104,10 @@ const MenuWrapper = styled.div`
   svg {
     height: 24px;
     width: 100%;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      height: 36px;
+    `};
   }
 `
 
