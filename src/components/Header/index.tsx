@@ -130,50 +130,6 @@ const HideLarge = styled.div`
 
 const activeClassName = 'ACTIVE'
 
-// const StyledNavLink = styled(NavLink).attrs({
-//   activeClassName
-// })`
-//   ${({ theme }) => theme.flexRowNoWrap}
-//   align-items: left;
-//   border-radius: 3rem;
-//   outline: none;
-//   cursor: pointer;
-//   text-decoration: none;
-//   color: ${({ theme }) => theme.secondaryText1};
-//   font-size: 1rem;
-//   width: fit-content;
-//   margin: 0 2.5rem 0 0;
-//   font-weight: 500;
-//   position: relative;
-
-//   &.${activeClassName} {
-//     border-radius: 12px;
-//     font-weight: 700;
-//     color: ${({ theme }) => theme.text1};
-
-//     &:after {
-//       content: '';
-//       width: ${rem(35)};
-//       height: ${rem(4)};
-//       bottom: -${rem(15)};
-//       left: 0;
-//       position: absolute;
-//       background: ${({ theme }) => theme.secondaryText1};
-//       border-radius: 1rem;
-
-//       :hover,
-//       :focus {
-//         color: ${({ theme }) => darken(0.1, theme.secondaryText1)};
-//       }
-//     }
-//   }
-
-//   :hover,
-//   :focus {
-//     color: ${({ theme }) => darken(0.1, theme.text1)};
-//   }
-// `
-
 const StyledExternalLink = styled(ExternalLink).attrs({
   activeClassName
 })<{ isActive?: boolean }>`
@@ -253,10 +209,6 @@ export const SocialLink = styled(ExternalLink)`
     width: auto;
   }
 `
-
-// export interface HeaderProps {
-//   toggleSideBar: any
-// }
 
 export default function Header() {
   const { t } = useTranslation()
