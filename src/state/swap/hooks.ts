@@ -315,17 +315,17 @@ export function useDerivedSwapInfo(): {
       if (!ethOutTrade && !ethInTrade) {
         requiredEthInWallet = requiredEthInWallet.add(requiredEthForMinerBribe)
       }
-      console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
-      console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
-      console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
-      console.log('ETH balance', ethBalance?.toSignificant())
+      // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
+      // console.log('Required ETH for base fee) ', baseFeeInEth.toSignificant())
+      // console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
+      // console.log('ETH balance', ethBalance?.toSignificant())
       if (JSBI.LT(ethBalance?.quotient, requiredEthInWallet?.quotient)) {
         inputError = 'Insufficient ETH balance'
       }
     }
   }
 
-  console.log(inputError)
+  // console.log(inputError)
 
   return {
     currencies,
