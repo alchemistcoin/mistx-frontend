@@ -100,7 +100,7 @@ export function useSwapCallback(
               gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
               type: 2,
               maxFeePerGas: baseFeePerGas,
-              maxPriorityFeePerGas: '0x0'
+              maxPriorityFeePerGas: '0x0',
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
 
@@ -252,7 +252,6 @@ export function useSwapCallback(
     swapCall,
     approve,
     addTransaction,
-    baseFeePerGas,
-    eip1559
+    baseFeePerGas
   ])
 }
