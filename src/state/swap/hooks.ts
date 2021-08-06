@@ -210,15 +210,15 @@ export function useDerivedSwapInfo(): {
         : bestTradeExactOutSushi
     }
   }
-  let baseFeeInEth: CurrencyAmount<Currency> | undefined
-  if (eip1559 && baseFeePerGas && v2Trade) {
-    baseFeeInEth = CurrencyAmount.fromRawAmount(
-      WETH[chainId || 1],
-      BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
-        .mul(baseFeePerGas)
-        .toString()
-    )
-  }
+
+  // let baseFeeInEth: CurrencyAmount<Currency>
+  if (baseFeePerGas) {
+  const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+    WETH[chainId || 1],
+    BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
+      .mul(baseFeePerGas)
+      .toString()
+  )
 
   //from here on we already set the right exchange for the trade - just need to set the router contract
   const currencyBalances = {
@@ -242,6 +242,10 @@ export function useDerivedSwapInfo(): {
 
   if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
     inputError = inputError ?? 'Swap'
+  }
+
+  if (!baseFeePerGas) {
+    inputError = 'Undefined base fee per '
   }
 
   const formattedTo = isAddress(to)
@@ -315,7 +319,11 @@ export function useDerivedSwapInfo(): {
       requiredEthBalance =
         requiredEthBalance && v2Trade?.minerBribe ? requiredEthBalance.add(v2Trade.minerBribe) : v2Trade?.minerBribe
     }
-    if (JSBI.LT(ethBalance?.quotient, requiredEthBalance?.quotient)) {
+
+    const requiredEthForMinerBribe = v2Trade && v2Trade.minerBribe
+    const requiredEthForWallet = baseFeeInEth
+
+    if (!baseFeePerGas && JSBI.LT(ethBalance?.quotient, requiredEthBalance?.quotient)) {
       inputError = 'Insufficient ' + ethBalance?.currency.symbol + ' balance (fees)'
     }
   }
