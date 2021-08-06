@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import useETHPrice from './useEthPrice'
-import useIsEIP1559 from './useIsEIP1559'
 import useBaseFeePerGas from './useBaseFeePerGas'
 import { Currency, CurrencyAmount, Trade, TradeType, WETH } from '@alchemist-coin/mistx-core'
 import { useActiveWeb3React } from 'hooks'
@@ -11,7 +10,6 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
   const { chainId } = useActiveWeb3React()
   const { realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const ethPrice = useETHPrice(trade.inputAmount.currency.wrapped)
-  const eip1559 = useIsEIP1559()
   const baseFeePerGas = useBaseFeePerGas()
 
   return useMemo(() => {
@@ -21,15 +19,13 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
     if (ethPrice && realizedLPFee) {
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
-      if (eip1559 && baseFeePerGas) {
-        // if eip 1559...
+      if (baseFeePerGas) {
         baseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
           BigNumber.from(trade.estimatedGas)
             .mul(baseFeePerGas)
             .toString()
         )
-
         totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
       }
     }
@@ -40,5 +36,5 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       realizedLPFeeInEth,
       totalFeeInEth
     }
-  }, [baseFeePerGas, chainId, ethPrice, eip1559, realizedLPFee, trade.estimatedGas, trade.minerBribe])
+  }, [baseFeePerGas, chainId, ethPrice, realizedLPFee, trade.estimatedGas, trade.minerBribe])
 }
