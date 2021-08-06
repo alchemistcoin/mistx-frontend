@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from '../../hooks'
 import { shortenAddress } from '../../utils'
 import Copy from './Copy'
-
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { getEtherscanLink } from '../../utils'
@@ -195,21 +194,6 @@ const TransactionsButton = styled(ButtonOutlined)`
   width: auto;
   padding: 8px 16px;
 `
-
-// function renderTransactions(transactions: string[]) {
-//   return (
-//     <TransactionListWrapper>
-//       {!!transactions.length ? (
-//         transactions.map((hash, i) => {
-//           return <Transaction key={i} hash={hash} />
-//         })
-//       ) : (
-//         <EmptyResults>Nothing here yet</EmptyResults>
-//       )}
-//     </TransactionListWrapper>
-//   )
-// }
-
 interface AccountDetailsProps {
   toggleWalletModal: () => void
   ENSName?: string
@@ -392,24 +376,6 @@ export default function AccountDetails({ toggleWalletModal, ENSName, openOptions
       <LowerSection>
         <TransactionsButton onClick={toggleSideBar}>View Transactions</TransactionsButton>
       </LowerSection>
-      {/* {!!pendingTransactions.length || !!confirmedTransactions.length ? (
-        <LowerSection>
-          <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>Pending Transactions</TYPE.body>
-          </AutoRow>
-          {renderTransactions(pendingTransactions)}
-          <AutoRow mb={'1rem'} mt={'2rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>Recent Transactions</TYPE.body>
-            <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
-          </AutoRow>
-          {renderTransactions(confirmedTransactions)}
-        </LowerSection>
-      ) : (
-        <LowerSection>
-          <TYPE.body color={theme.text1}>Your transactions will appear here...</TYPE.body>
-          <TransactionsButton>View Transactions</TransactionsButton>
-        </LowerSection>
-      )} */}
     </>
   )
 }
