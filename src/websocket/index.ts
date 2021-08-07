@@ -195,7 +195,8 @@ export default function Sockets(): null {
               chainId: bundleResponse.bundle.chainId,
               hash
             })
-          } else if (allTransactions?.[hashFallback]) { // legacy transactions
+          } else if (allTransactions?.[hashFallback]) {
+            // legacy transactions
             removeTransaction({
               chainId: bundleResponse.bundle.chainId,
               hash: hashFallback
