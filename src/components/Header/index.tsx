@@ -230,13 +230,13 @@ export default function Header() {
             </Link>
           </MistLogoWrapper>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://crucible.alchemist.wtf'}>
-            Crucible <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+            Crucible
           </StyledExternalLink>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://copperlaunch.com'}>
-            Copper <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+            Copper
           </StyledExternalLink>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
-            Sandwiched <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+            Sandwiched
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
