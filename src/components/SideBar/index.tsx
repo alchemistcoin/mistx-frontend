@@ -5,7 +5,7 @@ import Transactions from './transactions'
 import { useActiveWeb3React } from '../../hooks'
 import { StyledHeading } from './styled'
 import { CloseIcon } from '../../theme'
-import { useSideBarOpen } from '../../state/application/hooks'
+import { useSideBarOpen, useWalletModalToggle } from '../../state/application/hooks'
 
 const Container = styled.div<{ open?: boolean }>`
   position: fixed;
@@ -48,6 +48,7 @@ const Wrapper = styled.div`
 
   p {
     margin-top: 0;
+    cursor: pointer;
   }
 `
 
@@ -69,6 +70,12 @@ export interface SideBarProps {
 export default function SideBar() {
   const { chainId, account } = useActiveWeb3React()
   const { toggleSideBar, sideBarOpen } = useSideBarOpen()
+  const toggleWalletModal = useWalletModalToggle()
+  const connectWallet = () => {
+    toggleSideBar()
+    toggleWalletModal()
+  }
+
   return (
     <Container open={sideBarOpen}>
       <Wrapper>
@@ -78,7 +85,7 @@ export default function SideBar() {
         <StyledHeading>
           <h3>Balances</h3>
         </StyledHeading>
-        {account ? <Balance chainId={chainId} account={account} /> : <p>Connect a wallet</p>}
+        {account ? <Balance chainId={chainId} account={account} /> : <p onClick={connectWallet}>Connect a wallet</p>}
         <Transactions />
       </Wrapper>
     </Container>

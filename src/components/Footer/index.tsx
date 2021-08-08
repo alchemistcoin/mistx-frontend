@@ -67,19 +67,19 @@ const FooterRight = styled.div`
     display: none;
   `}
 
-  > a {
+  > div {
     display: flex;
     flex-direction: row;
     display: flex;
     -webkit-box-align: center;
     align-items: center;
     flex-direction: row;
-    min-width: 230px;
     border-radius: 20px;
-    padding: 8px 12px;
+    padding: 6px 8px;
     border: 1px solid #535d63;
     text-decoration: none;
     font-weight: 300;
+    font-size: 14px;
 
     &:hover,
     &:focus {
@@ -113,12 +113,12 @@ export default function Footer({ style }: { style?: object }) {
         </Row>
         <NavExternalLinks header={false} />
         <FooterRight>
-          <ExternalLink href="https://docs.alchemist.wtf/alchemist" title="About Alchemist">
+          <div>
             <div>
               <AlchemistLogo />
             </div>{' '}
             an alchemist product
-          </ExternalLink>
+          </div>
         </FooterRight>
       </FooterWrapper>
     </FooterFrame>
