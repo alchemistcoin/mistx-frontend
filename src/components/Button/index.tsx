@@ -386,3 +386,55 @@ export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonPr
     return <ButtonPrimary {...rest} />
   }
 }
+
+export const ButtonIcon = styled(Base)`
+  background-color: transparent;
+  color: ${({ theme }) => theme.primary1};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  opacity: 80%;
+
+  &:focus {
+    text-decoration: underline;
+    opacity: 100%;
+  }
+  &:hover {
+    text-decoration: none;
+    opacity: 100%;
+  }
+  &:active {
+    text-decoration: none;
+    opacity: 100%;
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
+
+export const ButtonText = styled(Base)`
+  background-color: transparent;
+  color: ${({ theme }) => theme.text1};
+  font-weight: 300;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  width: auto;
+
+  &:focus {
+    text-decoration: underline;
+  }
+  &:hover {
+    text-decoration: none;
+  }
+  &:active {
+    text-decoration: none;
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
