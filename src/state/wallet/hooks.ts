@@ -6,6 +6,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useMulticallContract } from '../../hooks/useContract'
 import { isAddress } from '../../utils'
 import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
+import { useAlchmeistToken } from '../../state/lists/hooks'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -129,4 +130,20 @@ export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
   const balances = useTokenBalances(account ?? undefined, allTokensArray)
   return balances ?? {}
+}
+
+export function useMistBalance(long?: boolean): any {
+  const { account } = useActiveWeb3React()
+  const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
+  const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
+  if (!account) return 0
+  if (long) return balance?.greaterThan('1') ? balance?.toFixed(4) : balance?.toFixed(0)
+  const mistBalance = balance?.greaterThan('1')
+    ? balance?.greaterThan('100')
+      ? balance?.toFixed(0) // ex. 100
+      : balance?.greaterThan('10')
+      ? balance?.toFixed(1) // ex. 11.0
+      : balance?.toFixed(2) // ex. 1.00
+    : balance?.toSignificant(2) // ex. .00012
+  return mistBalance
 }

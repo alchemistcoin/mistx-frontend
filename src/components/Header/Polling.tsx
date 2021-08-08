@@ -9,17 +9,13 @@ import { useActiveWeb3React } from '../../hooks'
 const StyledPolling = styled.div`
   color: ${({ theme }) => theme.green1};
   display: flex;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
   padding: 0 1rem;
   transition: opacity 0.25s ease;
 
   :hover {
     opacity: 1;
   }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `}
 `
 
 const StyledPollingDot = styled.div`
