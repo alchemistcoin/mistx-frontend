@@ -244,18 +244,24 @@ html {
 `
 
 export const ThemedGlobalStyle = createGlobalStyle`
-html {
-  color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg2};
-}
-
-body {
-  min-height: 100vh;
-  background-position: 0 -30vh;
-  background-repeat: no-repeat;
-  background: ${({ theme }) =>
-    `radial-gradient(48.8% 62.34% at 50% 0%, ${transparentize(0.1, theme.bg1)} 0%, ${transparentize(
-      1,
-      theme.bg2
-    )} 100%)`}}
+  html {
+    color: ${({ theme }) => theme.text1};
+    background-color: ${({ theme }) => theme.bg2};
+  }
+  
+  body {
+    min-height: 100vh;
+    background-position: 0 -30vh;
+    background-repeat: no-repeat;
+    background: ${({ theme }) =>
+      `radial-gradient(48.8% 62.34% at 50% 0%, ${transparentize(0.1, theme.bg1)} 0%, ${transparentize(
+        1,
+        theme.bg2
+      )} 100%)`}
+  }
+  .intercom-lightweight-app-launcher {
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      bottom: 5px !important;
+    `};
+  }
 `

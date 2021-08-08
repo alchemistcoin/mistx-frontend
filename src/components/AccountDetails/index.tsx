@@ -193,7 +193,7 @@ const MainWalletAction = styled(WalletAction)`
 const TransactionsButton = styled(ButtonOutlined)`
   width: auto;
   padding: 8px 16px;
-  color ${({ theme }) => theme.yellow1};
+  color: ${({ theme }) => theme.yellow1};
 `
 interface AccountDetailsProps {
   toggleWalletModal: () => void
