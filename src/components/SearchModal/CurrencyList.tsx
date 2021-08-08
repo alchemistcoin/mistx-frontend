@@ -1,8 +1,9 @@
-import { Currency, CurrencyAmount, currencyEquals, Token } from '@alchemist-coin/mistx-core'
+import { Currency, CurrencyAmount, currencyEquals, Token, Ether } from '@alchemist-coin/mistx-core'
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
+import { v4 as uuidv4 } from 'uuid'
 import { useActiveWeb3React } from '../../hooks'
 import { useCombinedActiveList } from '../../state/lists/hooks'
 import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
@@ -22,8 +23,12 @@ import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
 
-function currencyKey(currency: Currency | WrappedTokenInfo): string {
-  return currency instanceof WrappedTokenInfo ? currency.address : 'ETHER'
+function currencyKey(currency: Currency | WrappedTokenInfo | Token): string {
+  return currency instanceof (WrappedTokenInfo || Token)
+    ? currency.address
+    : currency instanceof Ether
+    ? 'ETHER'
+    : uuidv4()
 }
 
 const StyledBalanceText = styled(Text)`

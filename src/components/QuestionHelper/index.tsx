@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import Tooltip from '../Tooltip'
 import { Info } from '../Icons'
+import { PopoverProps } from '../Popover'
 
 const QuestionWrapper = styled.div`
   display: flex;
@@ -59,7 +60,7 @@ const QuestionMark = styled.span`
   font-size: 1rem;
 `
 
-export default function QuestionHelper({ text }: { text: string }) {
+export default function QuestionHelper({ text, placement }: { text: string; placement?: PopoverProps['placement'] }) {
   const [show, setShow] = useState<boolean>(false)
 
   const open = useCallback(() => setShow(true), [setShow])
@@ -67,7 +68,7 @@ export default function QuestionHelper({ text }: { text: string }) {
 
   return (
     <span style={{ display: 'flex', alignItems: 'center', marginLeft: 4 }}>
-      <Tooltip text={text} show={show}>
+      <Tooltip text={text} show={show} placement={placement}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
           <Info />
         </QuestionWrapper>

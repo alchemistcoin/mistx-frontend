@@ -1,4 +1,3 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { darken } from 'polished'
 import React, { useMemo } from 'react'
@@ -14,7 +13,7 @@ import { isPendingTransaction, isTransactionRecent, useAllTransactions } from '.
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonSecondary } from '../Button'
-import { PowerIcon, ConnectIcon } from '../Icons'
+import { ConnectIcon } from '../Icons'
 import { colors as ThemeColors } from '../../theme'
 import Loader from '../Loader'
 import { RowBetween } from '../Row'
@@ -88,7 +87,7 @@ const Text = styled.p`
   margin: 0 0.5rem 0 0.25rem;
   font-size: 1rem;
   width: fit-content;
-  font-weight: 700;
+  font-weight: 600;
 `
 
 const NetworkIcon = styled(Activity)`
@@ -98,9 +97,9 @@ const NetworkIcon = styled(Activity)`
   height: 16px;
 `
 
-const StyledPowerIcon = styled(PowerIcon)`
-  margin-left: 0.5rem;
-`
+// const StyledPowerIcon = styled(PowerIcon)`
+//   margin-left: 0.5rem;
+// `
 
 const StyledConnectIconWrapper = styled.div`
   position: relative;
@@ -123,15 +122,15 @@ const SOCK = (
 )
 
 // eslint-disable-next-line react/prop-types
-function StatusIcon({ connector }: { connector: AbstractConnector }) {
-  if (!connector) return null
-  return <StyledPowerIcon fill="#292624" />
-}
+// function StatusIcon({ connector }: { connector: AbstractConnector }) {
+//   if (!connector) return null
+//   return <StyledPowerIcon fill="#292624" />
+// }
 
 function Web3StatusInner() {
   const { t } = useTranslation()
   const [darkMode] = useDarkModeManager()
-  const { account, connector, error } = useWeb3React()
+  const { account, error } = useWeb3React()
 
   const colors = ThemeColors(darkMode)
 
@@ -163,7 +162,7 @@ function Web3StatusInner() {
             <Text>{ENSName || shortenAddress(account, 3)}</Text>
           </>
         )}
-        {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
+        {/* {!hasPendingTransactions && connector && <StatusIcon connector={connector} />} */}
       </Web3StatusConnected>
     )
   } else if (error) {

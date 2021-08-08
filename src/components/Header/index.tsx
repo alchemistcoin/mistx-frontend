@@ -1,14 +1,17 @@
 import React from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoMobile } from '../../assets/svg/logo_mobile.svg'
+import { ReactComponent as AlchemistLogo } from '../../assets/images/alchemist_logo.svg'
+import { ReactComponent as MenuIcon } from '../../assets/images/menu_icon.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
-import AlchemistMenu from './AlchemistMenu'
+import { ButtonIcon } from '../../components/Button'
+import { useSideBarOpen } from '../../state/application/hooks'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -41,6 +44,21 @@ const HeaderLinks = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0.5rem 0 0.5rem 0;
 `};
+`
+
+const MistLogoWrapper = styled.div`
+  width: 32px;
+  margin: 0 25px 0 0;
+  display: flex;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+     display: none;
+ `};
+
+  svg {
+    display: flex;
+    width: 100%;
+  }
 `
 
 const LogoWrapper = styled.div`
@@ -80,6 +98,19 @@ const LogoWrapperMobile = styled.div`
   }
 `
 
+const MenuWrapper = styled.div`
+  display: flex;
+
+  svg {
+    height: 28px;
+    width: auto;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      height: 28px;
+    `};
+  }
+`
+
 const LogoLink = styled(Link)`
   display: flex;
   flex-direction: column;
@@ -98,50 +129,6 @@ const HideLarge = styled.div`
 `
 
 const activeClassName = 'ACTIVE'
-
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.secondaryText1};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 2.5rem 0 0;
-  font-weight: 500;
-  position: relative;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 700;
-    color: ${({ theme }) => theme.text1};
-
-    &:after {
-      content: '';
-      width: ${rem(35)};
-      height: ${rem(4)};
-      bottom: -${rem(15)};
-      left: 0;
-      position: absolute;
-      background: ${({ theme }) => theme.secondaryText1};
-      border-radius: 1rem;
-
-      :hover,
-      :focus {
-        color: ${({ theme }) => darken(0.1, theme.secondaryText1)};
-      }
-    }
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-`
 
 const StyledExternalLink = styled(ExternalLink).attrs({
   activeClassName
@@ -225,6 +212,7 @@ export const SocialLink = styled(ExternalLink)`
 
 export default function Header() {
   const { t } = useTranslation()
+  const { toggleSideBar } = useSideBarOpen()
   return (
     <HeaderFrame>
       <HideLarge>
@@ -236,12 +224,19 @@ export default function Header() {
       </HideLarge>
       <HeaderRow align="start">
         <HeaderLinks>
-          <AlchemistMenu />
-          <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
-            {t('exchange')}
-          </StyledNavLink>
+          <MistLogoWrapper>
+            <Link to="/" title={t('mistx')}>
+              <AlchemistLogo />
+            </Link>
+          </MistLogoWrapper>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://crucible.alchemist.wtf'}>
+            Crucible
+          </StyledExternalLink>
+          <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://copperlaunch.com'}>
+            Copper
+          </StyledExternalLink>
           <StyledExternalLink id={`sandwiched-nav-link`} rel="" href={'https://sandwiched.wtf'}>
-            Sandwiched.wtf <StyledExternalLinkEl style={{ fontSize: '11px' }}>↗</StyledExternalLinkEl>
+            Sandwiched
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
@@ -252,6 +247,11 @@ export default function Header() {
       </LogoWrapper>
       <HeaderRow align="end" justify="flex-end">
         <WalletConnect />
+        <MenuWrapper>
+          <ButtonIcon onClick={() => toggleSideBar()}>
+            <MenuIcon />
+          </ButtonIcon>
+        </MenuWrapper>
       </HeaderRow>
     </HeaderFrame>
   )

@@ -1,12 +1,9 @@
 import { ChainId } from '@alchemist-coin/mistx-core'
 import React from 'react'
 import styled from 'styled-components'
-// import { rem } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
 import { YellowCard } from '../Card'
-import Menu from '../Menu'
 import Web3Status from '../Web3Status'
-import MistBalance from '../MistBalance'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -22,7 +19,7 @@ const HeaderFrame = styled.div`
   `};
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
   `}
 `
 
@@ -143,20 +140,17 @@ export default function Header() {
   return (
     <HeaderFrame>
       <HeaderControls>
-        <HeaderElementWrap>
-          <Menu />
-        </HeaderElementWrap>
         <HeaderElement>
           <HideSmall>
             {chainId && chainId !== ChainId.MAINNET && NETWORK_LABELS[chainId] && (
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
-          {chainId && chainId === ChainId.MAINNET && <MistBalance />}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             <Web3Status />
           </AccountElement>
         </HeaderElement>
+        <HeaderElementWrap></HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>
   )
