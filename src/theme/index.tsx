@@ -257,7 +257,11 @@ export const ThemedGlobalStyle = createGlobalStyle`
       `radial-gradient(48.8% 62.34% at 50% 0%, ${transparentize(0.1, theme.bg1)} 0%, ${transparentize(
         1,
         theme.bg2
-      )} 100%)`}
+      )} 100%)`};
+
+    &.scroll-disable  {
+      overflow: hidden;
+    } 
   }
   .intercom-lightweight-app-launcher {
     ${({ theme }) => theme.mediaWidth.upToMedium`

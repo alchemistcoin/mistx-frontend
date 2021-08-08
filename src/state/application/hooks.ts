@@ -123,6 +123,11 @@ export function useSideBarOpen(): any {
         hide_default_launcher: !sideBarOpen
       })
     }
+    if (sideBarOpen) {
+      document.body.classList.remove('scroll-disable')
+    } else {
+      document.body.classList.add('scroll-disable')
+    }
   }, [dispatch, sideBarOpen])
 
   return useMemo(() => ({ sideBarOpen, toggleSideBar }), [sideBarOpen, toggleSideBar])
