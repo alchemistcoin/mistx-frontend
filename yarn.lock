@@ -112,7 +112,7 @@
     "@ethersproject/bignumber" "^5.4.0"
     socket.io-client "^4.1.2"
 
-"@alchemist-coin/mistx-core@4.2.1":
+"@alchemist-coin/mistx-core@^4.0.2":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-core/-/mistx-core-4.2.1.tgz#f82900bbd29b43ee4ff00d14b0df3636f4a674c9"
   integrity sha512-R53xRkd9HPMHbn/d+HDisfmBy/P7qh6dbzWhqeXwEJgc7F7CscfrK+9Njs80skaerD06qPMabKP67tnNmRL2oA==
@@ -2657,6 +2657,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/caseless@*":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@types/caseless/-/caseless-0.12.2.tgz#f65d3d6389e01eeb458bd54dc8f52b95a9463bc8"
+  integrity sha512-6ckxMjBBD8URvjB6J3NcnuAn5Pkl7t3TizAg+xdlzzQGSPSmBcXf8KoIH0ua/i+tio+ZRUHEXp0HEmvaR4kt0w==
+
 "@types/component-emitter@^1.2.10":
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/@types/component-emitter/-/component-emitter-1.2.10.tgz#ef5b1589b9f16544642e473db5ea5639107ef3ea"
@@ -2701,6 +2706,14 @@
   dependencies:
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
+
+"@types/intercom-client@^2.11.11":
+  version "2.11.11"
+  resolved "https://registry.yarnpkg.com/@types/intercom-client/-/intercom-client-2.11.11.tgz#481ab038e39d7dd47a3254846134a109621b316d"
+  integrity sha512-I0aMp5OREP8QuRLVuzXziVHmXmWpGc/eTKfMzKiLozMJAi8HufZovctg7Jlatmh1wcbdZxDtL2aRC3SVx1Sd/Q==
+  dependencies:
+    "@types/node" "*"
+    "@types/request" "*"
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.3"
@@ -2899,6 +2912,16 @@
     "@types/styled-system" "*"
     "@types/styled-system__css" "*"
 
+"@types/request@*":
+  version "2.48.7"
+  resolved "https://registry.yarnpkg.com/@types/request/-/request-2.48.7.tgz#a962d11a26e0d71d9a9913d96bb806dc4d4c2f19"
+  integrity sha512-GWP9AZW7foLd4YQxyFZDBepl0lPsWLMEXDZUjQ/c1gqVPDPECrRZyEzuhJdnPWioFCq3Tv0qoGpMD6U+ygd4ZA==
+  dependencies:
+    "@types/caseless" "*"
+    "@types/node" "*"
+    "@types/tough-cookie" "*"
+    form-data "^2.5.0"
+
 "@types/scheduler@*":
   version "0.16.2"
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.2.tgz#1a62f89525723dde24ba1b01b092bf5df8ad4d39"
@@ -2956,6 +2979,11 @@
   dependencies:
     "@testing-library/dom" "^7.11.0"
     cypress "*"
+
+"@types/tough-cookie@*":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.1.tgz#8f80dd965ad81f3e1bc26d6f5c727e132721ff40"
+  integrity sha512-Y0K95ThC3esLEYD6ZuqNek29lNX2EM1qxV8y2FTLUB0ff5wWrk7az+mLrnNFUnaXcgKye22+sFBRXOgpPILZNg==
 
 "@types/warning@^3.0.0":
   version "3.0.0"
@@ -8696,6 +8724,15 @@ fork-ts-checker-webpack-plugin@3.1.1:
     semver "^5.6.0"
     tapable "^1.0.0"
     worker-rpc "^0.1.0"
+
+form-data@^2.5.0:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.5.1.tgz#f2cbec57b5e59e23716e128fe44d4e5dd23895f4"
+  integrity sha512-m21N3WOmEEURgk6B9GLOE4RuWOFf28Lhh9qGYeNlGq4VDXUlJy2th2slBNU8Gp8EzloYZOibZJ7t5ecIrFSjVA==
+  dependencies:
+    asynckit "^0.4.0"
+    combined-stream "^1.0.6"
+    mime-types "^2.1.12"
 
 form-data@~2.3.2:
   version "2.3.3"
