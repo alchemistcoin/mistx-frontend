@@ -4,29 +4,30 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
 import { RowFixed } from '../Row'
-import { GithubIcon, DiscordIcon, EtherscanIcon, CoingeckoIcon, EllipseIcon, CoingeckoLightIcon } from '../Icons'
+import { GithubIcon, DiscordIcon, EtherscanIcon, CoingeckoIcon, CoingeckoLightIcon } from '../Icons'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  width: 100%;
+  grid-column: span 2 / span 2;
   top: 0;
   position: relative;
+  display: flex;
   z-index: 2;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0.5rem 1rem;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding-left: 0;
+    grid-column: none;
+    align-items: flex-end;
+    margin: 8px 0;
   `}
 `
 
 const Row = styled(RowFixed)`
   flex-grow: 1;
   flex-basis: 0;
-  flex: ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    align-items: flex-end;
+    justify-content: flex-end;
   `};
 `
 
@@ -40,35 +41,22 @@ export const SocialLinkWrapper = styled.div<{ header?: boolean }>`
   margin: ${({ header }) => (header ? '0 0 0 1rem' : '0 0.5rem')};
   width: ${rem(36)};
   height: ${rem(36)};
-`
 
-const StyledEllipseWapper = styled.div`
-  display: flex;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  opacity: 0;
-  transition: opacity 0.2s ease-in;
-
-  > svg {
-    height: ${rem(40)};
-    width: auto;
-  }
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    &:last-child {
+      margin-right: 0;
+    }
+    width: ${rem(28)};
+    height: ${rem(28)};
+  `}
 `
 
 export const SocialLink = styled(ExternalLink)`
   display: flex;
-  position: absolute;
-  top: 0;
-
-  &:hover {
-    ${StyledEllipseWapper} {
-      opacity: 1;
-    }
-  }
+  position: relative;
 
   > svg {
-    height: ${rem(36)};
+    height: 100%;
     width: auto;
   }
 `
@@ -83,20 +71,14 @@ export default function NavExternalLinks({ header }: Props) {
 
   return (
     <Wrapper>
-      <Row align="end" justify="flex-end">
+      <Row align="center" justify="center">
         <SocialLinkWrapper header={header}>
           <SocialLink href="http://discord.alchemist.wtf" title={t('discord')}>
-            <StyledEllipseWapper>
-              <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-            </StyledEllipseWapper>
             <DiscordIcon fill={darkMode ? '#FFF' : '#1a0434'} />
           </SocialLink>
         </SocialLinkWrapper>
         <SocialLinkWrapper header={header}>
           <SocialLink href="https://github.com/alchemistcoin" title={t('github')}>
-            <StyledEllipseWapper>
-              <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-            </StyledEllipseWapper>
             <GithubIcon fill={darkMode ? '#FFF' : '#1a0434'} />
           </SocialLink>
         </SocialLinkWrapper>
@@ -105,17 +87,11 @@ export default function NavExternalLinks({ header }: Props) {
             href="https://etherscan.io/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab"
             title={t('etherscan')}
           >
-            <StyledEllipseWapper>
-              <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-            </StyledEllipseWapper>
             <EtherscanIcon fill={darkMode ? '#FFF' : '#1a0434'} />
           </SocialLink>
         </SocialLinkWrapper>
         <SocialLinkWrapper header={header}>
           <SocialLink href="https://www.coingecko.com/en/coins/alchemist" title={t('coingecko')}>
-            <StyledEllipseWapper>
-              <EllipseIcon fill={darkMode ? '#F6B713' : '#1a0434'} />
-            </StyledEllipseWapper>
             {darkMode ? <CoingeckoIcon /> : <CoingeckoLightIcon />}
           </SocialLink>
         </SocialLinkWrapper>

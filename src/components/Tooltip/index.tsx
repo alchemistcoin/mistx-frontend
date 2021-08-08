@@ -12,6 +12,7 @@ const TooltipContainer = styled.div`
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: string
+  placement?: PopoverProps['placement']
 }
 
 export default function Tooltip({ text, ...rest }: TooltipProps) {
