@@ -1,9 +1,14 @@
 {
   "name": "@alchemistcoin/mistx-frontend",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "mistX Frontend",
   "homepage": ".",
   "private": true,
+  "dependencies": {
+    "@alchemistcoin/default-token-list": "git+https://github.com/alchemistcoin/default-token-list.git#main",
+    "react-range": "^1.8.7",
+    "socket.io-client": "^4.0.1"
+  },
   "devDependencies": {
     "@alchemist-coin/mistx-connect": "4.0.3",
     "@alchemist-coin/mistx-core": "4.2.1",
