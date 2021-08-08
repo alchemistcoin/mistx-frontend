@@ -75,7 +75,7 @@ const FooterRight = styled.div`
     align-items: center;
     flex-direction: row;
     border-radius: 20px;
-    padding: 6px 8px;
+    padding: 6px 12px;
     border: 1px solid #535d63;
     text-decoration: none;
     font-weight: 300;
@@ -89,7 +89,7 @@ const FooterRight = styled.div`
     > div {
       width: 22px;
       display: flex;
-      margin-right: 12px;
+      margin-right: 8px;
 
       svg {
         width: 100%;
