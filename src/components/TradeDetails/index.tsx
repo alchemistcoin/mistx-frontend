@@ -96,7 +96,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
-          Protection from front-running attacks, cancellation fees, and failure costs.
+            Protection from front-running attacks, cancellation fees, and failure costs.
           </TYPE.black>
         </RowFixed>
       </RowBetween>
@@ -122,7 +122,8 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
-            Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. You would pay these fees even if you were not using mistX
+            Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. You would
+            pay these fees even if you were not using mistX
           </TYPE.black>
         </RowFixed>
       </RowBetween>
