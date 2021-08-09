@@ -190,11 +190,9 @@ const ToggleButton = styled.button<{ active: boolean }>`
   }
 `
 
-export default function SettingsTab() {
+function SettingsMenu({ toggle }: { toggle: () => void }) {
   const dispatch = useDispatch()
   const node = useRef<HTMLDivElement>()
-  const open = useModalOpen(ApplicationModal.SETTINGS)
-  const toggle = useToggleSettingsMenu()
   const [userBribeMargin, setUserBribeMargin] = useUserBribeMargin()
   const [stateBribeMargin, setStateBribeMargin] = useState<number>(userBribeMargin)
   const theme = useContext(ThemeContext)
@@ -205,29 +203,117 @@ export default function SettingsTab() {
   }
   const [ttl, setTtl] = useUserTransactionTTL()
 
-  const [expertMode, toggleExpertMode] = useExpertModeManager()
-
   const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
 
-  // show confirmation view before turning on
-  const [showConfirmation, setShowConfirmation] = useState(false)
+  const saveState = () => {
+    setUserBribeMargin(stateBribeMargin)
+  }
 
-  useOnClickOutside(node, open ? toggle : undefined)
+  const handleToggle = () => {
+    saveState()
+    toggle()
+  }
+
+  useOnClickOutside(node, handleToggle)
 
   const feeDisplayCurrency = useFeeDisplayCurrency()
 
+  return (
+    <MenuFlyout ref={node as any}>
+      <AutoColumn gap="md">
+        <SettingWrapper>
+          <StyledRowFixed>
+            <SettingsHeader>
+              <Text fontWeight={600} fontSize={20}>
+                Transaction Fee
+                <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
+              </Text>
+              <SettingsHeaderEnd>
+                <ToggleButton
+                  onClick={() => dispatch(updateFeeDisplayCurrency('USD'))}
+                  active={feeDisplayCurrency === 'USD'}
+                >
+                  USD
+                </ToggleButton>
+                <ToggleButton
+                  onClick={() => dispatch(updateFeeDisplayCurrency('ETH'))}
+                  active={feeDisplayCurrency === 'ETH'}
+                >
+                  ETH
+                </ToggleButton>
+              </SettingsHeaderEnd>
+            </SettingsHeader>
+          </StyledRowFixed>
+          <MinerBribeSlider
+            value={tipValueToSetting(stateBribeMargin)}
+            steps={TipSettingsSteps}
+            onChange={onTipChange}
+          />
+        </SettingWrapper>
+        <SettingWrapper darkBg>
+          <SettingsHeader>
+            <Text fontWeight={600} fontSize={20}>
+              Transaction Settings
+            </Text>
+          </SettingsHeader>
+          <TransactionSettings
+            rawSlippage={userSlippageTolerance}
+            setRawSlippage={setUserslippageTolerance}
+            deadline={ttl}
+            setDeadline={setTtl}
+          />
+        </SettingWrapper>
+        <SettingWrapper>
+          <SettingsHeader>
+            <Text fontWeight={600} fontSize={20}>
+              Interface Settings
+            </Text>
+          </SettingsHeader>
+          <RowBetween flexDirection="column">
+            <StyledRowFixed>
+              <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
+                DISABLE MULTIHOPS
+              </TYPE.black>
+              <QuestionHelper text="Restricts swaps to direct pairs only." />
+            </StyledRowFixed>
+            <StyledRowFixed marginTop="0.5rem">
+              <Toggle
+                id="toggle-disable-multihop-button"
+                isActive={singleHopOnly}
+                toggle={() => {
+                  // TODO: replace will alternative tracking
+                  // ReactGA.event({
+                  //   category: 'Routing',
+                  //   action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                  // })
+                  setSingleHopOnly(!singleHopOnly)
+                }}
+              />
+            </StyledRowFixed>
+          </RowBetween>
+        </SettingWrapper>
+      </AutoColumn>
+    </MenuFlyout>
+  )
+}
+
+export default function SettingsTab() {
+  const open = useModalOpen(ApplicationModal.SETTINGS)
+  const toggle = useToggleSettingsMenu()
+  const [expertMode, toggleExpertMode] = useExpertModeManager()
+  // show confirmation view before turning on
+  const [showConfirmation, setShowConfirmation] = useState(false)
+
   const handleDismiss = () => {
-    setUserBribeMargin(stateBribeMargin)
     setShowConfirmation(false)
   }
-  const handleToggle = () => {
-    if (open) {
+
+  const handleMenuButton = () => {
+    if (!open) {
+      console.log('open')
       toggle()
-    } else {
-      setUserBribeMargin(stateBribeMargin)
     }
   }
-  useOnClickOutside(node, handleToggle)
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
   return (
@@ -269,7 +355,7 @@ export default function SettingsTab() {
             </AutoColumn>
           </ModalContentWrapper>
         </Modal>
-        <StyledMenuButton onClick={() => !open && toggle()} id="open-settings-dialog-button">
+        <StyledMenuButton onClick={handleMenuButton} id="open-settings-dialog-button">
           <StyledMenuIcon>{open ? <Close /> : <Cog />}</StyledMenuIcon>
           {expertMode ? (
             <EmojiWrapper>
@@ -280,83 +366,7 @@ export default function SettingsTab() {
           ) : null}
         </StyledMenuButton>
       </StyledMenu>
-      {open && (
-        <MenuFlyout ref={node as any}>
-          <AutoColumn gap="md">
-            <SettingWrapper>
-              <StyledRowFixed>
-                <SettingsHeader>
-                  <Text fontWeight={600} fontSize={20}>
-                    Transaction Fee
-                    <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
-                  </Text>
-                  <SettingsHeaderEnd>
-                    <ToggleButton
-                      onClick={() => dispatch(updateFeeDisplayCurrency('USD'))}
-                      active={feeDisplayCurrency === 'USD'}
-                    >
-                      USD
-                    </ToggleButton>
-                    <ToggleButton
-                      onClick={() => dispatch(updateFeeDisplayCurrency('ETH'))}
-                      active={feeDisplayCurrency === 'ETH'}
-                    >
-                      ETH
-                    </ToggleButton>
-                  </SettingsHeaderEnd>
-                </SettingsHeader>
-              </StyledRowFixed>
-              <MinerBribeSlider
-                value={tipValueToSetting(stateBribeMargin)}
-                steps={TipSettingsSteps}
-                onChange={onTipChange}
-              />
-            </SettingWrapper>
-            <SettingWrapper darkBg>
-              <SettingsHeader>
-                <Text fontWeight={600} fontSize={20}>
-                  Transaction Settings
-                </Text>
-              </SettingsHeader>
-              <TransactionSettings
-                rawSlippage={userSlippageTolerance}
-                setRawSlippage={setUserslippageTolerance}
-                deadline={ttl}
-                setDeadline={setTtl}
-              />
-            </SettingWrapper>
-            <SettingWrapper>
-              <SettingsHeader>
-                <Text fontWeight={600} fontSize={20}>
-                  Interface Settings
-                </Text>
-              </SettingsHeader>
-              <RowBetween flexDirection="column">
-                <StyledRowFixed>
-                  <TYPE.black fontWeight={400} fontSize={16} color={theme.text1}>
-                    DISABLE MULTIHOPS
-                  </TYPE.black>
-                  <QuestionHelper text="Restricts swaps to direct pairs only." />
-                </StyledRowFixed>
-                <StyledRowFixed marginTop="0.5rem">
-                  <Toggle
-                    id="toggle-disable-multihop-button"
-                    isActive={singleHopOnly}
-                    toggle={() => {
-                      // TODO: replace will alternative tracking
-                      // ReactGA.event({
-                      //   category: 'Routing',
-                      //   action: singleHopOnly ? 'disable single hop' : 'enable single hop'
-                      // })
-                      setSingleHopOnly(!singleHopOnly)
-                    }}
-                  />
-                </StyledRowFixed>
-              </RowBetween>
-            </SettingWrapper>
-          </AutoColumn>
-        </MenuFlyout>
-      )}
+      {open && <SettingsMenu toggle={toggle} />}
     </>
   )
 }

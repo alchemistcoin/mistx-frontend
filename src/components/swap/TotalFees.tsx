@@ -10,15 +10,15 @@ interface TotalFeesProps {
 const TotalFees = ({ trade }: TotalFeesProps) => {
   const [minerTipPrice, setMinerTipPrice] = useState<string>('')
   const ethUSDCPrice = useUSDCPrice(WETH[1])
-  const { totalFeeInEth } = useTotalFeesForTrade(trade)
+  const { minerBribe } = useTotalFeesForTrade(trade)
 
   useEffect(() => {
     let label = '...'
-    if (totalFeeInEth && ethUSDCPrice) {
-      label = `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} (${Number(totalFeeInEth.toSignificant(2))} ETH)`
+    if (minerBribe && ethUSDCPrice) {
+      label = `$${ethUSDCPrice.quote(minerBribe).toFixed(2)} (${Number(minerBribe.toSignificant(2))} ETH)`
     }
     setMinerTipPrice(label)
-  }, [totalFeeInEth, ethUSDCPrice])
+  }, [minerBribe, ethUSDCPrice])
   return <>{minerTipPrice}</>
 }
 

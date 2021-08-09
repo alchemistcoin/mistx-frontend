@@ -12,7 +12,6 @@ import FormattedPriceImpact from '../swap/FormattedPriceImpact'
 import SwapPrice from '../swap/SwapPrice'
 import MinerTipPrice from '../swap/MinerTipPrice'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
-import useIsEIP1559 from '../../hooks/useIsEIP1559'
 import { FeeRowBetween, Divider } from '../swap/styleds'
 import useTotalFeesForTrade from 'hooks/useTotalFeesForTrade'
 interface TradeDetailsProps {
@@ -26,9 +25,8 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
   const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
-  const eip1559 = useIsEIP1559()
 
-  const { totalFeeInEth, baseFeeInEth, realizedLPFeeInEth } = useTotalFeesForTrade(trade)
+  const { totalFeeInEth, realizedLPFeeInEth } = useTotalFeesForTrade(trade)
 
   return !trade ? null : (
     <AutoColumn gap="6px">
@@ -127,7 +125,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
         </TYPE.black>
       </FeeRowBetween>
 
-      {eip1559 && baseFeeInEth && ethUSDCPrice ? (
+      {/*eip1559 && baseFeeInEth && ethUSDCPrice ? (
         <FeeRowBetween paddingLeft={20}>
           <RowFixed marginRight={20}>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
@@ -140,7 +138,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
         </FeeRowBetween>
       ) : (
         <></>
-      )}
+      )*/}
     </AutoColumn>
   )
 }
