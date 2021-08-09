@@ -197,16 +197,19 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
   const [stateBribeMargin, setStateBribeMargin] = useState<number>(userBribeMargin)
   const theme = useContext(ThemeContext)
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
+  const [stateUserSlippage, setStateUserSlippage] = useState<number>(userSlippageTolerance)
+  const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
+  const [stateSingleHopOnly, setStateSingleHopOnly] = useState<boolean>(singleHopOnly)
 
   const onTipChange = (setting: number) => {
     setStateBribeMargin(tipSettingToValue(setting))
   }
   const [ttl, setTtl] = useUserTransactionTTL()
 
-  const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
-
   const saveState = () => {
     setUserBribeMargin(stateBribeMargin)
+    setUserslippageTolerance(stateUserSlippage)
+    setSingleHopOnly(stateSingleHopOnly)
   }
 
   const handleToggle = () => {
@@ -257,8 +260,8 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
             </Text>
           </SettingsHeader>
           <TransactionSettings
-            rawSlippage={userSlippageTolerance}
-            setRawSlippage={setUserslippageTolerance}
+            rawSlippage={stateUserSlippage}
+            setRawSlippage={setStateUserSlippage}
             deadline={ttl}
             setDeadline={setTtl}
           />
@@ -279,14 +282,14 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
             <StyledRowFixed marginTop="0.5rem">
               <Toggle
                 id="toggle-disable-multihop-button"
-                isActive={singleHopOnly}
+                isActive={stateSingleHopOnly}
                 toggle={() => {
                   // TODO: replace will alternative tracking
                   // ReactGA.event({
                   //   category: 'Routing',
                   //   action: singleHopOnly ? 'disable single hop' : 'enable single hop'
                   // })
-                  setSingleHopOnly(!singleHopOnly)
+                  setStateSingleHopOnly(!stateSingleHopOnly)
                 }}
               />
             </StyledRowFixed>
