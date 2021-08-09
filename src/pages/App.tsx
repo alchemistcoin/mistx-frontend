@@ -4,8 +4,6 @@ import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Polling from '../components/Header/Polling'
-import ConnectionStatus from '../components/ConnectionStatus'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import NewAppVersionAvailable from '../components/NewAppVersionAvailable'
@@ -24,7 +22,6 @@ const AppWrapper = styled.div`
   align-items: flex-start;
   overflow-x: hidden;
   min-height: 100vh;
-  background-image: url(/images/bg.svg);
 `
 
 const HeaderWrapper = styled.div`
@@ -54,16 +51,6 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
-const ConnectionsWrapper = styled.div`
-  position: fixed;
-  left: 0;
-  bottom: 0;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    bottom: 72px;
-  `};
-`
-
 export default function App() {
   return (
     <Suspense fallback={null}>
@@ -77,10 +64,6 @@ export default function App() {
           <Header />
         </HeaderWrapper>
         <BodyWrapper>
-          <ConnectionsWrapper>
-            <Polling />
-            <ConnectionStatus />
-          </ConnectionsWrapper>
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/exchange" component={Swap} />
