@@ -313,7 +313,6 @@ export default function SettingsTab() {
 
   const handleMenuButton = () => {
     if (!open) {
-      console.log('open')
       toggle()
     }
   }
