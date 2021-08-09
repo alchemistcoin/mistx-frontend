@@ -117,7 +117,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <FeeRowBetween paddingLeft={20}>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Miner Tip
+            MEV Protection
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>

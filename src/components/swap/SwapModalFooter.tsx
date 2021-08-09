@@ -223,7 +223,7 @@ export default function SwapModalFooter({
         <StyledFeeRowBetween paddingLeft={20}>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Miner Tip
+              MEV Protection
             </TYPE.black>
             <QuestionHelper text="A tip for the miner to accept the private transaction to avoid front-running and sandwich attacks." />
           </AutoRow>

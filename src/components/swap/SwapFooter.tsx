@@ -159,7 +159,7 @@ export default function SwapFooter({
                   paddingRight: 10
                 }}
               >
-                MEV Protection (Miner Tip):&nbsp;
+                MEV Protection:&nbsp;
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>
                   <TotalFees trade={trade} />
                 </Text>
