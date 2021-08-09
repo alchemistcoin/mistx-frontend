@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Trade, TradeType, Percent, JSBI, Currency, WETH } from '@alchemist-coin/mistx-core'
+import { Trade, TradeType, Percent, JSBI, Currency, WETH, Exchange } from '@alchemist-coin/mistx-core'
 import { useActiveWeb3React } from '../../hooks'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
@@ -26,7 +26,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
   const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
 
-  const { totalFeeInEth, realizedLPFeeInEth } = useTotalFeesForTrade(trade)
+  const { realizedLPFeeInEth, baseFeeInEth } = useTotalFeesForTrade(trade)
 
   return !trade ? null : (
     <AutoColumn gap="6px">
@@ -89,20 +89,48 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Total Fee
+            mistX Fees
           </TYPE.black>
         </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {totalFeeInEth && ethUSDCPrice
-            ? `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} (${totalFeeInEth.toSignificant(4)} ETH)`
-            : '-'}
-        </TYPE.black>
+      </RowBetween>
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
+          Protection from front-running attacks, cancellation fees, and failure costs.
+          </TYPE.black>
+        </RowFixed>
       </RowBetween>
 
       <FeeRowBetween paddingLeft={20}>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Liquidity Provider
+            mistX Protection
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          <MinerTipPrice trade={trade} />
+        </TYPE.black>
+      </FeeRowBetween>
+      <Divider />
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Network Fees
+          </TYPE.black>
+        </RowFixed>
+      </RowBetween>
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
+            Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. You would pay these fees even if you were not using mistX
+          </TYPE.black>
+        </RowFixed>
+      </RowBetween>
+
+      <FeeRowBetween paddingLeft={20}>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            {trade.exchange === Exchange.UNI ? 'Uniswap' : 'Sushiswap'} LP Fee
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
@@ -113,17 +141,20 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
             : '-'}
         </TYPE.black>
       </FeeRowBetween>
-
-      <FeeRowBetween paddingLeft={20}>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            MEV Protection
+      {baseFeeInEth && ethUSDCPrice ? (
+        <FeeRowBetween paddingLeft={20}>
+          <RowFixed marginRight={20}>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              ETH Base Fee
+            </TYPE.black>
+          </RowFixed>
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            {`< $${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
           </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          <MinerTipPrice trade={trade} />
-        </TYPE.black>
-      </FeeRowBetween>
+        </FeeRowBetween>
+      ) : (
+        <></>
+      )}
 
       {/*eip1559 && baseFeeInEth && ethUSDCPrice ? (
         <FeeRowBetween paddingLeft={20}>
