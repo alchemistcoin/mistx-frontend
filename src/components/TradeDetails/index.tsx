@@ -122,7 +122,8 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
-            Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. mistX gets 0% of this fee.
+            Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. mistX gets
+            0% of this fee.
           </TYPE.black>
         </RowFixed>
       </RowBetween>
