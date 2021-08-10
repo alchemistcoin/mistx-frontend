@@ -11,21 +11,28 @@ const FooterFrame = styled.div`
   justify-content: space-between;
   position: absolute;
   bottom: 10px;
-  padding: 1rem 1rem;
+  padding: 1rem;
   padding-right: 88px; /* to account for chat widget */
   width: 100%;
   z-index: 0;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     bottom: 75px;
-    padding: 1rem 1rem 0;
+    padding: .5rem 0;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    align-items: flex-end;
+    padding: 0 1rem;
   `};
 `
 
 const ConnectionsWrapper = styled.div`
   display: flex;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    align-items: flex-end;
+    flex-direction: column;
   `};
 `
 
@@ -34,20 +41,26 @@ const Row = styled.div`
   display: flex;
   align-items: center;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    justify-content: flex-end;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: .325rem;
   `};
 `
 
 const Link = styled(ExternalLink)`
   opacity: 0.6;
-  transition: all 0.3s ease-in;
+  transition: opacity 0.3s ease-in;
   margin-left: 30px;
   font-weight: 400;
+
   &:hover {
     opacity: 1;
   }
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: .875rem;
+    margin-left: .5rem;
   `};
 `
 
