@@ -65,8 +65,13 @@ const StyledBalance = styled.div`
 `
 
 const StyledBalanceAmount = styled.span`
-  text-overflow: ellipsis;
+  max-width: 160px;
   overflow: hidden;
+  text-overflow: ellipsis;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 102px;
+  `};
 `
 interface SwapLabelProps {
   onMax?: () => void

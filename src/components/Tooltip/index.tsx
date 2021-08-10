@@ -25,7 +25,7 @@ export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show
   const close = useCallback(() => setShow(false), [setShow])
   return (
     <Tooltip {...rest} show={show}>
-      <div onMouseEnter={open} onMouseLeave={close}>
+      <div onMouseEnter={open} onMouseLeave={close} onClick={open}>
         {children}
       </div>
     </Tooltip>
