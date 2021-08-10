@@ -26,7 +26,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
             .mul(baseFeePerGas)
             .toString()
         )
-        totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
+        // totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
       }
     }
 
