@@ -10,20 +10,26 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
   const { chainId } = useActiveWeb3React()
   const { realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const ethPrice = useETHPrice(trade.inputAmount.currency.wrapped)
-  const { baseFeePerGas } = useBaseFeePerGas()
-
+  const { maxBaseFeePerGas, minBaseFeePerGas } = useBaseFeePerGas()
   return useMemo(() => {
     let totalFeeInEth: CurrencyAmount<Currency> | undefined
-    let baseFeeInEth: CurrencyAmount<Currency> | undefined
+    let maxBaseFeeInEth: CurrencyAmount<Currency> | undefined
+    let minBaseFeeInEth: CurrencyAmount<Currency> | undefined
     let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
     if (ethPrice && realizedLPFee) {
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
-      if (baseFeePerGas) {
-        baseFeeInEth = CurrencyAmount.fromRawAmount(
+      if (maxBaseFeePerGas && minBaseFeePerGas) {
+        maxBaseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
           BigNumber.from(trade.estimatedGas)
-            .mul(baseFeePerGas)
+            .mul(maxBaseFeePerGas)
+            .toString()
+        )
+        minBaseFeeInEth = CurrencyAmount.fromRawAmount(
+          WETH[chainId || 1],
+          BigNumber.from(trade.estimatedGas)
+            .mul(minBaseFeePerGas)
             .toString()
         )
         // totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
@@ -31,10 +37,11 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
     }
 
     return {
-      baseFeeInEth,
+      maxBaseFeeInEth,
+      minBaseFeeInEth,
       minerBribe: trade.minerBribe,
       realizedLPFeeInEth,
       totalFeeInEth
     }
-  }, [baseFeePerGas, chainId, ethPrice, realizedLPFee, trade.estimatedGas, trade.minerBribe])
+  }, [maxBaseFeePerGas, minBaseFeePerGas, chainId, ethPrice, realizedLPFee, trade.estimatedGas, trade.minerBribe])
 }

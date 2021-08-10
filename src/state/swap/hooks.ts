@@ -129,7 +129,7 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
-  const { baseFeePerGas } = useBaseFeePerGas()
+  const { maxBaseFeePerGas } = useBaseFeePerGas()
   const [userBribeMargin] = useUserBribeMargin()
   const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)
@@ -230,7 +230,7 @@ export function useDerivedSwapInfo(): {
     return returnNothing
   }
 
-  if (baseFeePerGas === undefined) return returnNothing
+  if (maxBaseFeePerGas === undefined) return returnNothing
 
   let inputError: string | undefined
   if (!account) {
@@ -295,13 +295,13 @@ export function useDerivedSwapInfo(): {
     const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId || 1),
       BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
-        .mul(baseFeePerGas)
+        .mul(maxBaseFeePerGas)
         .toString()
     )
     const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId || 1),
       BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
-        .mul(baseFeePerGas)
+        .mul(maxBaseFeePerGas)
         .toString()
     )
 
