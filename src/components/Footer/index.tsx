@@ -25,6 +25,10 @@ const FooterFrame = styled.div`
     align-items: flex-end;
     padding: 0 1rem;
   `};
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    position: relative;
+  `};
 `
 
 const ConnectionsWrapper = styled.div`
@@ -60,7 +64,7 @@ const Link = styled(ExternalLink)`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: .875rem;
-    margin-left: .5rem;
+    margin-left: 0rem;
   `};
 `
 
