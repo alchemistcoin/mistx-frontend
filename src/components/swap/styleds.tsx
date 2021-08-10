@@ -247,6 +247,8 @@ export const FeeInnerRight = styled.div`
 
 export const FeeRowBetween = styled(RowBetween)`
   position: relative;
+  align-items: flex-start;
+
   &:after {
     content: '';
     height: 13px;
@@ -262,7 +264,7 @@ export const FeeRowBetween = styled(RowBetween)`
     width: 8px;
     position: absolute;
     left: 8px;
-    bottom: 11px;
+    top: 12px;
     background-color: ${({ theme }) => theme.text2};
   }
 `

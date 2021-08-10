@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { Trade, TradeType, Percent, JSBI, Currency, WETH, Exchange } from '@alchemist-coin/mistx-core'
 import { useActiveWeb3React } from '../../hooks'
-import { ThemeContext } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { BIPS_BASE } from '../../constants'
 import { AutoColumn } from '../Column'
@@ -18,6 +18,12 @@ interface TradeDetailsProps {
   trade: Trade<Currency, Currency, TradeType>
   allowedSlippage: number
 }
+
+export const StyledFeeRowBetween = styled(FeeRowBetween)`
+  &:before {
+    top: 12px;
+  }
+`
 
 export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsProps) {
   const { chainId } = useActiveWeb3React()
@@ -95,13 +101,13 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
       <RowBetween>
         <RowFixed marginRight={20}>
-          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
+          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="16px">
             Protection from front-running attacks, cancellation fees, and failure costs.
           </TYPE.black>
         </RowFixed>
       </RowBetween>
 
-      <FeeRowBetween paddingLeft={20}>
+      <StyledFeeRowBetween paddingLeft={20}>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             mistX Protection
@@ -110,7 +116,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
           <MinerTipPrice trade={trade} />
         </TYPE.black>
-      </FeeRowBetween>
+      </StyledFeeRowBetween>
       <Divider />
       <RowBetween>
         <RowFixed marginRight={20}>
@@ -121,14 +127,14 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
       <RowBetween>
         <RowFixed marginRight={20}>
-          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
+          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="16px">
             Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. mistX gets
             0% of this fee.
           </TYPE.black>
         </RowFixed>
       </RowBetween>
 
-      <FeeRowBetween paddingLeft={20}>
+      <StyledFeeRowBetween paddingLeft={20}>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             {trade.exchange === Exchange.UNI ? 'Uniswap' : 'Sushiswap'} LP Fee
@@ -141,26 +147,31 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
               )} ${realizedLPFee.currency && realizedLPFee.currency.symbol})`
             : '-'}
         </TYPE.black>
-      </FeeRowBetween>
+      </StyledFeeRowBetween>
       {maxBaseFeeInEth && minBaseFeeInEth && ethUSDCPrice ? (
-        <FeeRowBetween paddingLeft={20}>
+        <StyledFeeRowBetween paddingLeft={20} alignItems="flex-start">
           <RowFixed marginRight={20}>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              ETH Base Fee
+              Base Fee
             </TYPE.black>
           </RowFixed>
-          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {`$${ethUSDCPrice.quote(minBaseFeeInEth).toFixed(2)}-${ethUSDCPrice
-              .quote(maxBaseFeeInEth)
-              .toFixed(2)} (${minBaseFeeInEth.toSignificant(4)}-${maxBaseFeeInEth.toSignificant(4)} ETH)`}
-          </TYPE.black>
-        </FeeRowBetween>
+          <div>
+            <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+              {`$${ethUSDCPrice.quote(minBaseFeeInEth).toFixed(2)}-${ethUSDCPrice.quote(maxBaseFeeInEth).toFixed(2)}`}
+            </TYPE.black>
+            <div>
+              <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+                {`(${minBaseFeeInEth.toSignificant(4)}-${maxBaseFeeInEth.toSignificant(4)} ETH)`}
+              </TYPE.black>
+            </div>
+          </div>
+        </StyledFeeRowBetween>
       ) : (
         <></>
       )}
 
       {/*eip1559 && baseFeeInEth && ethUSDCPrice ? (
-        <FeeRowBetween paddingLeft={20}>
+        <StyledFeeRowBetween paddingLeft={20}>
           <RowFixed marginRight={20}>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Base Fee
@@ -169,7 +180,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
           <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
             {`$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
           </TYPE.black>
-        </FeeRowBetween>
+        </StyledFeeRowBetween>
       ) : (
         <></>
       )*/}

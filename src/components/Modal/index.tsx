@@ -36,7 +36,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
     width: 50vw;
     overflow-y: auto;
     overflow-x: hidden;
-    max-width: 428px;
+    max-width: 440px;
 
     ${({ maxHeight }) =>
       maxHeight &&
