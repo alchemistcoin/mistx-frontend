@@ -129,7 +129,7 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
-  const baseFeePerGas = useBaseFeePerGas()
+  const { baseFeePerGas } = useBaseFeePerGas()
   const [userBribeMargin] = useUserBribeMargin()
   const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)

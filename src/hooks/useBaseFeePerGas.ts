@@ -14,7 +14,28 @@ export function getMaxBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: n
   return maxBaseFee
 }
 
-export default function useBaseFeePerGas(): BigNumber | undefined {
+export function getMinBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
+  let minBaseFee = BigNumber.from(baseFee)
+  for (let i = 0; i < blocksInFuture; i++) {
+    minBaseFee = minBaseFee
+      .mul(875)
+      .div(1000)
+      .add(1)
+  }
+  return minBaseFee
+}
+
+type BaseFeeReturnType = {
+  baseFeePerGas: BigNumber | undefined
+  minBaseFeePerGas: BigNumber | undefined
+  maxBaseFeePerGas: BigNumber | undefined
+}
+export default function useBaseFeePerGas(): BaseFeeReturnType {
+  const ret: BaseFeeReturnType = {
+    baseFeePerGas: undefined,
+    minBaseFeePerGas: undefined,
+    maxBaseFeePerGas: undefined
+  }
   const [baseFee, setBaseFee] = useState<string | undefined>(undefined)
   const block = useLatestBlockWithTransactions()
   useEffect(() => {
@@ -25,7 +46,12 @@ export default function useBaseFeePerGas(): BigNumber | undefined {
     }
   }, [block])
   return useMemo(() => {
-    if (!baseFee) return undefined
-    return getMaxBaseFeeInFutureBlock(BigNumber.from(baseFee), BASE_FEE_BLOCKS_IN_FUTURE)
+    if (baseFee) {
+      ret.baseFeePerGas = BigNumber.from(baseFee)
+      ret.minBaseFeePerGas = getMinBaseFeeInFutureBlock(ret.baseFeePerGas, BASE_FEE_BLOCKS_IN_FUTURE)
+      ret.maxBaseFeePerGas = getMaxBaseFeeInFutureBlock(ret.baseFeePerGas, BASE_FEE_BLOCKS_IN_FUTURE)
+    }
+    return ret
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseFee])
 }

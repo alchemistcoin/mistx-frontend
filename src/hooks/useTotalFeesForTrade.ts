@@ -10,7 +10,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
   const { chainId } = useActiveWeb3React()
   const { realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const ethPrice = useETHPrice(trade.inputAmount.currency.wrapped)
-  const baseFeePerGas = useBaseFeePerGas()
+  const { baseFeePerGas } = useBaseFeePerGas()
 
   return useMemo(() => {
     let totalFeeInEth: CurrencyAmount<Currency> | undefined

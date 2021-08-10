@@ -11,7 +11,7 @@ export function MaxAmountSpend(
   currencyAmount?: CurrencyAmount<Currency>,
   wrapType?: WrapType
 ): CurrencyAmount<Currency> | undefined {
-  const baseFeePerGas = useBaseFeePerGas()
+  const { baseFeePerGas } = useBaseFeePerGas()
   if (!currencyAmount) return undefined
   const ETH = Ether.onChain(currencyAmount.currency.chainId)
   if (wrapType !== WrapType.NOT_APPLICABLE) {
