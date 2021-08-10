@@ -50,6 +50,11 @@ const StyledBalanceLabel = styled.div`
   font-weight: 400;
   margin-right: 0.5rem;
   color: ${({ theme }) => theme.text3};
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    overflow: hidden;
+    width: 24px;
+  `};
 `
 
 const StyledBalance = styled.div`
