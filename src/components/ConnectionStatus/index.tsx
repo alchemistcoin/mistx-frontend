@@ -6,7 +6,7 @@ import { useSocketStatus } from 'state/application/hooks'
 const StyledPolling = styled.div<{ connected: boolean }>`
   color: ${({ theme, connected }) => (connected ? theme.green1 : theme.red3)};
   display: flex;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   padding: 0 1rem;
   transition: opacity 0.25s ease;
 
@@ -15,8 +15,13 @@ const StyledPolling = styled.div<{ connected: boolean }>`
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    bottom: 100px;
-  `}
+    margin-bottom: 0;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: 0.5rem;
+    padding: 0;
+  `};
 `
 const StyledPollingDot = styled.div<{ connected: boolean }>`
   background-color: ${({ theme, connected }) => (connected ? theme.green1 : theme.red3)};

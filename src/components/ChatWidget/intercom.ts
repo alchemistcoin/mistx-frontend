@@ -55,9 +55,9 @@ export function init() {
 
 export function start() {
   window.Intercom('boot', {
-    app_id: ENV.INTERCOM_APP_ID,
+    app_id: ENV.INTERCOM_APP_ID
     // Website visitor so may not have any user related info
-    vertical_padding: window.innerWidth >= 960 ? 20 : 86
+    // vertical_padding: 20
   })
 }
 
