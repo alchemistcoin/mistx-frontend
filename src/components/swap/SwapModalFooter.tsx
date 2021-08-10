@@ -20,7 +20,6 @@ import QuestionHelper from '../QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
-import useIsEIP1559 from '../../hooks/useIsEIP1559'
 import { FeeRowBetween } from '../swap/styleds'
 import useTotalFeesForTrade from 'hooks/useTotalFeesForTrade'
 
@@ -108,9 +107,8 @@ export default function SwapModalFooter({
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
   const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], trade.minerBribe.quotient)
-  const eip1559 = useIsEIP1559()
 
-  const { baseFeeInEth, realizedLPFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
+  const { realizedLPFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
 
   return (
     <>
@@ -225,7 +223,7 @@ export default function SwapModalFooter({
         <StyledFeeRowBetween paddingLeft={20}>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Miner Tip
+              mistX Protection
             </TYPE.black>
             <QuestionHelper text="A tip for the miner to accept the private transaction to avoid front-running and sandwich attacks." />
           </AutoRow>
@@ -235,7 +233,7 @@ export default function SwapModalFooter({
               : `Loading...`}
           </TYPE.black>
         </StyledFeeRowBetween>
-        {eip1559 && baseFeeInEth && ethUSDCPrice ? (
+        {/*eip1559 && baseFeeInEth && ethUSDCPrice ? (
           <StyledFeeRowBetween paddingLeft={20}>
             <AutoRow width="fit-content">
               <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
@@ -249,7 +247,7 @@ export default function SwapModalFooter({
           </StyledFeeRowBetween>
         ) : (
           <></>
-        )}
+        )*/}
       </AutoColumn>
 
       <AutoRow>
