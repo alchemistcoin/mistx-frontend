@@ -37,16 +37,12 @@ const StyledCloseIcon = styled(X)`
   :hover {
     cursor: pointer;
   }
-
-  > * {
-    stroke: ${({ theme }) => theme.text1};
-  }
 `
 
 const StyledMenuButton = styled.button`
   align-items: center;
   position: relative;
-  border: 2px solid ${({ theme }) => theme.primary2};
+  border: 1px solid ${({ theme }) => theme.primary2};
   background-color: transparent;
   display: flex;
   justify-content: center;
@@ -60,7 +56,7 @@ const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-    border: 2px solid ${({ theme }) => lighten(0.1, theme.primary2)};
+    border: 1px solid ${({ theme }) => lighten(0.1, theme.primary2)};
   }
 `
 
@@ -73,9 +69,6 @@ const StyledMenuIcon = styled.div`
     width: ${rem(24)};
     height: ${rem(24)};
 
-    > * {
-      stroke: ${({ theme }) => theme.primary2};
-    }
     path {
       fill: ${({ theme }) => theme.primary2};
     }
@@ -118,6 +111,16 @@ const MenuFlyout = styled.span`
     right: 0;
     left: 0;
     min-width: auto;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    left: 0;
+    max-height: 110%;
+    min-width: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    right: 0;
+    top: 52px;
   `};
 `
 
@@ -300,7 +303,7 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
   )
 }
 
-export default function SettingsTab() {
+export default function Settings() {
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
   const [expertMode, toggleExpertMode] = useExpertModeManager()
