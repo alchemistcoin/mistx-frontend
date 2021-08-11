@@ -10,12 +10,15 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
   const { chainId } = useActiveWeb3React()
   const { realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const ethPrice = useETHPrice(trade.inputAmount.currency.wrapped)
-  const { maxBaseFeePerGas, minBaseFeePerGas } = useBaseFeePerGas()
+  const { maxBaseFeePerGas, minBaseFeePerGas, baseFeePerGas } = useBaseFeePerGas()
   return useMemo(() => {
     let totalFeeInEth: CurrencyAmount<Currency> | undefined
     let maxBaseFeeInEth: CurrencyAmount<Currency> | undefined
     let minBaseFeeInEth: CurrencyAmount<Currency> | undefined
+    let baseFeeInEth: CurrencyAmount<Currency> | undefined
     let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
+    let toalNetworkFeeInEth: CurrencyAmount<Currency> | undefined
+
     if (ethPrice && realizedLPFee) {
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
@@ -32,16 +35,35 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
             .mul(minBaseFeePerGas)
             .toString()
         )
-        // totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
+        baseFeeInEth = CurrencyAmount.fromRawAmount(
+          WETH[chainId || 1],
+          BigNumber.from(trade.estimatedGas)
+            .mul(BigNumber.from(baseFeePerGas))
+            .toString()
+        )
+        totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
+
+        // toalNetworkFeeInEth = realizedLPFeeInEth.add(trade.minerBribe).add(baseFeeInEth) // is this correct ?
       }
     }
 
     return {
       maxBaseFeeInEth,
       minBaseFeeInEth,
+      baseFeeInEth,
       minerBribe: trade.minerBribe,
       realizedLPFeeInEth,
-      totalFeeInEth
+      totalFeeInEth,
+      toalNetworkFeeInEth
     }
-  }, [maxBaseFeePerGas, minBaseFeePerGas, chainId, ethPrice, realizedLPFee, trade.estimatedGas, trade.minerBribe])
+  }, [
+    maxBaseFeePerGas,
+    minBaseFeePerGas,
+    chainId,
+    ethPrice,
+    realizedLPFee,
+    trade.estimatedGas,
+    trade.minerBribe,
+    baseFeePerGas
+  ])
 }

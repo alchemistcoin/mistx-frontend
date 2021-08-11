@@ -282,7 +282,7 @@ export function BackArrow({ to }: { to: string }) {
   )
 }
 
-export const CustomLightSpinner = styled(Spinner)<{ size: string }>`
+export const CustomLightSpinner = styled(Spinner)<{ size: string; color?: string }>`
   height: ${({ size }) => size};
   width: ${({ size }) => size};
 `

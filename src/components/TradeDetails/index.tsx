@@ -60,18 +60,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Price Impact
-          </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
-        </TYPE.black>
-      </RowBetween>
-
-      <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            {trade.tradeType === TradeType.EXACT_INPUT ? `Min received` : `Max sent`}
+            {trade.tradeType === TradeType.EXACT_INPUT ? `Minimum received` : `Maximum sent`}
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
@@ -84,7 +73,18 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Slippage tolerance
+            Price Impact
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
+        </TYPE.black>
+      </RowBetween>
+
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Slippage Tolerance
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>

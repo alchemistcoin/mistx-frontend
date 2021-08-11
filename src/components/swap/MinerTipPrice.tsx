@@ -3,13 +3,14 @@ import { Trade, BribeEstimate, WETH, CurrencyAmount, Currency, TradeType } from 
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
-
+import Circle from '../../assets/images/blue-loader.svg'
+import { CustomLightSpinner } from '../../theme'
 interface MinerTipPriceProps {
   trade: Trade<Currency, Currency, TradeType>
 }
 
 const MinerTipPrice = ({ trade }: MinerTipPriceProps) => {
-  const [minerTipPrice, setMinerTipPrice] = useState<string>('')
+  const [minerTipPrice, setMinerTipPrice] = useState<string | null>(null)
   const bribeEstimate: BribeEstimate | null = useMinerBribeEstimate()
   const ethUSDCPrice = useUSDCPrice(WETH[1])
   const feeDisplayCurrency = useFeeDisplayCurrency()
@@ -22,7 +23,8 @@ const MinerTipPrice = ({ trade }: MinerTipPriceProps) => {
     }
     setMinerTipPrice(label)
   }, [bribeEstimate, ethUSDCPrice, feeDisplayCurrency, trade.minerBribe])
-  return <>{minerTipPrice}</>
+
+  return <>{minerTipPrice ? minerTipPrice : <CustomLightSpinner src={Circle} alt="loader" size={'14px'} />}</>
 }
 
 export default MinerTipPrice
