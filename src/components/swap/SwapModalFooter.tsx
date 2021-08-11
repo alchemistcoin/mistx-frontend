@@ -228,7 +228,7 @@ export default function SwapModalFooter({
         <RowBetween marginBottom="15px">
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Eth Base Fee (Estimated)
+              ETH Base Fee (Estimated)
             </TYPE.black>
             <StyledQuestionHelper text="Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee." />
           </AutoRow>
