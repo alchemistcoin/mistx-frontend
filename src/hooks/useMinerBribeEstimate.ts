@@ -11,6 +11,7 @@ export default function useMinerBribeEstimate(customTipMargin?: number): BribeEs
   if (gasPrice) gasPriceString = gasPrice.toString()
   return useMemo(() => {
     if (!gasPriceString) return null
-    return Trade.estimateBribeAmounts(gasPriceString, userBribeMarginString)
+    const estimate = Trade.estimateBribeAmounts(gasPriceString, userBribeMarginString)
+    return estimate
   }, [gasPriceString, userBribeMarginString])
 }

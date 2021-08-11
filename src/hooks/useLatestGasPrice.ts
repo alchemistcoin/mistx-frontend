@@ -50,6 +50,7 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
       gasPrices.forEach(price => {
         total = total.add(BigNumber.from(price))
       })
+
       setGasPrice(total.div(gasPrices.length).toString())
     }
   }, [gasPrices])
