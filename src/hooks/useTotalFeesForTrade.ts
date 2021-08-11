@@ -17,8 +17,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
     let minBaseFeeInEth: CurrencyAmount<Currency> | undefined
     let baseFeeInEth: CurrencyAmount<Currency> | undefined
     let realizedLPFeeInEth: CurrencyAmount<Currency> | undefined
-    let toalNetworkFeeInEth: CurrencyAmount<Currency> | undefined
-
+    console.log('baseFeeInEth', baseFeeInEth)
     if (ethPrice && realizedLPFee) {
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
@@ -42,8 +41,6 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
             .toString()
         )
         totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
-
-        // toalNetworkFeeInEth = realizedLPFeeInEth.add(trade.minerBribe).add(baseFeeInEth) // is this correct ?
       }
     }
 
@@ -53,8 +50,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       baseFeeInEth,
       minerBribe: trade.minerBribe,
       realizedLPFeeInEth,
-      totalFeeInEth,
-      toalNetworkFeeInEth
+      totalFeeInEth
     }
   }, [
     maxBaseFeePerGas,
