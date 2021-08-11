@@ -183,26 +183,31 @@ export default function SwapModalFooter({
           <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
         </RowBetween>
       </AutoColumn>
-      <AutoColumn gap="15px" style={{ padding: '1rem 1.5rem 1rem' }}>
-        <SettingsHeader style={{ marginBottom: '0' }}>
+      <AutoColumn gap="0px" style={{ padding: '1rem 1.5rem 1rem' }}>
+        <SettingsHeader style={{ marginBottom: '10px' }}>
           <Text fontWeight={600} fontSize={20}>
             Fee Breakdown
           </Text>
         </SettingsHeader>
 
         <RowBetween>
-          <AutoRow width="fit-content">
+          <AutoRow width="fit-content" marginBottom="5px">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               MistX Protection
             </TYPE.black>
-            <StyledQuestionHelper text="A tip for the miner to accept the private transaction to avoid front-running and sandwich attacks." />
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
             <MinerTipPrice trade={trade} />
           </TYPE.black>
         </RowBetween>
 
-        <RowBetween>
+        <AutoRow width="fit-content" marginBottom="15px">
+          <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
+            A tip for the miner to accept the private transaction to avoid front-running and sandwich attacks.
+          </TYPE.black>
+        </AutoRow>
+
+        <RowBetween marginBottom="15px">
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Liquidity Provider
@@ -220,7 +225,7 @@ export default function SwapModalFooter({
           </TYPE.black>
         </RowBetween>
 
-        <RowBetween>
+        <RowBetween marginBottom="15px">
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Eth Network Base Fee
