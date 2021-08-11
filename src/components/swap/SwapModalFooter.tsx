@@ -186,7 +186,7 @@ export default function SwapModalFooter({
       <AutoColumn gap="15px" style={{ padding: '1rem 1.5rem 1rem' }}>
         <SettingsHeader style={{ marginBottom: '0' }}>
           <Text fontWeight={600} fontSize={20}>
-            Fees
+            Fee Breakdown
           </Text>
         </SettingsHeader>
 
@@ -207,7 +207,7 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Liquidity Provider
             </TYPE.black>
-            <StyledQuestionHelper text="Charged by liquidity providers (Uniswap or Sushiswap) and base fee for successful use of the ETH blockchain. mistX gets 0% of this fee." />
+            <StyledQuestionHelper text="Charged by liquidity providers (Uniswap or Sushiswap), mistX gets 0% of this fee." />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
@@ -223,9 +223,9 @@ export default function SwapModalFooter({
         <RowBetween>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Base Fee
+              Eth Network Base Fee
             </TYPE.black>
-            <StyledQuestionHelper text="Charged by liquidity providers (Uniswap or Sushiswap) and base fee for successful use of the ETH blockchain. mistX gets 0% of this fee." />
+            <StyledQuestionHelper text="Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee." />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
