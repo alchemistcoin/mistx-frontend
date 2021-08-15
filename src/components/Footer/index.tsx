@@ -54,12 +54,12 @@ const Row = styled.div`
 
 const Link = styled(ExternalLink)`
   opacity: 0.6;
-  transition: opacity 0.3s ease-in;
   margin-left: 30px;
   font-weight: 400;
 
   &:hover {
     opacity: 1;
+    text-decoration: none;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
