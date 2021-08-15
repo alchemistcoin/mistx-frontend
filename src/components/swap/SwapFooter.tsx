@@ -164,6 +164,9 @@ export default function SwapFooter({
                   <TotalFees trade={trade} />
                 </Text>
               </Text>
+              <Text lineHeight="1.2rem" marginTop="10px" paddingLeft="100px">
+                Protection from front-running attacks, cancellation fees, and failure costs.
+              </Text>
             </FeeInnerLeft>
             <FeeInnerRight>
               <MouseoverTooltipContent content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}>

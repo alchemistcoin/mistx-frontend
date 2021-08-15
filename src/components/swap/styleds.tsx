@@ -22,7 +22,6 @@ export const ArrowWrapper = styled.div<{
   color?: string
   clickable: boolean
 }>`
-  align-items: center;
   border-radius: 50%;
   background: #2a3645;
   height: 2.5rem;
