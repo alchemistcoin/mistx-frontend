@@ -89,9 +89,8 @@ export default function CurrencySelect({
           <StyledDropDown />
         </DownArrow>
       </TokenSelectButton>
-      {onCurrencySelect && (
+      {onCurrencySelect && modalOpen && (
         <CurrencySearchModal
-          isOpen={modalOpen}
           onDismiss={handleDismissSearch}
           onCurrencySelect={onCurrencySelect}
           selectedCurrency={currency}
