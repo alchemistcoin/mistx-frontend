@@ -30,7 +30,6 @@ const MinerBribePrice = ({ customTipMargin }: Props) => {
       setMinerBribePrice(label)
     }
     return () => {
-      console.log('MinerBribePrice unmounting')
       mounted = false
     }
   }, [bribeEstimate, ethUSDCPrice, feeDisplayCurrency])
