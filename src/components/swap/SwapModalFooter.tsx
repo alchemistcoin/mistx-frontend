@@ -1,5 +1,4 @@
-import { Trade, Token, TradeType, Price, CurrencyAmount, WETH, Currency } from '@alchemist-coin/mistx-core'
-import { useActiveWeb3React } from '../../hooks'
+import { Trade, Token, TradeType, Price, Currency } from '@alchemist-coin/mistx-core'
 import { SettingsHeader } from 'components/shared/header/styled'
 import { darken } from 'polished'
 import React, { useContext, useMemo, useState } from 'react'
@@ -14,24 +13,20 @@ import {
   formatExecutionPrice,
   warningSeverity
 } from '../../utils/prices'
+import Circle from '../../assets/images/light-loader.svg'
+import { CustomLightSpinner } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
-import { FeeRowBetween } from '../swap/styleds'
 import useTotalFeesForTrade from 'hooks/useTotalFeesForTrade'
+import MinerTipPrice from '../swap/MinerTipPrice'
 
 const PriceWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg4};
   padding: 1rem 2rem 1rem 1.5rem;
-`
-
-const StyledFeeRowBetween = styled(FeeRowBetween)`
-  &:after {
-    top: -3px;
-  }
 `
 
 const ConfirmButton = styled(ButtonError)`
@@ -82,6 +77,11 @@ const ConfirmButton = styled(ButtonError)`
   }
 `
 
+const StyledQuestionHelper = styled(QuestionHelper)`
+  width: 20px;
+  margin-left: 10px;
+`
+
 export default function SwapModalFooter({
   trade,
   onConfirm,
@@ -97,7 +97,6 @@ export default function SwapModalFooter({
   disabledConfirm: boolean
   ethUSDCPrice: Price<Currency, Token> | undefined
 }) {
-  const { chainId } = useActiveWeb3React()
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
   const slippageAdjustedAmounts = useMemo(() => computeSlippageAdjustedAmounts(trade, allowedSlippage), [
@@ -106,9 +105,7 @@ export default function SwapModalFooter({
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
-  const minerBribeEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], trade.minerBribe.quotient)
-
-  const { realizedLPFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
+  const { totalFeeInEth, realizedLPFeeInEth, baseFeeInEth } = useTotalFeesForTrade(trade)
 
   return (
     <>
@@ -134,18 +131,13 @@ export default function SwapModalFooter({
           </Text>
         </RowBetween>
       </PriceWrapper>
-      <AutoColumn gap="14px" style={{ padding: '2.5rem 1.5rem' }}>
-        <SettingsHeader style={{ marginBottom: '.625rem' }}>
-          <Text fontWeight={600} fontSize={20}>
-            Breakdown
-          </Text>
-        </SettingsHeader>
+      <AutoColumn gap="15px" style={{ padding: '1.5rem 1.5rem 0' }}>
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {trade.tradeType === TradeType.EXACT_INPUT ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
-            <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+            <StyledQuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
           </RowFixed>
           <RowFixed>
             {ethUSDCPrice ? (
@@ -168,86 +160,106 @@ export default function SwapModalFooter({
             )}
           </RowFixed>
         </RowBetween>
-        <StyledFeeRowBetween paddingLeft={20}>
+        <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Slippage Tolerance
             </TYPE.black>
-            <QuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
+            <StyledQuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
           </RowFixed>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={700}>
               {`${(allowedSlippage / 100).toFixed(2)}%`}
             </TYPE.black>
           </RowFixed>
-        </StyledFeeRowBetween>
+        </RowBetween>
         <RowBetween>
           <AutoRow width="fit-content">
             <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
               Price Impact
             </TYPE.black>
-            <QuestionHelper text="The difference between the market price and your price due to trade size." />
+            <StyledQuestionHelper text="The difference between the market price and your price due to trade size." />
           </AutoRow>
           <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
+        </RowBetween>
+      </AutoColumn>
+      <AutoColumn gap="0px" style={{ padding: '1rem 1.5rem 1rem' }}>
+        <SettingsHeader style={{ marginBottom: '10px' }}>
+          <Text fontWeight={600} fontSize={20}>
+            Fee Breakdown
+          </Text>
+        </SettingsHeader>
+
+        <RowBetween>
+          <AutoRow width="fit-content" marginBottom="5px">
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              MistX Protection
+            </TYPE.black>
+          </AutoRow>
+          <TYPE.black fontSize={14} fontWeight={700}>
+            <MinerTipPrice trade={trade} />
+          </TYPE.black>
+        </RowBetween>
+
+        <AutoRow width="fit-content" marginBottom="15px">
+          <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
+            Protection from front-running attacks, cancellation fees, and failure costs.
+          </TYPE.black>
+        </AutoRow>
+
+        <RowBetween marginBottom="15px">
+          <AutoRow width="fit-content">
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Liquidity Provider
+            </TYPE.black>
+            <StyledQuestionHelper text="Charged by liquidity providers (Uniswap or Sushiswap), mistX gets 0% of this fee." />
+          </AutoRow>
+
+          <TYPE.black fontSize={14} fontWeight={700}>
+            {ethUSDCPrice && realizedLPFeeInEth && `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} `}
+            {realizedLPFee ? (
+              '(' + realizedLPFee?.toSignificant(4) + ' ' + trade.inputAmount.currency.symbol + ')'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
+        </RowBetween>
+
+        <RowBetween marginBottom="15px">
+          <AutoRow width="fit-content">
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              ETH Base Fee (Estimated)
+            </TYPE.black>
+            <StyledQuestionHelper text="Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee." />
+          </AutoRow>
+
+          <TYPE.black fontSize={14} fontWeight={700}>
+            {ethUSDCPrice && baseFeeInEth && `$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} `}
+            {baseFeeInEth ? (
+              '(' + baseFeeInEth?.toSignificant(4) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
         </RowBetween>
 
         <RowBetween>
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Total Fees
+              Total (Estimated)
             </TYPE.black>
-            <QuestionHelper text="Total transaction fee" />
+            <StyledQuestionHelper text="Estimated Total Fee for this swap" />
           </AutoRow>
+
           <TYPE.black fontSize={14} fontWeight={700}>
-            {totalFeeInEth && ethUSDCPrice
-              ? `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} (${totalFeeInEth.toSignificant(4)} ETH)`
-              : '-'}
+            {ethUSDCPrice && totalFeeInEth && `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} `}
+            {totalFeeInEth ? (
+              '(' + totalFeeInEth?.toSignificant(4) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
           </TYPE.black>
         </RowBetween>
-
-        <StyledFeeRowBetween paddingLeft={20}>
-          <AutoRow width="fit-content">
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Liquidity Provider
-            </TYPE.black>
-            <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
-          </AutoRow>
-          <TYPE.black fontSize={14} fontWeight={700}>
-            {ethUSDCPrice && realizedLPFeeInEth && `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} `}
-            {realizedLPFee
-              ? '(' + realizedLPFee?.toSignificant(4) + ' ' + trade.inputAmount.currency.symbol + ')'
-              : '-'}
-          </TYPE.black>
-        </StyledFeeRowBetween>
-
-        <StyledFeeRowBetween paddingLeft={20}>
-          <AutoRow width="fit-content">
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              mistX Protection
-            </TYPE.black>
-            <QuestionHelper text="A tip for the miner to accept the private transaction to avoid front-running and sandwich attacks." />
-          </AutoRow>
-          <TYPE.black fontSize={14} fontWeight={700}>
-            {ethUSDCPrice
-              ? `$ ${ethUSDCPrice.quote(minerBribeEth).toFixed(2)} (${minerBribeEth.toSignificant(4)} ETH)`
-              : `Loading...`}
-          </TYPE.black>
-        </StyledFeeRowBetween>
-        {/*eip1559 && baseFeeInEth && ethUSDCPrice ? (
-          <StyledFeeRowBetween paddingLeft={20}>
-            <AutoRow width="fit-content">
-              <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-                Base Fee
-              </TYPE.black>
-              <QuestionHelper text="The London hard fork (EIP 1559) requires a base fee for every transaction. The value shown is the maximum base fee you will pay for your transaction." />
-            </AutoRow>
-            <TYPE.black fontSize={14} fontWeight={700}>
-              {`$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
-            </TYPE.black>
-          </StyledFeeRowBetween>
-        ) : (
-          <></>
-        )*/}
       </AutoColumn>
 
       <AutoRow>

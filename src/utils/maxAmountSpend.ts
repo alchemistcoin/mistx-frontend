@@ -11,7 +11,7 @@ export function MaxAmountSpend(
   currencyAmount?: CurrencyAmount<Currency>,
   wrapType?: WrapType
 ): CurrencyAmount<Currency> | undefined {
-  const baseFeePerGas = useBaseFeePerGas()
+  const { maxBaseFeePerGas } = useBaseFeePerGas()
   if (!currencyAmount) return undefined
   const ETH = Ether.onChain(currencyAmount.currency.chainId)
   if (wrapType !== WrapType.NOT_APPLICABLE) {
@@ -20,8 +20,8 @@ export function MaxAmountSpend(
     } else {
       return CurrencyAmount.fromRawAmount(ETH, JSBI.BigInt(0))
     }
-  } else if (currencyAmount.currency.isNative && baseFeePerGas) {
-    const minETH = JSBI.multiply(JSBI.BigInt(baseFeePerGas.toString()), JSBI.BigInt(MISTX_DEFAULT_GAS_LIMIT))
+  } else if (currencyAmount.currency.isNative && maxBaseFeePerGas) {
+    const minETH = JSBI.multiply(JSBI.BigInt(maxBaseFeePerGas.toString()), JSBI.BigInt(MISTX_DEFAULT_GAS_LIMIT))
     if (JSBI.greaterThan(currencyAmount.quotient, minETH)) {
       return CurrencyAmount.fromRawAmount(ETH, JSBI.subtract(currencyAmount.quotient, minETH))
     } else {
