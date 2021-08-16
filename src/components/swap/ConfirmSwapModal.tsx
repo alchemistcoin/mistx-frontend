@@ -36,11 +36,9 @@ export default function ConfirmSwapModal({
   onDismiss,
   recipient,
   swapErrorMessage,
-  isOpen,
   attemptingTxn,
   txHash
 }: {
-  isOpen: boolean
   trade: Trade<Currency, Currency, TradeType> | undefined
   originalTrade: Trade<Currency, Currency, TradeType> | undefined
   attemptingTxn: boolean
@@ -95,7 +93,7 @@ export default function ConfirmSwapModal({
 
   return (
     <TransactionConfirmationModal
-      isOpen={isOpen}
+      isOpen={true}
       onDismiss={onDismiss}
       attemptingTxn={attemptingTxn}
       hash={txHash}
