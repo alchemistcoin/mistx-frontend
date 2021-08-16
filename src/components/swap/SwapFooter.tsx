@@ -83,6 +83,7 @@ const StyledButtonYellow = styled(StyledButtonError)`
 `
 
 const InfoWrapper = styled.div`
+  cursor: pointer;
   svg {
     circle,
     path {
