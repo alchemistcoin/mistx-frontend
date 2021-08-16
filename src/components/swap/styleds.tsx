@@ -65,6 +65,8 @@ export const SectionBreak = styled.div`
 export const BottomGrouping = styled.div`
   margin: 1rem 0 0 0;
   padding: 0;
+  z-index: 1;
+  position: relative;
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`

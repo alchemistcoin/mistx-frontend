@@ -94,6 +94,7 @@ const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapMod
 const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletModal'))
 
 export default function Swap({ history }: RouteComponentProps) {
+  console.log('---- swap')
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff

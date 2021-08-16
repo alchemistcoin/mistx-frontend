@@ -148,7 +148,7 @@ export default function SwapFooter({
   return (
     <>
       {trade && trade.minerBribe ? (
-        <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
+        <AutoRow justify="space-between" style={{ padding: '0 1rem', position: 'relative', zIndex: 3 }}>
           <FeeWrapper>
             <FeeInnerLeft>
               <Text
@@ -163,9 +163,6 @@ export default function SwapFooter({
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>
                   <TotalFees trade={trade} />
                 </Text>
-              </Text>
-              <Text lineHeight="1.2rem" marginTop="10px" paddingLeft="100px">
-                Protection from front-running attacks, cancellation fees, and failure costs.
               </Text>
             </FeeInnerLeft>
             <FeeInnerRight>
