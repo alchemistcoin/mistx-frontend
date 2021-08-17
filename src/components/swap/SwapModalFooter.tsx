@@ -80,6 +80,12 @@ const ConfirmButton = styled(ButtonError)`
 const StyledQuestionHelper = styled(QuestionHelper)`
   width: 20px;
   margin-left: 10px;
+  svg {
+    circle,
+    path {
+      fill: #fff;
+    }
+  }
 `
 
 export default function SwapModalFooter({
@@ -137,7 +143,10 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {trade.tradeType === TradeType.EXACT_INPUT ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
-            <StyledQuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+            <StyledQuestionHelper
+              text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed."
+              small
+            />
           </RowFixed>
           <RowFixed>
             {ethUSDCPrice ? (
@@ -165,7 +174,10 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Slippage Tolerance
             </TYPE.black>
-            <StyledQuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
+            <StyledQuestionHelper
+              text="Your transaction will revert if the price changes unfavorably by more than this percentage."
+              small
+            />
           </RowFixed>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={700}>
@@ -178,7 +190,10 @@ export default function SwapModalFooter({
             <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
               Price Impact
             </TYPE.black>
-            <StyledQuestionHelper text="The difference between the market price and your price due to trade size." />
+            <StyledQuestionHelper
+              text="The difference between the market price and your price due to trade size."
+              small
+            />
           </AutoRow>
           <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
         </RowBetween>
@@ -195,6 +210,10 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               MistX Protection
             </TYPE.black>
+            <QuestionHelper
+              text="Represents a fee sent to the miner to include your transaction privately and a fee sent to Alchemist for providing mistX protection services"
+              small
+            />
           </AutoRow>
           <TYPE.black fontSize={14} fontWeight={700}>
             <MinerTipPrice trade={trade} />
@@ -203,7 +222,7 @@ export default function SwapModalFooter({
 
         <AutoRow width="fit-content" marginBottom="15px">
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
-            Protection from front-running attacks, cancellation fees, and failure costs.
+            Protection from front-running attacks, cancellation fees, and failure costs. Includes tip sent to miner.
           </TYPE.black>
         </AutoRow>
 
@@ -212,7 +231,10 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Liquidity Provider
             </TYPE.black>
-            <StyledQuestionHelper text="Charged by liquidity providers (Uniswap or Sushiswap), mistX gets 0% of this fee." />
+            <StyledQuestionHelper
+              text="Charged by liquidity providers (Uniswap or Sushiswap), mistX gets 0% of this fee."
+              small
+            />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
@@ -230,7 +252,10 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               ETH Base Fee (Estimated)
             </TYPE.black>
-            <StyledQuestionHelper text="Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee." />
+            <StyledQuestionHelper
+              text="Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee."
+              small
+            />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
@@ -248,7 +273,7 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Total (Estimated)
             </TYPE.black>
-            <StyledQuestionHelper text="Estimated Total Fee for this swap" />
+            <StyledQuestionHelper text="Estimated Total Fee for this swap" small />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
