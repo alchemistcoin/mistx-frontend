@@ -129,7 +129,11 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
     recipient
   } = useSwapState()
+<<<<<<< HEAD
   const { maxBaseFeePerGas } = useBaseFeePerGas()
+=======
+  const [baseFeePerGas] = useBaseFeePerGas()
+>>>>>>> 98a3ef9... add gas tracker. adjust base fee per gas calculation and get block +1 and block +3 values. get priority fee per gas to use in miner tip calculation
   const [userBribeMargin] = useUserBribeMargin()
   const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)

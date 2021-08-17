@@ -1,17 +1,17 @@
 import { useEffect, useState, useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import useLatestBlockWithTransactions from './useLatestBlockWithTransactions'
-import { BASE_FEE_BLOCKS_IN_FUTURE } from '../constants'
+import { BASE_FEE_BLOCKS_IN_FUTURE, MAX_BASE_FEE_BLOCKS_IN_FUTURE } from '../constants'
 
 export function getMaxBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
   let maxBaseFee = BigNumber.from(baseFee)
-  for (let i = 0; i < blocksInFuture; i++) {
-    maxBaseFee = maxBaseFee
-      .mul(1125)
-      .div(1000)
-      .add(1)
-  }
-  return maxBaseFee
+
+  const multiplier = 1125 ** blocksInFuture
+  const divide = 1000 ** blocksInFuture
+
+  maxBaseFee = maxBaseFee.mul(multiplier).div(divide)
+
+  return maxBaseFee.add(1)
 }
 
 export function getMinBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
@@ -30,6 +30,7 @@ type BaseFeeReturnType = {
   minBaseFeePerGas: BigNumber | undefined
   maxBaseFeePerGas: BigNumber | undefined
 }
+
 export default function useBaseFeePerGas(): BaseFeeReturnType {
   const ret: BaseFeeReturnType = {
     baseFeePerGas: undefined,
@@ -45,6 +46,7 @@ export default function useBaseFeePerGas(): BaseFeeReturnType {
       setBaseFee(block.baseFeePerGas?.toString())
     }
   }, [block])
+
   return useMemo(() => {
     if (baseFee) {
       ret.baseFeePerGas = BigNumber.from(baseFee)

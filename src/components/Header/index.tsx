@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom'
 import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+// hooks
+import { useSideBarOpen } from '../../state/application/hooks'
+// components
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoMobile } from '../../assets/svg/logo_mobile.svg'
 import { ReactComponent as AlchemistLogo } from '../../assets/images/alchemist_logo.svg'
@@ -11,7 +14,7 @@ import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { ButtonIcon } from '../../components/Button'
-import { useSideBarOpen } from '../../state/application/hooks'
+import GasTracker from './GasTracker'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -245,7 +248,8 @@ export default function Header() {
           <Logo />
         </LogoLink>
       </LogoWrapper>
-      <HeaderRow align="end" justify="flex-end">
+      <HeaderRow align="center" justify="flex-end">
+        <GasTracker />
         <WalletConnect />
         <MenuWrapper>
           <ButtonIcon onClick={() => toggleSideBar()}>

@@ -10,6 +10,7 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
 
   useEffect(() => {
     if (block) {
+      console.log('transactions', block)
       // final tx of block
       const tx = block.transactions[block.transactions.length - 1]
       const blockBaseFee = block.baseFeePerGas ? BigNumber.from(block.baseFeePerGas) : undefined
@@ -24,7 +25,7 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
           const mfpg = BigNumber.from(tx.maxFeePerGas)
           const mpfpg = BigNumber.from(tx.maxPriorityFeePerGas)
           const maxFeeBaseFeeDiff = mfpg.sub(blockBaseFee)
-          const priorityFeePerGas = mpfpg.lt(maxFeeBaseFeeDiff) ? mpfpg : maxFeeBaseFeeDiff
+          const priorityFeePerGas = mpfpg.lt(maxFeeBaseFeeDiff) ? mpfpg : maxFeeBaseFeeDiff // use whichever is lower
           if (priorityFeePerGas) {
             gasPrice = gasPrice.add(priorityFeePerGas)
           }

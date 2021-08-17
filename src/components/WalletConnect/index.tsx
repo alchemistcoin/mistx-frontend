@@ -60,25 +60,6 @@ const HeaderElement = styled.div`
   `};
 `
 
-const HeaderElementWrap = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-const AccountElement = styled.div<{ active: boolean }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 12px;
-  white-space: nowrap;
-  width: 100%;
-  cursor: pointer;
-
-  :focus {
-    border: 1px solid blue;
-  }
-`
-
 const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -136,7 +117,8 @@ export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 }
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
+
   return (
     <HeaderFrame>
       <HeaderControls>
@@ -146,11 +128,8 @@ export default function Header() {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            <Web3Status />
-          </AccountElement>
+          <Web3Status />
         </HeaderElement>
-        <HeaderElementWrap></HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>
   )
