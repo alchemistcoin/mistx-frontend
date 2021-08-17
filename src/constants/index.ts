@@ -273,8 +273,8 @@ export const BLOCKED_ADDRESSES: string[] = [
 
 // Miner Tip Margin
 // default bribe margin, in bips
-export const INITIAL_BRIBE_MARGIN = 18
-export const MINER_BRIBE_MIN = 2
+export const INITIAL_BRIBE_MARGIN = 20
+export const MINER_BRIBE_MIN = 5
 export const MINER_BRIBE_MAX = 50
 
 export const MISTX_DEFAULT_GAS_LIMIT = 375000
