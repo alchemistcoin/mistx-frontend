@@ -42,16 +42,12 @@ function TooltipContent({ content, show, ...rest }: TooltipContentProps) {
 }
 
 export function MouseoverTooltipContent({ content, children, ...rest }: Omit<TooltipContentProps, 'show'>) {
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(true)
   const open = useCallback(() => setShow(true), [setShow])
   const close = useCallback(() => setShow(false), [setShow])
   return (
     <TooltipContent {...rest} show={show} content={content}>
-      <div
-        style={{ display: 'flex', lineHeight: 0, padding: '0.25rem', alignItems: 'center' }}
-        onMouseEnter={open}
-        onMouseLeave={close}
-      >
+      <div style={{ display: 'flex', lineHeight: 0 }} onMouseEnter={open} onMouseLeave={close}>
         {children}
       </div>
     </TooltipContent>
