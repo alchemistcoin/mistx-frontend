@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
-import { Diagnosis, Status, SwapReq, BundleProcessed } from '../../websocket/index'
+import { Diagnosis, Status, SwapReq, BundleProcessed } from '@alchemist-coin/mistx-connect'
 import { WrapType } from 'hooks/useWrapCallback'
 
 export interface SerializableTransactionReceipt {

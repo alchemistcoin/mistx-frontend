@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
+import { BundleProcessed } from '@alchemist-coin/mistx-connect'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from '../application/hooks'
-import { Diagnosis, emitTransactionCancellation, Status, BundleProcessed } from '../../websocket'
+import { Diagnosis, emitTransactionCancellation, Status } from '../../websocket'
 import { WrapType } from '../../hooks/useWrapCallback'
 interface TransactionResponseIdentifier {
   chainId: ChainId
@@ -190,7 +191,7 @@ export function useTransactionCanceller() {
       }
     ) => {
       if (!account) return
-      emitTransactionCancellation(bundle.serialized)
+      emitTransactionCancellation(bundle.id)
     },
     [account]
   )
@@ -238,7 +239,7 @@ export function useGetBundleByID() {
   return useCallback(
     (id: string) => {
       return Object.values(transactions).find((transaction: TransactionDetails) => {
-        return transaction.processed?.serialized === id
+        return transaction.processed?.id === id
       })
     },
     [transactions]

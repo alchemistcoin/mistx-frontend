@@ -1,7 +1,7 @@
 import { ChainId, Token } from '@alchemist-coin/mistx-core'
 import { createReducer } from '@reduxjs/toolkit'
 import { WrapType } from 'hooks/useWrapCallback'
-import { Diagnosis, Status, SwapReq, BundleProcessed, TransactionProcessed } from 'websocket'
+import { Diagnosis, Status, SwapReq, BundleProcessed, TransactionProcessed } from '@alchemist-coin/mistx-connect'
 import {
   addTransaction,
   checkedTransaction,
@@ -77,6 +77,25 @@ const LegacyMessageMap: { [key: string]: string } = {
 
 function SerializeLegacyTransaction(transaction: any): TransactionDetails | undefined {
   const { processed } = transaction
+  if (processed && processed.serialized) {
+    const serialized: TransactionDetails = {
+      ...transaction,
+      processed: {
+        bribe: transaction.processed.bribe,
+        id: transaction.processed.serialized,
+        chainId: 1,
+        deadline: transaction.processed.deadline,
+        from: transaction.processed.from,
+        sessionToken: transaction.processed.sessionToken,
+        simulateOnly: false,
+        timestamp: transaction.processed.timestamp,
+        totalEstimatedEffectiveGasPrice: transaction.processed.totalEstimatedEffectiveGasPrice,
+        totalEstimatedGas: transaction.processed.totalEstimatedGas,
+        transactions: transaction.processed.transactions
+      }
+    }
+    return serialized
+  }
   if (processed && processed.serializedSwap) {
     const transactions: TransactionProcessed[] = []
     const bundleSerialized = processed.serializedApprove ? processed.serializedApprove : processed.serializedSwap
@@ -101,6 +120,7 @@ function SerializeLegacyTransaction(transaction: any): TransactionDetails | unde
         to: processed.swap.to
       }
     })
+
     const serialized: TransactionDetails = {
       chainId: 1,
       hash: transaction.hash,
@@ -115,7 +135,7 @@ function SerializeLegacyTransaction(transaction: any): TransactionDetails | unde
       message: LegacyMessageMap[LegacyStatusMap[transaction.status]],
       processed: {
         bribe: processed.bribe,
-        serialized: bundleSerialized,
+        id: bundleSerialized,
         chainId: 1,
         deadline: processed.swap.deadline,
         from: processed.from,
