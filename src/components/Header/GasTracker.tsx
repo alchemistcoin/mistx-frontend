@@ -11,7 +11,7 @@ const IconContainer = styled.div`
 `
 
 export default function GasTracker() {
-  const [, , baseFee] = useBaseFeePerGas()
+  const { baseFeePerGas: baseFee } = useBaseFeePerGas()
 
   if (!baseFee) return null
 

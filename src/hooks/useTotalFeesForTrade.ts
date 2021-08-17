@@ -5,12 +5,14 @@ import useBaseFeePerGas from './useBaseFeePerGas'
 import { Currency, CurrencyAmount, Trade, TradeType, WETH } from '@alchemist-coin/mistx-core'
 import { useActiveWeb3React } from 'hooks'
 import { computeTradePriceBreakdown } from 'utils/prices'
+// import useMinerBribeEstimate from './useMinerBribeEstimate'
 
 export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, TradeType>) {
   const { chainId } = useActiveWeb3React()
   const { realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const ethPrice = useETHPrice(trade.inputAmount.currency.wrapped)
   const { maxBaseFeePerGas, minBaseFeePerGas, baseFeePerGas } = useBaseFeePerGas()
+  // const minerBribeEstimate = useMinerBribeEstimate()
 
   return useMemo(() => {
     let totalFeeInEth: CurrencyAmount<Currency> | undefined

@@ -8,7 +8,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut, useMinTradeAmount, MinTradeEstimates } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
-import useLatestGasPrice from '../../hooks/useLatestGasPrice'
+// import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import useBaseFeePerGas from '../../hooks/useBaseFeePerGas'
 import { isAddress } from '../../utils'
 import { isETHInTrade, isETHOutTrade, isTradeBetter } from '../../utils/trades'
@@ -25,6 +25,7 @@ import {
   MISTX_DEFAULT_GAS_LIMIT,
   MISTX_DEFAULT_APPROVE_GAS_LIMIT
 } from '../../constants'
+import usePriorityFeePerGas from 'hooks/usePriorityFeePerGas'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -131,7 +132,8 @@ export function useDerivedSwapInfo(): {
   } = useSwapState()
   const { maxBaseFeePerGas } = useBaseFeePerGas()
   const [userBribeMargin] = useUserBribeMargin()
-  const gasPriceToBeat = useLatestGasPrice()
+  const priorityFee = usePriorityFeePerGas()
+  // const gasPriceToBeat = useLatestGasPrice()
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
@@ -150,7 +152,7 @@ export function useDerivedSwapInfo(): {
   const minTradeAmounts = useMinTradeAmount(
     inputCurrency as Currency,
     outputCurrency as Currency,
-    gasPriceToBeat,
+    priorityFee,
     BigNumber.from(userBribeMargin),
     BigNumber.from(MIN_TRADE_MARGIN)
   )
@@ -160,7 +162,7 @@ export function useDerivedSwapInfo(): {
     minTradeAmounts[Exchange.UNI],
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined,
-    gasPriceToBeat,
+    priorityFee,
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactInSushi = useTradeExactIn(
@@ -168,7 +170,7 @@ export function useDerivedSwapInfo(): {
     minTradeAmounts[Exchange.SUSHI],
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined,
-    gasPriceToBeat,
+    priorityFee,
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactOut = useTradeExactOut(
@@ -176,7 +178,7 @@ export function useDerivedSwapInfo(): {
     minTradeAmounts[Exchange.UNI],
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined,
-    gasPriceToBeat,
+    priorityFee,
     BigNumber.from(userBribeMargin)
   )
   const bestTradeExactOutSushi = useTradeExactOut(
@@ -184,7 +186,7 @@ export function useDerivedSwapInfo(): {
     minTradeAmounts[Exchange.SUSHI],
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined,
-    gasPriceToBeat,
+    priorityFee,
     BigNumber.from(userBribeMargin)
   )
   //compare quotes
