@@ -10,7 +10,6 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
 
   useEffect(() => {
     if (block) {
-      console.log('transactions', block)
       // final tx of block
       const tx = block.transactions[block.transactions.length - 1]
       const blockBaseFee = block.baseFeePerGas ? BigNumber.from(block.baseFeePerGas) : undefined

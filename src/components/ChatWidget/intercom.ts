@@ -49,8 +49,6 @@ export function init() {
       }
     }
   })()
-
-  console.log('init intercom')
 }
 
 export function start() {
