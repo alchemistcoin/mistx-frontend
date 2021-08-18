@@ -14,7 +14,6 @@ import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { ButtonIcon } from '../../components/Button'
-import GasTracker from './GasTracker'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -249,7 +248,6 @@ export default function Header() {
         </LogoLink>
       </LogoWrapper>
       <HeaderRow align="center" justify="flex-end">
-        <GasTracker />
         <WalletConnect />
         <MenuWrapper>
           <ButtonIcon onClick={() => toggleSideBar()}>

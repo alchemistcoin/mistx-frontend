@@ -17,23 +17,12 @@ const StyledExternalLink = styled(ExternalLink)`
 const StyledPolling = styled.div`
   color: ${({ theme }) => theme.green1};
   display: flex;
-  margin-bottom: 0.5rem;
-  padding: 0 1rem;
   transition: opacity 0.25s ease;
   text-decoration: none;
 
   :hover {
     opacity: 1;
   }
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin-bottom: 0;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-bottom: 0.5rem;
-    padding: 0;
-  `};
 `
 
 const StyledPollingDot = styled.div`

@@ -2,25 +2,50 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text } from 'rebass'
 import { ReactComponent as Icon } from '../../assets/svg/gas-icon.svg'
-import { RowFixed } from '../Row'
 import useBaseFeePerGas from 'hooks/useBaseFeePerGas'
+import { ExternalLink } from 'theme'
+import useTheme from 'hooks/useTheme'
+import { BigNumber } from 'ethers'
 
 const IconContainer = styled.div`
-  height: 20px;
-  width: 20px;
+  height: 26px;
+  width: 12px;
 `
 
-export default function GasTracker() {
+const StyledExternalLink = styled(ExternalLink)`
+  align-items: center;
+  display: flex;
+
+  &:hover {
+    text-decoration: none;
+  }
+`
+
+function useGetWarningColor(number: BigNumber | undefined) {
+  const theme = useTheme()
+
+  if (!number) return 'white'
+  if (number.gt(200)) return theme.red1
+  if (number.gt(100)) return theme.yellow2
+  if (number.lt(50)) return theme.green1
+
+  return 'white'
+}
+
+export default function GasTracker({ className }: { className?: string | undefined }) {
   const { baseFeePerGas: baseFee } = useBaseFeePerGas()
 
-  if (!baseFee) return null
+  const baseFeeGwei = baseFee?.div(1000000000)
+  const color = useGetWarningColor(baseFeeGwei)
 
   return (
-    <RowFixed>
+    <StyledExternalLink className={className} href="https://etherscan.io/gastracker">
       <IconContainer>
-        <Icon />
+        <Icon style={{ fill: color }} />
       </IconContainer>
-      <Text fontSize="14px" fontWeight="500" margin="0 .5rem">{`${baseFee?.div(1000000000).toString()} Gwei`}</Text>
-    </RowFixed>
+      <Text color={color} fontSize="11px" fontWeight="500" marginLeft=".25rem">
+        {baseFeeGwei ? baseFeeGwei.toString() : '...'}
+      </Text>
+    </StyledExternalLink>
   )
 }
