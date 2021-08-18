@@ -210,7 +210,6 @@ export const FeeWrapper = styled.div`
   color: ${({ theme }) => theme.text3};
   display: flex;
   font-size: 0.875rem;
-  height: 2.5rem;
   line-height: 2.5rem;
   padding: 0 0.25rem;
   width: 100%;
@@ -227,7 +226,7 @@ export const FeeInnerRight = styled.div`
   text-align: right;
   color: ${({ theme }) => theme.white};
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   position: relative;
   margin-top: -2px;
 
