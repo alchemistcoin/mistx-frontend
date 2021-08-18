@@ -73,17 +73,11 @@ export default function LedgerAccounts({ connector, onSubmit }: { connector: Led
   const loadAccounts = useCallback(async () => {
     setAccountsLoading(true)
     const nextPage = accountsPage + 1
-    console.log('before fetch accounts')
-    try {
-      const fetchedAccounts = await connector.getAccounts(nextPage)
-      console.log('fetched accounts', fetchedAccounts)
-      if (mountedRef.current) {
-        setAccountsLoading(false)
-        setAccounts([...accounts, ...fetchedAccounts])
-        setAccountsPage(nextPage)
-      }
-    } catch (e) {
-      console.log('catch fetch accounts', e)
+    const fetchedAccounts = await connector.getAccounts(nextPage)
+    if (mountedRef.current) {
+      setAccountsLoading(false)
+      setAccounts([...accounts, ...fetchedAccounts])
+      setAccountsPage(nextPage)
     }
   }, [accounts, accountsPage, connector])
 
