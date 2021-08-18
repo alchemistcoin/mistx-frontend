@@ -43,7 +43,7 @@ function TooltipContent({ content, show, ...rest }: TooltipContentProps) {
 
 export function MouseoverTooltipContent({ content, children, ...rest }: Omit<TooltipContentProps, 'show'>) {
   const [show, setShow] = useState(true)
-  const open = useCallback(() => setShow(true), [setShow])
+  const open = useCallback(() => setShow(false), [setShow])
   const close = useCallback(() => setShow(false), [setShow])
   return (
     <TooltipContent {...rest} show={show} content={content}>
