@@ -14,7 +14,7 @@ const Row = styled(Box)<{
   width: ${({ width }) => width ?? '100%'};
   display: flex;
   align-items: ${({ align }) => align ?? 'center'};
-  justify-content: ${({ justify }) => justify ?? 'flex-start'};
+  ${({ justify }) => (justify ? `justify-content: ${justify}` : '')};
   padding: ${({ padding }) => padding};
   border: ${({ border }) => border};
   border-radius: ${({ borderRadius }) => borderRadius};

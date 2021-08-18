@@ -43,7 +43,7 @@ export default function NewAppVersionAvailableModal() {
     <Modal
       isOpen={newAppVersionAvailable}
       onDismiss={() => {
-        console.log(newAppVersionAvailable)
+        // console.log(newAppVersionAvailable)
       }}
       maxHeight={100}
     >

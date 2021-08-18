@@ -3,6 +3,7 @@ import { WrapType } from 'hooks/useWrapCallback'
 import { MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 import useBaseFeePerGas from '../hooks/useBaseFeePerGas'
 import { MIN_ETH } from '../constants'
+
 /**
  * Given some token amount, return the max that can be spent of it
  * @param currencyAmount to return max of

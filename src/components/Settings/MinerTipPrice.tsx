@@ -3,6 +3,7 @@ import { BribeEstimate, WETH, CurrencyAmount } from '@alchemist-coin/mistx-core'
 import useMinerBribeEstimate from '../../hooks/useMinerBribeEstimate'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
+
 type Props = {
   customTipMargin?: number
 }
@@ -33,6 +34,7 @@ const MinerBribePrice = ({ customTipMargin }: Props) => {
       mounted = false
     }
   }, [bribeEstimate, ethUSDCPrice, feeDisplayCurrency])
+
   return <>{minerBribePrice}</>
 }
 

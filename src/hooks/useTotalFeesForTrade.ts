@@ -11,6 +11,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
   const { realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const ethPrice = useETHPrice(trade.inputAmount.currency.wrapped)
   const { maxBaseFeePerGas, minBaseFeePerGas, baseFeePerGas } = useBaseFeePerGas()
+
   return useMemo(() => {
     let totalFeeInEth: CurrencyAmount<Currency> | undefined
     let maxBaseFeeInEth: CurrencyAmount<Currency> | undefined
