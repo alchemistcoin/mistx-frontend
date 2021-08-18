@@ -352,36 +352,42 @@ export default function Swap({ history }: RouteComponentProps) {
   //   bribeEstimate?.maxBribe.toSignificant(6)
   // )
 
+  const showTokenWarningModal = importTokensNotInDefault.length > 0 && !dismissTokenWarning
+
   return (
     <>
       <Suspense fallback={null}>
         <NetworkWarningModal />
-        <TokenWarningModal
-          isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
-          tokens={importTokensNotInDefault}
-          onConfirm={handleConfirmTokenWarning}
-          onDismiss={handleDismissTokenWarning}
-        />
-        <ConfirmInfoModal
-          isOpen={showInfoModal}
-          onDismiss={handleInfoModalDismiss}
-          onConfirm={displayConfirmModal}
-          trade={trade}
-          attemptingTxn={attemptingTxn}
-        />
-        <ConfirmSwapModal
-          isOpen={showConfirmModal}
-          trade={trade}
-          originalTrade={tradeToConfirm}
-          onAcceptChanges={handleAcceptChanges}
-          attemptingTxn={attemptingTxn}
-          txHash={txHash}
-          recipient={recipient}
-          allowedSlippage={allowedSlippage}
-          onConfirm={handleSwap}
-          swapErrorMessage={swapErrorMessage}
-          onDismiss={handleConfirmDismiss}
-        />
+        {showTokenWarningModal && (
+          <TokenWarningModal
+            tokens={importTokensNotInDefault}
+            onConfirm={handleConfirmTokenWarning}
+            onDismiss={handleDismissTokenWarning}
+          />
+        )}
+        {showInfoModal && (
+          <ConfirmInfoModal
+            onDismiss={handleInfoModalDismiss}
+            onConfirm={displayConfirmModal}
+            trade={trade}
+            attemptingTxn={attemptingTxn}
+          />
+        )}
+        {showConfirmModal && (
+          <ConfirmSwapModal
+            trade={trade}
+            originalTrade={tradeToConfirm}
+            onAcceptChanges={handleAcceptChanges}
+            attemptingTxn={attemptingTxn}
+            txHash={txHash}
+            recipient={recipient}
+            allowedSlippage={allowedSlippage}
+            onConfirm={handleSwap}
+            swapErrorMessage={swapErrorMessage}
+            onDismiss={handleConfirmDismiss}
+          />
+        )}
+
         <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
       </Suspense>
       {hasPendingTransactions ? (

@@ -6,7 +6,7 @@ import { updateSocketStatus } from '../state/application/actions'
 import PJSON from '../../package.json'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
-import { BundleRes, MistxSocket } from '@alchemist-coin/mistx-connect'
+import { BundleProcessed, BundleRes, MistxSocket } from '@alchemist-coin/mistx-connect'
 
 // state
 import { updateGas } from '../state/application/actions'
@@ -74,6 +74,7 @@ export interface TransactionReq {
   estimatedGas?: number
   estimatedEffectiveGasPrice?: number
 }
+
 export interface TransactionProcessed {
   serialized: string // serialized transaction
   bundle: string // bundle.serialized
@@ -81,6 +82,7 @@ export interface TransactionProcessed {
   estimatedGas: number
   estimatedEffectiveGasPrice: number
 }
+
 export interface BundleReq {
   transactions: TransactionReq[]
   chainId: number
@@ -89,24 +91,12 @@ export interface BundleReq {
   deadline: BigNumberish
   simulateOnly: boolean
 }
+
 export interface SwapReq {
   amount0: BigNumberish
   amount1: BigNumberish
   path: Array<string>
   to: string
-}
-export interface BundleProcessed {
-  serialized: string
-  transactions: TransactionProcessed[]
-  bribe: BigNumberish
-  sessionToken: string
-  chainId: number
-  timestamp: number // EPOCH,
-  totalEstimatedGas: number
-  totalEstimatedEffectiveGasPrice: number
-  from: string
-  deadline: BigNumberish
-  simulateOnly: boolean
 }
 
 function bundleResponseToastStatus(bundle: BundleRes) {
@@ -336,7 +326,7 @@ export default function Sockets(): null {
             const secondsSinceLastUpdate = (timeNow - tx.updatedAt) / 1000
             if (secondsSinceLastUpdate > MANUAL_CHECK_TX_STATUS_INTERVAL && tx.processed) {
               // const transactionReq: TransactionProcessed = tx.processed
-              socket.emitStatusRequest(tx.processed.serialized)
+              socket.emitStatusRequest(tx.processed.id)
             }
           }
         })
@@ -356,7 +346,7 @@ export function emitTransactionRequest(bundle: BundleReq) {
   socket.emitTransactionRequest(bundle)
 }
 
-export function emitTransactionCancellation(serialized: string) {
+export function emitTransactionCancellation(id: string) {
   // TO DO any
-  socket.emitTransactionCancellation(serialized)
+  socket.emitTransactionCancellation(id)
 }

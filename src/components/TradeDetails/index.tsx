@@ -1,11 +1,11 @@
 import React, { useContext, useMemo } from 'react'
-import { Trade, TradeType, Percent, JSBI, Currency, WETH, Exchange } from '@alchemist-coin/mistx-core'
+import { Trade, TradeType, Percent, JSBI, Currency, WETH } from '@alchemist-coin/mistx-core'
 import { useActiveWeb3React } from '../../hooks'
-import { ThemeContext } from 'styled-components/macro'
-import { TYPE } from '../../theme'
+import styled, { ThemeContext } from 'styled-components/macro'
+import { TYPE, CustomLightSpinner } from '../../theme'
 import { BIPS_BASE } from '../../constants'
 import { AutoColumn } from '../Column'
-import { RowBetween, RowFixed } from '../Row'
+import { Row, RowBetween, RowFixed } from '../Row'
 import SwapPath from './swapPath'
 import { computeTradePriceBreakdown } from '../../utils/prices'
 import FormattedPriceImpact from '../swap/FormattedPriceImpact'
@@ -14,10 +14,17 @@ import MinerTipPrice from '../swap/MinerTipPrice'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import { FeeRowBetween, Divider } from '../swap/styleds'
 import useTotalFeesForTrade from 'hooks/useTotalFeesForTrade'
+import Circle from '../../assets/images/light-loader.svg'
 interface TradeDetailsProps {
   trade: Trade<Currency, Currency, TradeType>
   allowedSlippage: number
 }
+
+export const StyledFeeRowBetween = styled(FeeRowBetween)`
+  &:before {
+    top: 12px;
+  }
+`
 
 export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsProps) {
   const { chainId } = useActiveWeb3React()
@@ -26,10 +33,10 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
   const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
 
-  const { realizedLPFeeInEth, baseFeeInEth } = useTotalFeesForTrade(trade)
+  const { realizedLPFeeInEth, baseFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
 
   return !trade ? null : (
-    <AutoColumn gap="6px">
+    <AutoColumn gap="6px" width="20rem">
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
@@ -54,18 +61,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Price Impact
-          </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
-        </TYPE.black>
-      </RowBetween>
-
-      <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            {trade.tradeType === TradeType.EXACT_INPUT ? `Min received` : `Max sent`}
+            {trade.tradeType === TradeType.EXACT_INPUT ? `Minimum received` : `Maximum sent`}
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
@@ -78,7 +74,18 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       <RowBetween>
         <RowFixed marginRight={20}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Slippage tolerance
+            Price Impact
+          </TYPE.black>
+        </RowFixed>
+        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+          <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
+        </TYPE.black>
+      </RowBetween>
+
+      <RowBetween>
+        <RowFixed marginRight={20}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            Slippage Tolerance
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
@@ -87,90 +94,70 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
       <Divider />
       <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            mistX Fees
-          </TYPE.black>
-        </RowFixed>
-      </RowBetween>
-      <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
-            Protection from front-running attacks, cancellation fees, and failure costs.
+        <RowFixed marginRight={0} marginBottom="10px">
+          <TYPE.black fontSize={16} fontWeight={600} color={theme.text2}>
+            Fee Breakdown
           </TYPE.black>
         </RowFixed>
       </RowBetween>
 
-      <FeeRowBetween paddingLeft={20}>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+      <RowBetween align="flex-start" flexDirection="column" width="100%">
+        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px">
             mistX Protection
           </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          <MinerTipPrice trade={trade} />
-        </TYPE.black>
-      </FeeRowBetween>
-      <Divider />
-      <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Network Fees
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            <MinerTipPrice trade={trade} />
           </TYPE.black>
-        </RowFixed>
-      </RowBetween>
-      <RowBetween>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={12} fontWeight={400} color={theme.text1} lineHeight="14px">
-            Fees charged by the liquidity providers (Uniswap or Sushiswap) and the usage of ETH blockchain. mistX gets
-            0% of this fee.
-          </TYPE.black>
-        </RowFixed>
+        </Row>
       </RowBetween>
 
-      <FeeRowBetween paddingLeft={20}>
-        <RowFixed marginRight={20}>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            {trade.exchange === Exchange.UNI ? 'Uniswap' : 'Sushiswap'} LP Fee
+      <RowBetween align="flex-start" flexDirection="column" width="100%">
+        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px">
+            Liquidity Provider
           </TYPE.black>
-        </RowFixed>
-        <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-          {realizedLPFee && realizedLPFeeInEth && ethUSDCPrice
-            ? `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} (${realizedLPFee.toSignificant(
-                4
-              )} ${realizedLPFee.currency && realizedLPFee.currency.symbol})`
-            : '-'}
-        </TYPE.black>
-      </FeeRowBetween>
-      {baseFeeInEth && ethUSDCPrice ? (
-        <FeeRowBetween paddingLeft={20}>
-          <RowFixed marginRight={20}>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              ETH Base Fee
-            </TYPE.black>
-          </RowFixed>
           <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {`< $${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
+            {realizedLPFee && realizedLPFeeInEth && ethUSDCPrice
+              ? `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} (${realizedLPFee.toSignificant(
+                  3
+                )} ${realizedLPFee.currency && realizedLPFee.currency.symbol})`
+              : '-'}
           </TYPE.black>
-        </FeeRowBetween>
-      ) : (
-        <></>
-      )}
+        </Row>
+      </RowBetween>
 
-      {/*eip1559 && baseFeeInEth && ethUSDCPrice ? (
-        <FeeRowBetween paddingLeft={20}>
-          <RowFixed marginRight={20}>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Base Fee
-            </TYPE.black>
-          </RowFixed>
-          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {`$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} (${baseFeeInEth.toSignificant(4)} ETH)`}
+      <RowBetween align="flex-start" flexDirection="column" width="100%">
+        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px">
+            Base Fee (Estimated)
           </TYPE.black>
-        </FeeRowBetween>
-      ) : (
-        <></>
-      )*/}
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            {ethUSDCPrice && baseFeeInEth && `$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} `}
+            {baseFeeInEth ? (
+              '(' + baseFeeInEth?.toSignificant(3) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
+        </Row>
+      </RowBetween>
+
+      <RowBetween align="flex-start" flexDirection="column" width="100%">
+        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px">
+            Total (Estimated)
+          </TYPE.black>
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            {ethUSDCPrice && totalFeeInEth && baseFeeInEth && `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} `}
+            {totalFeeInEth && baseFeeInEth ? (
+              '(' + totalFeeInEth?.toSignificant(3) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
+        </Row>
+      </RowBetween>
     </AutoColumn>
   )
 }

@@ -24,7 +24,7 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
           const mfpg = BigNumber.from(tx.maxFeePerGas)
           const mpfpg = BigNumber.from(tx.maxPriorityFeePerGas)
           const maxFeeBaseFeeDiff = mfpg.sub(blockBaseFee)
-          const priorityFeePerGas = mpfpg.lt(maxFeeBaseFeeDiff) ? mpfpg : maxFeeBaseFeeDiff
+          const priorityFeePerGas = mpfpg.lt(maxFeeBaseFeeDiff) ? mpfpg : maxFeeBaseFeeDiff // use whichever is lower
           if (priorityFeePerGas) {
             gasPrice = gasPrice.add(priorityFeePerGas)
           }
@@ -50,6 +50,7 @@ export default function useLatestTipGasPrice(): BigNumber | undefined {
       gasPrices.forEach(price => {
         total = total.add(BigNumber.from(price))
       })
+
       setGasPrice(total.div(gasPrices.length).toString())
     }
   }, [gasPrices])

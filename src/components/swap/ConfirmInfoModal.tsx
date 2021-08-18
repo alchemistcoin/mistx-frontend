@@ -7,11 +7,9 @@ import Modal from '../Modal'
 export default function ConfirmSwapModal({
   onConfirm,
   onDismiss,
-  isOpen,
   attemptingTxn,
   trade
 }: {
-  isOpen: boolean
   onConfirm: () => void
   onDismiss: () => void
   attemptingTxn: boolean
@@ -23,7 +21,7 @@ export default function ConfirmSwapModal({
   } for ${trade?.outputAmount?.toSignificant(6)} ${trade?.outputAmount?.currency?.symbol}`
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss}>
+    <Modal isOpen={true} onDismiss={onDismiss}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : (

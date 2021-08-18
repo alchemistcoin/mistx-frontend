@@ -1,31 +1,57 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import useLatestBlockWithTransactions from './useLatestBlockWithTransactions'
-import { BASE_FEE_BLOCKS_IN_FUTURE } from '../constants'
+import { MAX_BASE_FEE_BLOCKS_IN_FUTURE } from '../constants'
 
 export function getMaxBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
-  let maxBaseFee = BigNumber.from(baseFee)
-  for (let i = 0; i < blocksInFuture; i++) {
-    maxBaseFee = maxBaseFee
-      .mul(1125)
-      .div(1000)
-      .add(1)
-  }
+  const multiplier = 1125 ** blocksInFuture
+  const divide = 1000 ** blocksInFuture
+
+  const maxBaseFee = BigNumber.from(baseFee)
+    .mul(multiplier)
+    .div(divide)
+    .add(1)
+
   return maxBaseFee
 }
 
-export default function useBaseFeePerGas(): BigNumber | undefined {
-  const [baseFee, setBaseFee] = useState<string | undefined>(undefined)
+export function getMinBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
+  const multiplier = 875 ** blocksInFuture
+  const divide = 1000 ** blocksInFuture
+
+  const minBaseFee = BigNumber.from(baseFee)
+    .mul(multiplier)
+    .div(divide)
+    .add(1)
+
+  return minBaseFee
+}
+
+type BaseFeeReturnType = {
+  baseFeePerGas: BigNumber | undefined
+  minBaseFeePerGas: BigNumber | undefined
+  maxBaseFeePerGas: BigNumber | undefined
+}
+
+export default function useBaseFeePerGas(): BaseFeeReturnType {
   const block = useLatestBlockWithTransactions()
-  useEffect(() => {
-    if (!block) {
-      setBaseFee(undefined)
-    } else {
-      setBaseFee(block.baseFeePerGas?.toString())
-    }
-  }, [block])
+
   return useMemo(() => {
-    if (!baseFee) return undefined
-    return getMaxBaseFeeInFutureBlock(BigNumber.from(baseFee), BASE_FEE_BLOCKS_IN_FUTURE)
-  }, [baseFee])
+    const ret: BaseFeeReturnType = {
+      baseFeePerGas: undefined,
+      minBaseFeePerGas: undefined,
+      maxBaseFeePerGas: undefined
+    }
+
+    if (block) {
+      const baseFee = BigNumber.from(block.baseFeePerGas?.toString())
+      if (baseFee) {
+        ret.baseFeePerGas = baseFee
+        ret.minBaseFeePerGas = getMinBaseFeeInFutureBlock(baseFee, MAX_BASE_FEE_BLOCKS_IN_FUTURE)
+        ret.maxBaseFeePerGas = getMaxBaseFeeInFutureBlock(baseFee, MAX_BASE_FEE_BLOCKS_IN_FUTURE)
+      }
+    }
+    return ret
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [block])
 }

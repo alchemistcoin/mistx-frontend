@@ -44,7 +44,8 @@ export function useSwapCallback(
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-  const baseFeePerGas = useBaseFeePerGas()
+  const { maxBaseFeePerGas } = useBaseFeePerGas()
+
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -99,7 +100,7 @@ export function useSwapCallback(
               nonce: nonce,
               gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
               type: 2,
-              maxFeePerGas: baseFeePerGas,
+              maxFeePerGas: maxBaseFeePerGas,
               maxPriorityFeePerGas: '0x0',
               ...(value && !isZero(value) ? { value } : { value: '0x0' })
             })
@@ -255,6 +256,6 @@ export function useSwapCallback(
     swapCall,
     approve,
     addTransaction,
-    baseFeePerGas
+    maxBaseFeePerGas
   ])
 }

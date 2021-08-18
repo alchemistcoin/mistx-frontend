@@ -35,7 +35,7 @@ export function useApproveCallback(
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
-  const baseFeePerGas = useBaseFeePerGas()
+  const { maxBaseFeePerGas } = useBaseFeePerGas()
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
@@ -56,7 +56,7 @@ export function useApproveCallback(
 
   const approve = useCallback(async (): Promise<string | undefined> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
-      console.log('approve was called unnecessarily')
+      // console.log('approve was called unnecessarily')
       return undefined
     }
     if (!token) {
@@ -125,7 +125,7 @@ export function useApproveCallback(
           nonce: nonce,
           gasLimit: calculateGasMargin(estimatedGas), //needed?
           type: 2,
-          maxFeePerGas: baseFeePerGas,
+          maxFeePerGas: maxBaseFeePerGas,
           maxPriorityFeePerGas: '0x0'
         }
       )
@@ -174,7 +174,7 @@ export function useApproveCallback(
       }
       throw error
     }
-  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, baseFeePerGas])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, account, chainId, library, maxBaseFeePerGas])
 
   return [approvalState, approve]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@alchemistcoin/mistx-frontend",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "mistX Frontend",
   "homepage": ".",
   "private": true,
@@ -11,8 +11,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@alchemist-coin/mistx-connect": "4.0.3",
-    "@alchemist-coin/mistx-core": "4.2.1",
+    "@alchemist-coin/mistx-connect": "4.3.0",
+    "@alchemist-coin/mistx-core": "4.3.0",
     "@ethersproject/experimental": "^5.4.0",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",
     "@popperjs/core": "^2.4.4",
@@ -47,7 +47,7 @@
     "@web3-react/core": "^6.0.9",
     "@web3-react/fortmatic-connector": "^6.0.9",
     "@web3-react/injected-connector": "^6.0.7",
-    "@web3-react/ledger-connector": "Dire-0x/ledger-connector",
+    "@web3-react/ledger-connector": "git+https://github.com/Dire-0x/ledger-connector.git#main",
     "@web3-react/portis-connector": "^6.0.9",
     "@web3-react/walletconnect-connector": "^6.1.1",
     "@web3-react/walletlink-connector": "^6.0.9",

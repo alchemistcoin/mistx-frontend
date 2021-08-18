@@ -6,25 +6,23 @@ import { useBlockNumber } from '../../state/application/hooks'
 import { getEtherscanLink } from '../../utils'
 import { useActiveWeb3React } from '../../hooks'
 
+const StyledExternalLink = styled(ExternalLink)`
+  text-decoration: none;
+
+  :hover {
+    text-decoration: none;
+  }
+`
+
 const StyledPolling = styled.div`
   color: ${({ theme }) => theme.green1};
   display: flex;
-  margin-bottom: 0.5rem;
-  padding: 0 1rem;
   transition: opacity 0.25s ease;
+  text-decoration: none;
 
   :hover {
     opacity: 1;
   }
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin-bottom: 0;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-bottom: 0.5rem;
-    padding: 0;
-  `};
 `
 
 const StyledPollingDot = styled.div`
@@ -85,11 +83,11 @@ export default function Polling() {
   )
 
   return (
-    <ExternalLink href={chainId && blockNumber ? getEtherscanLink(chainId, blockNumber.toString(), 'block') : ''}>
+    <StyledExternalLink href={chainId && blockNumber ? getEtherscanLink(chainId, blockNumber.toString(), 'block') : ''}>
       <StyledPolling>
         <TYPE.small>{blockNumber ? `Block ${blockNumber}` : 'Loading Block...'}</TYPE.small>
         <StyledPollingDot>{!isMounted && <Spinner />}</StyledPollingDot>
       </StyledPolling>
-    </ExternalLink>
+    </StyledExternalLink>
   )
 }

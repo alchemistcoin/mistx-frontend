@@ -34,10 +34,11 @@ export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show
 
 interface TooltipContentProps extends Omit<PopoverProps, 'content'> {
   content: ReactNode
+  show: boolean
 }
 
-function TooltipContent({ content, ...rest }: TooltipContentProps) {
-  return <Popover content={<TooltipContainer>{content}</TooltipContainer>} {...rest} />
+function TooltipContent({ content, show, ...rest }: TooltipContentProps) {
+  return <Popover show={show} content={<TooltipContainer>{show ? content : null}</TooltipContainer>} {...rest} />
 }
 
 export function MouseoverTooltipContent({ content, children, ...rest }: Omit<TooltipContentProps, 'show'>) {
@@ -46,11 +47,7 @@ export function MouseoverTooltipContent({ content, children, ...rest }: Omit<Too
   const close = useCallback(() => setShow(false), [setShow])
   return (
     <TooltipContent {...rest} show={show} content={content}>
-      <div
-        style={{ display: 'flex', lineHeight: 0, padding: '0.25rem', alignItems: 'center' }}
-        onMouseEnter={open}
-        onMouseLeave={close}
-      >
+      <div style={{ display: 'flex', lineHeight: 0 }} onMouseEnter={open} onMouseLeave={close}>
         {children}
       </div>
     </TooltipContent>

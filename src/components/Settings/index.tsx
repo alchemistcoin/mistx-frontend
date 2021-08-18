@@ -231,8 +231,8 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
           <StyledRowFixed>
             <SettingsHeader>
               <Text fontWeight={600} fontSize={20}>
-                Transaction Fee
-                <QuestionHelper text="A tip for the miner to accept the transaction. Higher tips are more likely to be accepted." />
+                MistX Protection
+                <QuestionHelper text="Protection from front-running attacks, cancellation fees, and failure costs. Higher tips are more likely to be accepted." />
               </Text>
               <SettingsHeaderEnd>
                 <ToggleButton

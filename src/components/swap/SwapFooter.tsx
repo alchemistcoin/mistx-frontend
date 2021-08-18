@@ -20,7 +20,7 @@ import { ButtonError } from '../Button'
 import { GreyCard } from '../Card'
 import { Info } from '../Icons'
 import { AutoRow } from '../Row'
-import { BottomGrouping, SwapCallbackError, FeeWrapper, FeeInnerLeft, FeeInnerRight } from './styleds'
+import { BottomGrouping, SwapCallbackError, FeeWrapper, FeeInnerLeft } from './styleds'
 import { MouseoverTooltipContent } from '../Tooltip'
 import TradeDetails from '../TradeDetails'
 import TotalFees from './TotalFees'
@@ -83,6 +83,7 @@ const StyledButtonYellow = styled(StyledButtonError)`
 `
 
 const InfoWrapper = styled.div`
+  cursor: pointer;
   svg {
     circle,
     path {
@@ -148,30 +149,46 @@ export default function SwapFooter({
   return (
     <>
       {trade && trade.minerBribe ? (
-        <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
+        <AutoRow justify="space-between" style={{ padding: '0 1rem', position: 'relative', zIndex: 3 }}>
           <FeeWrapper>
             <FeeInnerLeft>
               <Text
                 style={{
-                  justifyContent: 'flex-end',
-                  alignItems: 'flex-end',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
                   display: 'flex',
-                  paddingRight: 10
+                  paddingRight: 10,
+                  fontWeight: 600,
+                  fontSize: '15px',
+                  color: theme.text2
                 }}
               >
-                mistX Protection:&nbsp;
-                <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                mistX Protection&nbsp;
+                <Text fontWeight={500} fontSize={14} color={theme.text2} marginRight="6px">
                   <TotalFees trade={trade} />
                 </Text>
+                <MouseoverTooltipContent content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}>
+                  <InfoWrapper>
+                    <Info />
+                  </InfoWrapper>
+                </MouseoverTooltipContent>
+              </Text>
+              <Text
+                style={{
+                  justifyContent: 'flex-start',
+                  alignItems: 'flex-start',
+                  display: 'flex',
+                  paddingRight: 10,
+                  lineHeight: '1.2rem',
+                  color: theme.text2
+                }}
+              >
+                Protection from front-running attacks, cancellation fees, and failure costs.
               </Text>
             </FeeInnerLeft>
-            <FeeInnerRight>
-              <MouseoverTooltipContent content={<TradeDetails trade={trade} allowedSlippage={allowedSlippage} />}>
-                <InfoWrapper>
-                  <Info />
-                </InfoWrapper>
-              </MouseoverTooltipContent>
-            </FeeInnerRight>
+            {/* <FeeInnerRight>
+             
+            </FeeInnerRight> */}
           </FeeWrapper>
         </AutoRow>
       ) : null}
