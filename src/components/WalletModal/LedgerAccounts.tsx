@@ -2,6 +2,7 @@ import { ButtonYellow, ButtonPrimary2Outlined } from 'components/Button'
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Text } from 'rebass'
 import styled from 'styled-components'
+import Loader from '../Loader'
 import { LedgerConnector } from '@web3-react/ledger-connector'
 
 const Wrapper = styled.div`
@@ -109,6 +110,13 @@ export default function LedgerAccounts({ connector, onSubmit }: { connector: Led
             </ListItem>
           )
         })}
+        {accountsLoading ? (
+          <ListItem key={'ledger-account-loading'}>
+            <Loader />
+          </ListItem>
+        ) : (
+          <></>
+        )}
       </List>
       <WalletAction
         className={`${accountsLoading ? `disabled` : ``}`}
