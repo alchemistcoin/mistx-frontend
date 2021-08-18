@@ -1,18 +1,17 @@
 import { useMemo } from 'react'
 import { useUserBribeMargin } from '../state/user/hooks'
 import { BribeEstimate, Trade } from '@alchemist-coin/mistx-core'
-import usePriorityFeePerGas from './usePriorityFeePerGas'
+import useLatestTipGasPrice from './useLatestGasPrice'
 
 export default function useMinerBribeEstimate(customTipMargin?: number): BribeEstimate | null {
   const [userBribeMargin] = useUserBribeMargin()
   const userBribeMarginString = String(customTipMargin || userBribeMargin)
-  const priorityFee = usePriorityFeePerGas()
-
-  let priorityFeeString: string | null = null
-  if (priorityFee) priorityFeeString = priorityFee.toString()
+  const gasPrice = useLatestTipGasPrice()
+  let gasPriceString: string | null = null
+  if (gasPrice) gasPriceString = gasPrice.toString()
   return useMemo(() => {
-    if (!priorityFeeString) return null
-    const estimate = Trade.estimateBribeAmounts(priorityFeeString, userBribeMarginString)
+    if (!gasPriceString) return null
+    const estimate = Trade.estimateBribeAmounts(gasPriceString, userBribeMarginString)
     return estimate
-  }, [priorityFeeString, userBribeMarginString])
+  }, [gasPriceString, userBribeMarginString])
 }
