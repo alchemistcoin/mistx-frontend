@@ -45,6 +45,7 @@ export function useSwapCallback(
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const { maxBaseFeePerGas } = useBaseFeePerGas()
+
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }

@@ -112,10 +112,10 @@ export default function Transactions() {
                   <QuestionHelper text="Transaction cancelled for free" placement="top" />
                 </StyledStatusWapper>
               )}
-              {tx.status === Status.FAILED_BUNDLE && !tx.cancel && (
+              {(tx.status === Status.FAILED_BUNDLE || tx.status === Status.BUNDLE_NOT_FOUND) && !tx.cancel && (
                 <StyledStatusWapper>
                   <StyledTransactionStatus failed={true}>Failed</StyledTransactionStatus>
-                  <QuestionHelper text={tx.message} placement="top" />
+                  {tx.message && <QuestionHelper text={tx.message} placement="top" />}
                 </StyledStatusWapper>
               )}
               <div>{tx.summary}</div>
