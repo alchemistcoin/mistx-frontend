@@ -2,6 +2,7 @@ import { ButtonYellow, ButtonPrimary2Outlined } from 'components/Button'
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Text } from 'rebass'
 import styled from 'styled-components'
+import Loader from '../Loader'
 import { LedgerConnector } from '@web3-react/ledger-connector'
 
 const Wrapper = styled.div`
@@ -72,11 +73,17 @@ export default function LedgerAccounts({ connector, onSubmit }: { connector: Led
   const loadAccounts = useCallback(async () => {
     setAccountsLoading(true)
     const nextPage = accountsPage + 1
-    const fetchedAccounts = await connector.getAccounts(nextPage)
-    if (mountedRef.current) {
-      setAccountsLoading(false)
-      setAccounts([...accounts, ...fetchedAccounts])
-      setAccountsPage(nextPage)
+    console.log('before fetch accounts')
+    try {
+      const fetchedAccounts = await connector.getAccounts(nextPage)
+      console.log('fetched accounts', fetchedAccounts)
+      if (mountedRef.current) {
+        setAccountsLoading(false)
+        setAccounts([...accounts, ...fetchedAccounts])
+        setAccountsPage(nextPage)
+      }
+    } catch (e) {
+      console.log('catch fetch accounts', e)
     }
   }, [accounts, accountsPage, connector])
 
@@ -109,6 +116,13 @@ export default function LedgerAccounts({ connector, onSubmit }: { connector: Led
             </ListItem>
           )
         })}
+        {accountsLoading ? (
+          <ListItem key={'ledger-account-loading'}>
+            <Loader />
+          </ListItem>
+        ) : (
+          <></>
+        )}
       </List>
       <WalletAction
         className={`${accountsLoading ? `disabled` : ``}`}

@@ -17,6 +17,7 @@ import { ExternalLink } from '../../theme'
 import AccountDetails from '../AccountDetails'
 import LedgerInstructions from './LedgerInstructions'
 import LedgerAccounts from './LedgerAccounts'
+import LedgerDerivationPath from './LedgerDerivationPath'
 import fathomConnectionEvent from './fathomConnectionEvent'
 
 import Modal from '../Modal'
@@ -118,6 +119,7 @@ const WALLET_VIEWS = {
   ACCOUNT: 'account',
   LEDGER: 'ledger',
   LEDGER_ACCOUNTS: 'ledger_accounts',
+  LEDGER_DERIVATION_PATH: 'ledger_derivation_path',
   PENDING: 'pending'
 }
 
@@ -150,7 +152,7 @@ export default function WalletModal({
       toggleWalletModal()
     }
     if (account && !previousAccount && walletModalOpen && connector === SUPPORTED_WALLETS.LEDGER.connector) {
-      setWalletView(WALLET_VIEWS.LEDGER_ACCOUNTS)
+      setWalletView(WALLET_VIEWS.LEDGER_DERIVATION_PATH)
     }
   }, [account, previousAccount, toggleWalletModal, walletModalOpen, connector])
 
@@ -168,7 +170,7 @@ export default function WalletModal({
   useEffect(() => {
     if (walletModalOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
       if (connector === SUPPORTED_WALLETS.LEDGER.connector) {
-        setWalletView(WALLET_VIEWS.LEDGER_ACCOUNTS)
+        setWalletView(WALLET_VIEWS.LEDGER_DERIVATION_PATH)
       } else {
         setWalletView(WALLET_VIEWS.ACCOUNT)
       }
@@ -354,7 +356,7 @@ export default function WalletModal({
       )
     }
 
-    if (walletView === WALLET_VIEWS.LEDGER_ACCOUNTS) {
+    if (walletView === WALLET_VIEWS.LEDGER_DERIVATION_PATH) {
       return (
         <>
           <CloseIcon onClick={toggleWalletModal}>
@@ -365,6 +367,32 @@ export default function WalletModal({
               onClick={() => {
                 setPendingError(false)
                 setWalletView(WALLET_VIEWS.ACCOUNT)
+              }}
+            >
+              Back
+            </HoverText>
+          </HeaderRow>
+          <LedgerDerivationPath
+            onSubmit={() => {
+              setWalletView(WALLET_VIEWS.LEDGER_ACCOUNTS)
+            }}
+            connector={SUPPORTED_WALLETS.LEDGER.connector as LedgerConnector}
+          />
+        </>
+      )
+    }
+
+    if (walletView === WALLET_VIEWS.LEDGER_ACCOUNTS) {
+      return (
+        <>
+          <CloseIcon onClick={toggleWalletModal}>
+            <CloseColor />
+          </CloseIcon>
+          <HeaderRow color="blue">
+            <HoverText
+              onClick={() => {
+                setPendingError(false)
+                setWalletView(WALLET_VIEWS.LEDGER_DERIVATION_PATH)
               }}
             >
               Back
