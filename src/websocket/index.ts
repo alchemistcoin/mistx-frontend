@@ -74,6 +74,7 @@ export interface TransactionReq {
   estimatedGas?: number
   estimatedEffectiveGasPrice?: number
 }
+
 export interface TransactionProcessed {
   serialized: string // serialized transaction
   bundle: string // bundle.serialized
@@ -81,6 +82,7 @@ export interface TransactionProcessed {
   estimatedGas: number
   estimatedEffectiveGasPrice: number
 }
+
 export interface BundleReq {
   transactions: TransactionReq[]
   chainId: number
@@ -89,6 +91,7 @@ export interface BundleReq {
   deadline: BigNumberish
   simulateOnly: boolean
 }
+
 export interface SwapReq {
   amount0: BigNumberish
   amount1: BigNumberish
