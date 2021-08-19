@@ -232,7 +232,7 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
             <SettingsHeader>
               <Text fontWeight={600} fontSize={20}>
                 MistX Protection
-                <QuestionHelper text="Protection from front-running attacks, cancellation fees, and failure costs. Higher tips are more likely to be accepted." />
+                <QuestionHelper text="Represents a fee sent to the miner to include your transaction privately and a fee sent to Alchemist for providing mistX protection services. Higher tips are more likely to be accepted." />
               </Text>
               <SettingsHeaderEnd>
                 <ToggleButton

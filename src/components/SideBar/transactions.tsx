@@ -8,6 +8,8 @@ import QuestionHelper from '../QuestionHelper'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { clearCompletedTransactions } from '../../state/transactions/actions'
 import { StyledHeading } from './styled'
+import { ExternalLink } from 'theme'
+import { TransactionDetails } from 'state/transactions/reducer'
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -72,6 +74,14 @@ const StyledTransactionStatus = styled.div<{ success?: boolean; failed?: boolean
     `}
 `
 
+const StyledExternalLink = styled(ExternalLink)`
+  font-weight: inherit;
+
+  :hover {
+    color: #fff;
+  }
+`
+
 export default function Transactions() {
   const dispatch = useDispatch()
   const { chainId } = useActiveWeb3React()
@@ -99,7 +109,7 @@ export default function Transactions() {
 
       {txs && txs.length ? (
         <StyledWrapper>
-          {txs.map((tx: any) => (
+          {txs.map((tx: TransactionDetails) => (
             <StyledTransaction key={tx.hash}>
               {tx.status === Status.SUCCESSFUL_BUNDLE && (
                 <StyledStatusWapper>
@@ -118,7 +128,14 @@ export default function Transactions() {
                   {tx.message && <QuestionHelper text={tx.message} placement="top" />}
                 </StyledStatusWapper>
               )}
-              <div>{tx.summary}</div>
+              {tx.status === Status.SUCCESSFUL_BUNDLE ? (
+                <StyledExternalLink href={`https://etherscan.io/tx/${tx.hash}`}>
+                  {tx.summary}
+                  <span style={{ fontSize: '.5em' }}>&nbsp;↗</span>
+                </StyledExternalLink>
+              ) : (
+                <div>{tx.summary}</div>
+              )}
             </StyledTransaction>
           ))}
         </StyledWrapper>
