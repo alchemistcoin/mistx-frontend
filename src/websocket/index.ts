@@ -28,8 +28,6 @@ export enum Event {
   SOCKET_SESSION = 'SOCKET_SESSION',
   SOCKET_ERR = 'SOCKET_ERR',
   MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
-  BUNDLE_STATUS_REQUEST = 'BUNDLE_STATUS_REQUEST',
-  BUNDLE_STATUS_RESPONSE = 'BUNDLE_STATUS_RESPONSE',
   BUNDLE_RESPONSE = 'BUNDLE_RESPONSE',
   BUNDLE_CANCEL_REQUEST = 'BUNDLE_CANCEL_REQUEST'
 }
@@ -208,29 +206,6 @@ export default function Sockets(): null {
       },
       onGasChange: gas => {
         dispatch(updateGas(gas))
-      },
-      onTransactionUpdate: response => {
-        const { bundle: b, status } = response
-
-        const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
-        const [hash, hashFallback] = getHashWithFallback(bundle as BundleProcessed)
-        const tx = allTransactions?.[hash] ?? allTransactions?.[hashFallback]
-
-        const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
-        if (!tx || !tx.chainId || previouslyCompleted) return
-        const transactionId = {
-          chainId: tx.chainId,
-          hash
-        }
-        let message = response.message
-        if (status === Status.BUNDLE_NOT_FOUND) {
-          message = ''
-        }
-        updateTransaction(transactionId, {
-          status: status,
-          message: message,
-          updatedAt: new Date().getTime()
-        })
       },
       onTransactionResponse: response => {
         const [serializedTxHash, hashFallback] = getHashWithFallback(response.bundle)
