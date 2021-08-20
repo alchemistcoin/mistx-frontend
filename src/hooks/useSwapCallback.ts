@@ -45,7 +45,6 @@ export function useSwapCallback(
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const { maxBaseFeePerGas } = useBaseFeePerGas()
-
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -187,6 +186,7 @@ export function useSwapCallback(
 
             // Create the transactions array with the serialized tx object
             const transactions: TransactionReq[] = [transactionReq]
+
             // Check if there is a signed approval with this tx
             // (token -> eth & token -> token transactions require signed approval)
             if (signedApproval) {
@@ -200,7 +200,6 @@ export function useSwapCallback(
               // Add the approval to the transactions array
               transactions.unshift(signedTransactionApproval) // signed approval first
             }
-            console.log(JSON.stringify(transactions))
 
             // Creat the bundle request object
             const bundleReq: BundleReq = {
