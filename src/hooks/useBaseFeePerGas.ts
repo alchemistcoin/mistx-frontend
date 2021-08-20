@@ -4,8 +4,8 @@ import useLatestBlockWithTransactions from './useLatestBlockWithTransactions'
 import { MAX_BASE_FEE_BLOCKS_IN_FUTURE } from '../constants'
 
 export function getMaxBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
-  const multiplier = 1125 ** blocksInFuture
-  const divide = 1000 ** blocksInFuture
+  const multiplier = Math.floor(1125 ** blocksInFuture)
+  const divide = Math.floor(1000 ** blocksInFuture)
 
   const maxBaseFee = BigNumber.from(baseFee)
     .mul(multiplier)
@@ -16,8 +16,8 @@ export function getMaxBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: n
 }
 
 export function getMinBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
-  const multiplier = 875 ** blocksInFuture
-  const divide = 1000 ** blocksInFuture
+  const multiplier = Math.floor(875 ** blocksInFuture)
+  const divide = Math.floor(1000 ** blocksInFuture)
 
   const minBaseFee = BigNumber.from(baseFee)
     .mul(multiplier)
