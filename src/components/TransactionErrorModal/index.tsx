@@ -47,10 +47,6 @@ const Button = styled(ButtonYellow)`
   font-weight: 700;
 `
 
-interface HardwareWalletModalProps {
-  metaMaskConnected?: boolean
-}
-
 export default function HardwareWalletModal() {
   const hidePref = localStorage.getItem('hideMMHardwareModal')
   const openState = useModalOpen(ApplicationModal.MMHARDWARE)
