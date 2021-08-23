@@ -353,8 +353,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const showTokenWarningModal = importTokensNotInDefault.length > 0 && !dismissTokenWarning
 
-  
-
   return (
     <>
       <Suspense fallback={null}>
