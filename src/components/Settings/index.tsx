@@ -211,7 +211,7 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
 
   const saveState = () => {
     setUserBribeMargin(stateBribeMargin, userBribeMargin)
-    setUserslippageTolerance(stateUserSlippage)
+    setUserslippageTolerance(stateUserSlippage, userSlippageTolerance)
     setSingleHopOnly(stateSingleHopOnly)
   }
 

@@ -130,8 +130,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
-  // get user transaction deadline TTL, in minutes
-  // const [transactionTTL] = useUserTransactionTTL()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
