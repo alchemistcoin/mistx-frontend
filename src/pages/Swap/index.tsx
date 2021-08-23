@@ -92,6 +92,7 @@ const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'
 const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
 const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletModal'))
+const TransactionErrorModal = React.lazy(() => import('components/TransactionErrorModal'))
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -352,6 +353,8 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const showTokenWarningModal = importTokensNotInDefault.length > 0 && !dismissTokenWarning
 
+  
+
   return (
     <>
       <Suspense fallback={null}>
@@ -385,8 +388,8 @@ export default function Swap({ history }: RouteComponentProps) {
             onDismiss={handleConfirmDismiss}
           />
         )}
-
         <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
+        <TransactionErrorModal />
       </Suspense>
       {hasPendingTransactions ? (
         <AppBody>
