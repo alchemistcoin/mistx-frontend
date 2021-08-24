@@ -64,6 +64,12 @@ export function useToggleSelfClaimModal(): () => void {
   return useToggleModal(ApplicationModal.SELF_CLAIM)
 }
 
+export function useTransactionErrorModalOpen(): any {
+  const modalPerfernce = localStorage.getItem('hideMMHardwareModal')
+  const openModal = useSelector((state: AppState) => state.application.openModal)
+  return openModal === ApplicationModal.MMHARDWARE && !modalPerfernce
+}
+
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string, removeAfterMs?: number) => void {
   const dispatch = useDispatch()
