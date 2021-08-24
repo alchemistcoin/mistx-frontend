@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import { tipSettingToValue } from './reducer'
-import { updateMatchesDarkMode, updateUserBribeMargin } from './actions'
+import { DEFAULT_DEADLINE_FROM_NOW } from '../../constants'
+import { updateMatchesDarkMode, updateUserBribeMargin, updateUserDeadline } from './actions'
 
 export default function Updater(): null {
   const dispatch = useDispatch<AppDispatch>()
@@ -28,6 +29,10 @@ export default function Updater(): null {
       }
       if (newBribeMargin && newBribeMargin !== state.userBribeMargin) {
         dispatch(updateUserBribeMargin({ userBribeMargin: newBribeMargin }))
+      }
+      const oldDefaultUserDeadline = 60 * 20 // 20 minutes
+      if (state.userDeadline === oldDefaultUserDeadline) {
+        dispatch(updateUserDeadline({ userDeadline: DEFAULT_DEADLINE_FROM_NOW }))
       }
     }
     setUpdatedDefaultUserSettings(true)
