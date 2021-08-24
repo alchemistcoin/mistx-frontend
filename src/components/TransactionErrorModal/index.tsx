@@ -7,8 +7,7 @@ import { AutoColumn } from '../Column'
 import { ButtonYellow } from '../Button'
 import Modal from '../Modal'
 import FATHOM_GOALS from '../../constants/fathom'
-import { useModalOpen } from '../../state/application/hooks'
-import { ApplicationModal, setOpenModal } from '../../state/application/actions'
+import { setOpenModal } from '../../state/application/actions'
 import { modalContent } from '../HardwareWalletModal'
 
 const Wrapper = styled.div`
@@ -48,16 +47,11 @@ const Button = styled(ButtonYellow)`
 `
 
 export default function HardwareWalletModal() {
-  const hidePref = localStorage.getItem('hideMMHardwareModal')
-  const openState = useModalOpen(ApplicationModal.MMHARDWARE)
-  const modalOpen = !hidePref && openState
   const dispatch = useDispatch()
-  const [localModalOpen, setModalOpen] = useState<boolean>(modalOpen)
   const [hideModalPref, setHideModalPref] = useState<boolean>(false)
   const [showInfo, setShowInfo] = useState<boolean>(false)
 
   const hideModal = () => {
-    setModalOpen(false)
     dispatch(setOpenModal(null))
   }
 
@@ -86,7 +80,7 @@ export default function HardwareWalletModal() {
   }
 
   return (
-    <Modal isOpen={localModalOpen} onDismiss={() => ''}>
+    <Modal isOpen={true} onDismiss={() => ''}>
       <Wrapper>
         {showInfo ? (
           modalContent(hideModal, hideModal)

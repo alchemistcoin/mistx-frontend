@@ -36,6 +36,7 @@ import {
 } from '../../state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance } from '../../state/user/hooks'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
+import { useTransactionErrorModalOpen } from 'state/application/hooks'
 // constants
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 // utils
@@ -178,8 +179,7 @@ export default function Swap({ history }: RouteComponentProps) {
     txHash: undefined
   })
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
-
-  // Modals
+  const transactionErrorModalOpen = useTransactionErrorModalOpen()
   const [showInfoModal, setShowInfoModal] = useState(false)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
 
@@ -190,16 +190,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const hideWarningModalPerference =
     !(library as Web3Provider).provider.isMetaMask || localStorage.getItem('hideWarningModal')
-
-  // const handleInfoModalContinue = () => {
-  //   setShowInfoModal(false);
-  //   setSwapState({
-  //     tradeToConfirm: trade,
-  //     attemptingTxn: false,
-  //     swapErrorMessage: undefined,
-  //     txHash: undefined
-  //   })
-  // };
 
   const formattedAmounts = useMemo(
     () => ({
@@ -387,7 +377,7 @@ export default function Swap({ history }: RouteComponentProps) {
           />
         )}
         <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
-        <TransactionErrorModal />
+        {transactionErrorModalOpen && <TransactionErrorModal />}
       </Suspense>
       {hasPendingTransactions ? (
         <AppBody>
