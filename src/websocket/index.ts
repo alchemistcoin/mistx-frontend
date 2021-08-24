@@ -197,7 +197,6 @@ export default function Sockets(): null {
       },
       onSocketSession: session => {
         const { version } = session
-        dispatch(setOpenModal(ApplicationModal.MMHARDWARE))
         // check client version and notify user to refresh page
         // if the client version is not equal to the version.client
         // received in the session payload
