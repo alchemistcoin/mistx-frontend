@@ -92,6 +92,7 @@ const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'
 const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
 const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletModal'))
+const TransactionErrorModal = React.lazy(() => import('components/TransactionErrorModal'))
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -130,8 +131,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
-  // get user transaction deadline TTL, in minutes
-  // const [transactionTTL] = useUserTransactionTTL()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -387,8 +386,8 @@ export default function Swap({ history }: RouteComponentProps) {
             onDismiss={handleConfirmDismiss}
           />
         )}
-
         <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
+        <TransactionErrorModal />
       </Suspense>
       {hasPendingTransactions ? (
         <AppBody>

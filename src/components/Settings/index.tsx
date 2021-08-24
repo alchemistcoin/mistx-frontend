@@ -210,8 +210,8 @@ function SettingsMenu({ toggle }: { toggle: () => void }) {
   const [ttl, setTtl] = useUserTransactionTTL()
 
   const saveState = () => {
-    setUserBribeMargin(stateBribeMargin)
-    setUserslippageTolerance(stateUserSlippage)
+    setUserBribeMargin(stateBribeMargin, userBribeMargin)
+    setUserslippageTolerance(stateUserSlippage, userSlippageTolerance)
     setSingleHopOnly(stateSingleHopOnly)
   }
 

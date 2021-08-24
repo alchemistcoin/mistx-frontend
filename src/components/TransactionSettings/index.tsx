@@ -4,6 +4,7 @@ import QuestionHelper from '../QuestionHelper'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween, RowFixed } from '../Row'
+import FATHOM_GOALS from '../../constants/fathom'
 
 import { darken } from 'polished'
 
@@ -123,6 +124,12 @@ export interface SlippageTabsProps {
   setDeadline: (deadline: number) => void
 }
 
+const trackSlippageChange = () => {
+  if (window.fathom) {
+    window.fathom.trackGoal(FATHOM_GOALS.LEDGER_CONNECTED, 0)
+  }
+}
+
 export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, setDeadline }: SlippageTabsProps) {
   const theme = useContext(ThemeContext)
 
@@ -168,11 +175,16 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
 
   function parseCustomDeadline(value: string) {
     setDeadlineInput(value)
-
     try {
       const valueAsInt: number = Number.parseInt(value) * 60
+
       if (!Number.isNaN(valueAsInt) && valueAsInt > 0) {
         setDeadline(valueAsInt)
+        if (deadline !== valueAsInt) {
+          if (window.fathom) {
+            window.fathom.trackGoal(FATHOM_GOALS.SETTINGS_DEADLINE_CHANGED, 0)
+          }
+        }
       }
     } catch {}
   }
@@ -192,6 +204,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
               onClick={() => {
                 setSlippageInput('')
                 setRawSlippage(slippageValue)
+                trackSlippageChange()
               }}
               active={rawSlippage === slippageValue}
               key={slippageValue}

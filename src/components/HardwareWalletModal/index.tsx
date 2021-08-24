@@ -30,6 +30,50 @@ interface HardwareWalletModalProps {
   metaMaskConnected: boolean
 }
 
+export const modalContent = (hideModal: () => void, cta: () => void) => (
+  <>
+    <Section>
+      <RowBetween>
+        <Text fontWeight={500} fontSize={20}>
+          MetaMask Hardware Support
+        </Text>
+        <CloseIcon onClick={hideModal} />
+      </RowBetween>
+      <RowBetween margin="0.5rem 0 0" flexDirection="column">
+        <Text fontWeight={300} fontSize={16}>
+          <div style={{ marginBottom: '1em' }}>
+            mistX will <b style={{ fontWeight: 600 }}>not work with hardware wallets connected with MetaMask</b> due to
+            their lack of support for eth_signTransaction.
+          </div>
+          <div>
+            <span>You can:</span>
+            <ul>
+              <li>Connect your Ledger directly</li>
+              <li>Use Wallet Connect</li>
+              <li>Use a standard MetaMask wallet</li>
+            </ul>
+            <span>
+              We are&nbsp;
+              <a
+                href="https://github.com/MetaMask/metamask-extension/issues/10914"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                pushing MetaMask to fix the issue
+              </a>
+              {'. '}
+              (&nbsp;Show your support and leave a comment!&nbsp;)
+            </span>
+          </div>
+        </Text>
+      </RowBetween>
+    </Section>
+    <BottomSection gap="12px">
+      <Button onClick={cta}>I understand</Button>
+    </BottomSection>
+  </>
+)
+
 export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalletModalProps) {
   const hideWHardwareWalletWarningModalPerference = localStorage.getItem('hideHardwareWarningModal') === 'true'
   const [localModalOpen, setModalOpen] = useState<boolean>(false)
@@ -53,47 +97,7 @@ export default function HardwareWalletModal({ metaMaskConnected }: HardwareWalle
 
   return (
     <Modal isOpen={localModalOpen} onDismiss={hideModal}>
-      <Wrapper>
-        <Section>
-          <RowBetween>
-            <Text fontWeight={500} fontSize={20}>
-              MetaMask Hardware Support
-            </Text>
-            <CloseIcon onClick={hideModal} />
-          </RowBetween>
-          <RowBetween margin="0.5rem 0 0" flexDirection="column">
-            <Text fontWeight={300} fontSize={16}>
-              <div style={{ marginBottom: '1em' }}>
-                mistX will <b style={{ fontWeight: 600 }}>not work with hardware wallets connected with MetaMask</b> due
-                to their lack of support for eth_signTransaction.
-              </div>
-              <div>
-                <span>You can:</span>
-                <ul>
-                  <li>Connect your Ledger directly</li>
-                  <li>Use Wallet Connect</li>
-                  <li>Use a standard MetaMask wallet</li>
-                </ul>
-                <span>
-                  We are&nbsp;
-                  <a
-                    href="https://github.com/MetaMask/metamask-extension/issues/10914"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    pushing MetaMask to fix the issue
-                  </a>
-                  {'. '}
-                  (&nbsp;Show your support and leave a comment!&nbsp;)
-                </span>
-              </div>
-            </Text>
-          </RowBetween>
-        </Section>
-        <BottomSection gap="12px">
-          <Button onClick={cta}>I understand</Button>
-        </BottomSection>
-      </Wrapper>
+      <Wrapper>{modalContent(hideModal, cta)}</Wrapper>
     </Modal>
   )
 }
