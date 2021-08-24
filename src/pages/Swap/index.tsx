@@ -36,6 +36,7 @@ import {
 } from '../../state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance } from '../../state/user/hooks'
 import { useHasPendingTransactions } from 'state/transactions/hooks'
+import { useTransactionErrorModalOpen } from 'state/application/hooks'
 // constants
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 // utils
@@ -92,6 +93,7 @@ const TokenWarningModal = React.lazy(() => import('components/TokenWarningModal'
 const ConfirmInfoModal = React.lazy(() => import('components/swap/ConfirmInfoModal'))
 const ConfirmSwapModal = React.lazy(() => import('components/swap/ConfirmSwapModal'))
 const HardwareWalletModal = React.lazy(() => import('components/HardwareWalletModal'))
+const TransactionErrorModal = React.lazy(() => import('components/TransactionErrorModal'))
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -130,8 +132,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
-  // get user transaction deadline TTL, in minutes
-  // const [transactionTTL] = useUserTransactionTTL()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -179,8 +179,7 @@ export default function Swap({ history }: RouteComponentProps) {
     txHash: undefined
   })
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
-
-  // Modals
+  const transactionErrorModalOpen = useTransactionErrorModalOpen()
   const [showInfoModal, setShowInfoModal] = useState(false)
   const handleInfoModalDismiss = () => setShowInfoModal(false)
 
@@ -191,16 +190,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const hideWarningModalPerference =
     !(library as Web3Provider).provider.isMetaMask || localStorage.getItem('hideWarningModal')
-
-  // const handleInfoModalContinue = () => {
-  //   setShowInfoModal(false);
-  //   setSwapState({
-  //     tradeToConfirm: trade,
-  //     attemptingTxn: false,
-  //     swapErrorMessage: undefined,
-  //     txHash: undefined
-  //   })
-  // };
 
   const formattedAmounts = useMemo(
     () => ({
@@ -387,8 +376,8 @@ export default function Swap({ history }: RouteComponentProps) {
             onDismiss={handleConfirmDismiss}
           />
         )}
-
         <HardwareWalletModal metaMaskConnected={metaMaskConnected} />
+        {transactionErrorModalOpen && <TransactionErrorModal />}
       </Suspense>
       {hasPendingTransactions ? (
         <AppBody>

@@ -32,7 +32,8 @@ export enum ApplicationModal {
   CLAIM_POPUP,
   MENU,
   DELEGATE,
-  VOTE
+  VOTE,
+  MMHARDWARE
 }
 
 export const updateGas = createAction<Gas>('application/updateGas')

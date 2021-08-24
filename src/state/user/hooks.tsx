@@ -3,6 +3,7 @@ import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants'
+import FATHOM_GOALS from '../../constants/fathom'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens } from '../../hooks/Tokens'
@@ -100,15 +101,20 @@ export function useUserSingleHopOnly(): [boolean, (newSingleHopOnly: boolean) =>
   return [singleHopOnly, setSingleHopOnly]
 }
 
-export function useUserSlippageTolerance(): [number, (slippage: number) => void] {
+export function useUserSlippageTolerance(): [number, (userSlippageTolerance: number, currentSlippage: number) => void] {
   const dispatch = useDispatch<AppDispatch>()
   const userSlippageTolerance = useSelector<AppState, AppState['user']['userSlippageTolerance']>(state => {
     return state.user.userSlippageTolerance
   })
 
   const setUserSlippageTolerance = useCallback(
-    (userSlippageTolerance: number) => {
-      dispatch(updateUserSlippageTolerance({ userSlippageTolerance }))
+    (userSlippageTolerance: number, currentSlippage: number) => {
+      if (userSlippageTolerance !== currentSlippage) {
+        dispatch(updateUserSlippageTolerance({ userSlippageTolerance }))
+        if (window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.SETTINGS_SLIPPAGE_CHANGED, 0)
+        }
+      }
     },
     [dispatch]
   )
@@ -116,16 +122,21 @@ export function useUserSlippageTolerance(): [number, (slippage: number) => void]
   return [userSlippageTolerance, setUserSlippageTolerance]
 }
 
-export function useUserBribeMargin(): [number, (bribeMargin: number) => void] {
+export function useUserBribeMargin(): [number, (bribeMargin: number, currentBribeMargin: number) => void] {
   const dispatch = useDispatch<AppDispatch>()
   const userBribeMargin = useSelector<AppState, AppState['user']['userBribeMargin']>(state => {
     return state.user.userBribeMargin
   })
 
   const setUserBribeMargin = useCallback(
-    (userBribeMargin: number) => {
-      const bribeMargin = userBribeMargin < 1 ? 1 : userBribeMargin
-      dispatch(updateUserBribeMargin({ userBribeMargin: bribeMargin }))
+    (userBribeMargin: number, currentBribeMargin: number) => {
+      if (userBribeMargin !== currentBribeMargin) {
+        const bribeMargin = userBribeMargin < 1 ? 1 : userBribeMargin
+        dispatch(updateUserBribeMargin({ userBribeMargin: bribeMargin }))
+        if (window.fathom) {
+          window.fathom.trackGoal(FATHOM_GOALS.SETTINGS_MINER_TIP_CHANGED, 0)
+        }
+      }
     },
     [dispatch]
   )

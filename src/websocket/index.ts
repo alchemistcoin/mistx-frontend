@@ -7,6 +7,7 @@ import PJSON from '../../package.json'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
 import { BundleProcessed, BundleRes, MistxSocket } from '@alchemist-coin/mistx-connect'
+import { setOpenModal, ApplicationModal } from '../state/application/actions'
 
 // state
 import { updateGas } from '../state/application/actions'
@@ -277,6 +278,13 @@ export default function Sockets(): null {
               hash,
               60000
             )
+            const { ethereum } = window
+            const isMetaMask = !!(ethereum && ethereum.isMetaMask)
+            const hideWHardwareWalletWarningModalPerference =
+              localStorage.getItem('hideHardwareWarningModal') === 'true'
+            if (response.error === 'AccountNonceTooHigh' && isMetaMask && !hideWHardwareWalletWarningModalPerference) {
+              dispatch(setOpenModal(ApplicationModal.MMHARDWARE))
+            }
           }
         }
       }
