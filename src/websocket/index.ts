@@ -282,7 +282,7 @@ export default function Sockets(): null {
             const isMetaMask = !!(ethereum && ethereum.isMetaMask)
             const hideWHardwareWalletWarningModalPerference =
               localStorage.getItem('hideHardwareWarningModal') === 'true'
-            if (response.error === 'AccountNonceTooHigh' && isMetaMask && !hideWHardwareWalletWarningModalPerference) {
+            if (response.error === 'nonce too high' && isMetaMask && !hideWHardwareWalletWarningModalPerference) {
               dispatch(setOpenModal(ApplicationModal.MMHARDWARE))
             }
           }
