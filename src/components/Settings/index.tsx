@@ -29,6 +29,7 @@ import MinerBribeSlider from './MinerBribeSlider'
 import TransactionSettings from '../TransactionSettings'
 import { Cog, Close } from '../Icons'
 import useFeeDisplayCurrency from '../../hooks/useFeeDisplayCurrency'
+import FATHOM_GOALS from '../../constants/fathom'
 
 const StyledCloseIcon = styled(X)`
   height: 20px;
@@ -317,6 +318,9 @@ export default function Settings() {
   const handleMenuButton = () => {
     if (!open) {
       toggle()
+      if (window.fathom) {
+        window.fathom.trackGoal(FATHOM_GOALS.SETTINGS_OPENED, 0)
+      }
     }
   }
 
