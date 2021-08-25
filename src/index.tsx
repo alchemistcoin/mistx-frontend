@@ -29,7 +29,7 @@ if (!!window.ethereum) {
 
 initAnalytics()
 
-function Updaters() {
+export const Updaters = () => {
   return (
     <>
       <ListsUpdater />
@@ -49,10 +49,10 @@ ReactDOM.render(
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Blocklist>
           <Provider store={store}>
-            <Websockets />
-            <Updaters />
+            {/* <Websockets /> */}
+            {/* <Updaters /> */}
             <ThemeProvider>
-              <ThemedGlobalStyle />
+              {/* <ThemedGlobalStyle /> */}
               <HashRouter>
                 <App />
               </HashRouter>

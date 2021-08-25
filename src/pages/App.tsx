@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { ThemeProvider, DefaultTheme } from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -11,10 +11,13 @@ import EIP1559InfoModal from '../components/EIP1559InfoModal'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
+import Index from './V2/index'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import SideBar from '../components/SideBar'
 import Overlay from '../components/SideBar/overlay'
 import { ChatWidget } from 'components/ChatWidget'
+import { theme } from '../theme-v2'
+import { GlobalStyles } from '../theme-v2/global'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -52,31 +55,34 @@ const BodyWrapper = styled.div`
 export default function App() {
   return (
     <Suspense fallback={null}>
-      <Route component={GoogleAnalyticsReporter} />
+      {/* <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
-      <Overlay />
-      <AppWrapper>
-        {/* <URLWarning /> */}
-        <SideBar />
-        <HeaderWrapper>
+      <Overlay /> */}
+      {/* <AppWrapper> */}
+      {/* <URLWarning /> */}
+      {/* <SideBar /> */}
+      {/* <HeaderWrapper>
           <Header />
-        </HeaderWrapper>
-        <BodyWrapper>
-          <Web3ReactManager>
-            <Switch>
-              <Route exact strict path="/exchange" component={Swap} />
-              <Route exact strict path="/exchange/:outputCurrency" component={RedirectToSwap} />
-              <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
-              <Route component={RedirectPathToSwapOnly} />
-            </Switch>
-          </Web3ReactManager>
-          <Footer style={{ marginTop: '2.5rem' }} />
-        </BodyWrapper>
-      </AppWrapper>
-      <Popups />
-      <EIP1559InfoModal />
+        </HeaderWrapper> */}
+      {/* <BodyWrapper> */}
+      <Web3ReactManager>
+        <Switch>
+          <ThemeProvider theme={theme()}>
+            <GlobalStyles />
+            <Route exact strict path="/" component={Index} />
+          </ThemeProvider>
+          <Route exact strict path="/exchange/:outputCurrency" component={RedirectToSwap} />
+          <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
+          <Route component={RedirectPathToSwapOnly} />
+        </Switch>
+      </Web3ReactManager>
+      {/* <Footer style={{ marginTop: '2.5rem' }} /> */}
+      {/* </BodyWrapper>
+      </AppWrapper> */}
+      {/* <Popups /> */}
+      {/* <EIP1559InfoModal />
       <NewAppVersionAvailable />
-      <ChatWidget />
+      <ChatWidget /> */}
     </Suspense>
   )
 }

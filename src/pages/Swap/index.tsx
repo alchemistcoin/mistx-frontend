@@ -46,6 +46,7 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import { LinkStyledButton } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import SwapFooter from '../../components/swap/SwapFooter'
+import { Updaters } from '../../index'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -345,6 +346,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   return (
     <>
+      <Updaters />
       <Suspense fallback={null}>
         <NetworkWarningModal />
         {showTokenWarningModal && (
