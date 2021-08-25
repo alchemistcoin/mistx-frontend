@@ -36,7 +36,6 @@ export function theme(): any {
     // text
     text1: '#FFFFFF',
     //shadows
-    // shadow1: '#2F80ED'
 
     // media queries
     mediaWidth: mediaWidthTemplates
