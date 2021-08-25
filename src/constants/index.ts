@@ -234,7 +234,7 @@ export const NetworkContextName = 'NETWORK'
 // default allowed slippage, in bips
 export const INITIAL_ALLOWED_SLIPPAGE = 100
 // 7 minutes, denominated in seconds
-export const DEFAULT_DEADLINE_FROM_NOW = 60 * 7
+export const DEFAULT_DEADLINE_FROM_NOW = 60 * 5
 // default min trade margin, in bips
 export const MIN_TRADE_MARGIN = 1
 
