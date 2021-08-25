@@ -1,6 +1,4 @@
 import { css } from 'styled-components'
-import { ThemeV2 } from './styled'
-import styled, { ThemeProvider as StyledComponentsThemeProvider, DefaultTheme } from 'styled-components'
 
 const MEDIA_WIDTHS = {
   upToExtraSmall: 500,
