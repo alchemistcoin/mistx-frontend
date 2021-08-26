@@ -8,6 +8,7 @@ import { isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
+import useTransactionDeadline from './useTransactionDeadline'
 import { INITIAL_ALLOWED_SLIPPAGE, MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
@@ -42,6 +43,7 @@ export function useSwapCallback(
   const useApprove = useApproveCallbackFromTrade(trade, allowedSlippage)
   const approve = useApprove[1]
   const swapCall = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
+  const deadline = useTransactionDeadline()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const { maxBaseFeePerGas } = useBaseFeePerGas()
@@ -207,7 +209,9 @@ export function useSwapCallback(
               chainId,
               bribe: args[1], // need to use calculated bribe ?
               from: account,
-              deadline: args[0][4],
+              deadline: BigNumber.from(Math.floor(Date.now() / 1000))
+                .add(deadline)
+                .toHexString(),
               simulateOnly: false
             }
 
@@ -246,6 +250,7 @@ export function useSwapCallback(
       error: null
     }
   }, [
+    deadline,
     trade,
     library,
     account,
