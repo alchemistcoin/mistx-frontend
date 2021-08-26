@@ -55,7 +55,7 @@ export function useSwapCallArguments(
             feeOnTransfer: true,
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
-            deadline: deadline.toNumber()
+            ttl: deadline.toNumber()
           })
         }
       }
@@ -67,7 +67,7 @@ export function useSwapCallArguments(
             feeOnTransfer: false,
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
-            deadline: deadline.toNumber()
+            ttl: deadline.toNumber()
           })
         }
       }
