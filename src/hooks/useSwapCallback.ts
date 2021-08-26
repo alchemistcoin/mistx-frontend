@@ -250,6 +250,7 @@ export function useSwapCallback(
       error: null
     }
   }, [
+    deadline,
     trade,
     library,
     account,
