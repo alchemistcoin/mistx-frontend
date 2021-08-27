@@ -23,6 +23,9 @@ export type PopupContent =
         auto: boolean
       }
     }
+  | {
+      message: string
+    }
 
 export enum ApplicationModal {
   WALLET,

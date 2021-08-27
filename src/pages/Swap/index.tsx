@@ -46,6 +46,7 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import { LinkStyledButton } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import SwapFooter from '../../components/swap/SwapFooter'
+import Notice from '../../components/Notice'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -387,91 +388,94 @@ export default function Swap({ history }: RouteComponentProps) {
           </PendingWrapper>
         </AppBody>
       ) : (
-        <AppBody>
-          <SwapHeader />
-          <Wrapper id="swap-page">
-            <SwapWrapper>
-              <InputWrapper>
-                {currencies[Field.INPUT] ? (
-                  <CurrencyInputPanel
-                    value={formattedAmounts[Field.INPUT]}
-                    showMaxButton={!atMaxAmountInput}
-                    currency={currencies[Field.INPUT]}
-                    onUserInput={handleTypeInput}
-                    onMax={handleMaxInput}
-                    onCurrencySelect={handleInputSelect}
-                    otherCurrency={currencies[Field.OUTPUT]}
-                    type={Field.INPUT}
-                    id="swap-currency-input"
-                  />
-                ) : (
-                  <CurrencySelect onCurrencySelect={handleInputSelect} />
-                )}
-              </InputWrapper>
-              <StyledAutoRow
-                justify={isExpertMode ? 'space-between' : 'center'}
-                style={{ margin: '0.5rem 0 0.5rem', padding: '0 1rem' }}
-              >
-                <ArrowWrapper
-                  clickable
-                  color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
-                  onClick={() => {
-                    //setApprovalSubmitted(false) // reset 2 step UI for approvals
-                    onSwitchTokens()
-                  }}
-                >
-                  <ArrowDownCircled data-test="arrow-down" />
-                </ArrowWrapper>
-                {recipient === null && !showWrap && isExpertMode ? (
-                  <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
-                    + Add a send (optional)
-                  </LinkStyledButton>
-                ) : null}
-              </StyledAutoRow>
-              {currencies[Field.OUTPUT] ? (
-                <OutputWrapper>
-                  <RelativeWrapper>
+        <>
+          <Notice />
+          <AppBody>
+            <SwapHeader />
+            <Wrapper id="swap-page">
+              <SwapWrapper>
+                <InputWrapper>
+                  {currencies[Field.INPUT] ? (
                     <CurrencyInputPanel
-                      value={formattedAmounts[Field.OUTPUT]}
-                      onUserInput={handleTypeOutput}
-                      showMaxButton={false}
-                      currency={currencies[Field.OUTPUT]}
-                      onCurrencySelect={handleOutputSelect}
-                      otherCurrency={currencies[Field.INPUT]}
-                      type={Field.OUTPUT}
-                      id="swap-currency-output"
+                      value={formattedAmounts[Field.INPUT]}
+                      showMaxButton={!atMaxAmountInput}
+                      currency={currencies[Field.INPUT]}
+                      onUserInput={handleTypeInput}
+                      onMax={handleMaxInput}
+                      onCurrencySelect={handleInputSelect}
+                      otherCurrency={currencies[Field.OUTPUT]}
+                      type={Field.INPUT}
+                      id="swap-currency-input"
                     />
-                  </RelativeWrapper>
-                </OutputWrapper>
-              ) : (
-                <SelectWrapper>
-                  <CurrencySelect onCurrencySelect={handleOutputSelect} />
-                </SelectWrapper>
-              )}
-
-              {recipient !== null && !showWrap ? (
-                <>
-                  <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                    <ArrowWrapper clickable={false}>
-                      <ArrowDownCircled data-test="arrow-down" />
-                    </ArrowWrapper>
-                    <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
-                      - Remove send
+                  ) : (
+                    <CurrencySelect onCurrencySelect={handleInputSelect} />
+                  )}
+                </InputWrapper>
+                <StyledAutoRow
+                  justify={isExpertMode ? 'space-between' : 'center'}
+                  style={{ margin: '0.5rem 0 0.5rem', padding: '0 1rem' }}
+                >
+                  <ArrowWrapper
+                    clickable
+                    color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
+                    onClick={() => {
+                      //setApprovalSubmitted(false) // reset 2 step UI for approvals
+                      onSwitchTokens()
+                    }}
+                  >
+                    <ArrowDownCircled data-test="arrow-down" />
+                  </ArrowWrapper>
+                  {recipient === null && !showWrap && isExpertMode ? (
+                    <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
+                      + Add a send (optional)
                     </LinkStyledButton>
-                  </AutoRow>
-                  <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
-                </>
-              ) : null}
-              <SwapFooter
-                onSwapIntent={onSwapIntent}
-                parsedAmounts={parsedAmounts}
-                swapCallbackError={swapCallbackError}
-                swapErrorMessage={swapErrorMessage}
-                trade={trade}
-              />
-            </SwapWrapper>
-          </Wrapper>
-        </AppBody>
+                  ) : null}
+                </StyledAutoRow>
+                {currencies[Field.OUTPUT] ? (
+                  <OutputWrapper>
+                    <RelativeWrapper>
+                      <CurrencyInputPanel
+                        value={formattedAmounts[Field.OUTPUT]}
+                        onUserInput={handleTypeOutput}
+                        showMaxButton={false}
+                        currency={currencies[Field.OUTPUT]}
+                        onCurrencySelect={handleOutputSelect}
+                        otherCurrency={currencies[Field.INPUT]}
+                        type={Field.OUTPUT}
+                        id="swap-currency-output"
+                      />
+                    </RelativeWrapper>
+                  </OutputWrapper>
+                ) : (
+                  <SelectWrapper>
+                    <CurrencySelect onCurrencySelect={handleOutputSelect} />
+                  </SelectWrapper>
+                )}
+
+                {recipient !== null && !showWrap ? (
+                  <>
+                    <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
+                      <ArrowWrapper clickable={false}>
+                        <ArrowDownCircled data-test="arrow-down" />
+                      </ArrowWrapper>
+                      <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
+                        - Remove send
+                      </LinkStyledButton>
+                    </AutoRow>
+                    <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
+                  </>
+                ) : null}
+                <SwapFooter
+                  onSwapIntent={onSwapIntent}
+                  parsedAmounts={parsedAmounts}
+                  swapCallbackError={swapCallbackError}
+                  swapErrorMessage={swapErrorMessage}
+                  trade={trade}
+                />
+              </SwapWrapper>
+            </Wrapper>
+          </AppBody>
+        </>
       )}
       <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />
     </>
