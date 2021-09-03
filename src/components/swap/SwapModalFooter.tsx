@@ -111,7 +111,7 @@ export default function SwapModalFooter({
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
-  const { totalFeeInEth, realizedLPFeeInEth, baseFeeInEth } = useTotalFeesForTrade(trade)
+  const { totalFeeInEth, realizedLPFeeInEth, baseFeeInEth, maxBaseFeeInEth } = useTotalFeesForTrade(trade)
 
   return (
     <>
@@ -247,7 +247,7 @@ export default function SwapModalFooter({
           </TYPE.black>
         </RowBetween>
 
-        <RowBetween marginBottom="15px">
+        <RowBetween marginBottom="10px">
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               ETH Base Fee (Estimated)
@@ -262,6 +262,26 @@ export default function SwapModalFooter({
             {ethUSDCPrice && baseFeeInEth && `$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} `}
             {baseFeeInEth ? (
               '(' + baseFeeInEth?.toSignificant(4) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
+        </RowBetween>
+        <RowBetween marginBottom="15px" style={{ opacity: '0.4' }}>
+          <AutoRow width="fit-content">
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              ┗ Max ETH Base Fee
+            </TYPE.black>
+            <StyledQuestionHelper
+              text="Max allowed network fee. If the base fee surpasses this amount, your transaction will fail."
+              small
+            />
+          </AutoRow>
+
+          <TYPE.black fontSize={14} fontWeight={700}>
+            {ethUSDCPrice && maxBaseFeeInEth && `$${ethUSDCPrice.quote(maxBaseFeeInEth).toFixed(2)} `}
+            {maxBaseFeeInEth ? (
+              '(' + maxBaseFeeInEth?.toSignificant(4) + ' ETH)'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}
