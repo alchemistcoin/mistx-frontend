@@ -284,7 +284,7 @@ export default function SwapModalFooter({
             />
           </AutoRow>
 
-          <TYPE.black fontSize={14} fontWeight={700}>
+          <TYPE.black fontSize={14} fontWeight={500}>
             {ethUSDCPrice && maxBaseFeeInEth && `up to $${ethUSDCPrice.quote(maxBaseFeeInEth).toFixed(2)} `}
             {maxBaseFeeInEth ? (
               '(' + maxBaseFeeInEth?.toSignificant(3) + ' ETH)'
@@ -294,7 +294,7 @@ export default function SwapModalFooter({
           </TYPE.black>
         </RowBetween>
 
-        <RowBetween>
+        <RowBetween marginBottom="10px">
           <AutoRow width="fit-content">
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Total (Estimated)
@@ -304,6 +304,17 @@ export default function SwapModalFooter({
 
           <TYPE.black fontSize={14} fontWeight={700}>
             {ethUSDCPrice && totalFeeInEth && `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} `}
+            {totalFeeInEth ? (
+              '(' + totalFeeInEth?.toSignificant(3) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
+        </RowBetween>
+        <RowBetween style={{ opacity: 0.4 }}>
+          <AutoRow width="fit-content" />
+          <TYPE.black fontSize={14} fontWeight={500}>
+            {ethUSDCPrice && totalFeeInEth && `up to $${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} `}
             {totalFeeInEth ? (
               '(' + totalFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
