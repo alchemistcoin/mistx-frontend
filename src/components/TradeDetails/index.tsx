@@ -33,7 +33,9 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
   const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
 
-  const { realizedLPFeeInEth, baseFeeInEth, maxBaseFeeInEth, maxTotalFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
+  const { realizedLPFeeInEth, baseFeeInEth, maxBaseFeeInEth, maxTotalFeeInEth, totalFeeInEth } = useTotalFeesForTrade(
+    trade
+  )
 
   return !trade ? null : (
     <AutoColumn gap="6px" width="20rem">
@@ -176,7 +178,10 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
         <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'} style={{ opacity: 0.4 }}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px" />
           <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {ethUSDCPrice && maxTotalFeeInEth && baseFeeInEth && `≤ $${ethUSDCPrice.quote(maxTotalFeeInEth).toFixed(2)} `}
+            {ethUSDCPrice &&
+              maxTotalFeeInEth &&
+              baseFeeInEth &&
+              `≤ $${ethUSDCPrice.quote(maxTotalFeeInEth).toFixed(2)} `}
             {maxTotalFeeInEth && baseFeeInEth ? (
               '(' + maxTotalFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
