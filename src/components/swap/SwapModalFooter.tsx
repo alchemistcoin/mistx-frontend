@@ -111,7 +111,9 @@ export default function SwapModalFooter({
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
-  const { totalFeeInEth, realizedLPFeeInEth, baseFeeInEth, maxBaseFeeInEth } = useTotalFeesForTrade(trade)
+  const { maxTotalFeeInEth, totalFeeInEth, realizedLPFeeInEth, baseFeeInEth, maxBaseFeeInEth } = useTotalFeesForTrade(
+    trade
+  )
 
   return (
     <>
@@ -314,9 +316,9 @@ export default function SwapModalFooter({
         <RowBetween style={{ opacity: 0.4 }}>
           <AutoRow width="fit-content" />
           <TYPE.black fontSize={14} fontWeight={500}>
-            {ethUSDCPrice && totalFeeInEth && `up to $${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} `}
-            {totalFeeInEth ? (
-              '(' + totalFeeInEth?.toSignificant(3) + ' ETH)'
+            {ethUSDCPrice && maxTotalFeeInEth && `up to $${ethUSDCPrice.quote(maxTotalFeeInEth).toFixed(2)} `}
+            {maxTotalFeeInEth ? (
+              '(' + maxTotalFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}
