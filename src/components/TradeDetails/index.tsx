@@ -33,7 +33,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
   const slippagePercent = new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE)
   const ethUSDCPrice = useUSDCPrice(WETH[chainId || 1])
 
-  const { realizedLPFeeInEth, baseFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
+  const { realizedLPFeeInEth, baseFeeInEth, maxBaseFeeInEth, totalFeeInEth } = useTotalFeesForTrade(trade)
 
   return !trade ? null : (
     <AutoColumn gap="6px" width="20rem">
@@ -128,7 +128,7 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
       </RowBetween>
 
       <RowBetween align="flex-start" flexDirection="column" width="100%">
-        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'}>
+        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'0px'}>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px">
             Base Fee (Estimated)
           </TYPE.black>
@@ -136,6 +136,22 @@ export default function TradeDetails({ trade, allowedSlippage }: TradeDetailsPro
             {ethUSDCPrice && baseFeeInEth && `$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} `}
             {baseFeeInEth ? (
               '(' + baseFeeInEth?.toSignificant(3) + ' ETH)'
+            ) : (
+              <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
+            )}
+          </TYPE.black>
+        </Row>
+      </RowBetween>
+
+      <RowBetween align="flex-start" flexDirection="column" width="100%" style={{ opacity: 0.4 }}>
+        <Row marginRight={0} justify="space-between" width="100%" marginBottom={'4px'}>
+          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2} lineHeight="18px">
+            ┗ Max Base Fee
+          </TYPE.black>
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            {ethUSDCPrice && maxBaseFeeInEth && `up to $${ethUSDCPrice.quote(maxBaseFeeInEth).toFixed(2)} `}
+            {maxBaseFeeInEth ? (
+              '(' + maxBaseFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}

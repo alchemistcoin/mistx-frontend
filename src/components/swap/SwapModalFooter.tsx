@@ -232,7 +232,9 @@ export default function SwapModalFooter({
               Liquidity Provider
             </TYPE.black>
             <StyledQuestionHelper
-              text="Charged by liquidity providers (Uniswap or Sushiswap), mistX gets 0% of this fee."
+              text={`Charged by liquidity providers (Uniswap or Sushiswap), mistX gets 0% of this fee.${
+                realizedLPFee ? ` ${realizedLPFee.toSignificant(5)} ${trade.inputAmount.currency.symbol}` : ''
+              }`}
               small
             />
           </AutoRow>
@@ -240,7 +242,7 @@ export default function SwapModalFooter({
           <TYPE.black fontSize={14} fontWeight={700}>
             {ethUSDCPrice && realizedLPFeeInEth && `$${ethUSDCPrice.quote(realizedLPFeeInEth).toFixed(2)} `}
             {realizedLPFee ? (
-              '(' + realizedLPFee?.toSignificant(4) + ' ' + trade.inputAmount.currency.symbol + ')'
+              '(' + realizedLPFee?.toSignificant(3) + ' ' + trade.inputAmount.currency.symbol + ')'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}
@@ -253,7 +255,9 @@ export default function SwapModalFooter({
               ETH Base Fee (Estimated)
             </TYPE.black>
             <StyledQuestionHelper
-              text="Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee."
+              text={`Standard network fee for successful use of the ETH blockchain, mistX gets 0% of this fee.${
+                baseFeeInEth ? ` ${baseFeeInEth.toSignificant(5)} ETH` : ''
+              }`}
               small
             />
           </AutoRow>
@@ -261,7 +265,7 @@ export default function SwapModalFooter({
           <TYPE.black fontSize={14} fontWeight={700}>
             {ethUSDCPrice && baseFeeInEth && `$${ethUSDCPrice.quote(baseFeeInEth).toFixed(2)} `}
             {baseFeeInEth ? (
-              '(' + baseFeeInEth?.toSignificant(4) + ' ETH)'
+              '(' + baseFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}
@@ -273,15 +277,17 @@ export default function SwapModalFooter({
               ┗ Max ETH Base Fee
             </TYPE.black>
             <StyledQuestionHelper
-              text="Max allowed network fee. If the base fee surpasses this amount, your transaction will fail."
+              text={`Max allowed network fee. If the base fee surpasses this amount, your transaction will fail.${
+                maxBaseFeeInEth ? ` ${maxBaseFeeInEth.toSignificant(5)} ETH` : ''
+              }`}
               small
             />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
-            {ethUSDCPrice && maxBaseFeeInEth && `$${ethUSDCPrice.quote(maxBaseFeeInEth).toFixed(2)} `}
+            {ethUSDCPrice && maxBaseFeeInEth && `up to $${ethUSDCPrice.quote(maxBaseFeeInEth).toFixed(2)} `}
             {maxBaseFeeInEth ? (
-              '(' + maxBaseFeeInEth?.toSignificant(4) + ' ETH)'
+              '(' + maxBaseFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}
@@ -293,13 +299,13 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Total (Estimated)
             </TYPE.black>
-            <StyledQuestionHelper text="Estimated Total Fee for this swap" small />
+            <StyledQuestionHelper text={`Estimated Total Fee for this swap`} small />
           </AutoRow>
 
           <TYPE.black fontSize={14} fontWeight={700}>
             {ethUSDCPrice && totalFeeInEth && `$${ethUSDCPrice.quote(totalFeeInEth).toFixed(2)} `}
             {totalFeeInEth ? (
-              '(' + totalFeeInEth?.toSignificant(4) + ' ETH)'
+              '(' + totalFeeInEth?.toSignificant(3) + ' ETH)'
             ) : (
               <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />
             )}
