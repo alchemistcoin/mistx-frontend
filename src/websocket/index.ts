@@ -134,14 +134,8 @@ function bundleResponseToastStatus(bundle: BundleRes) {
   }
 }
 
-function getHashWithFallback(bundle: BundleProcessed) {
-  const serializedTx = bundle.transactions[bundle.transactions.length - 1].serialized
-  const serializedFallback = bundle.transactions[0].serialized
-
-  if (serializedTx === serializedFallback) return [keccak256(serializedTx)]
-
-  return [keccak256(serializedTx), keccak256(serializedFallback)]
-}
+const getTransactionHashes = (bundle: BundleProcessed): string[] =>
+  bundle.transactions.map((t: TransactionProcessed) => keccak256(t.serialized))
 
 const serverUrl = (process.env.REACT_APP_SERVER_URL as string) || 'http://localhost:4000'
 
@@ -177,18 +171,15 @@ export default function Sockets(): null {
         // console.log('websocket err', err)
         if (err.event === Event.MISTX_BUNDLE_REQUEST) {
           const bundleResponse = err.data as BundleRes
-          const [hash, hashFallback] = getHashWithFallback(bundleResponse.bundle)
+          const hashes = getTransactionHashes(bundleResponse.bundle)
+          const hash: string | undefined = hashes.find((h: string) => !!allTransactions?.[h])
+
+          if (!hash) return // TODO: log and handle this error
 
           if (allTransactions?.[hash]) {
             removeTransaction({
               chainId: bundleResponse.bundle.chainId,
               hash
-            })
-          } else if (allTransactions?.[hashFallback]) {
-            // legacy transactions
-            removeTransaction({
-              chainId: bundleResponse.bundle.chainId,
-              hash: hashFallback
             })
           }
         }
@@ -211,13 +202,16 @@ export default function Sockets(): null {
         const { bundle: b, message, status } = response
 
         const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
-        const [serializedTxHash, hashFallback] = getHashWithFallback(bundle as BundleProcessed)
-        const tx = allTransactions?.[serializedTxHash] ?? allTransactions?.[hashFallback]
+        const hashes = getTransactionHashes(bundle as BundleProcessed)
+        const hash: string | undefined = hashes.find((h: string) => !!allTransactions?.[h])
+
+        if (!hash) return // TODO: handle this if necessary
+
+        const tx = allTransactions?.[hash]
         const summary = tx?.summary
-        const hash = tx?.hash
         const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
 
-        if (!hash || !bundle) return
+        if (!bundle) return
 
         const transactionId = {
           chainId: bundle.chainId,
