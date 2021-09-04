@@ -14,6 +14,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
 
   return useMemo(() => {
     let totalFeeInEth: CurrencyAmount<Currency> | undefined
+    let maxTotalFeeInEth: CurrencyAmount<Currency> | undefined
     let maxBaseFeeInEth: CurrencyAmount<Currency> | undefined
     let minBaseFeeInEth: CurrencyAmount<Currency> | undefined
     let baseFeeInEth: CurrencyAmount<Currency> | undefined
@@ -22,6 +23,8 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
     if (ethPrice && realizedLPFee) {
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
+      maxTotalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
+
       if (maxBaseFeePerGas && minBaseFeePerGas) {
         maxBaseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
@@ -42,6 +45,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
             .toString()
         )
         totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
+        maxTotalFeeInEth = maxTotalFeeInEth.add(maxBaseFeeInEth) // add max base fee
       }
     }
 
@@ -51,6 +55,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       baseFeeInEth,
       minerBribe: trade.minerBribe,
       realizedLPFeeInEth,
+      maxTotalFeeInEth,
       totalFeeInEth
     }
   }, [
