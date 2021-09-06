@@ -10,7 +10,7 @@ export const Notice = () => {
       addPopup({
         content: {
           message:
-            'mistX runs in limited mode due to an outage on the flashbots relay. You can trade safely but more transactions will expire than usual. If so, you can try again and try to up the miner payment (mistX protection).'
+            'WARNING: mistX runs in limited mode due to an outage on the flashbots relay. You can trade safely but more transactions will expire than usual. If so, you can try again and try to up the miner payment (mistX protection).'
         },
         key: 'limitedMode',
         removeAfterMs: 20000
