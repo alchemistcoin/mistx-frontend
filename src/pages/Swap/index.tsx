@@ -20,7 +20,6 @@ import { ArrowWrapper, PendingHeader, PendingWrapper, RelativeWrapper, Wrapper }
 // import TradePrice from '../../components/swap/TradePrice'
 // import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
-// import NoticeBanner from '../../components/swap/NoticeBanner'
 // hooks
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
@@ -390,7 +389,6 @@ export default function Swap({ history }: RouteComponentProps) {
         </AppBody>
       ) : (
         <>
-          {/* <NoticeBanner /> */}
           <Notice />
           <AppBody>
             <SwapHeader />
