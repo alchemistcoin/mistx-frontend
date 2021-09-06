@@ -10,7 +10,6 @@ const RowNoFlex = styled(AutoRow)`
 `
 
 export default function ContentPopup({ message }: { message?: string }) {
-
   return (
     <RowNoFlex>
       <AutoColumn gap="8px">
