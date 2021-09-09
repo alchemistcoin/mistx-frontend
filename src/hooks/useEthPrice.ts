@@ -47,6 +47,12 @@ export default function useETHPrice(currency?: Token): Price<Currency, Token> | 
       )
     }
 
+    if (v2ETHTrade && sushiETHTrade) {
+      const bestTrade = v2ETHTrade?.outputAmount.greaterThan(sushiETHTrade?.outputAmount) ? v2ETHTrade : sushiETHTrade
+      const { numerator, denominator } = bestTrade.route.midPrice
+      return new Price(currency, WETH[1], denominator, numerator)
+    }
+
     // use v2 price if available, v3 as fallback
     if (v2ETHTrade) {
       const { numerator, denominator } = v2ETHTrade.route.midPrice
