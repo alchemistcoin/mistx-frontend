@@ -23,6 +23,15 @@ export default function useETHPrice(currency?: Token): Price<Currency, Token> | 
     BigNumber.from(0)
   )
 
+  const sushiETHTrade = useTradeExactOut(
+    Exchange.SUSHI,
+    null,
+    currency,
+    chainId === 1 ? ethCurrencyAmount : undefined,
+    BigNumber.from(0),
+    BigNumber.from(0)
+  )
+
   return useMemo(() => {
     if (!currency || !chainId) {
       return undefined
@@ -38,14 +47,25 @@ export default function useETHPrice(currency?: Token): Price<Currency, Token> | 
       )
     }
 
+    if (v2ETHTrade && sushiETHTrade) {
+      const bestTrade = v2ETHTrade?.outputAmount.greaterThan(sushiETHTrade?.outputAmount) ? v2ETHTrade : sushiETHTrade
+      const { numerator, denominator } = bestTrade.route.midPrice
+      return new Price(currency, WETH[1], denominator, numerator)
+    }
+
     // use v2 price if available, v3 as fallback
     if (v2ETHTrade) {
       const { numerator, denominator } = v2ETHTrade.route.midPrice
       return new Price(currency, WETH[1], denominator, numerator)
     }
 
+    if (sushiETHTrade) {
+      const { numerator, denominator } = sushiETHTrade.route.midPrice
+      return new Price(currency, WETH[1], denominator, numerator)
+    }
+
     return undefined
-  }, [chainId, currency, v2ETHTrade])
+  }, [chainId, currency, v2ETHTrade, sushiETHTrade])
 }
 
 // export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null) {
