@@ -169,10 +169,6 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   `}
 `
 
-export const StyledExternalLinkEl = styled.span`
-  margin: 0 0 0 0.5rem;
-`
-
 export const SocialLinkWrapper = styled.div`
   display: flex;
   position: relative;

@@ -97,7 +97,9 @@ const StyledExternalLink = styled(ExternalLink)`
   `}
 `
 
-export const StyledExternalWrapper = styled.div`
+const ExecutionPrice = styled.div``
+
+const StyledExternalWrapper = styled.div`
   display: flex;
   margin: 0.65rem 0 0 0;
   font-size: 0.875rem;
@@ -110,7 +112,7 @@ export const StyledExternalWrapper = styled.div`
     }
 `
 
-export const StyledExternalLinkEl = styled.span`
+const StyledExternalLinkEl = styled.span`
   display: flex;
   margin: 0 0 0 0.75rem;
   color: ${({ theme }) => theme.text1};
@@ -237,6 +239,7 @@ const StyledNumericalInput = styled(NumericalInput)`
 `
 interface CurrencyInputPanelProps {
   value: string
+  rawValue: string
   onUserInput: (value: string) => void
   onMax?: () => void
   showMaxButton: boolean
@@ -247,6 +250,7 @@ interface CurrencyInputPanelProps {
   hideInput?: boolean
   otherCurrency?: Currency | null
   id: string
+  isDependent?: boolean
   showCommonBases?: boolean
   customBalanceText?: string
   type: Field
@@ -254,6 +258,7 @@ interface CurrencyInputPanelProps {
 
 export default function CurrencyInputPanel({
   value,
+  rawValue,
   onUserInput,
   onMax,
   showMaxButton,
@@ -266,7 +271,8 @@ export default function CurrencyInputPanel({
   id,
   showCommonBases,
   customBalanceText,
-  type
+  type,
+  isDependent
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -285,9 +291,11 @@ export default function CurrencyInputPanel({
         <LabelRow>
           <RowBetween>
             <span>
+              {/* Max Button */}
               {currency && showMaxButton && type === Field.INPUT && (
                 <StyledBalanceMax onClick={onMax}>MAX x</StyledBalanceMax>
               )}
+              {/* Currency Balance */}
               <TYPE.body
                 onClick={onMax}
                 color={theme.text2}
@@ -304,6 +312,7 @@ export default function CurrencyInputPanel({
         </LabelRow>
       )}
       <Container>
+        {/* Currency Select Button */}
         <CurrencySelectWrapper>
           <CurrencySelect
             selected={!!currency}
@@ -353,6 +362,7 @@ export default function CurrencyInputPanel({
             )}
           </CurrencyDisplay>
         </CurrencySelectWrapper>
+        {/* Amount Input */}
         <InputPanelWapper>
           <InputPanelContainer>
             <InputRow style={hideInput ? { padding: '0' } : {}} value={value}>
@@ -371,20 +381,26 @@ export default function CurrencyInputPanel({
               )}
             </InputRow>
             {account && <Balance currency={currency} onMax={onMax} showMaxButton={type === Field.INPUT} />}
-            {onCurrencySelect && modalOpen && (
-              <Suspense fallback={null}>
-                <CurrencySearchModal
-                  onDismiss={handleDismissSearch}
-                  onCurrencySelect={onCurrencySelect}
-                  selectedCurrency={currency}
-                  otherSelectedCurrency={otherCurrency}
-                  showCommonBases={showCommonBases}
-                />
-              </Suspense>
-            )}
+            {isDependent && rawValue ? (
+              <ExecutionPrice>
+                <span>{type === Field.INPUT ? 'From Amount' : 'Receive Amount'}: (excl fees)</span>
+                <span>{rawValue}</span>
+              </ExecutionPrice>
+            ) : null}
           </InputPanelContainer>
         </InputPanelWapper>
       </Container>
+      {onCurrencySelect && modalOpen && (
+        <Suspense fallback={null}>
+          <CurrencySearchModal
+            onDismiss={handleDismissSearch}
+            onCurrencySelect={onCurrencySelect}
+            selectedCurrency={currency}
+            otherSelectedCurrency={otherCurrency}
+            showCommonBases={showCommonBases}
+          />
+        </Suspense>
+      )}
     </InputPanel>
   )
 }

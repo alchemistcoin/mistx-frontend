@@ -141,22 +141,27 @@ export default function Swap({ history }: RouteComponentProps) {
     currencyBalances,
     parsedAmount,
     // minTradeAmounts,
-    currencies
+    currencies,
+    rawAmount,
   } = useDerivedSwapInfo()
   const { wrapType } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
 
   const trade = showWrap ? undefined : v2Trade
 
-  const parsedAmounts = showWrap
-    ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount
-      }
-    : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
-      }
+  const parsedAmounts = useMemo(
+    () =>
+      showWrap
+        ? {
+            [Field.INPUT]: parsedAmount,
+            [Field.OUTPUT]: parsedAmount
+          }
+        : {
+            [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
+          },
+    [independentField, parsedAmount, showWrap, trade?.inputAmount, trade?.outputAmount]
+  )
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
@@ -398,6 +403,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   {currencies[Field.INPUT] ? (
                     <CurrencyInputPanel
                       value={formattedAmounts[Field.INPUT]}
+                      rawValue={rawAmount?.toSignificant(6) || ''}
                       showMaxButton={!atMaxAmountInput}
                       currency={currencies[Field.INPUT]}
                       onUserInput={handleTypeInput}
@@ -406,6 +412,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       otherCurrency={currencies[Field.OUTPUT]}
                       type={Field.INPUT}
                       id="swap-currency-input"
+                      isDependent={dependentField === Field.INPUT}
                     />
                   ) : (
                     <CurrencySelect onCurrencySelect={handleInputSelect} />
@@ -436,6 +443,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     <RelativeWrapper>
                       <CurrencyInputPanel
                         value={formattedAmounts[Field.OUTPUT]}
+                        rawValue={rawAmount?.toSignificant(6) || ''}
                         onUserInput={handleTypeOutput}
                         showMaxButton={false}
                         currency={currencies[Field.OUTPUT]}
@@ -443,6 +451,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         otherCurrency={currencies[Field.INPUT]}
                         type={Field.OUTPUT}
                         id="swap-currency-output"
+                        isDependent={dependentField === Field.OUTPUT}
                       />
                     </RelativeWrapper>
                   </OutputWrapper>

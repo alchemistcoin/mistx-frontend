@@ -1,6 +1,15 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, Ether, Exchange, JSBI, Token, Trade, TradeType } from '@alchemist-coin/mistx-core'
+import {
+  Currency,
+  CurrencyAmount,
+  Ether,
+  Exchange,
+  JSBI,
+  Token,
+  Trade,
+  TradeType
+} from '@alchemist-coin/mistx-core'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,6 +34,7 @@ import {
   MISTX_DEFAULT_GAS_LIMIT,
   MISTX_DEFAULT_APPROVE_GAS_LIMIT
 } from '../../constants'
+import useETHPrice from 'hooks/useEthPrice'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -120,6 +130,7 @@ export function useDerivedSwapInfo(): {
   minTradeAmounts: MinTradeEstimates
   inputError?: string
   minAmountError?: boolean
+  rawAmount?: CurrencyAmount<Currency> | undefined
 } {
   const { account, chainId } = useActiveWeb3React()
   const {
@@ -136,6 +147,8 @@ export function useDerivedSwapInfo(): {
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
   const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
+  const ethPriceIn = useETHPrice(inputCurrency as Token)
+  const ethPriceOut = useETHPrice(outputCurrency as Token)
 
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
     inputCurrency ?? undefined,
@@ -187,6 +200,7 @@ export function useDerivedSwapInfo(): {
     gasPriceToBeat,
     BigNumber.from(userBribeMargin)
   )
+
   //compare quotes
   let v2Trade: Trade<Currency, Currency, TradeType> | undefined = undefined
   if (isExactIn) {
@@ -223,7 +237,8 @@ export function useDerivedSwapInfo(): {
     v2Trade: undefined,
     minTradeAmounts: { 0: null, 1: null, 2: null },
     inputError: undefined,
-    minAmountError: undefined
+    minAmountError: undefined,
+    rawAmount: undefined
   }
 
   if (!v2Trade) {
@@ -307,7 +322,6 @@ export function useDerivedSwapInfo(): {
 
     // check if the user has ETH to pay the base fee and bribe
     const ethInTrade = isETHInTrade(v2Trade)
-    const ethOutTrade = isETHOutTrade(v2Trade)
     let requiredEthInWallet = baseFeeInEth
     if (amountIn && ethInTrade) {
       requiredEthInWallet = requiredEthInWallet.add(amountIn)
@@ -326,7 +340,7 @@ export function useDerivedSwapInfo(): {
     } else if (requiredEthInWallet === undefined) {
       inputError = 'Required ETH for Wallet is undefined'
     } else {
-      if (!ethOutTrade && !ethInTrade) {
+      if (!isETHOutTrade(v2Trade) && !ethInTrade) {
         requiredEthInWallet = requiredEthInWallet.add(requiredEthForMinerBribe)
       }
       // console.log('Required ETH for miner bribe ', requiredEthForMinerBribe?.toSignificant())
@@ -340,7 +354,8 @@ export function useDerivedSwapInfo(): {
     }
   }
 
-  // console.log(inputError)
+  console.log('ETH PRICE IN', ethPriceIn?.quotient.toString())
+  console.log('ETH PRICE OUT', ethPriceOut)
 
   return {
     currencies,
@@ -349,7 +364,22 @@ export function useDerivedSwapInfo(): {
     v2Trade: v2Trade ?? undefined,
     minTradeAmounts,
     inputError,
-    minAmountError
+    minAmountError,
+    rawAmount: isExactIn
+      ? ethPriceOut && v2Trade.outputAmount?.add(
+          CurrencyAmount.fromFractionalAmount(
+            v2Trade.outputAmount.currency,
+            JSBI.multiply(v2Trade.minerBribe.numerator, ethPriceOut.asFraction.denominator),
+            JSBI.multiply(v2Trade.minerBribe.denominator, ethPriceOut.asFraction.numerator)
+          )
+        )
+      : ethPriceIn && v2Trade.inputAmount?.subtract(
+          CurrencyAmount.fromFractionalAmount(
+            v2Trade.inputAmount.currency,
+            JSBI.multiply(v2Trade.minerBribe.numerator, ethPriceIn.asFraction.denominator),
+            JSBI.multiply(v2Trade.minerBribe.denominator, ethPriceIn.asFraction.numerator)
+          )
+        )
   }
 }
 
