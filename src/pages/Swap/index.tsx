@@ -142,7 +142,7 @@ export default function Swap({ history }: RouteComponentProps) {
     parsedAmount,
     // minTradeAmounts,
     currencies,
-    rawAmount,
+    rawAmount
   } = useDerivedSwapInfo()
   const { wrapType } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
