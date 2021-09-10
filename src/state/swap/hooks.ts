@@ -1,17 +1,8 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import {
-  Currency,
-  CurrencyAmount,
-  Ether,
-  Exchange,
-  JSBI,
-  Token,
-  Trade,
-  TradeType
-} from '@alchemist-coin/mistx-core'
+import { Currency, CurrencyAmount, Ether, Exchange, JSBI, Token, Trade, TradeType } from '@alchemist-coin/mistx-core'
 import { ParsedQs } from 'qs'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -218,6 +209,30 @@ export function useDerivedSwapInfo(): {
     }
   }
 
+  const rawAmount = useMemo(() => {
+    if (v2Trade?.inputAmount.currency.isToken && v2Trade?.inputAmount.currency.isToken) return undefined
+
+    return isExactIn
+      ? ethPriceOut &&
+          v2Trade &&
+          v2Trade.outputAmount?.add(
+            CurrencyAmount.fromFractionalAmount(
+              v2Trade.outputAmount.currency,
+              JSBI.multiply(v2Trade.minerBribe.numerator, ethPriceOut.asFraction.denominator),
+              JSBI.multiply(v2Trade.minerBribe.denominator, ethPriceOut.asFraction.numerator)
+            )
+          )
+      : ethPriceIn &&
+          v2Trade &&
+          v2Trade.inputAmount?.subtract(
+            CurrencyAmount.fromFractionalAmount(
+              v2Trade.inputAmount.currency,
+              JSBI.multiply(v2Trade.minerBribe.numerator, ethPriceIn.asFraction.denominator),
+              JSBI.multiply(v2Trade.minerBribe.denominator, ethPriceIn.asFraction.numerator)
+            )
+          )
+  }, [ethPriceIn, ethPriceOut, isExactIn, v2Trade])
+
   //from here on we already set the right exchange for the trade - just need to set the router contract
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -354,9 +369,6 @@ export function useDerivedSwapInfo(): {
     }
   }
 
-  console.log('ETH PRICE IN', ethPriceIn?.quotient.toString())
-  console.log('ETH PRICE OUT', ethPriceOut)
-
   return {
     currencies,
     currencyBalances,
@@ -365,21 +377,7 @@ export function useDerivedSwapInfo(): {
     minTradeAmounts,
     inputError,
     minAmountError,
-    rawAmount: isExactIn
-      ? ethPriceOut && v2Trade.outputAmount?.add(
-          CurrencyAmount.fromFractionalAmount(
-            v2Trade.outputAmount.currency,
-            JSBI.multiply(v2Trade.minerBribe.numerator, ethPriceOut.asFraction.denominator),
-            JSBI.multiply(v2Trade.minerBribe.denominator, ethPriceOut.asFraction.numerator)
-          )
-        )
-      : ethPriceIn && v2Trade.inputAmount?.subtract(
-          CurrencyAmount.fromFractionalAmount(
-            v2Trade.inputAmount.currency,
-            JSBI.multiply(v2Trade.minerBribe.numerator, ethPriceIn.asFraction.denominator),
-            JSBI.multiply(v2Trade.minerBribe.denominator, ethPriceIn.asFraction.numerator)
-          )
-        )
+    rawAmount
   }
 }
 

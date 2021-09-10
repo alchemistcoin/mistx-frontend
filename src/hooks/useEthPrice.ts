@@ -32,8 +32,6 @@ export default function useETHPrice(currency?: Token): Price<Currency, Token> | 
     BigNumber.from(0)
   )
 
-  console.log('v2 eth trade', v2ETHTrade?.route.midPrice.toSignificant(6))
-
   return useMemo(() => {
     if (!currency || !chainId) {
       return undefined

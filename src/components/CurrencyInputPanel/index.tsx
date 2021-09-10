@@ -15,6 +15,7 @@ import Balance from 'components/swap/Balance'
 import { Field } from '../../state/swap/actions'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
+import { Text } from 'rebass'
 
 function getShortSymbol(symbol: string) {
   return `${symbol.slice(0, 4)}...${symbol.slice(symbol.length - 5, symbol.length)}`
@@ -97,7 +98,13 @@ const StyledExternalLink = styled(ExternalLink)`
   `}
 `
 
-const ExecutionPrice = styled.div``
+const ExecutionPrice = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  margin-top: 0.375rem;
+`
 
 const StyledExternalWrapper = styled.div`
   display: flex;
@@ -381,13 +388,13 @@ export default function CurrencyInputPanel({
               )}
             </InputRow>
             {account && <Balance currency={currency} onMax={onMax} showMaxButton={type === Field.INPUT} />}
-            {isDependent && rawValue ? (
-              <ExecutionPrice>
-                <span>{type === Field.INPUT ? 'From Amount' : 'Receive Amount'}: (excl fees)</span>
-                <span>{rawValue}</span>
-              </ExecutionPrice>
-            ) : null}
           </InputPanelContainer>
+          {isDependent && rawValue ? (
+            <ExecutionPrice>
+              <Text fontSize="12px">{type === Field.INPUT ? 'Amount' : 'Amount'}: (excl. fee)</Text>
+              <Text fontWeight={600}>&nbsp;{rawValue}</Text>
+            </ExecutionPrice>
+          ) : null}
         </InputPanelWapper>
       </Container>
       {onCurrencySelect && modalOpen && (
