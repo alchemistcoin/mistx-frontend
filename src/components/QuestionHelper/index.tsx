@@ -57,14 +57,26 @@ const QuestionMark = styled.span`
   font-size: 1rem;
 `
 
+const Wrapper = styled.div`
+  align-items: center;
+  display: flex;
+  margin-left: 4px;
+`
+
+const defaultWrapperStyle = {}
+
 export default function QuestionHelper({
+  className,
   text,
   placement,
-  small
+  small,
+  style
 }: {
+  className?: string
   text: string
   placement?: PopoverProps['placement']
   small?: boolean
+  style?: any
 }) {
   const [show, setShow] = useState<boolean>(false)
 
@@ -72,13 +84,13 @@ export default function QuestionHelper({
   const close = useCallback(() => setShow(false), [setShow])
 
   return (
-    <span style={{ display: 'flex', alignItems: 'center', marginLeft: 4 }}>
+    <Wrapper className={className} style={style || defaultWrapperStyle}>
       <Tooltip text={text} show={show} placement={placement}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close} small={small}>
           <Info />
         </QuestionWrapper>
       </Tooltip>
-    </span>
+    </Wrapper>
   )
 }
 

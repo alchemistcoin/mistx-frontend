@@ -105,7 +105,6 @@ const ExecutionPrice = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-right: 0.5rem;
   margin-top: 0.375rem;
   padding: 0 0.75rem;
 `
@@ -190,8 +189,12 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
 `
 const InputPanelWapper = styled.div<{ hideInput?: boolean }>`
   width: 100%;
-  padding: 0 0 0 20px;
+  padding-left: 20px;
   ${({ theme }) => theme.flexColumnNoWrap}
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-left: 12px;
+  `}
 `
 const InputPanelContainer = styled.div<{ hideInput?: boolean }>`
   width: 100%;
@@ -250,18 +253,16 @@ const StyledNumericalInput = styled(NumericalInput)`
 `
 
 const StyledQuestionHelper = styled(QuestionHelper)`
-  width: 20px;
-  margin-left: 10px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none !important;
+  `};
+
   svg {
     circle,
     path {
       fill: #fff;
     }
   }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
 `
 interface CurrencyInputPanelProps {
   value: string
@@ -410,7 +411,12 @@ export default function CurrencyInputPanel({
           </InputPanelContainer>
           {isDependent && rawValue ? (
             <ExecutionPrice>
-              <Text color={theme.text2} fontSize="12px" style={{ display: 'flex', alignItems: 'center' }}>
+              <Text
+                color={theme.text2}
+                fontSize="12px"
+                marginRight=".5rem"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
                 {type === Field.INPUT ? 'Amount' : 'Amount'} (excl. fee)
                 <StyledQuestionHelper
                   text={`${type === Field.INPUT ? 'Input' : 'Output'} amount without the mistX protection fee.`}
