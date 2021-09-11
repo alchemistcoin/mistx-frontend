@@ -160,7 +160,7 @@ export default function Swap({ history }: RouteComponentProps) {
             [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
             [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
           },
-    [independentField, parsedAmount, showWrap, trade?.inputAmount, trade?.outputAmount]
+    [independentField, parsedAmount, showWrap, trade]
   )
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
