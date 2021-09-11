@@ -105,8 +105,9 @@ const ExecutionPrice = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: 0 0.75rem;
+  margin-right: 0.5rem;
   margin-top: 0.375rem;
+  padding: 0 0.75rem;
 `
 
 const StyledExternalWrapper = styled.div`
@@ -257,6 +258,10 @@ const StyledQuestionHelper = styled(QuestionHelper)`
       fill: #fff;
     }
   }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none;
+  `};
 `
 interface CurrencyInputPanelProps {
   value: string
