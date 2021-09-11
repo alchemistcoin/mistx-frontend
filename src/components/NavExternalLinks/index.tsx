@@ -31,10 +31,6 @@ const Row = styled(RowFixed)`
   `};
 `
 
-export const StyledExternalLinkEl = styled.span`
-  margin: 0 0 0 0.5rem;
-`
-
 export const SocialLinkWrapper = styled.div<{ header?: boolean }>`
   display: flex;
   position: relative;
