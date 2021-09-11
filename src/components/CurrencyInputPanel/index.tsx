@@ -1,21 +1,24 @@
 import React, { Suspense, useState, useCallback } from 'react'
 import { Currency, Pair, Token } from '@alchemist-coin/mistx-core'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
+import { Text } from 'rebass'
+// hooks
 import { useCurrencyBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks'
+import { Field } from '../../state/swap/actions'
+import useTheme from '../../hooks/useTheme'
+// components
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
 import { TYPE, ExternalLink } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
-import { useActiveWeb3React } from '../../hooks'
 import { ArrowIcon } from '../Icons'
-import Balance from 'components/swap/Balance'
-import { Field } from '../../state/swap/actions'
-import { useTranslation } from 'react-i18next'
-import useTheme from '../../hooks/useTheme'
-import { Text } from 'rebass'
+import QuestionHelper from '../QuestionHelper'
+import Balance from '../swap/Balance'
 
 function getShortSymbol(symbol: string) {
   return `${symbol.slice(0, 4)}...${symbol.slice(symbol.length - 5, symbol.length)}`
@@ -244,6 +247,17 @@ const CurrencySearchModal = React.lazy(() => import('../SearchModal/CurrencySear
 const StyledNumericalInput = styled(NumericalInput)`
   // padding-left: 0.25rem;
 `
+
+const StyledQuestionHelper = styled(QuestionHelper)`
+  width: 20px;
+  margin-left: 10px;
+  svg {
+    circle,
+    path {
+      fill: #fff;
+    }
+  }
+`
 interface CurrencyInputPanelProps {
   value: string
   rawValue: string
@@ -391,7 +405,13 @@ export default function CurrencyInputPanel({
           </InputPanelContainer>
           {isDependent && rawValue ? (
             <ExecutionPrice>
-              <Text fontSize="12px">{type === Field.INPUT ? 'Amount' : 'Amount'}: (excl. fee)</Text>
+              <Text color={theme.text2} fontSize="12px" style={{ display: 'flex', alignItems: 'center' }}>
+                {type === Field.INPUT ? 'Amount' : 'Amount'} (excl. fee)
+                <StyledQuestionHelper
+                  text={`${type === Field.INPUT ? 'Input' : 'Output'} amount without the mistX protection fee.`}
+                  small
+                />
+              </Text>
               <Text fontWeight={600}>&nbsp;{rawValue}</Text>
             </ExecutionPrice>
           ) : null}
