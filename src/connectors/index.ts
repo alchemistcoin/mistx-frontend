@@ -13,6 +13,7 @@ const NETWORK_URL = process.env.REACT_APP_NETWORK_URL
 const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
 const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
 const WALLETCONNECT_BRIDGE_URL = process.env.REACT_APP_WALLETCONNECT_BRIDGE_URL
+const INFURA_ID = process.env.REACT_APP_INFURA_ID
 
 export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1', 10)
 
@@ -43,8 +44,9 @@ export const injected = new InjectedConnector({
 export const walletconnect = new WalletConnectConnector({
   rpc: { 1: NETWORK_URL },
   bridge: WALLETCONNECT_BRIDGE_URL,
+  infuraId: INFURA_ID,
   qrcode: true,
-  pollingInterval: 15000
+  pollingInterval: 10000
 })
 
 // mainnet only
