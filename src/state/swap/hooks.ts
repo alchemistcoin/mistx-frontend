@@ -256,7 +256,7 @@ export function useDerivedSwapInfo(): {
     rawAmount: undefined
   }
 
-  if (!v2Trade) {
+  if (!v2Trade || !chainId) {
     return returnNothing
   }
 
@@ -323,13 +323,13 @@ export function useDerivedSwapInfo(): {
   // if there is not already an input error
   if (!inputError) {
     const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-      Ether.onChain(chainId || 1),
+      Ether.onChain(chainId),
       BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
         .mul(maxBaseFeePerGas)
         .toString()
     )
     const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-      Ether.onChain(chainId || 1),
+      Ether.onChain(chainId),
       BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
         .mul(maxBaseFeePerGas)
         .toString()
@@ -346,7 +346,7 @@ export function useDerivedSwapInfo(): {
     }
 
     const requiredEthForMinerBribe: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-      Ether.onChain(chainId || 1),
+      Ether.onChain(chainId),
       v2Trade.minerBribe.quotient.toString()
     )
 
