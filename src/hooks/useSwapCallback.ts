@@ -177,8 +177,6 @@ export function useSwapCallback(
                       : recipientAddressOrName
                   }`
 
-            console.log('signed tx', signedTx, hash)
-
             const minerBribeBN = BigNumber.from(args[1])
             const totalFees = minerBribeBN
             // if (baseFeePerGas && populatedTx.gasLimit) {
