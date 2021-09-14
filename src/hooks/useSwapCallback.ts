@@ -146,6 +146,21 @@ export function useSwapCallback(
               web3Provider.provider.isMetaMask = isMetamask
             }
 
+            const parsed = ethers.utils.parseTransaction(signedTx)
+
+            if (parsed.from !== account) {
+              // console.log("DETECTED ACCOUNTS DON'T MATCH")
+              if (isMetamask) {
+                throw new Error(
+                  'MistX does not support Hard Wallets connected through MetaMask. If you are using Ledger, please connect it directly.'
+                )
+              } else {
+                throw new Error(
+                  'The wallet used does not support eth_signTransaction. Try using MetaMask or connect your Ledger directly.'
+                )
+              }
+            }
+
             const hash = keccak256(signedTx)
             const inputSymbol = trade.inputAmount.currency.symbol
             const outputSymbol = trade.outputAmount.currency.symbol
