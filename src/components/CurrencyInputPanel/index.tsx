@@ -1,20 +1,24 @@
 import React, { Suspense, useState, useCallback } from 'react'
 import { Currency, Pair, Token } from '@alchemist-coin/mistx-core'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
+import { Text } from 'rebass'
+// hooks
 import { useCurrencyBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks'
+import { Field } from '../../state/swap/actions'
+import useTheme from '../../hooks/useTheme'
+// components
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
 import { TYPE, ExternalLink } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
-import { useActiveWeb3React } from '../../hooks'
 import { ArrowIcon } from '../Icons'
-import Balance from 'components/swap/Balance'
-import { Field } from '../../state/swap/actions'
-import { useTranslation } from 'react-i18next'
-import useTheme from '../../hooks/useTheme'
+import QuestionHelper from '../QuestionHelper'
+import Balance from '../swap/Balance'
 
 function getShortSymbol(symbol: string) {
   return `${symbol.slice(0, 4)}...${symbol.slice(symbol.length - 5, symbol.length)}`
@@ -97,7 +101,15 @@ const StyledExternalLink = styled(ExternalLink)`
   `}
 `
 
-export const StyledExternalWrapper = styled.div`
+const ExecutionPrice = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.375rem;
+  padding: 0 0.75rem;
+`
+
+const StyledExternalWrapper = styled.div`
   display: flex;
   margin: 0.65rem 0 0 0;
   font-size: 0.875rem;
@@ -110,7 +122,7 @@ export const StyledExternalWrapper = styled.div`
     }
 `
 
-export const StyledExternalLinkEl = styled.span`
+const StyledExternalLinkEl = styled.span`
   display: flex;
   margin: 0 0 0 0.75rem;
   color: ${({ theme }) => theme.text1};
@@ -177,8 +189,12 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
 `
 const InputPanelWapper = styled.div<{ hideInput?: boolean }>`
   width: 100%;
-  padding: 0 0 0 20px;
+  padding-left: 20px;
   ${({ theme }) => theme.flexColumnNoWrap}
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-left: 12px;
+  `}
 `
 const InputPanelContainer = styled.div<{ hideInput?: boolean }>`
   width: 100%;
@@ -235,8 +251,22 @@ const CurrencySearchModal = React.lazy(() => import('../SearchModal/CurrencySear
 const StyledNumericalInput = styled(NumericalInput)`
   // padding-left: 0.25rem;
 `
+
+const StyledQuestionHelper = styled(QuestionHelper)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none !important;
+  `};
+
+  svg {
+    circle,
+    path {
+      fill: #fff;
+    }
+  }
+`
 interface CurrencyInputPanelProps {
   value: string
+  rawValue: string
   onUserInput: (value: string) => void
   onMax?: () => void
   showMaxButton: boolean
@@ -247,6 +277,7 @@ interface CurrencyInputPanelProps {
   hideInput?: boolean
   otherCurrency?: Currency | null
   id: string
+  isDependent?: boolean
   showCommonBases?: boolean
   customBalanceText?: string
   type: Field
@@ -254,6 +285,7 @@ interface CurrencyInputPanelProps {
 
 export default function CurrencyInputPanel({
   value,
+  rawValue,
   onUserInput,
   onMax,
   showMaxButton,
@@ -266,7 +298,8 @@ export default function CurrencyInputPanel({
   id,
   showCommonBases,
   customBalanceText,
-  type
+  type,
+  isDependent
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -285,9 +318,11 @@ export default function CurrencyInputPanel({
         <LabelRow>
           <RowBetween>
             <span>
+              {/* Max Button */}
               {currency && showMaxButton && type === Field.INPUT && (
                 <StyledBalanceMax onClick={onMax}>MAX x</StyledBalanceMax>
               )}
+              {/* Currency Balance */}
               <TYPE.body
                 onClick={onMax}
                 color={theme.text2}
@@ -304,6 +339,7 @@ export default function CurrencyInputPanel({
         </LabelRow>
       )}
       <Container>
+        {/* Currency Select Button */}
         <CurrencySelectWrapper>
           <CurrencySelect
             selected={!!currency}
@@ -353,6 +389,7 @@ export default function CurrencyInputPanel({
             )}
           </CurrencyDisplay>
         </CurrencySelectWrapper>
+        {/* Amount Input */}
         <InputPanelWapper>
           <InputPanelContainer>
             <InputRow style={hideInput ? { padding: '0' } : {}} value={value}>
@@ -371,20 +408,37 @@ export default function CurrencyInputPanel({
               )}
             </InputRow>
             {account && <Balance currency={currency} onMax={onMax} showMaxButton={type === Field.INPUT} />}
-            {onCurrencySelect && modalOpen && (
-              <Suspense fallback={null}>
-                <CurrencySearchModal
-                  onDismiss={handleDismissSearch}
-                  onCurrencySelect={onCurrencySelect}
-                  selectedCurrency={currency}
-                  otherSelectedCurrency={otherCurrency}
-                  showCommonBases={showCommonBases}
-                />
-              </Suspense>
-            )}
           </InputPanelContainer>
+          {isDependent && rawValue ? (
+            <ExecutionPrice>
+              <Text
+                color={theme.text2}
+                fontSize="12px"
+                marginRight=".5rem"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                {type === Field.INPUT ? 'Amount' : 'Amount'} (excl. fee)
+                <StyledQuestionHelper
+                  text={`${type === Field.INPUT ? 'Input' : 'Output'} amount without the mistX protection fee.`}
+                  small
+                />
+              </Text>
+              <Text fontWeight={600}>&nbsp;{rawValue}</Text>
+            </ExecutionPrice>
+          ) : null}
         </InputPanelWapper>
       </Container>
+      {onCurrencySelect && modalOpen && (
+        <Suspense fallback={null}>
+          <CurrencySearchModal
+            onDismiss={handleDismissSearch}
+            onCurrencySelect={onCurrencySelect}
+            selectedCurrency={currency}
+            otherSelectedCurrency={otherCurrency}
+            showCommonBases={showCommonBases}
+          />
+        </Suspense>
+      )}
     </InputPanel>
   )
 }
