@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Fees } from '@alchemist-coin/mistx-connect'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
+import { Gas } from './reducer'
 import {
   addPopup,
   ApplicationModal,
@@ -19,8 +19,8 @@ export function useBlockNumber(): number | undefined {
   return useSelector((state: AppState) => state.application.blockNumber[chainId ?? -1])
 }
 
-export function useFees(): Fees | undefined {
-  return useSelector((state: AppState) => state.application.fees)
+export function useGas(): Gas | undefined {
+  return useSelector((state: AppState) => state.application.gas)
 }
 
 export function useModalOpen(modal: ApplicationModal): boolean {

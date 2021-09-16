@@ -46,6 +46,7 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import { LinkStyledButton } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import SwapFooter from '../../components/swap/SwapFooter'
+import Notice from '../../components/Notice'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -393,6 +394,7 @@ export default function Swap({ history }: RouteComponentProps) {
         </AppBody>
       ) : (
         <>
+          <Notice />
           <AppBody>
             <SwapHeader />
             <Wrapper id="swap-page">
