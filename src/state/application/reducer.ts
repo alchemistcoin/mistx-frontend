@@ -1,5 +1,5 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
-import { Fees } from '../../../../alchemist-sdk/packages/mistx-connect/dist'
+import { Fees } from '@alchemist-coin/mistx-connect'
 import {
   addPopup,
   PopupContent,
