@@ -91,7 +91,8 @@ function SerializeLegacyTransaction(transaction: any): TransactionDetails | unde
         timestamp: transaction.processed.timestamp,
         totalEstimatedEffectiveGasPrice: transaction.processed.totalEstimatedEffectiveGasPrice,
         totalEstimatedGas: transaction.processed.totalEstimatedGas,
-        transactions: transaction.processed.transactions
+        transactions: transaction.processed.transactions,
+        backrun: transaction.processed.backrun
       }
     }
     return serialized
@@ -144,7 +145,8 @@ function SerializeLegacyTransaction(transaction: any): TransactionDetails | unde
         timestamp: processed.timestamp,
         totalEstimatedEffectiveGasPrice: processed.estimatedEffectiveGasPrice,
         totalEstimatedGas: processed.estimatedGas,
-        transactions: transactions
+        transactions: transactions,
+        backrun: processed.backrun
       },
       legacyRawV1: transaction
     }
