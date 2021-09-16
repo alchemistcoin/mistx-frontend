@@ -1,14 +1,17 @@
-import Loader from 'components/Loader'
 import React, { useContext } from 'react'
+import { Status } from '@alchemist-coin/mistx-connect'
 import { AlertCircle, CheckCircle } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
+// hooks
 import { useActiveWeb3React } from '../../hooks'
+// components
 import { TYPE } from '../../theme'
-import { ExternalLink } from '../../theme/components'
-import { getEtherscanLink } from '../../utils'
 import { AutoColumn } from '../Column'
 import { AutoRow } from '../Row'
-import { Status } from '../../websocket'
+import { ExternalLink } from '../../theme/components'
+import Loader from '../Loader'
+// utils
+import { getEtherscanLink } from '../../utils'
 
 const RowNoFlex = styled(AutoRow)`
   flex-wrap: nowrap;
