@@ -281,7 +281,7 @@ export const MISTX_DEFAULT_GAS_LIMIT = 375000
 export const MISTX_DEFAULT_APPROVE_GAS_LIMIT = 55000
 
 // Base fee, future block to calculate
-export const MAX_BASE_FEE_BLOCKS_IN_FUTURE = 3.5
+export const MAX_BASE_FEE_BLOCKS_IN_FUTURE = 3.75
 
 // The interval for manual transaction status checks are emitted if no update has been received for x seconds
 export const MANUAL_CHECK_TX_STATUS_INTERVAL = 30 // seconds
