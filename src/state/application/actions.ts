@@ -1,7 +1,8 @@
+import { Status } from '@alchemist-coin/mistx-connect'
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
-import { Status, TransactionProcessed } from 'websocket'
-import { Gas } from './reducer'
+import { TransactionProcessed } from 'websocket'
+import { Fees } from '@alchemist-coin/mistx-connect'
 
 export type PopupContent =
   | {
@@ -39,7 +40,7 @@ export enum ApplicationModal {
   MMHARDWARE
 }
 
-export const updateGas = createAction<Gas>('application/updateGas')
+export const updateFees = createAction<Fees>('application/updateFees')
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal')
 export const addPopup = createAction<{ key?: string; removeAfterMs?: number | null; content: PopupContent }>(

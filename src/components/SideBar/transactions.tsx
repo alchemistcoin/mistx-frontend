@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { useDispatch } from 'react-redux'
-import { Status } from '../../websocket'
+import { Status } from '@alchemist-coin/mistx-connect'
 import { useActiveWeb3React } from '../../hooks'
 import { ButtonText } from '../../components/Button'
 import QuestionHelper from '../QuestionHelper'

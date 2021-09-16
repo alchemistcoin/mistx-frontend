@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
-import useLatestBlockWithTransactions from './useLatestBlockWithTransactions'
+import { Fees } from '@alchemist-coin/mistx-connect'
 import { MAX_BASE_FEE_BLOCKS_IN_FUTURE } from '../constants'
+import { useFees } from '../state/application/hooks'
 
 export function getMaxBaseFeeInFutureBlock(baseFee: BigNumber, blocksInFuture: number): BigNumber {
   const multiplier = Math.floor(1125 ** blocksInFuture)
@@ -34,7 +35,8 @@ type BaseFeeReturnType = {
 }
 
 export default function useBaseFeePerGas(): BaseFeeReturnType {
-  const block = useLatestBlockWithTransactions()
+  const fees: Fees | undefined = useFees()
+  const baseFeeish = fees?.baseFeePerGas
 
   return useMemo(() => {
     const ret: BaseFeeReturnType = {
@@ -43,15 +45,13 @@ export default function useBaseFeePerGas(): BaseFeeReturnType {
       maxBaseFeePerGas: undefined
     }
 
-    if (block) {
-      const baseFee = BigNumber.from(block.baseFeePerGas?.toString())
-      if (baseFee) {
-        ret.baseFeePerGas = baseFee
-        ret.minBaseFeePerGas = getMinBaseFeeInFutureBlock(baseFee, MAX_BASE_FEE_BLOCKS_IN_FUTURE)
-        ret.maxBaseFeePerGas = getMaxBaseFeeInFutureBlock(baseFee, MAX_BASE_FEE_BLOCKS_IN_FUTURE)
-      }
+    if (baseFeeish) {
+      const baseFee = BigNumber.from(baseFeeish)
+      ret.baseFeePerGas = baseFee
+      ret.minBaseFeePerGas = getMinBaseFeeInFutureBlock(baseFee, MAX_BASE_FEE_BLOCKS_IN_FUTURE)
+      ret.maxBaseFeePerGas = getMaxBaseFeeInFutureBlock(baseFee, MAX_BASE_FEE_BLOCKS_IN_FUTURE)
     }
     return ret
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [block])
+  }, [baseFeeish])
 }
