@@ -6,11 +6,19 @@ import { updateSocketStatus } from '../state/application/actions'
 import PJSON from '../../package.json'
 import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
-import { BundleProcessed, BundleRes, MistxSocket } from '@alchemist-coin/mistx-connect'
+import {
+  BundleProcessed,
+  BundleRes,
+  BundleResApi,
+  Event,
+  Fees,
+  MistxSocket,
+  Status
+} from '@alchemist-coin/mistx-connect'
 import { setOpenModal, ApplicationModal } from '../state/application/actions'
 
 // state
-import { updateGas } from '../state/application/actions'
+import { updateFees } from '../state/application/actions'
 import { useSocketStatus, useNewAppVersionAvailable } from '../state/application/hooks'
 import {
   useAllTransactions,
@@ -22,23 +30,6 @@ import {
 
 import { useAddPopup } from 'state/application/hooks'
 import { BigNumber } from 'ethers'
-
-export enum Event {
-  GAS_CHANGE = 'GAS_CHANGE',
-  SOCKET_SESSION = 'SOCKET_SESSION',
-  SOCKET_ERR = 'SOCKET_ERR',
-  MISTX_BUNDLE_REQUEST = 'MISTX_BUNDLE_REQUEST',
-  BUNDLE_RESPONSE = 'BUNDLE_RESPONSE',
-  BUNDLE_CANCEL_REQUEST = 'BUNDLE_CANCEL_REQUEST'
-}
-
-export enum Status {
-  PENDING_BUNDLE = 'PENDING_BUNDLE',
-  FAILED_BUNDLE = 'FAILED_BUNDLE',
-  SUCCESSFUL_BUNDLE = 'SUCCESSFUL_BUNDLE',
-  CANCEL_BUNDLE_SUCCESSFUL = 'CANCEL_BUNDLE_SUCCESSFUL',
-  BUNDLE_NOT_FOUND = 'BUNDLE_NOT_FOUND'
-}
 
 export const STATUS_LOCALES: Record<string, string> = {
   PENDING_BUNDLE: 'Flashbots working on including your swap',
@@ -98,7 +89,7 @@ export interface SwapReq {
   to: string
 }
 
-function bundleResponseToastStatus(bundle: BundleRes) {
+function bundleResponseToastStatus(bundle: BundleRes | BundleResApi) {
   let pending = false
   let success = false
   let message = bundle.message
@@ -112,6 +103,9 @@ function bundleResponseToastStatus(bundle: BundleRes) {
       break
     case Status.SUCCESSFUL_BUNDLE:
       message = 'Successful Transaction'
+      // if (bundle.bundle.backrun.best.count > 0) {
+      //   message += `. You earned rewards in total of ${bundle.bundle.backrun}`
+      // }
       success = true
       break
     case Status.CANCEL_BUNDLE_SUCCESSFUL:
@@ -195,13 +189,13 @@ export default function Sockets(): null {
           setNewAppVersionAvailable(false)
         }
       },
-      onGasChange: gas => {
-        dispatch(updateGas(gas))
+      onFeesChange: (fees: Fees) => {
+        dispatch(updateFees(fees))
       },
       onTransactionResponse: response => {
         const { bundle: b, message, status } = response
 
-        const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : b
+        const bundle = b && typeof b === 'string' ? getBundleByID(b)?.processed : (b as BundleProcessed)
         const hashes = getTransactionHashes(bundle as BundleProcessed)
         const hash: string | undefined = hashes.find((h: string) => !!allTransactions?.[h])
 
@@ -211,7 +205,7 @@ export default function Sockets(): null {
         const summary = tx?.summary
         const previouslyCompleted = tx?.status !== Status.PENDING_BUNDLE && tx?.receipt
 
-        if (!bundle) return
+        if (!bundle || !bundle.chainId) return
 
         const transactionId = {
           chainId: bundle.chainId,

@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ChainId, CurrencyAmount, Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
-import { BundleProcessed } from '@alchemist-coin/mistx-connect'
+import { BundleProcessed, Status } from '@alchemist-coin/mistx-connect'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction, removeTransaction, updateTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 import { useAddPopup } from '../application/hooks'
-import { Diagnosis, emitTransactionCancellation, Status } from '../../websocket'
+import { Diagnosis, emitTransactionCancellation } from '../../websocket'
 import { WrapType } from '../../hooks/useWrapCallback'
 interface TransactionResponseIdentifier {
   chainId: ChainId

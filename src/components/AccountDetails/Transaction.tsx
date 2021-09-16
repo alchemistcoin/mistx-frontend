@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { CheckCircle, Triangle } from 'react-feather'
+import { Status } from '@alchemist-coin/mistx-connect'
 
 import { useActiveWeb3React } from '../../hooks'
 import { getEtherscanLink } from '../../utils'
@@ -13,7 +14,7 @@ import {
 } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
-import { Status, STATUS_LOCALES } from '../../websocket/index'
+import { STATUS_LOCALES } from '../../websocket/index'
 import { truncateStringMiddle } from '../../utils/truncateString'
 import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
