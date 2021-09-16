@@ -152,11 +152,11 @@ export function useSwapCallback(
               // console.log("DETECTED ACCOUNTS DON'T MATCH")
               if (isMetamask) {
                 throw new Error(
-                  'MistX does not support hardware wallets connected through MetaMask. If you are using Ledger, please connect it directly.'
+                  'MistX does not support Hard Wallets connected through MetaMask. If you are using Ledger, please connect it directly.'
                 )
               } else {
                 throw new Error(
-                  'The wallet used does not support our signing method. Please use a supported wallet such as MetaMask.'
+                  'The wallet used does not support eth_signTransaction. Try using MetaMask or connect your Ledger directly.'
                 )
               }
             }
