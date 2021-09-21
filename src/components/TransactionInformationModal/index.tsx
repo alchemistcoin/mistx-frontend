@@ -78,7 +78,7 @@ export default function TransactionInformationModal({ onDismiss, onContinue }: C
               <img src={Image} alt="metamask warning" />
             </ImageWrapper>
             <Text fontWeight={300} fontSize={16}>
-              Due to a limitation of Metamask, 0-gas transactions must be manually signed. This is not an error.
+              Due to a limitation of Metamask, mistX transactions must be manually signed. This is not an error.
             </Text>
           </RowBetween>
           <RowBetween margin="0.5rem 0 0">
