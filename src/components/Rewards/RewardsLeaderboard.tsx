@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { rgba } from 'polished'
 import { getRewards, Reward } from '../../api/rewards'
-import { CloseIcon } from 'theme'
+import { CloseIcon, ExternalLink } from 'theme'
 import dayjs from 'dayjs'
+import { getEtherscanLink } from 'utils'
+import { ChainId } from '@alchemist-coin/mistx-core'
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => rgba(theme.bg1, 0.92)};
@@ -103,6 +105,15 @@ const RewardItemCellValue = styled(RewardItemCell)`
   `};
 `
 
+const StyledExternalLink = styled(ExternalLink)`
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 const Loader = styled.div`
   margin: 1rem 0;
   text-align: center;
@@ -161,7 +172,11 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
           <RewardItem key={reward._id}>
             <RewardItemCellNumber>{index + 1}.</RewardItemCellNumber>
             <RewardItemCellDate>{dayjs(reward.transactions[0].timestamp * 1000).format('YY-MM-DD')}</RewardItemCellDate>
-            <RewardItemCell>{`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}</RewardItemCell>
+            <RewardItemCell>
+              <StyledExternalLink href={getEtherscanLink(ChainId.MAINNET, reward.from, 'address')}>
+                {`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}
+              </StyledExternalLink>
+            </RewardItemCell>
             <RewardItemCellValue>
               {`${reward.totalValueETH.toFixed(4)}ETH ($${reward.totalValueUSD.toFixed(2)})`}
             </RewardItemCellValue>
