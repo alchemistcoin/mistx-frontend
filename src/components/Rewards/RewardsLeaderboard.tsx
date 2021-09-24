@@ -121,7 +121,9 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
           <RewardItem key={reward._id}>
             <RewardItemCell style={{ width: '80px' }}>{index + 1}.</RewardItemCell>
             <RewardItemCell>{`${reward.from.substring(0, 8)}...${reward.from.substring(30)}`}</RewardItemCell>
-            <RewardItemCell style={{ flex: 1, textAlign: 'center' }}>{`${reward.totalValueETH.toFixed(6)}ETH ($${reward.totalValueUSD.toFixed(2)})`}</RewardItemCell>
+            <RewardItemCell style={{ flex: 1, textAlign: 'center' }}>{`${reward.totalValueETH.toFixed(
+              6
+            )}ETH ($${reward.totalValueUSD.toFixed(2)})`}</RewardItemCell>
           </RewardItem>
         ))}
         {loading && <Loader>...Loading</Loader>}
