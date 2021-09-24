@@ -76,7 +76,7 @@ function bundleResponseToastStatus(bundle: BundleRes | BundleResApi) {
       message = 'Successful Transaction'
 
       if (processedBundle.backrun.best.count > 0) {
-        message += `. Congratulations, you earned $${processedBundle.backrun.best.totalValueUSD} in rewards sent to your wallet!`
+        message += `. CONGRATULATIONS, you earned ${processedBundle.backrun.best.totalValueETH?.toFixed(3)}ETH ($${Math.floor(processedBundle.backrun.best.totalValueUSD || 0)}) in rewards sent to your wallet!`
       }
 
       success = true

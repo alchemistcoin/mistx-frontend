@@ -187,6 +187,10 @@ const StyledEllipseWapper = styled.div`
   opacity: 0;
   transition: opacity 0.2s ease-in;
 
+  &:hover {
+    color: ${({ theme }) => theme.primary2};
+  }
+
   > svg {
     height: ${rem(40)};
     width: auto;
@@ -195,8 +199,10 @@ const StyledEllipseWapper = styled.div`
 
 export const SocialLink = styled(ExternalLink)`
   display: flex;
+  font-size: 1rem;
   position: absolute;
   top: 0;
+  white-space: nowrap;
 
   &:hover {
     ${StyledEllipseWapper} {
@@ -211,14 +217,30 @@ export const SocialLink = styled(ExternalLink)`
 `
 
 const LeaderboardButton = styled.button`
+  align-items: center;
   background-color: transparent;
   border: 0;
-  height: 2.5rem;
+  color: ${({ theme }) => theme.secondaryText1};
+  cursor: pointer;
+  display: flex;
+  font-size: 0.875rem;
+  height: 2rem;
   padding: 0.25rem;
+  white-space: nowrap;
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.2, theme.secondaryText1)};
+
+    > svg {
+      fill: ${({ theme }) => darken(0.2, theme.primary2)};
+    }
+  }
 
   > svg {
     fill: ${({ theme }) => theme.primary2};
     height: 100%;
+    margin-right: 0.25rem;
     width: auto;
   }
 `
@@ -271,6 +293,7 @@ export default function Header() {
       <HeaderRow align="center" justify="flex-end">
         <LeaderboardButton onClick={handleLeaderboardClick} type="button">
           <LeaderboardIcon />
+          Top Rewards
         </LeaderboardButton>
         <WalletConnect />
         <MenuWrapper>

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const baseUrl = process.env.REACT_APP_ANALYTICS_API_URL || 'http://localhost:3002'
 
-const DEFAULT_LIMIT = 12
+const DEFAULT_LIMIT = 16
 const DEFAULT_SKIP = 0
 
 export interface Reward {

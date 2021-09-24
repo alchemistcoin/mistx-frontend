@@ -33,6 +33,10 @@ const Title = styled.h1`
   font-size: 2.75rem;
   margin-bottom: 2rem;
   text-align: center;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 2.25rem;
+  `};
 `
 
 const LoadMoreButton = styled.button`
@@ -72,7 +76,7 @@ const RewardItemCell = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     width: 60px;
-    padding: 0.25rem .5rem;
+    padding: 0.375rem .5rem;
   `};
 `
 
@@ -84,8 +88,24 @@ const RewardItemCellNumber = styled(RewardItemCell)`
   `};
 `
 
+const RewardItemCellDate = styled(RewardItemCell)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none;
+  `};
+`
+
+const RewardItemCellValue = styled(RewardItemCell)`
+  flex: 1;
+  text-align: center;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    text-align: right;
+  `};
+`
+
 const Loader = styled.div`
   margin: 1rem 0;
+  text-align: center;
 `
 
 export default function RewardsLeaderboard({ onClose }: { onClose: () => void }) {
@@ -140,14 +160,14 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
         {rewards.map((reward: Reward, index: number) => (
           <RewardItem key={reward._id}>
             <RewardItemCellNumber>{index + 1}.</RewardItemCellNumber>
+            <RewardItemCellDate>{dayjs(reward.transactions[0].timestamp * 1000).format('YY-MM-DD')}</RewardItemCellDate>
             <RewardItemCell>{`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}</RewardItemCell>
-            <RewardItemCell>{dayjs(reward.transactions[0].timestamp * 1000).format('MM-DD-YY')}</RewardItemCell>
-            <RewardItemCell style={{ flex: 1, textAlign: 'center' }}>{`${reward.totalValueETH.toFixed(
-              6
-            )}ETH ($${reward.totalValueUSD.toFixed(2)})`}</RewardItemCell>
+            <RewardItemCellValue>
+              {`${reward.totalValueETH.toFixed(4)}ETH ($${reward.totalValueUSD.toFixed(2)})`}
+            </RewardItemCellValue>
           </RewardItem>
         ))}
-        {loading && <Loader>...Loading</Loader>}
+        {loading && <Loader>...Loading Rewards</Loader>}
         {rewards.length > 0 && (
           <LoadMoreButton onClick={loadMoreResults} type="button">
             Load More Rewards
