@@ -246,6 +246,14 @@ const LeaderboardButton = styled.button`
     height: 1.25rem;
     width: auto;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    border: 0;
+    
+    > svg {
+      height: 1.75rem;
+    }
+  `}
 `
 
 export default function Header() {
