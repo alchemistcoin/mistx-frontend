@@ -16,6 +16,7 @@ import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { ButtonIcon } from '../../components/Button'
 import RewardsLeaderboard from '../../components/Rewards/RewardsLeaderboard'
+import { MouseoverTooltip } from 'components/Tooltip'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -219,13 +220,16 @@ export const SocialLink = styled(ExternalLink)`
 const LeaderboardButton = styled.button`
   align-items: center;
   background-color: transparent;
-  border: 0;
+  border: 2px solid ${({ theme }) => theme.secondaryText1};
+  border-radius: 1.3125rem;
   color: ${({ theme }) => theme.secondaryText1};
   cursor: pointer;
   display: flex;
   font-size: 0.875rem;
-  height: 2rem;
-  padding: 0.25rem;
+  height: 2.625rem;
+  justify-content: center;
+  width: 2.625rem;
+  padding: 0.5rem;
   white-space: nowrap;
 
   :hover,
@@ -239,8 +243,7 @@ const LeaderboardButton = styled.button`
 
   > svg {
     fill: ${({ theme }) => theme.primary2};
-    height: 100%;
-    margin-right: 0.25rem;
+    height: 1.25rem;
     width: auto;
   }
 `
@@ -291,10 +294,11 @@ export default function Header() {
         </LogoLink>
       </LogoWrapper>
       <HeaderRow align="center" justify="flex-end">
-        <LeaderboardButton onClick={handleLeaderboardClick} type="button">
-          <LeaderboardIcon />
-          Top Rewards
-        </LeaderboardButton>
+        <MouseoverTooltip text="Top Rewards" placement="bottom">
+          <LeaderboardButton onClick={handleLeaderboardClick} type="button">
+            <LeaderboardIcon />
+          </LeaderboardButton>
+        </MouseoverTooltip>
         <WalletConnect />
         <MenuWrapper>
           <ButtonIcon onClick={() => toggleSideBar()}>
