@@ -213,7 +213,14 @@ export const SocialLink = styled(ExternalLink)`
 const LeaderboardButton = styled.button`
   background-color: transparent;
   border: 0;
-  color: ${({ theme }) => theme.text1};
+  height: 2.5rem;
+  padding: 0.25rem;
+
+  > svg {
+    fill: ${({ theme }) => theme.primary2};
+    height: 100%;
+    width: auto;
+  }
 `
 
 export default function Header() {
