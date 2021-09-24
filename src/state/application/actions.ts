@@ -1,8 +1,6 @@
-import { Status } from '@alchemist-coin/mistx-connect'
+import { Fees, Status, TransactionProcessed } from '@alchemist-coin/mistx-connect'
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
-import { TransactionProcessed } from 'websocket'
-import { Fees } from '@alchemist-coin/mistx-connect'
 
 export type PopupContent =
   | {

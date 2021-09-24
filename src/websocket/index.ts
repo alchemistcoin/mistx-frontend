@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
-import { BigNumberish } from '@ethersproject/bignumber'
 import { keccak256 } from '@ethersproject/keccak256'
 import { updateSocketStatus } from '../state/application/actions'
 import PJSON from '../../package.json'
@@ -8,12 +7,14 @@ import { MANUAL_CHECK_TX_STATUS_INTERVAL } from '../constants'
 import FATHOM_GOALS from '../constants/fathom'
 import {
   BundleProcessed,
+  BundleReq,
   BundleRes,
   BundleResApi,
   Event,
   Fees,
   MistxSocket,
-  Status
+  Status,
+  TransactionProcessed
 } from '@alchemist-coin/mistx-connect'
 import { setOpenModal, ApplicationModal } from '../state/application/actions'
 
@@ -58,41 +59,11 @@ export interface SocketSession {
   version: MistXVersion | undefined
 }
 
-export interface TransactionReq {
-  serialized: string // serialized transaction
-  raw: SwapReq | undefined // raw def. of each type of trade
-  estimatedGas?: number
-  estimatedEffectiveGasPrice?: number
-}
-
-export interface TransactionProcessed {
-  serialized: string // serialized transaction
-  bundle: string // bundle.serialized
-  raw: SwapReq | undefined // raw def. of each type of trade
-  estimatedGas: number
-  estimatedEffectiveGasPrice: number
-}
-
-export interface BundleReq {
-  transactions: TransactionReq[]
-  chainId: number
-  bribe: string // BigNumber
-  from: string
-  deadline: BigNumberish
-  simulateOnly: boolean
-}
-
-export interface SwapReq {
-  amount0: BigNumberish
-  amount1: BigNumberish
-  path: Array<string>
-  to: string
-}
-
 function bundleResponseToastStatus(bundle: BundleRes | BundleResApi) {
   let pending = false
   let success = false
   let message = bundle.message
+  const processedBundle = bundle.bundle as BundleProcessed
 
   switch (bundle.status) {
     case Status.FAILED_BUNDLE:
@@ -103,9 +74,13 @@ function bundleResponseToastStatus(bundle: BundleRes | BundleResApi) {
       break
     case Status.SUCCESSFUL_BUNDLE:
       message = 'Successful Transaction'
-      // if (bundle.bundle.backrun.best.count > 0) {
-      //   message += `. You earned rewards in total of ${bundle.bundle.backrun}`
-      // }
+
+      if (processedBundle.backrun.best.count > 0) {
+        message += `. CONGRATULATIONS, you earned ${processedBundle.backrun.best.totalValueETH?.toFixed(
+          3
+        )}ETH ($${Math.floor(processedBundle.backrun.best.totalValueUSD || 0)}) in rewards sent to your wallet!`
+      }
+
       success = true
       break
     case Status.CANCEL_BUNDLE_SUCCESSFUL:

@@ -13,13 +13,14 @@ const HeaderFrame = styled.div`
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
-    padding: 0 1rem;
-    width: calc(100%);
+    padding: 0;
+    width: 0;
     position: relative;
   `};
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 0.5rem 1rem;
+    padding: 0;
+    width: 0;
   `}
 `
 

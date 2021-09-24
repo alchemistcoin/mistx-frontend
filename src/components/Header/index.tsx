@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
@@ -10,10 +10,13 @@ import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoMobile } from '../../assets/svg/logo_mobile.svg'
 import { ReactComponent as AlchemistLogo } from '../../assets/images/alchemist_logo.svg'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu_icon.svg'
+import { ReactComponent as LeaderboardIcon } from '../../assets/svg/leaderboard-icon.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { ButtonIcon } from '../../components/Button'
+import RewardsLeaderboard from '../../components/Rewards/RewardsLeaderboard'
+import { MouseoverTooltip } from 'components/Tooltip'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -185,6 +188,10 @@ const StyledEllipseWapper = styled.div`
   opacity: 0;
   transition: opacity 0.2s ease-in;
 
+  &:hover {
+    color: ${({ theme }) => theme.primary2};
+  }
+
   > svg {
     height: ${rem(40)};
     width: auto;
@@ -193,8 +200,10 @@ const StyledEllipseWapper = styled.div`
 
 export const SocialLink = styled(ExternalLink)`
   display: flex;
+  font-size: 1rem;
   position: absolute;
   top: 0;
+  white-space: nowrap;
 
   &:hover {
     ${StyledEllipseWapper} {
@@ -208,9 +217,58 @@ export const SocialLink = styled(ExternalLink)`
   }
 `
 
+const LeaderboardButton = styled.button`
+  align-items: center;
+  background-color: transparent;
+  border: 2px solid ${({ theme }) => theme.secondaryText1};
+  border-radius: 1.3125rem;
+  color: ${({ theme }) => theme.secondaryText1};
+  cursor: pointer;
+  display: flex;
+  font-size: 0.875rem;
+  height: 2.625rem;
+  justify-content: center;
+  width: 2.625rem;
+  padding: 0.5rem;
+  white-space: nowrap;
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.2, theme.secondaryText1)};
+
+    > svg {
+      fill: ${({ theme }) => darken(0.2, theme.primary2)};
+    }
+  }
+
+  > svg {
+    fill: ${({ theme }) => theme.primary2};
+    height: 1.25rem;
+    width: auto;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    border: 0;
+    
+    > svg {
+      height: 1.75rem;
+    }
+  `}
+`
+
 export default function Header() {
   const { t } = useTranslation()
   const { toggleSideBar } = useSideBarOpen()
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
+
+  function handleLeaderboardClick() {
+    setShowLeaderboard(true)
+  }
+
+  function handleCloseLeaderboard() {
+    setShowLeaderboard(false)
+  }
+
   return (
     <HeaderFrame>
       <HideLarge>
@@ -244,6 +302,11 @@ export default function Header() {
         </LogoLink>
       </LogoWrapper>
       <HeaderRow align="center" justify="flex-end">
+        <MouseoverTooltip text="Top Rewards" placement="bottom">
+          <LeaderboardButton onClick={handleLeaderboardClick} type="button">
+            <LeaderboardIcon />
+          </LeaderboardButton>
+        </MouseoverTooltip>
         <WalletConnect />
         <MenuWrapper>
           <ButtonIcon onClick={() => toggleSideBar()}>
@@ -251,6 +314,7 @@ export default function Header() {
           </ButtonIcon>
         </MenuWrapper>
       </HeaderRow>
+      {showLeaderboard && <RewardsLeaderboard onClose={handleCloseLeaderboard} />}
     </HeaderFrame>
   )
 }
