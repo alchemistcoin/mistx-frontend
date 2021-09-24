@@ -12,8 +12,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@alchemist-coin/mistx-connect": "4.5.0",
-    "@alchemist-coin/mistx-core": "4.5.0",
+    "@alchemist-coin/mistx-connect": "4.5.1",
+    "@alchemist-coin/mistx-core": "4.5.1",
     "@ethersproject/experimental": "^5.4.0",
     "@ledgerhq/hw-transport-webhid": "^5.51.1",
     "@popperjs/core": "^2.4.4",

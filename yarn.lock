@@ -104,18 +104,18 @@
     ethers "~4.0.4"
     lodash "^4.17.11"
 
-"@alchemist-coin/mistx-connect@4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-connect/-/mistx-connect-4.5.0.tgz#b357a91bfa2fc5e5f01245452597aee588722486"
-  integrity sha512-2DEvv6fhcG/O8y2jxR/q8FVWoy+c+3Hgd7JPmw5Mr/sVvra2NcYrWq5SLFASJ+iOjjiJAwkkSkKApwZKN2OjYQ==
+"@alchemist-coin/mistx-connect@4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-connect/-/mistx-connect-4.5.1.tgz#681713818a7d4b4e2a75fa614230d86e9602191e"
+  integrity sha512-22HiLkY63WKx0fHKIrHzfcnz7kyM+5pfaWa7JRs+FUoXHMv7P+s3zgemX66hy8qfKwErKwBtTn5mg0egq6raFA==
   dependencies:
     "@ethersproject/bignumber" "^5.4.0"
     socket.io-client "^4.1.2"
 
-"@alchemist-coin/mistx-core@4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-core/-/mistx-core-4.5.0.tgz#70b80a68274faff35966df7a5053708e9edd7245"
-  integrity sha512-k/WUaY7FlcyBHeYhlgqGcoXB2JxdcZUuD435p877rl0NlfeEvmeCDJ0xAyBAN2Fl6zf/bI9tSX6sQs5wL7Rlgg==
+"@alchemist-coin/mistx-core@4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@alchemist-coin/mistx-core/-/mistx-core-4.5.1.tgz#7bf65ce03d679f9c3c8b72e005c7662828e6e489"
+  integrity sha512-xnfQf3HQlAI9GmWIV4Nm/ahMxBi13IcVwHwbIGnaCJ1lgqi2sfDKdhfTgfFdBIrkBuUHFhVQL4jpX+gnnLgk1w==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
@@ -8316,9 +8316,9 @@ express@^4.14.0, express@^4.17.1:
     vary "~1.1.2"
 
 ext@^1.1.2:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/ext/-/ext-1.5.0.tgz#e93b97ae0cb23f8370380f6107d2d2b7887687ad"
-  integrity sha512-+ONcYoWj/SoQwUofMr94aGu05Ou4FepKi7N7b+O8T4jVfyIsZQV1/xeS8jpaBzF0csAk0KLXoHCxU7cKYZjo1Q==
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/ext/-/ext-1.6.0.tgz#3871d50641e874cc172e2b53f919842d19db4c52"
+  integrity sha512-sdBImtzkq2HpkdRLtlLWDa6w4DX22ijZLKx8BMPUuKe1c5lbN6xwQDQCxSfxBQnHZ13ls/FH0MQZx/q/gr6FQg==
   dependencies:
     type "^2.5.0"
 
