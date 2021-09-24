@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import { rgba } from 'polished'
 import { getRewards, Reward } from '../../api/rewards'
 import { CloseIcon } from 'theme'
+import dayjs from 'dayjs'
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => rgba(theme.bg1, 0.85)};
+  background-color: ${({ theme }) => rgba(theme.bg1, 0.92)};
   height: 100%;
   left: 0;
   overflow: auto;
-  padding: 2rem 1rem;
+  padding: 2rem 0;
   position: fixed;
   top: 0;
   width: 100%;
@@ -30,6 +31,7 @@ const Title = styled.h1`
   colors: ${({ theme }) => theme.text1};
   font-family: 'Press Start 2P', 'VT323', Arial;
   font-size: 2.75rem;
+  margin-bottom: 2rem;
   text-align: center;
 `
 
@@ -52,6 +54,11 @@ const RewardsList = styled.ul`
   margin: auto;
   max-width: 800px;
   padding: 1rem 0;
+  width: 100%;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 1.25rem;
+  `};
 `
 
 const RewardItem = styled.li`
@@ -62,6 +69,19 @@ const RewardItem = styled.li`
 
 const RewardItemCell = styled.div`
   padding: 0.5rem 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 60px;
+    padding: 0.25rem .5rem;
+  `};
+`
+
+const RewardItemCellNumber = styled(RewardItemCell)`
+  width: 80px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 40px;
+  `};
 `
 
 const Loader = styled.div`
@@ -115,12 +135,13 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
       <CloseButton>
         <CloseIcon onClick={handleClose} />
       </CloseButton>
-      <Title>Rewards Leaders</Title>
+      <Title>Top Rewards</Title>
       <RewardsList>
         {rewards.map((reward: Reward, index: number) => (
           <RewardItem key={reward._id}>
-            <RewardItemCell style={{ width: '80px' }}>{index + 1}.</RewardItemCell>
-            <RewardItemCell>{`${reward.from.substring(0, 8)}...${reward.from.substring(30)}`}</RewardItemCell>
+            <RewardItemCellNumber>{index + 1}.</RewardItemCellNumber>
+            <RewardItemCell>{`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}</RewardItemCell>
+            <RewardItemCell>{dayjs(reward.transactions[0].timestamp * 1000).format('MM-DD-YY')}</RewardItemCell>
             <RewardItemCell style={{ flex: 1, textAlign: 'center' }}>{`${reward.totalValueETH.toFixed(
               6
             )}ETH ($${reward.totalValueUSD.toFixed(2)})`}</RewardItemCell>

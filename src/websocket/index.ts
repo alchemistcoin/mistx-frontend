@@ -63,6 +63,7 @@ function bundleResponseToastStatus(bundle: BundleRes | BundleResApi) {
   let pending = false
   let success = false
   let message = bundle.message
+  const processedBundle = bundle.bundle as BundleProcessed
 
   switch (bundle.status) {
     case Status.FAILED_BUNDLE:
@@ -73,9 +74,11 @@ function bundleResponseToastStatus(bundle: BundleRes | BundleResApi) {
       break
     case Status.SUCCESSFUL_BUNDLE:
       message = 'Successful Transaction'
-      // if (bundle.bundle.backrun.best.count > 0) {
-      //   message += `. You earned rewards in total of ${bundle.bundle.backrun}`
-      // }
+
+      if (processedBundle.backrun.best.count > 0) {
+        message += `. Congratulations, you earned $${processedBundle.backrun.best.totalValueUSD} in rewards sent to your wallet!`
+      }
+
       success = true
       break
     case Status.CANCEL_BUNDLE_SUCCESSFUL:

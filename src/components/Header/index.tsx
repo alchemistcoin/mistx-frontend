@@ -10,6 +10,7 @@ import { ReactComponent as Logo } from '../../assets/svg/logo.svg'
 import { ReactComponent as LogoMobile } from '../../assets/svg/logo_mobile.svg'
 import { ReactComponent as AlchemistLogo } from '../../assets/images/alchemist_logo.svg'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu_icon.svg'
+import { ReactComponent as LeaderboardIcon } from '../../assets/svg/leaderboard-icon.svg'
 import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
@@ -212,7 +213,7 @@ export const SocialLink = styled(ExternalLink)`
 const LeaderboardButton = styled.button`
   background-color: transparent;
   border: 0;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.text1};
 `
 
 export default function Header() {
@@ -262,7 +263,7 @@ export default function Header() {
       </LogoWrapper>
       <HeaderRow align="center" justify="flex-end">
         <LeaderboardButton onClick={handleLeaderboardClick} type="button">
-          Leaderboard
+          <LeaderboardIcon />
         </LeaderboardButton>
         <WalletConnect />
         <MenuWrapper>
