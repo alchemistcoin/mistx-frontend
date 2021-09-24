@@ -158,7 +158,7 @@ export default function Updater(): null {
       cancellations: chunkedCalls.map((chunk, index) => {
         const { cancel, promise } = retry(() => fetchChunk(multicallContract, chunk, latestBlockNumber), {
           n: Infinity,
-          minWait: 2500,
+          minWait: 1000,
           maxWait: 3500
         })
         promise
