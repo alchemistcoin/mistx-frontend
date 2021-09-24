@@ -1,6 +1,7 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
+import { BundleReq, SwapReq, TransactionReq } from '@alchemist-coin/mistx-connect'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -17,7 +18,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import useBaseFeePerGas from './useBaseFeePerGas'
-import { TransactionReq, SwapReq, emitTransactionRequest, BundleReq } from '../websocket'
+import { emitTransactionRequest } from '../websocket'
 
 export enum SwapCallbackState {
   INVALID,
@@ -196,7 +197,7 @@ export function useSwapCallback(
             // Create the transaction body with the serialized tx
             const transactionReq: TransactionReq = {
               estimatedGas: Number(trade.estimatedGas),
-              estimatedEffectiveGasPrice: estimatedEffectiveGasPrice,
+              estimatedEffectiveGasPrice,
               serialized: signedTx,
               raw: swapReq
             }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { darken, rem } from 'polished'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +14,7 @@ import { ExternalLink } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import WalletConnect from '../../components/WalletConnect'
 import { ButtonIcon } from '../../components/Button'
+import RewardsLeaderboard from '../../components/Rewards/RewardsLeaderboard'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -208,9 +209,25 @@ export const SocialLink = styled(ExternalLink)`
   }
 `
 
+const LeaderboardButton = styled.button`
+  background-color: transparent;
+  border: 0;
+  color: ${({ theme }) => theme.primary1};
+`
+
 export default function Header() {
   const { t } = useTranslation()
   const { toggleSideBar } = useSideBarOpen()
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
+
+  function handleLeaderboardClick() {
+    setShowLeaderboard(true)
+  }
+
+  function handleCloseLeaderboard() {
+    setShowLeaderboard(false)
+  }
+
   return (
     <HeaderFrame>
       <HideLarge>
@@ -244,6 +261,9 @@ export default function Header() {
         </LogoLink>
       </LogoWrapper>
       <HeaderRow align="center" justify="flex-end">
+        <LeaderboardButton onClick={handleLeaderboardClick} type="button">
+          Leaderboard
+        </LeaderboardButton>
         <WalletConnect />
         <MenuWrapper>
           <ButtonIcon onClick={() => toggleSideBar()}>
@@ -251,6 +271,7 @@ export default function Header() {
           </ButtonIcon>
         </MenuWrapper>
       </HeaderRow>
+      {showLeaderboard && <RewardsLeaderboard onClose={handleCloseLeaderboard} />}
     </HeaderFrame>
   )
 }

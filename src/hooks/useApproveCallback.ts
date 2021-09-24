@@ -163,13 +163,13 @@ export function useApproveCallback(
         }
       }
 
-      if (web3Provider) {
+      if (web3Provider && isMetamask) {
         web3Provider.provider.isMetaMask = isMetamask
       }
       return signedTx
     } catch (error) {
       console.debug('Failed to approve token', error)
-      if (web3Provider) {
+      if (web3Provider && isMetamask) {
         web3Provider.provider.isMetaMask = isMetamask
       }
       throw error
