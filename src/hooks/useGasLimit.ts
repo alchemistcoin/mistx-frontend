@@ -19,14 +19,13 @@ export function useGasLimitForPath(path: string[] | undefined) {
           getGasUsedForPath(path)
             .then(response => {
               delete loading[str]
-              console.log('gas for path', response)
               gasUsed[str] = response.data.gasUsed
 
               setGasLimit(response.data.gasUsed || MISTX_DEFAULT_GAS_LIMIT)
             })
             .catch(e => {
               delete loading[str]
-              console.error('error getting gas for path', path, e)
+              // console.error('error getting gas for path', path, e)
               setGasLimit(MISTX_DEFAULT_GAS_LIMIT)
             })
         }
