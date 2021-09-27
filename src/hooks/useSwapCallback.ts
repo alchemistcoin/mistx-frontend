@@ -10,7 +10,7 @@ import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
 import useTransactionDeadline from './useTransactionDeadline'
-import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { INITIAL_ALLOWED_SLIPPAGE, MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -103,7 +103,7 @@ export function useSwapCallback(
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
               nonce: nonce,
-              gasLimit: BigNumber.from(gasLimit),
+              gasLimit: BigNumber.from(gasLimit || MISTX_DEFAULT_GAS_LIMIT),
               type: 2,
               maxFeePerGas: maxBaseFeePerGas,
               maxPriorityFeePerGas: '0x0',
