@@ -81,8 +81,12 @@ const StyledAutoRow = styled(AutoRow)`
   > * {
     z-index: 3;
   }
+`
 
-  svg path {
+const StyledArrowWrapper = styled(ArrowWrapper)`
+  align-items: center;
+
+  > svg {
     fill: ${({ theme }) => (theme.darkMode ? theme.yellow1 : theme.bg6)};
   }
 `
@@ -420,7 +424,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   justify={isExpertMode ? 'space-between' : 'center'}
                   style={{ margin: '0.5rem 0 0.5rem', padding: '0 1rem' }}
                 >
-                  <ArrowWrapper
+                  <StyledArrowWrapper
                     clickable
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
                     onClick={() => {
@@ -429,7 +433,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     }}
                   >
                     <ArrowDownCircled data-test="arrow-down" />
-                  </ArrowWrapper>
+                  </StyledArrowWrapper>
                   {recipient === null && !showWrap && isExpertMode ? (
                     <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                       + Add a send (optional)
@@ -462,9 +466,9 @@ export default function Swap({ history }: RouteComponentProps) {
                 {recipient !== null && !showWrap ? (
                   <>
                     <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                      <ArrowWrapper clickable={false}>
+                      <StyledArrowWrapper clickable={false}>
                         <ArrowDownCircled data-test="arrow-down" />
-                      </ArrowWrapper>
+                      </StyledArrowWrapper>
                       <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
                         - Remove send
                       </LinkStyledButton>

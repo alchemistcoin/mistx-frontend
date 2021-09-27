@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { IBackrunTransactionProcessed } from '@alchemist-coin/mistx-connect'
 
 const baseUrl = process.env.REACT_APP_ANALYTICS_API_URL || 'http://localhost:3002'
 
@@ -13,7 +14,7 @@ export interface Reward {
   origin: string
   totalValueETH: number
   totalValueUSD: number
-  transactions: any[]
+  transactions: IBackrunTransactionProcessed[]
   _id: string
 }
 
