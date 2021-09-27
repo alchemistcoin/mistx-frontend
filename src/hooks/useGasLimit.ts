@@ -14,7 +14,7 @@ export function useGasLimitForPath(path: string[] | undefined) {
       if (gasUsed[str]) {
         setGasLimit(gasUsed[str])
       } else {
-        if (!loading) {
+        if (!loading[str]) {
           loading[str] = true
           getGasUsedForPath(path)
             .then(response => {
