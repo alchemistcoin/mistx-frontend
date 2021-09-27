@@ -19,13 +19,9 @@ import { SwapState } from './reducer'
 import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
-import {
-  MIN_TRADE_MARGIN,
-  BETTER_TRADE_LESS_HOPS_THRESHOLD,
-  MISTX_DEFAULT_GAS_LIMIT,
-  MISTX_DEFAULT_APPROVE_GAS_LIMIT
-} from '../../constants'
+import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD, MISTX_DEFAULT_APPROVE_GAS_LIMIT, MISTX_DEFAULT_GAS_LIMIT } from '../../constants'
 import useETHPrice from 'hooks/useEthPrice'
+import { useGasLimitForPath } from 'hooks/useGasLimit'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -209,6 +205,7 @@ export function useDerivedSwapInfo(): {
     }
   }
 
+  const gasLimit = useGasLimitForPath(v2Trade?.route.path.map((token: Token) => token.address))
   const rawAmount = useMemo(() => {
     if (v2Trade?.inputAmount.currency.isToken && v2Trade?.inputAmount.currency.isToken) return undefined
 
@@ -324,7 +321,7 @@ export function useDerivedSwapInfo(): {
   if (!inputError) {
     const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
       Ether.onChain(chainId),
-      BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
+      BigNumber.from(gasLimit || MISTX_DEFAULT_GAS_LIMIT)
         .mul(maxBaseFeePerGas)
         .toString()
     )

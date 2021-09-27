@@ -10,7 +10,7 @@ import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
 import useTransactionDeadline from './useTransactionDeadline'
-import { INITIAL_ALLOWED_SLIPPAGE, MISTX_DEFAULT_GAS_LIMIT } from '../constants'
+import { INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -19,6 +19,7 @@ import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import useBaseFeePerGas from './useBaseFeePerGas'
 import { emitTransactionRequest } from '../websocket'
+import { useGasLimitForPath } from './useGasLimit'
 
 export enum SwapCallbackState {
   INVALID,
@@ -47,7 +48,9 @@ export function useSwapCallback(
   const deadline = useTransactionDeadline()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const gasLimit = useGasLimitForPath(swapCall?.call.parameters.args[0][2])
   const { maxBaseFeePerGas } = useBaseFeePerGas()
+
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
@@ -100,7 +103,7 @@ export function useSwapCallback(
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
               nonce: nonce,
-              gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
+              gasLimit: BigNumber.from(gasLimit),
               type: 2,
               maxFeePerGas: maxBaseFeePerGas,
               maxPriorityFeePerGas: '0x0',
@@ -271,6 +274,7 @@ export function useSwapCallback(
     library,
     account,
     chainId,
+    gasLimit,
     recipient,
     recipientAddressOrName,
     swapCall,
