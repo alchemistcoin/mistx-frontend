@@ -223,7 +223,11 @@ export default function Swap({ history }: RouteComponentProps) {
   //   }
   // }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount<Currency> | undefined = MaxAmountSpend(currencyBalances[Field.INPUT], wrapType, trade)
+  const maxAmountInput: CurrencyAmount<Currency> | undefined = MaxAmountSpend(
+    currencyBalances[Field.INPUT],
+    wrapType,
+    trade
+  )
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap

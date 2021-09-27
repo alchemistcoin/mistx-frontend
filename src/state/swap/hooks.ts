@@ -19,7 +19,12 @@ import { SwapState } from './reducer'
 import { useUserSlippageTolerance, useUserBribeMargin } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from '@ethersproject/bignumber'
-import { MIN_TRADE_MARGIN, BETTER_TRADE_LESS_HOPS_THRESHOLD, MISTX_DEFAULT_APPROVE_GAS_LIMIT, MISTX_DEFAULT_GAS_LIMIT } from '../../constants'
+import {
+  MIN_TRADE_MARGIN,
+  BETTER_TRADE_LESS_HOPS_THRESHOLD,
+  MISTX_DEFAULT_APPROVE_GAS_LIMIT,
+  MISTX_DEFAULT_GAS_LIMIT
+} from '../../constants'
 import useETHPrice from 'hooks/useEthPrice'
 import { useGasLimitForPath } from 'hooks/useGasLimit'
 
