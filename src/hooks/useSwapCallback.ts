@@ -1,6 +1,6 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
+import { Trade, Currency, TradeType, Token } from '@alchemist-coin/mistx-core'
 import { BundleReq, SwapReq, TransactionReq } from '@alchemist-coin/mistx-connect'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
@@ -48,7 +48,7 @@ export function useSwapCallback(
   const deadline = useTransactionDeadline()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-  const gasLimit = useGasLimitForPath(swapCall?.call.parameters.args[0][2])
+  const gasLimit = useGasLimitForPath(trade?.route.path.map((t: Token) => t.address))
   const { maxBaseFeePerGas } = useBaseFeePerGas()
 
   return useMemo(() => {
