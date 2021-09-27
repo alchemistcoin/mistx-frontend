@@ -7,7 +7,6 @@ import Footer from '../components/Footer'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import NewAppVersionAvailable from '../components/NewAppVersionAvailable'
-import EIP1559InfoModal from '../components/EIP1559InfoModal'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Swap from './Swap'
@@ -74,7 +73,6 @@ export default function App() {
         </BodyWrapper>
       </AppWrapper>
       <Popups />
-      <EIP1559InfoModal />
       <NewAppVersionAvailable />
       <ChatWidget />
     </Suspense>

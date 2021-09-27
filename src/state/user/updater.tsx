@@ -30,7 +30,7 @@ export default function Updater(): null {
       if (newBribeMargin && newBribeMargin !== state.userBribeMargin) {
         dispatch(updateUserBribeMargin({ userBribeMargin: newBribeMargin }))
       }
-      const oldDefaultUserDeadline = 60 * 7 // 20 minutes
+      const oldDefaultUserDeadline = 60 * 5 // 5 minutes
       if (state.userDeadline === oldDefaultUserDeadline) {
         dispatch(updateUserDeadline({ userDeadline: DEFAULT_DEADLINE_FROM_NOW }))
       }
