@@ -29,3 +29,13 @@ export const getRewards = ({ limit = DEFAULT_LIMIT, skip = DEFAULT_SKIP }: { lim
     params: query
   })
 }
+
+export const getTotalRewards = (address?: string) => {
+  const query = {
+    address
+  }
+
+  return axios.get(`${baseUrl}/rewards/totals`, {
+    params: query
+  })
+}

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { rgba } from 'polished'
-import { getRewards, Reward } from '../../api/rewards'
+import { getRewards, getTotalRewards, Reward } from '../../api/rewards'
 import { CloseIcon, ExternalLink } from 'theme'
 import dayjs from 'dayjs'
 import { getEtherscanLink } from 'utils'
 import { ChainId } from '@alchemist-coin/mistx-core'
 import { keccak256 } from '@ethersproject/keccak256'
+import { useActiveWeb3React } from 'hooks'
+import { Share } from 'react-feather'
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => rgba(theme.bg1, 0.92)};
@@ -120,9 +122,105 @@ const Loader = styled.div`
   text-align: center;
 `
 
+const Totals = styled.ul`
+  display: flex;
+  justify-content: space-around;
+  list-style-type: none;
+  margin: auto;
+  max-width: 960px;
+  padding: 0 1rem;
+`
+
+const TotalContainer = styled.li`
+  width: 20%;
+`
+
+const Total = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 112px;
+  justify-content: center;
+  padding: 1rem;
+`
+
+const TotalReward = styled.div`
+  font-family: 'Press Start 2P', 'VT323', Arial;
+  text-align: center;
+`
+
+const TotalCount = styled(TotalReward)`
+  font-size: 2rem;
+`
+
+const ETHReward = styled(TotalReward)`
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+`
+
+const USDReward = styled(TotalReward)`
+  font-size: 1rem;
+`
+
+const TotalLabel = styled.h5`
+  align-items: center;
+  border-top: 4px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 600;
+  justify-content: space-between;
+  margin: 0 0 2rem;
+  padding-left: 0.75rem;
+  padding-top: 0.75rem;
+`
+
+const LoaderTotal = styled.div`
+  align-items: center;
+  display: flex;
+  font-family: 'VT323', Arial;
+  font-size: 1rem;
+  justify-content: center;
+`
+
+const prettyNumberString = (str: string) => {
+  return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
 export default function RewardsLeaderboard({ onClose }: { onClose: () => void }) {
+  const { account } = useActiveWeb3React()
   const [loading, setLoading] = useState(false)
+  const [loadingTotals, setLoadingTotals] = useState(false)
   const [rewards, setRewards] = useState([] as any)
+  const [totalRewardsCount, setTotalRewardsCount] = useState<number | undefined>()
+  const [totalRewardsETH, setTotalRewardsETH] = useState<number | undefined>()
+  const [totalRewardsUSD, setTotalRewardsUSD] = useState<number | undefined>()
+  const [myRewardsCount, setMyRewardsCount] = useState<number | undefined>()
+  const [myRewardsETH, setMyRewardsETH] = useState<number | undefined>()
+  const [myRewardsUSD, setMyRewardsUSD] = useState<number | undefined>()
+
+  const loadTotals = async () => {
+    setLoadingTotals(true)
+    try {
+      const promises = [getTotalRewards()]
+      if (account) promises.push(getTotalRewards(account))
+
+      const [totalRewards, myRewards] = await Promise.all(promises)
+
+      setTotalRewardsCount(totalRewards.data.count)
+      setTotalRewardsETH(totalRewards.data.totals.totalValueETH)
+      setTotalRewardsUSD(totalRewards.data.totals.totalValueUSD)
+
+      if (myRewards) {
+        setMyRewardsCount(myRewards.data.count)
+        setMyRewardsETH(myRewards.data.totals.totalValueETH)
+        setMyRewardsUSD(myRewards.data.totals.totalValueUSD)
+      }
+      console.log('total rewards', totalRewards, myRewards)
+    } catch (e) {
+      console.error('Error getting rewards', e)
+    }
+    setLoadingTotals(false)
+  }
 
   const loadRewards = async () => {
     setLoading(true)
@@ -162,12 +260,99 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
     loadRewards()
   }, [])
 
+  useEffect(() => {
+    loadTotals()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Wrapper>
       <CloseButton>
         <CloseIcon onClick={handleClose} />
       </CloseButton>
       <Title>Top Rewards</Title>
+      <Totals>
+        <TotalContainer>
+          <Total>
+            {loadingTotals ? (
+              <LoaderTotal>Loading...</LoaderTotal>
+            ) : (
+              <TotalCount>{prettyNumberString(totalRewardsCount?.toString() || '0')}</TotalCount>
+            )}
+          </Total>
+          <TotalLabel>
+            Total Swaps
+            <br />
+            With Rewards
+          </TotalLabel>
+        </TotalContainer>
+        <TotalContainer>
+          <Total>
+            {loadingTotals ? (
+              <LoaderTotal>Loading...</LoaderTotal>
+            ) : (
+              <>
+                {totalRewardsETH && <ETHReward>{totalRewardsETH.toFixed(3)}ETH</ETHReward>}
+                {totalRewardsUSD && <USDReward>${prettyNumberString(totalRewardsUSD.toFixed(2) || '0')}</USDReward>}
+              </>
+            )}
+          </Total>
+          <TotalLabel>
+            Total Rewards
+            <br />
+            Distributed
+          </TotalLabel>
+        </TotalContainer>
+        {account && (
+          <>
+            <TotalContainer>
+              <Total>
+                {loadingTotals ? (
+                  <LoaderTotal>Loading...</LoaderTotal>
+                ) : (
+                  <TotalCount>{prettyNumberString(myRewardsCount?.toString() || '0')}</TotalCount>
+                )}
+              </Total>
+              <TotalLabel>
+                {`Times I've`}
+                <br />
+                Been Rewarded
+              </TotalLabel>
+            </TotalContainer>
+            <TotalContainer>
+              <Total>
+                {loadingTotals ? (
+                  <LoaderTotal>Loading...</LoaderTotal>
+                ) : (
+                  <>
+                    <ETHReward>{myRewardsETH?.toFixed(3) || 0}ETH</ETHReward>
+                    <USDReward>${prettyNumberString(myRewardsUSD?.toFixed(2) || '0')}</USDReward>
+                  </>
+                )}
+              </Total>
+              <TotalLabel>
+                <span>
+                  My Total
+                  <br />
+                  Rewards
+                </span>
+                {myRewardsETH && myRewardsETH > 0 && (
+                  <StyledExternalLink
+                    className="twitter-share-button"
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                      `I've received ${prettyNumberString(myRewardsETH?.toFixed(3) || '0')}ETH ($${prettyNumberString(
+                        myRewardsUSD?.toFixed(2) || '0'
+                      )}) in total rewards trading on https://app.mistx.io!`
+                    )}`}
+                  >
+                    <Share size={16} />
+                  </StyledExternalLink>
+                )}
+              </TotalLabel>
+            </TotalContainer>
+          </>
+        )}
+      </Totals>
       <RewardsList>
         {rewards.map((reward: Reward, index: number) => (
           <RewardItem key={reward._id}>
