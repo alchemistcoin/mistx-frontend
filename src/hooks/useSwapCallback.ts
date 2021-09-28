@@ -1,6 +1,6 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade, Currency, TradeType, Token } from '@alchemist-coin/mistx-core'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { BundleReq, SwapReq, TransactionReq } from '@alchemist-coin/mistx-connect'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
@@ -19,7 +19,6 @@ import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import useBaseFeePerGas from './useBaseFeePerGas'
 import { emitTransactionRequest } from '../websocket'
-import { useGasLimitForPath } from './useGasLimit'
 
 export enum SwapCallbackState {
   INVALID,
@@ -48,7 +47,6 @@ export function useSwapCallback(
   const deadline = useTransactionDeadline()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-  const gasLimit = useGasLimitForPath(trade?.route.path.map((t: Token) => t.address))
   const { maxBaseFeePerGas } = useBaseFeePerGas()
 
   return useMemo(() => {
@@ -103,7 +101,7 @@ export function useSwapCallback(
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
               nonce: nonce,
-              gasLimit: BigNumber.from(gasLimit || MISTX_DEFAULT_GAS_LIMIT),
+              gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
               type: 2,
               maxFeePerGas: maxBaseFeePerGas,
               maxPriorityFeePerGas: '0x0',
@@ -274,7 +272,6 @@ export function useSwapCallback(
     library,
     account,
     chainId,
-    gasLimit,
     recipient,
     recipientAddressOrName,
     swapCall,
