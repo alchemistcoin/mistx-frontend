@@ -1,9 +1,8 @@
-import { CurrencyAmount, JSBI, Currency, Ether, Trade, TradeType, Token } from '@alchemist-coin/mistx-core'
+import { CurrencyAmount, JSBI, Currency, Ether } from '@alchemist-coin/mistx-core'
 import { WrapType } from 'hooks/useWrapCallback'
 import { MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 import useBaseFeePerGas from '../hooks/useBaseFeePerGas'
 import { MIN_ETH } from '../constants'
-import { useGasLimitForPath } from 'hooks/useGasLimit'
 
 /**
  * Given some token amount, return the max that can be spent of it
@@ -11,12 +10,9 @@ import { useGasLimitForPath } from 'hooks/useGasLimit'
  */
 export function MaxAmountSpend(
   currencyAmount?: CurrencyAmount<Currency>,
-  wrapType?: WrapType,
-  trade?: Trade<Currency, Currency, TradeType>
+  wrapType?: WrapType
 ): CurrencyAmount<Currency> | undefined {
   const { maxBaseFeePerGas } = useBaseFeePerGas()
-  const gasLimit = useGasLimitForPath(trade?.route.path.map((t: Token) => t.address))
-
   if (!currencyAmount) return undefined
   const ETH = Ether.onChain(currencyAmount.currency.chainId)
   if (wrapType !== WrapType.NOT_APPLICABLE) {
@@ -26,10 +22,7 @@ export function MaxAmountSpend(
       return CurrencyAmount.fromRawAmount(ETH, JSBI.BigInt(0))
     }
   } else if (currencyAmount.currency.isNative && maxBaseFeePerGas) {
-    const minETH = JSBI.multiply(
-      JSBI.BigInt(maxBaseFeePerGas.toString()),
-      JSBI.BigInt(gasLimit || MISTX_DEFAULT_GAS_LIMIT)
-    )
+    const minETH = JSBI.multiply(JSBI.BigInt(maxBaseFeePerGas.toString()), JSBI.BigInt(MISTX_DEFAULT_GAS_LIMIT))
     if (JSBI.greaterThan(currencyAmount.quotient, minETH)) {
       return CurrencyAmount.fromRawAmount(ETH, JSBI.subtract(currencyAmount.quotient, minETH))
     } else {

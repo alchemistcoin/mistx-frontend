@@ -10,11 +10,6 @@ import { clearCompletedTransactions } from '../../state/transactions/actions'
 import { StyledHeading } from './styled'
 import { ExternalLink } from 'theme'
 import { TransactionDetails } from 'state/transactions/reducer'
-import { MouseoverTooltip } from 'components/Tooltip'
-import { ReactComponent as LeaderboardIcon } from '../../assets/svg/leaderboard-icon.svg'
-import { getEtherscanLink } from 'utils'
-import { ChainId } from '@alchemist-coin/mistx-core'
-import { keccak256 } from '@ethersproject/keccak256'
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -51,8 +46,12 @@ const StyledStatusWapper = styled.div`
 
   svg {
     display: flex;
+    opacity: 60%;
     cursor: pointer;
     margin-left: 6px;
+    path {
+      fill: #fff;
+    }
   }
 `
 
@@ -80,26 +79,6 @@ const StyledExternalLink = styled(ExternalLink)`
 
   :hover {
     color: #fff;
-  }
-`
-
-const StyledLeaderboardIcon = styled(LeaderboardIcon)`
-  fill: ${({ theme }) => theme.secondaryText1};
-  height: 1.25rem;
-  width: 1.25rem;
-
-  path {
-    fill: ${({ theme }) => theme.secondaryText1};
-  }
-`
-
-const StyledQuestionHelper = styled(QuestionHelper)`
-  svg {
-    opacity: 60%;
-  }
-
-  path {
-    fill: #fff;
   }
 `
 
@@ -135,36 +114,18 @@ export default function Transactions() {
               {tx.status === Status.SUCCESSFUL_BUNDLE && (
                 <StyledStatusWapper>
                   <StyledTransactionStatus success={true}>Success</StyledTransactionStatus>
-                  {tx.processed?.backrun && tx.processed?.backrun.best.count > 0 && (
-                    <MouseoverTooltip
-                      text={`Rewards: ${tx.processed.backrun.best.totalValueETH?.toFixed(
-                        4
-                      )}ETH ($${tx.processed.backrun.best.totalValueUSD?.toFixed(2)})`}
-                      placement="top"
-                    >
-                      <ExternalLink
-                        href={getEtherscanLink(
-                          ChainId.MAINNET,
-                          keccak256(tx.processed.backrun.best.transactions[0].serializedBackrun),
-                          'transaction'
-                        )}
-                      >
-                        <StyledLeaderboardIcon />
-                      </ExternalLink>
-                    </MouseoverTooltip>
-                  )}
                 </StyledStatusWapper>
               )}
               {tx.cancel && tx.cancel === Status.CANCEL_BUNDLE_SUCCESSFUL && (
                 <StyledStatusWapper>
                   <StyledTransactionStatus>Cancelled</StyledTransactionStatus>
-                  <StyledQuestionHelper text="Transaction cancelled for free" placement="top" />
+                  <QuestionHelper text="Transaction cancelled for free" placement="top" />
                 </StyledStatusWapper>
               )}
               {(tx.status === Status.FAILED_BUNDLE || tx.status === Status.BUNDLE_NOT_FOUND) && !tx.cancel && (
                 <StyledStatusWapper>
                   <StyledTransactionStatus failed={true}>Failed</StyledTransactionStatus>
-                  {tx.message && <StyledQuestionHelper text={tx.message} placement="top" />}
+                  {tx.message && <QuestionHelper text={tx.message} placement="top" />}
                 </StyledStatusWapper>
               )}
               {tx.status === Status.SUCCESSFUL_BUNDLE ? (
