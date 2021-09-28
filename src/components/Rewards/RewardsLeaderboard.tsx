@@ -129,10 +129,18 @@ const Totals = styled.ul`
   margin: auto;
   max-width: 960px;
   padding: 0 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-wrap: wrap;
+  `};
 `
 
 const TotalContainer = styled.li`
   width: 20%;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 40%;
+  `};
 `
 
 const Total = styled.div`
@@ -142,6 +150,11 @@ const Total = styled.div`
   height: 112px;
   justify-content: center;
   padding: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0;
+    height: 68px;
+  `};
 `
 
 const TotalReward = styled.div`
@@ -151,15 +164,28 @@ const TotalReward = styled.div`
 
 const TotalCount = styled(TotalReward)`
   font-size: 2rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 1.5rem;
+  `};
 `
 
 const ETHReward = styled(TotalReward)`
   font-size: 1.25rem;
   margin-bottom: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 1rem;
+    margin-bottom: .5rem;
+  `};
 `
 
 const USDReward = styled(TotalReward)`
   font-size: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: .75rem;
+  `};
 `
 
 const TotalLabel = styled.h5`
@@ -172,6 +198,12 @@ const TotalLabel = styled.h5`
   margin: 0 0 2rem;
   padding-left: 0.75rem;
   padding-top: 0.75rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-bottom: 1rem;
+    padding-left: .25rem;
+    padding-top: .5rem;
+  `};
 `
 
 const LoaderTotal = styled.div`
@@ -281,7 +313,7 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
             )}
           </Total>
           <TotalLabel>
-            Total Swaps
+            # Total Swaps
             <br />
             With Rewards
           </TotalLabel>
@@ -314,7 +346,7 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
                 )}
               </Total>
               <TotalLabel>
-                {`Times I've`}
+                {`# Times I've`}
                 <br />
                 Been Rewarded
               </TotalLabel>
