@@ -21,7 +21,7 @@ export function useGasLimitForPath(path: string[] | undefined) {
               delete loading[str]
               gasUsed[str] = response.data.gasUsed
 
-              setGasLimit(response.data.gasUsed * 1.1 || MISTX_DEFAULT_GAS_LIMIT)
+              setGasLimit(response.data.gasUsed || MISTX_DEFAULT_GAS_LIMIT) // add 10% margin to gasLimit
             })
             .catch(e => {
               delete loading[str]

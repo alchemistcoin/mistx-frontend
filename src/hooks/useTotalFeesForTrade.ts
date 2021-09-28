@@ -6,6 +6,7 @@ import { Currency, CurrencyAmount, Token, Trade, TradeType, WETH } from '@alchem
 import { useActiveWeb3React } from 'hooks'
 import { computeTradePriceBreakdown } from 'utils/prices'
 import { useGasLimitForPath } from './useGasLimit'
+import { calculateGasMargin } from 'utils'
 
 export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, TradeType>) {
   const { chainId } = useActiveWeb3React()
@@ -30,7 +31,7 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       if (maxBaseFeePerGas && minBaseFeePerGas) {
         maxBaseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
-          BigNumber.from(gasLimit || trade.estimatedGas)
+          calculateGasMargin(BigNumber.from(gasLimit || trade.estimatedGas))
             .mul(maxBaseFeePerGas)
             .toString()
         )
@@ -38,13 +39,13 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
         console.log('GAS LIMIT', gasLimit, trade.estimatedGas)
         minBaseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
-          BigNumber.from(gasLimit || trade.estimatedGas)
+          calculateGasMargin(BigNumber.from(gasLimit || trade.estimatedGas))
             .mul(minBaseFeePerGas)
             .toString()
         )
         baseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
-          BigNumber.from(gasLimit || trade.estimatedGas)
+          calculateGasMargin(BigNumber.from(gasLimit || trade.estimatedGas))
             .mul(BigNumber.from(baseFeePerGas))
             .toString()
         )
