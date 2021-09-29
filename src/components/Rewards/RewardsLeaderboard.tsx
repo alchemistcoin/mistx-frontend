@@ -406,7 +406,7 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
               getTweetText({ myRewardsETH, myRewardsUSD, totalRewardsUSD, totalCount: totalRewardsCount })
             )}`}
-            style={{ marginLeft: '1rem' }}
+            style={{ margin: '0 .75rem' }}
           >
             <Twitter size={28} />
           </StyledExternalIconLink>
@@ -482,13 +482,15 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
           </>
         )}
       </Totals>
-      <CheckboxContainer>
-        <CheckboxLabel>
-          <HiddenCheckbox checked={showAccountRewardsOnly} onChange={handleShowMyRewards} />
-          <StyledCheckbox checked={showAccountRewardsOnly}>{showAccountRewardsOnly && <Close />}</StyledCheckbox>
-          <span>Show Only My Rewards</span>
-        </CheckboxLabel>
-      </CheckboxContainer>
+      {account && (
+        <CheckboxContainer>
+          <CheckboxLabel>
+            <HiddenCheckbox checked={showAccountRewardsOnly} onChange={handleShowMyRewards} />
+            <StyledCheckbox checked={showAccountRewardsOnly}>{showAccountRewardsOnly && <Close />}</StyledCheckbox>
+            <span>Show Only My Rewards</span>
+          </CheckboxLabel>
+        </CheckboxContainer>
+      )}
       <RewardsList>
         {rewards.length > 0
           ? rewards.map((reward: Reward, index: number) => (
