@@ -8,10 +8,12 @@ import { getEtherscanLink } from 'utils'
 import { ChainId } from '@alchemist-coin/mistx-core'
 import { keccak256 } from '@ethersproject/keccak256'
 import { useActiveWeb3React } from 'hooks'
-import { Share } from 'react-feather'
+import { Twitter } from 'react-feather'
+import { Close } from 'components/Icons'
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => rgba(theme.bg1, 0.92)};
+  background-color: ${({ theme }) => rgba(theme.bg2, 0.92)};
+  color: ${({ theme }) => theme.text1};
   height: 100%;
   left: 0;
   overflow: auto;
@@ -33,9 +35,10 @@ const CloseButton = styled.button`
 `
 
 const Title = styled.h1`
-  colors: ${({ theme }) => theme.text1};
+  display: flex;
   font-family: 'Press Start 2P', 'VT323', Arial;
   font-size: 2.75rem;
+  justify-content: center;
   margin-bottom: 2rem;
   text-align: center;
 
@@ -106,6 +109,18 @@ const RewardItemCellValue = styled(RewardItemCell)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     text-align: right;
   `};
+`
+
+const StyledExternalIconLink = styled(ExternalLink)`
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 const StyledExternalLink = styled(ExternalLink)`
@@ -192,8 +207,9 @@ const TotalLabel = styled.h5`
   align-items: center;
   border-top: 4px solid rgba(255, 255, 255, 0.3);
   display: flex;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: 'VT323', Arial;
+  font-size: 1rem;
+  font-weight: 500;
   justify-content: space-between;
   margin: 0 0 2rem;
   padding-left: 0.75rem;
@@ -214,8 +230,77 @@ const LoaderTotal = styled.div`
   justify-content: center;
 `
 
+const CheckboxContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 0 1rem;
+`
+
+const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  // Hide checkbox visually but remain accessible to screen readers.
+  // Source: https://polished.js.org/docs/#hidevisually
+  border: 0;
+  clip: rect(0 0 0 0);
+  clippath: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+`
+
+const StyledCheckbox = styled.div<{ checked?: boolean }>`
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: ${({ checked, theme }) => (checked ? theme.text1 : 'transparent')};
+  border-radius: 1px;
+  border: 2px solid ${({ theme }) => theme.text1}
+  margin-right: .5rem;
+  transition: all 150ms;
+
+  > svg > path {
+    fill: ${({ theme }) => theme.bg2};
+  }
+`
+
+const CheckboxLabel = styled.label`
+  align-items: center;
+  cursor: pointer;
+  font-family: 'VT323', Arial;
+  display: flex;
+`
+
 const prettyNumberString = (str: string) => {
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+const getTweetText = ({
+  myRewardsETH,
+  myRewardsUSD,
+  totalCount,
+  totalRewardsUSD
+}: {
+  myRewardsETH?: number
+  myRewardsUSD?: number
+  totalCount: number
+  totalRewardsUSD: number
+}) => {
+  if (myRewardsETH && myRewardsUSD) {
+    return `I’ve earned $${prettyNumberString(myRewardsUSD.toFixed(0))} (${prettyNumberString(
+      myRewardsETH.toFixed(3)
+    )}ETH) instant cashback trading on mistX.io. A total of $${prettyNumberString(
+      totalRewardsUSD.toFixed(2)
+    )} has been paid out so far, will you be next? $mist ⚗️`
+  }
+
+  return `mistX.io gave me the opportunity to earn cashback on my trades. A total of $${prettyNumberString(
+    totalRewardsUSD.toFixed(0)
+  )} has been paid out so far, will you be next? $mist ⚗️`
 }
 
 export default function RewardsLeaderboard({ onClose }: { onClose: () => void }) {
@@ -229,6 +314,7 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
   const [myRewardsCount, setMyRewardsCount] = useState<number | undefined>()
   const [myRewardsETH, setMyRewardsETH] = useState<number | undefined>()
   const [myRewardsUSD, setMyRewardsUSD] = useState<number | undefined>()
+  const [showAccountRewardsOnly, setShowAccountRewardsOnly] = useState(false)
 
   const loadTotals = async () => {
     setLoadingTotals(true)
@@ -254,10 +340,10 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
     setLoadingTotals(false)
   }
 
-  const loadRewards = async () => {
+  const loadRewards = async (account?: string) => {
     setLoading(true)
     try {
-      const response = await getRewards()
+      const response = await getRewards({ account })
 
       console.log('response', response)
 
@@ -288,9 +374,19 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
     onClose()
   }
 
+  function handleShowMyRewards() {
+    setShowAccountRewardsOnly(!showAccountRewardsOnly)
+  }
+
   useEffect(() => {
-    loadRewards()
-  }, [])
+    if (showAccountRewardsOnly) {
+      if (account) {
+        loadRewards(account)
+      }
+    } else {
+      loadRewards()
+    }
+  }, [account, showAccountRewardsOnly])
 
   useEffect(() => {
     loadTotals()
@@ -302,7 +398,20 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
       <CloseButton>
         <CloseIcon onClick={handleClose} />
       </CloseButton>
-      <Title>Top Rewards</Title>
+      <Title>
+        Top Rewards.
+        {totalRewardsUSD && totalRewardsCount && (
+          <StyledExternalIconLink
+            className="twitter-share-button"
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+              getTweetText({ myRewardsETH, myRewardsUSD, totalRewardsUSD, totalCount: totalRewardsCount })
+            )}`}
+            style={{ marginLeft: '1rem' }}
+          >
+            <Twitter size={28} />
+          </StyledExternalIconLink>
+        )}
+      </Title>
       <Totals>
         <TotalContainer>
           <Total>
@@ -368,58 +477,55 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
                   <br />
                   Rewards
                 </span>
-                {myRewardsETH && myRewardsETH > 0 && (
-                  <StyledExternalLink
-                    className="twitter-share-button"
-                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                      `I've received ${prettyNumberString(myRewardsETH?.toFixed(3) || '0')}ETH ($${prettyNumberString(
-                        myRewardsUSD?.toFixed(2) || '0'
-                      )}) in total rewards trading on https://app.mistx.io!`
-                    )}`}
-                  >
-                    <Share size={16} />
-                  </StyledExternalLink>
-                )}
               </TotalLabel>
             </TotalContainer>
           </>
         )}
       </Totals>
+      <CheckboxContainer>
+        <CheckboxLabel>
+          <HiddenCheckbox checked={showAccountRewardsOnly} onChange={handleShowMyRewards} />
+          <StyledCheckbox checked={showAccountRewardsOnly}>{showAccountRewardsOnly && <Close />}</StyledCheckbox>
+          <span>Show Only My Rewards</span>
+        </CheckboxLabel>
+      </CheckboxContainer>
       <RewardsList>
-        {rewards.map((reward: Reward, index: number) => (
-          <RewardItem key={reward._id}>
-            <RewardItemCellNumber>{index + 1}.</RewardItemCellNumber>
-            <RewardItemCellDate>
-              <StyledExternalLink
-                href={getEtherscanLink(
-                  ChainId.MAINNET,
-                  keccak256(reward.transactions[0].serializedOrigin),
-                  'transaction'
-                )}
-              >
-                {reward.transactions[0].timestamp
-                  ? dayjs(reward.transactions[0].timestamp * 1000).format('YYYY-MM-DD')
-                  : 'N/A'}
-              </StyledExternalLink>
-            </RewardItemCellDate>
-            <RewardItemCell>
-              <StyledExternalLink href={getEtherscanLink(ChainId.MAINNET, reward.from, 'address')}>
-                {`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}
-              </StyledExternalLink>
-            </RewardItemCell>
-            <RewardItemCellValue>
-              <StyledExternalLink
-                href={getEtherscanLink(
-                  ChainId.MAINNET,
-                  keccak256(reward.transactions[0].serializedBackrun),
-                  'transaction'
-                )}
-              >
-                {`${reward.totalValueETH.toFixed(4)}ETH ($${reward.totalValueUSD.toFixed(2)})`}
-              </StyledExternalLink>
-            </RewardItemCellValue>
-          </RewardItem>
-        ))}
+        {rewards.length > 0
+          ? rewards.map((reward: Reward, index: number) => (
+              <RewardItem key={reward._id}>
+                <RewardItemCellNumber>{index + 1}.</RewardItemCellNumber>
+                <RewardItemCellDate>
+                  <StyledExternalLink
+                    href={getEtherscanLink(
+                      ChainId.MAINNET,
+                      keccak256(reward.transactions[0].serializedOrigin),
+                      'transaction'
+                    )}
+                  >
+                    {reward.transactions[0].timestamp
+                      ? dayjs(reward.transactions[0].timestamp * 1000).format('YYYY-MM-DD')
+                      : 'N/A'}
+                  </StyledExternalLink>
+                </RewardItemCellDate>
+                <RewardItemCell>
+                  <StyledExternalLink href={getEtherscanLink(ChainId.MAINNET, reward.from, 'address')}>
+                    {`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}
+                  </StyledExternalLink>
+                </RewardItemCell>
+                <RewardItemCellValue>
+                  <StyledExternalLink
+                    href={getEtherscanLink(
+                      ChainId.MAINNET,
+                      keccak256(reward.transactions[0].serializedBackrun),
+                      'transaction'
+                    )}
+                  >
+                    {`${reward.totalValueETH.toFixed(4)}ETH ($${reward.totalValueUSD.toFixed(2)})`}
+                  </StyledExternalLink>
+                </RewardItemCellValue>
+              </RewardItem>
+            ))
+          : !loading && <Loader>There are no rewards here yet...</Loader>}
         {loading ? (
           <Loader>...Loading Rewards</Loader>
         ) : (
