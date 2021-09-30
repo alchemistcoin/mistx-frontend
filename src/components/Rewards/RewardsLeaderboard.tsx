@@ -104,17 +104,14 @@ const RewardItemCellDate = styled(RewardItemCell)`
 
 const RewardItemCellValue = styled(RewardItemCell)`
   flex: 1;
-  text-align: center;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    text-align: right;
-  `};
+  text-align: right;
 `
 
 const StyledExternalIconLink = styled(ExternalLink)`
   align-items: center;
   color: inherit;
   display: inline-flex;
+  font-family: 'VT323', Arial;
   justify-content: center;
   text-decoration: none;
 
@@ -147,6 +144,7 @@ const Totals = styled.ul`
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     flex-wrap: wrap;
+    margin-bottom: 1rem;
   `};
 `
 
@@ -232,9 +230,9 @@ const LoaderTotal = styled.div`
 
 const CheckboxContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin: 0 auto;
-  max-width: 720px;
+  max-width: 800px;
   padding: 0 1rem;
 `
 
@@ -398,20 +396,7 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
       <CloseButton>
         <CloseIcon onClick={handleClose} />
       </CloseButton>
-      <Title>
-        Top Rewards.
-        {totalRewardsUSD && totalRewardsCount && (
-          <StyledExternalIconLink
-            className="twitter-share-button"
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-              getTweetText({ myRewardsETH, myRewardsUSD, totalRewardsUSD, totalCount: totalRewardsCount })
-            )}`}
-            style={{ margin: '0 .75rem' }}
-          >
-            <Twitter size={28} />
-          </StyledExternalIconLink>
-        )}
-      </Title>
+      <Title>Top Rewards.</Title>
       <Totals>
         <TotalContainer>
           <Total>
@@ -482,15 +467,30 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
           </>
         )}
       </Totals>
-      {account && (
-        <CheckboxContainer>
-          <CheckboxLabel>
-            <HiddenCheckbox checked={showAccountRewardsOnly} onChange={handleShowMyRewards} />
-            <StyledCheckbox checked={showAccountRewardsOnly}>{showAccountRewardsOnly && <Close />}</StyledCheckbox>
-            <span>Show Only My Rewards</span>
-          </CheckboxLabel>
-        </CheckboxContainer>
-      )}
+      <CheckboxContainer>
+        <div>
+          {account && (
+            <CheckboxLabel>
+              <HiddenCheckbox checked={showAccountRewardsOnly} onChange={handleShowMyRewards} />
+              <StyledCheckbox checked={showAccountRewardsOnly}>{showAccountRewardsOnly && <Close />}</StyledCheckbox>
+              <span>Show Only My Rewards</span>
+            </CheckboxLabel>
+          )}
+        </div>
+        <div>
+          {totalRewardsUSD && totalRewardsCount && (
+            <StyledExternalIconLink
+              className="twitter-share-button"
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                getTweetText({ myRewardsETH, myRewardsUSD, totalRewardsUSD, totalCount: totalRewardsCount })
+              )}`}
+            >
+              <Twitter size={20} style={{ marginRight: '.5rem' }} />
+              Share on Twitter
+            </StyledExternalIconLink>
+          )}
+        </div>
+      </CheckboxContainer>
       <RewardsList>
         {rewards.length > 0
           ? rewards.map((reward: Reward, index: number) => (
