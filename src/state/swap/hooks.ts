@@ -22,10 +22,11 @@ import { BigNumber } from '@ethersproject/bignumber'
 import {
   MIN_TRADE_MARGIN,
   BETTER_TRADE_LESS_HOPS_THRESHOLD,
-  MISTX_DEFAULT_GAS_LIMIT,
-  MISTX_DEFAULT_APPROVE_GAS_LIMIT
+  MISTX_DEFAULT_APPROVE_GAS_LIMIT,
+  MISTX_DEFAULT_GAS_LIMIT
 } from '../../constants'
 import useETHPrice from 'hooks/useEthPrice'
+import { useGasLimitForPath } from 'hooks/useGasLimit'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -209,6 +210,7 @@ export function useDerivedSwapInfo(): {
     }
   }
 
+  const gasLimit = useGasLimitForPath(v2Trade?.route.path.map((token: Token) => token.address))
   const rawAmount = useMemo(() => {
     if (v2Trade?.inputAmount.currency.isToken && v2Trade?.inputAmount.currency.isToken) return undefined
 
@@ -322,27 +324,41 @@ export function useDerivedSwapInfo(): {
   // only proceed to check eth balance for base fee and bribe
   // if there is not already an input error
   if (!inputError) {
-    const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-      Ether.onChain(chainId),
-      BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
-        .mul(maxBaseFeePerGas)
-        .toString()
-    )
-    const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-      Ether.onChain(chainId),
-      BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
-        .mul(maxBaseFeePerGas)
-        .toString()
-    )
+    let requiredEthInWallet: CurrencyAmount<Currency>
 
     // check if the user has ETH to pay the base fee and bribe
     const ethInTrade = isETHInTrade(v2Trade)
-    let requiredEthInWallet = baseFeeInEth
+    // use the gas limit for this path if its defined
+    if (gasLimit) {
+      requiredEthInWallet = CurrencyAmount.fromRawAmount(
+        Ether.onChain(chainId),
+        BigNumber.from(gasLimit)
+          .mul(maxBaseFeePerGas)
+          .toString()
+      )
+    } else {
+      const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+        Ether.onChain(chainId),
+        BigNumber.from(v2Trade.estimatedGas || MISTX_DEFAULT_GAS_LIMIT)
+          .mul(maxBaseFeePerGas)
+          .toString()
+      )
+
+      const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+        Ether.onChain(chainId),
+        BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
+          .mul(maxBaseFeePerGas)
+          .toString()
+      )
+      requiredEthInWallet = baseFeeInEth
+      if (!ethInTrade) {
+        requiredEthInWallet = requiredEthInWallet.add(approveBaseFeeInEth)
+      }
+    }
+
+    // add amountIn to required ETH if there's ETH in the trade
     if (amountIn && ethInTrade) {
       requiredEthInWallet = requiredEthInWallet.add(amountIn)
-    }
-    if (!ethInTrade) {
-      requiredEthInWallet = requiredEthInWallet.add(approveBaseFeeInEth)
     }
 
     const requiredEthForMinerBribe: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(

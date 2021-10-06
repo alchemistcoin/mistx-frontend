@@ -33,12 +33,13 @@ export const RowFlat = styled.div`
 
 export const AutoRow = styled(Row)<{ gap?: string; justify?: string }>`
   flex-wrap: wrap;
-  margin: ${({ gap }) => gap && `-${gap}`};
+  ${({ gap }) => (gap ? `margin: -${gap};` : '')}
   ${({ justify }) => (justify ? `justify-content: ${justify};` : '')}
-
-  & > * {
-    margin: ${({ gap }) => gap} !important;
-  }
+  ${({ gap }) =>
+    gap &&
+    `& > * {
+      margin: ${gap} !important;
+    }`}
 `
 
 export const RowFixed = styled(Row)<{ gap?: string; justify?: string }>`
