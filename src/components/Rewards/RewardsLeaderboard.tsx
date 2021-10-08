@@ -6,6 +6,7 @@ import { CloseIcon, ExternalLink } from 'theme'
 import dayjs from 'dayjs'
 import { getEtherscanLink } from 'utils'
 import { ChainId } from '@alchemist-coin/mistx-core'
+import { keccak256 } from '@ethersproject/keccak256'
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => rgba(theme.bg1, 0.92)};
@@ -171,22 +172,45 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
         {rewards.map((reward: Reward, index: number) => (
           <RewardItem key={reward._id}>
             <RewardItemCellNumber>{index + 1}.</RewardItemCellNumber>
-            <RewardItemCellDate>{dayjs(reward.transactions[0].timestamp * 1000).format('YY-MM-DD')}</RewardItemCellDate>
+            <RewardItemCellDate>
+              <StyledExternalLink
+                href={getEtherscanLink(
+                  ChainId.MAINNET,
+                  keccak256(reward.transactions[0].serializedOrigin),
+                  'transaction'
+                )}
+              >
+                {reward.transactions[0].timestamp
+                  ? dayjs(reward.transactions[0].timestamp * 1000).format('YYYY-MM-DD')
+                  : 'N/A'}
+              </StyledExternalLink>
+            </RewardItemCellDate>
             <RewardItemCell>
               <StyledExternalLink href={getEtherscanLink(ChainId.MAINNET, reward.from, 'address')}>
                 {`${reward.from.substring(0, 8)}...${reward.from.substring(36)}`}
               </StyledExternalLink>
             </RewardItemCell>
             <RewardItemCellValue>
-              {`${reward.totalValueETH.toFixed(4)}ETH ($${reward.totalValueUSD.toFixed(2)})`}
+              <StyledExternalLink
+                href={getEtherscanLink(
+                  ChainId.MAINNET,
+                  keccak256(reward.transactions[0].serializedBackrun),
+                  'transaction'
+                )}
+              >
+                {`${reward.totalValueETH.toFixed(4)}ETH ($${reward.totalValueUSD.toFixed(2)})`}
+              </StyledExternalLink>
             </RewardItemCellValue>
           </RewardItem>
         ))}
-        {loading && <Loader>...Loading Rewards</Loader>}
-        {rewards.length > 0 && (
-          <LoadMoreButton onClick={loadMoreResults} type="button">
-            Load More Rewards
-          </LoadMoreButton>
+        {loading ? (
+          <Loader>...Loading Rewards</Loader>
+        ) : (
+          rewards.length > 0 && (
+            <LoadMoreButton onClick={loadMoreResults} type="button">
+              Load More Rewards
+            </LoadMoreButton>
+          )
         )}
       </RewardsList>
     </Wrapper>
