@@ -10,7 +10,7 @@ import { useTradeExactIn, useTradeExactOut, useMinTradeAmount, MinTradeEstimates
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import useLatestGasPrice from '../../hooks/useLatestGasPrice'
 import useBaseFeePerGas from '../../hooks/useBaseFeePerGas'
-import { isAddress } from '../../utils'
+import { calculateGasMargin, isAddress } from '../../utils'
 import { isETHInTrade, isETHOutTrade, isTradeBetter } from '../../utils/trades'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalance, useCurrencyBalances } from '../wallet/hooks'
@@ -332,7 +332,7 @@ export function useDerivedSwapInfo(): {
     if (gasLimit) {
       requiredEthInWallet = CurrencyAmount.fromRawAmount(
         Ether.onChain(chainId),
-        BigNumber.from(gasLimit)
+        calculateGasMargin(BigNumber.from(gasLimit))
           .mul(maxBaseFeePerGas)
           .toString()
       )
