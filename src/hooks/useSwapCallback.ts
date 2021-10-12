@@ -100,6 +100,9 @@ export function useSwapCallback(
                 : await contract.signer.getTransactionCount().then(nonce => {
                     return nonce + 1
                   })
+
+
+            console.log('GASLIMIT', gasLimit, calculateGasMargin(BigNumber.from(gasLimit)).toString())
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
               nonce: nonce,

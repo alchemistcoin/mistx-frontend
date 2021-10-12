@@ -337,23 +337,23 @@ export function useDerivedSwapInfo(): {
           .toString()
       )
     } else {
-      const baseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+      requiredEthInWallet = CurrencyAmount.fromRawAmount(
         Ether.onChain(chainId),
-        BigNumber.from(v2Trade.estimatedGas || MISTX_DEFAULT_GAS_LIMIT)
+        BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
           .mul(maxBaseFeePerGas)
           .toString()
       )
+    }
 
-      const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
-        Ether.onChain(chainId),
-        BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
-          .mul(maxBaseFeePerGas)
-          .toString()
-      )
-      requiredEthInWallet = baseFeeInEth
-      if (!ethInTrade) {
-        requiredEthInWallet = requiredEthInWallet.add(approveBaseFeeInEth)
-      }
+    const approveBaseFeeInEth: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(
+      Ether.onChain(chainId),
+      BigNumber.from(MISTX_DEFAULT_APPROVE_GAS_LIMIT)
+        .mul(maxBaseFeePerGas)
+        .toString()
+    )
+
+    if (!ethInTrade) {
+      requiredEthInWallet = requiredEthInWallet.add(approveBaseFeeInEth)
     }
 
     // add amountIn to required ETH if there's ETH in the trade

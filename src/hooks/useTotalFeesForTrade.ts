@@ -7,6 +7,7 @@ import { useActiveWeb3React } from 'hooks'
 import { computeTradePriceBreakdown } from 'utils/prices'
 import { useGasLimitForPath } from './useGasLimit'
 import { calculateGasMargin } from 'utils'
+import { MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 
 export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, TradeType>) {
   const { chainId } = useActiveWeb3React()
@@ -27,27 +28,15 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
       maxTotalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
+      const gas = gasLimit ? calculateGasMargin(BigNumber.from(gasLimit)) : BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
 
       if (maxBaseFeePerGas && minBaseFeePerGas) {
-        maxBaseFeeInEth = CurrencyAmount.fromRawAmount(
-          WETH[chainId || 1],
-          calculateGasMargin(BigNumber.from(gasLimit || trade.estimatedGas))
-            .mul(maxBaseFeePerGas)
-            .toString()
-        )
+        maxBaseFeeInEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], gas.mul(maxBaseFeePerGas).toString())
 
-        console.log('GAS LIMIT', gasLimit, trade.estimatedGas)
-        minBaseFeeInEth = CurrencyAmount.fromRawAmount(
-          WETH[chainId || 1],
-          calculateGasMargin(BigNumber.from(gasLimit || trade.estimatedGas))
-            .mul(minBaseFeePerGas)
-            .toString()
-        )
+        minBaseFeeInEth = CurrencyAmount.fromRawAmount(WETH[chainId || 1], gas.mul(minBaseFeePerGas).toString())
         baseFeeInEth = CurrencyAmount.fromRawAmount(
           WETH[chainId || 1],
-          calculateGasMargin(BigNumber.from(gasLimit || trade.estimatedGas))
-            .mul(BigNumber.from(baseFeePerGas))
-            .toString()
+          gas.mul(BigNumber.from(baseFeePerGas)).toString()
         )
         totalFeeInEth = totalFeeInEth.add(baseFeeInEth) // add the base fee
         maxTotalFeeInEth = maxTotalFeeInEth.add(maxBaseFeeInEth) // add max base fee
@@ -63,15 +52,5 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       maxTotalFeeInEth,
       totalFeeInEth
     }
-  }, [
-    gasLimit,
-    maxBaseFeePerGas,
-    minBaseFeePerGas,
-    chainId,
-    ethPrice,
-    realizedLPFee,
-    trade.estimatedGas,
-    trade.minerBribe,
-    baseFeePerGas
-  ])
+  }, [gasLimit, maxBaseFeePerGas, minBaseFeePerGas, chainId, ethPrice, realizedLPFee, trade.minerBribe, baseFeePerGas])
 }
