@@ -23,5 +23,5 @@ jobs:
 
       - name: Run unit tests
         env: 
-          REACT_APP_SERVER_URL: ${{secrets.REACT_APP_SERVER_URL}}
+          REACT_APP_NETWORK_URL: ${{secrets.REACT_APP_NETWORK_URL}}
         run: yarn test
