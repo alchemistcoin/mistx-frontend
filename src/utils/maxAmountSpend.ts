@@ -4,6 +4,8 @@ import { MISTX_DEFAULT_GAS_LIMIT } from '../constants'
 import useBaseFeePerGas from '../hooks/useBaseFeePerGas'
 import { MIN_ETH } from '../constants'
 import { useGasLimitForPath } from 'hooks/useGasLimit'
+import { calculateGasMargin } from 'utils'
+import { BigNumber } from '@ethersproject/bignumber'
 
 /**
  * Given some token amount, return the max that can be spent of it
@@ -28,7 +30,7 @@ export function MaxAmountSpend(
   } else if (currencyAmount.currency.isNative && maxBaseFeePerGas) {
     const minETH = JSBI.multiply(
       JSBI.BigInt(maxBaseFeePerGas.toString()),
-      JSBI.BigInt(gasLimit || MISTX_DEFAULT_GAS_LIMIT)
+      JSBI.BigInt((gasLimit && calculateGasMargin(BigNumber.from(gasLimit)).toString()) || MISTX_DEFAULT_GAS_LIMIT)
     )
     if (JSBI.greaterThan(currencyAmount.quotient, minETH)) {
       return CurrencyAmount.fromRawAmount(ETH, JSBI.subtract(currencyAmount.quotient, minETH))

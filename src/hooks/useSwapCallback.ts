@@ -1,11 +1,10 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
+import { Trade, Currency, TradeType, Token } from '@alchemist-coin/mistx-core'
 import { BundleReq, SwapReq, TransactionReq } from '@alchemist-coin/mistx-connect'
-import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { isAddress, shortenAddress } from '../utils'
+import { calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
@@ -19,6 +18,7 @@ import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import useBaseFeePerGas from './useBaseFeePerGas'
 import { emitTransactionRequest } from '../websocket'
+import { useGasLimitForPath } from './useGasLimit'
 
 export enum SwapCallbackState {
   INVALID,
@@ -47,6 +47,7 @@ export function useSwapCallback(
   const deadline = useTransactionDeadline()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const gasLimit = useGasLimitForPath(trade?.route.path.map((t: Token) => t.address))
   const { maxBaseFeePerGas } = useBaseFeePerGas()
 
   return useMemo(() => {
@@ -98,10 +99,13 @@ export function useSwapCallback(
                 : await contract.signer.getTransactionCount().then(nonce => {
                     return nonce + 1
                   })
+
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
               nonce: nonce,
-              gasLimit: BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
+              gasLimit: gasLimit
+                ? calculateGasMargin(BigNumber.from(gasLimit))
+                : BigNumber.from(MISTX_DEFAULT_GAS_LIMIT),
               type: 2,
               maxFeePerGas: maxBaseFeePerGas,
               maxPriorityFeePerGas: '0x0',
@@ -179,15 +183,6 @@ export function useSwapCallback(
                       : recipientAddressOrName
                   }`
 
-            const minerBribeBN = BigNumber.from(args[1])
-            const totalFees = minerBribeBN
-            // if (baseFeePerGas && populatedTx.gasLimit) {
-            //   // totalFees = totalFees.add(baseFeePerGas.mul(trade.estimatedGas.toString()))
-            //   const requiredFunds = baseFeePerGas.mul(populatedTx.gasLimit).add(value)
-            //   console.log('requiredFunds', requiredFunds.toString())
-            // }
-            const estimatedEffectiveGasPriceBn = totalFees.div(BigNumber.from(trade.estimatedGas))
-            const estimatedEffectiveGasPrice = Number(formatUnits(estimatedEffectiveGasPriceBn, 'gwei'))
             const swapReq: SwapReq = {
               amount0: args[0][0] as string,
               amount1: args[0][1] as string,
@@ -197,8 +192,6 @@ export function useSwapCallback(
 
             // Create the transaction body with the serialized tx
             const transactionReq: TransactionReq = {
-              estimatedGas: Number(trade.estimatedGas),
-              estimatedEffectiveGasPrice,
               serialized: signedTx,
               raw: swapReq
             }
@@ -211,8 +204,6 @@ export function useSwapCallback(
             if (signedApproval) {
               // if there is an approval, create the Approval tx object
               const signedTransactionApproval: TransactionReq = {
-                estimatedGas: 25000,
-                estimatedEffectiveGasPrice: 0,
                 serialized: signedApproval,
                 raw: undefined
               }
@@ -272,6 +263,7 @@ export function useSwapCallback(
     library,
     account,
     chainId,
+    gasLimit,
     recipient,
     recipientAddressOrName,
     swapCall,
