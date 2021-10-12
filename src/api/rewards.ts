@@ -19,13 +19,33 @@ export interface Reward {
   _id: string
 }
 
-export const getRewards = ({ limit = DEFAULT_LIMIT, skip = DEFAULT_SKIP }: { limit?: number; skip?: number } = {}) => {
-  const query = {
+export const getRewards = ({
+  account,
+  limit = DEFAULT_LIMIT,
+  skip = DEFAULT_SKIP
+}: { account?: string; limit?: number; skip?: number } = {}) => {
+  const query: {
+    address?: string
+    limit: number
+    skip: number
+  } = {
     limit,
     skip
   }
 
+  if (account) query.address = account
+
   return axios.get(`${baseUrl}/rewards`, {
+    params: query
+  })
+}
+
+export const getTotalRewards = (address?: string) => {
+  const query = {
+    address
+  }
+
+  return axios.get(`${baseUrl}/rewards/totals`, {
     params: query
   })
 }
