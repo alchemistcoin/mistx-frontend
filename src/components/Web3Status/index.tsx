@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
-import { useHasSocks } from '../../hooks/useSocksBalance'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { isPendingTransaction, isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
@@ -115,12 +114,6 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
   return b.addedTime - a.addedTime
 }
 
-const SOCK = (
-  <span role="img" aria-label="has socks emoji" style={{ marginTop: -4, marginBottom: -4 }}>
-    🧦
-  </span>
-)
-
 // eslint-disable-next-line react/prop-types
 // function StatusIcon({ connector }: { connector: AbstractConnector }) {
 //   if (!connector) return null
@@ -146,7 +139,6 @@ function Web3StatusInner() {
   const pending = sortedRecentTransactions.filter(tx => isPendingTransaction(tx)).map(tx => tx.hash)
 
   const hasPendingTransactions = !!pending.length
-  const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
 
   if (account) {
@@ -158,7 +150,6 @@ function Web3StatusInner() {
           </RowBetween>
         ) : (
           <>
-            {hasSocks ? SOCK : null}
             <Text>{ENSName || shortenAddress(account, 3)}</Text>
           </>
         )}
