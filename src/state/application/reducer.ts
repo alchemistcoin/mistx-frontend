@@ -10,7 +10,8 @@ import {
   setOpenModal,
   updateSocketStatus,
   updateNewAppVersionAvailable,
-  toggleSideBar
+  toggleSideBar,
+  setGasLimitForPath
 } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
@@ -22,6 +23,9 @@ export interface ApplicationState {
   readonly socketStatus: boolean
   readonly newAppVersionAvailable: boolean
   readonly sideBarOpen: boolean
+  readonly gasLimits: {
+    [path: string]: number
+  }
 }
 
 const initialState: ApplicationState = {
@@ -31,7 +35,8 @@ const initialState: ApplicationState = {
   fees: undefined,
   socketStatus: true,
   newAppVersionAvailable: false,
-  sideBarOpen: false
+  sideBarOpen: false,
+  gasLimits: {}
 }
 
 export default createReducer(initialState, builder =>
@@ -76,5 +81,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(toggleSideBar, state => {
       state.sideBarOpen = !state.sideBarOpen
+    })
+    .addCase(setGasLimitForPath, (state, { payload }) => {
+      state.gasLimits[payload.path] = payload.gasLimit
     })
 )
