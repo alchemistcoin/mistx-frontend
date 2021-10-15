@@ -5,7 +5,7 @@ import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
-import { calculateGasMargin } from '../utils'
+import { BigNumber } from '@ethersproject/bignumber'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 import useBaseFeePerGas from './useBaseFeePerGas'
@@ -123,7 +123,7 @@ export function useApproveCallback(
         amountToApprove.quotient.toString(),
         {
           nonce: nonce,
-          gasLimit: calculateGasMargin(estimatedGas), //needed?
+          gasLimit: estimatedGas.mul(BigNumber.from(10000).add(BigNumber.from(1000))).div(BigNumber.from(10000)), // add 10%
           type: 2,
           maxFeePerGas: maxBaseFeePerGas,
           maxPriorityFeePerGas: '0x0'
