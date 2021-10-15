@@ -331,7 +331,6 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
         setMyRewardsETH(myRewards.data.totals.totalValueETH)
         setMyRewardsUSD(myRewards.data.totals.totalValueUSD)
       }
-      console.log('total rewards', totalRewards, myRewards)
     } catch (e) {
       console.error('Error getting rewards', e)
     }
@@ -358,8 +357,6 @@ export default function RewardsLeaderboard({ onClose }: { onClose: () => void })
       const response = await getRewards({
         skip: rewards.length
       })
-
-      console.log('response', response)
 
       setRewards([...rewards, ...response.data])
     } catch (e) {
