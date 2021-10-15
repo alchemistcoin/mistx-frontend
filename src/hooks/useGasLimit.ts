@@ -49,6 +49,5 @@ export function useGasLimitForPath(path: string[] | undefined) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [str])
 
-  return MISTX_DEFAULT_GAS_LIMIT
-  // return str ? gasLimits[str] : MISTX_DEFAULT_GAS_LIMIT
+  return str ? gasLimits[str] : MISTX_DEFAULT_GAS_LIMIT
 }
