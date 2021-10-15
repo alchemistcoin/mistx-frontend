@@ -48,3 +48,4 @@ export const removePopup = createAction<{ key: string }>('application/removePopu
 export const updateSocketStatus = createAction<boolean>('application/updateSocketStatus')
 export const updateNewAppVersionAvailable = createAction<boolean>('application/updateNewAppVersionAvailable')
 export const toggleSideBar = createAction('application/toggleSideBar')
+export const setGasLimitForPath = createAction<{ path: string; gasLimit: number }>('application/setGasLimit')

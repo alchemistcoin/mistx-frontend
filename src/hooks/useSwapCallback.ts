@@ -1,6 +1,6 @@
 import { PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Trade, Currency, TradeType, Token } from '@alchemist-coin/mistx-core'
+import { Trade, Currency, TradeType } from '@alchemist-coin/mistx-core'
 import { BundleReq, SwapReq, TransactionReq } from '@alchemist-coin/mistx-connect'
 import { useMemo } from 'react'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -18,7 +18,6 @@ import { useApproveCallbackFromTrade } from './useApproveCallback'
 import { useSwapCallArguments } from './useSwapCallArguments'
 import useBaseFeePerGas from './useBaseFeePerGas'
 import { emitTransactionRequest } from '../websocket'
-import { useGasLimitForPath } from './useGasLimit'
 
 export enum SwapCallbackState {
   INVALID,
@@ -36,7 +35,8 @@ interface SignedTransactionResponse {
 export function useSwapCallback(
   trade: Trade<Currency, Currency, TradeType> | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  gasLimit: number
   // transactionTTL: number // deadline to use for relay -- set to undefined for no relay
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
@@ -47,7 +47,6 @@ export function useSwapCallback(
   const deadline = useTransactionDeadline()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
-  const gasLimit = useGasLimitForPath(trade?.route.path.map((t: Token) => t.address))
   const { maxBaseFeePerGas } = useBaseFeePerGas()
 
   return useMemo(() => {
@@ -99,6 +98,10 @@ export function useSwapCallback(
                 : await contract.signer.getTransactionCount().then(nonce => {
                     return nonce + 1
                   })
+
+            if (!maxBaseFeePerGas || isZero(maxBaseFeePerGas?.toHexString())) {
+              throw new Error('There was an error getting the current base fee.')
+            }
 
             const populatedTx: PopulatedTransaction = await contract.populateTransaction[methodName](...args, {
               //modify nonce if we also have an approval
@@ -222,6 +225,8 @@ export function useSwapCallback(
                 .toHexString(),
               simulateOnly: false
             }
+
+            // console.log('gas limit, basefee', gasLimit, maxBaseFeePerGas?.toString())
 
             // dispatch "add transaction" action
             addTransaction(

@@ -46,6 +46,7 @@ import { computeTradePriceBreakdown } from '../../utils/prices'
 import { LinkStyledButton } from '../../theme'
 import FATHOM_GOALS from '../../constants/fathom'
 import SwapFooter from '../../components/swap/SwapFooter'
+import { useGasLimitForPath } from 'hooks/useGasLimit'
 
 const SwapWrapper = styled.div`
   background: #2a3645;
@@ -230,11 +231,14 @@ export default function Swap({ history }: RouteComponentProps) {
   )
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
+  const gasLimit = useGasLimitForPath(trade?.route.path.map((t: Token) => t.address))
+
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
     trade,
     allowedSlippage,
-    recipient
+    recipient,
+    gasLimit
     //transactionTTL
   )
 
