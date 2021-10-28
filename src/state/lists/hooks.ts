@@ -164,7 +164,7 @@ export function useIsListActive(url: string): boolean {
 }
 
 // return the alchemist token
-export function useAlchmeistToken(chainId: ChainId): any {
+export function useAlchemistToken(chainId: ChainId): any {
   const list = TRANSFORMED_DEFAULT_TOKEN_LIST
   const alchemistList = list[chainId]
   if (!alchemistList) return null
