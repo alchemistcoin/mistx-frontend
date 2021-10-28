@@ -6,12 +6,12 @@ import { useActiveWeb3React } from '../../hooks'
 import { useMulticallContract } from '../../hooks/useContract'
 import { isAddress } from '../../utils'
 import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
-import { useAlchmeistToken } from '../../state/lists/hooks'
+import { useAlchemistToken } from '../../state/lists/hooks'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
  */
-export function useETHBalances(
+function useETHBalances(
   uncheckedAddresses?: (string | undefined)[]
 ): { [address: string]: CurrencyAmount<Currency> | undefined } {
   const multicallContract = useMulticallContract()
@@ -28,11 +28,8 @@ export function useETHBalances(
     [uncheckedAddresses]
   )
 
-  const results = useSingleContractMultipleData(
-    multicallContract,
-    'getEthBalance',
-    addresses.map(address => [address])
-  )
+  const addressArrays = useMemo(() => addresses.map(address => [address]), [addresses])
+  const results = useSingleContractMultipleData(multicallContract, 'getEthBalance', addressArrays)
 
   return useMemo(() => {
     if (!chainId) return {}
@@ -57,8 +54,8 @@ export function useTokenBalancesWithLoadingIndicator(
   )
 
   const validatedTokenAddresses = useMemo(() => validatedTokens.map(vt => vt.address), [validatedTokens])
-
-  const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'balanceOf', [address])
+  const addresses = useMemo(() => [address], [address])
+  const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'balanceOf', addresses)
 
   const anyLoading: boolean = useMemo(() => balances.some(callState => callState.loading), [balances])
 
@@ -90,8 +87,11 @@ export function useTokenBalances(
 
 // get the balance for a single token/account combo
 export function useTokenBalance(account?: string, token?: Token): CurrencyAmount<Token> | undefined {
-  const tokenBalances = useTokenBalances(account, [token])
+  const tokens = useMemo(() => [token], [token])
+  const tokenBalances = useTokenBalances(account, tokens)
+
   if (!token) return undefined
+
   return tokenBalances[token.address]
 }
 
@@ -105,7 +105,8 @@ export function useCurrencyBalances(
 
   const tokenBalances = useTokenBalances(account, tokens)
   const containsETH: boolean = useMemo(() => currencies?.some(currency => currency?.isNative) ?? false, [currencies])
-  const ethBalance = useETHBalances(containsETH ? [account] : [])
+  const addresses = useMemo(() => (containsETH ? [account] : []), [containsETH, account])
+  const ethBalance = useETHBalances(addresses)
 
   return useMemo(
     () =>
@@ -120,7 +121,8 @@ export function useCurrencyBalances(
 }
 
 export function useCurrencyBalance(account?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
-  return useCurrencyBalances(account, [currency])[0]
+  const currencies = useMemo(() => [currency], [currency])
+  return useCurrencyBalances(account, currencies)[0]
 }
 
 // mimics useAllBalances
@@ -134,7 +136,7 @@ export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<
 
 export function useMistBalance(long?: boolean): any {
   const { account } = useActiveWeb3React()
-  const alchemistToken = useAlchmeistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
+  const alchemistToken = useAlchemistToken(1) // default ot mainnet as there is no mist token on other networks - value will fallback to 0 on other networks
   const balance = useCurrencyBalance(account ?? undefined, alchemistToken.token)
   if (!account) return 0
   if (long) return balance?.greaterThan('1') ? balance?.toFixed(4) : balance?.toFixed(0)

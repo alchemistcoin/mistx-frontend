@@ -142,10 +142,11 @@ export function useDerivedSwapInfo(): {
   const ethPriceIn = useETHPrice(inputCurrency as Token)
   const ethPriceOut = useETHPrice(outputCurrency as Token)
 
-  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
-    inputCurrency ?? undefined,
-    outputCurrency ?? undefined
+  const tokenBalanceTokens = useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [
+    inputCurrency,
+    outputCurrency
   ])
+  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, tokenBalanceTokens)
 
   const ethBalance = useCurrencyBalance(account ?? undefined, chainId ? Ether.onChain(chainId) : undefined)
 
