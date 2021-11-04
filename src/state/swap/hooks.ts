@@ -148,7 +148,8 @@ export function useDerivedSwapInfo(): {
   ])
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, tokenBalanceTokens)
 
-  const ethBalance = useCurrencyBalance(account ?? undefined, chainId ? Ether.onChain(chainId) : undefined)
+  const eth = useMemo(() => (chainId ? Ether.onChain(chainId) : undefined), [chainId])
+  const ethBalance = useCurrencyBalance(account ?? undefined, eth)
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
@@ -294,10 +295,8 @@ export function useDerivedSwapInfo(): {
   const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
 
   // compare input balance to max input based on version
-  const [balanceIn, amountIn] = [
-    currencyBalances[Field.INPUT],
-    slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null
-  ]
+  const balanceIn = currencyBalances[Field.INPUT]
+  const amountIn = slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
     inputError = 'Insufficient ' + amountIn.currency.symbol + ' balance'
   }
@@ -328,7 +327,7 @@ export function useDerivedSwapInfo(): {
     let requiredEthInWallet: CurrencyAmount<Currency>
 
     // check if the user has ETH to pay the base fee and bribe
-    const ethInTrade = isETHInTrade(v2Trade)
+    const ethInTrade = isETHInTrade(v2Trade) // if input currency is ETH
     // use the gas limit for this path if its defined
     if (gasLimit) {
       requiredEthInWallet = CurrencyAmount.fromRawAmount(
@@ -356,7 +355,6 @@ export function useDerivedSwapInfo(): {
     if (!ethInTrade) {
       requiredEthInWallet = requiredEthInWallet.add(approveBaseFeeInEth)
     }
-
     // add amountIn to required ETH if there's ETH in the trade
     if (amountIn && ethInTrade) {
       requiredEthInWallet = requiredEthInWallet.add(amountIn)
@@ -381,7 +379,7 @@ export function useDerivedSwapInfo(): {
       // console.log('Required ETH ALL: ', requiredEthInWallet.toExact())
       // console.log('ETH balance', ethBalance?.toSignificant())
       if (JSBI.LT(ethBalance?.quotient, requiredEthInWallet?.quotient)) {
-        inputError = 'Insufficient ETH balance'
+        inputError = `${Math.ceil(parseFloat(requiredEthInWallet?.toFixed(4)) * 1000) / 1000}ETH Balance Required`
       }
     }
   }
