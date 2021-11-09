@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { IBackrunTransactionProcessed } from '@alchemist-coin/mistx-connect'
 import config from '../config/environment'
 
@@ -19,11 +19,19 @@ export interface Reward {
   _id: string
 }
 
+interface RewardTotal {
+  totals: {
+    totalValueETH: number
+    totalValueUSD: number
+  }
+  count: number
+}
+
 export const getRewards = ({
   account,
   limit = DEFAULT_LIMIT,
   skip = DEFAULT_SKIP
-}: { account?: string; limit?: number; skip?: number } = {}) => {
+}: { account?: string; limit?: number; skip?: number } = {}): Promise<AxiosResponse<Reward[]>> => {
   const query: {
     address?: string
     limit: number
@@ -35,17 +43,17 @@ export const getRewards = ({
 
   if (account) query.address = account
 
-  return axios.get(`${baseUrl}/rewards`, {
+  return axios.get<Reward[]>(`${baseUrl}/rewards`, {
     params: query
   })
 }
 
-export const getTotalRewards = (address?: string) => {
+export const getTotalRewards = (address?: string): Promise<AxiosResponse<RewardTotal>> => {
   const query = {
     address
   }
 
-  return axios.get(`${baseUrl}/rewards/totals`, {
+  return axios.get<RewardTotal>(`${baseUrl}/rewards/totals`, {
     params: query
   })
 }

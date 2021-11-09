@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react'
+import React, { useContext, useCallback, ReactElement } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import useENS from '../../hooks/useENS'
 import { useActiveWeb3React } from '../../hooks'
@@ -75,7 +75,7 @@ export default function AddressInputPanel({
   value: string
   // triggers whenever the typed value changes
   onChange: (value: string) => void
-}) {
+}): ReactElement {
   const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 

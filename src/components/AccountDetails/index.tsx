@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import styled from 'styled-components'
 import { useActiveWeb3React } from '../../hooks'
 import { shortenAddress } from '../../utils'
@@ -201,7 +201,7 @@ interface AccountDetailsProps {
   openOptions: () => void
 }
 
-export default function AccountDetails({ toggleWalletModal, ENSName, openOptions }: AccountDetailsProps) {
+export default function AccountDetails({ toggleWalletModal, ENSName, openOptions }: AccountDetailsProps): ReactElement {
   const { chainId, account, connector, deactivate } = useActiveWeb3React()
   const { toggleSideBar } = useSideBarOpen()
   function formatConnectorName() {
