@@ -3,12 +3,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
-import { checkedTransaction, finalizeTransaction, serializeLegacyTransaction } from './actions'
+import {
+  checkedTransaction,
+  finalizeTransaction,
+  SerializableTransactionReceipt,
+  serializeLegacyTransaction
+} from './actions'
 import FATHOM_GOALS from '../../constants/fathom'
 
 export function shouldCheck(
   lastBlockNumber: number,
-  tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number }
+  tx: { addedTime: number; receipt?: SerializableTransactionReceipt; lastCheckedBlockNumber?: number }
 ): boolean {
   if (tx.receipt) return false
   if (!tx.lastCheckedBlockNumber) return true

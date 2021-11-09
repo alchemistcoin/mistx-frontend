@@ -83,7 +83,7 @@ const StyledGasTracker = styled(GasTracker)`
   `}
 `
 
-export default function Footer({ style }: { style?: object }) {
+export default function Footer({ style }: { style?: any }) {
   return (
     <FooterFrame style={style}>
       <Row>
