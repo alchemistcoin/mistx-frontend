@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 // @ts-nocheck
 
 declare global {

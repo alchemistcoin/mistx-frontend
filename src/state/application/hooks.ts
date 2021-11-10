@@ -125,7 +125,6 @@ export function useSideBarOpen(): any {
     dispatch(toggleSideBarAction())
     if (window.Intercom) {
       window.Intercom('hide')
-      /* eslint-disable @typescript-eslint/camelcase */
       window.Intercom('update', {
         hide_default_launcher: !sideBarOpen
       })

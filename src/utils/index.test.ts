@@ -1,6 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { AddressZero } from '@ethersproject/constants'
-import { Token, ChainId, Percent, JSBI, CurrencyAmount, Ether, Currency } from '@alchemist-coin/mistx-core'
+import { ChainId, Percent, JSBI, CurrencyAmount, Ether } from '@alchemist-coin/mistx-core'
 
 import {
   getEtherscanLink,
@@ -86,9 +85,9 @@ describe('utils', () => {
   })
 
   describe('#calculateGasMargin', () => {
-    it('adds 10%', () => {
-      expect(calculateGasMargin(BigNumber.from(1000)).toString()).toEqual('1300')
-      expect(calculateGasMargin(BigNumber.from(100)).toString()).toEqual('130')
+    it('adds 5%', () => {
+      expect(calculateGasMargin(BigNumber.from(1000)).toString()).toEqual('1050')
+      expect(calculateGasMargin(BigNumber.from(100)).toString()).toEqual('105')
     })
   })
 

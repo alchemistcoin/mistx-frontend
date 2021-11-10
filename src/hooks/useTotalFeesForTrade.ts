@@ -28,6 +28,8 @@ export default function useTotalFeesForTrade(trade: Trade<Currency, Currency, Tr
       realizedLPFeeInEth = ethPrice.quote(realizedLPFee?.wrapped)
       totalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
       maxTotalFeeInEth = realizedLPFeeInEth.add(trade.minerBribe)
+
+      // console.log('gaslimit', gasLimit)
       const gas = gasLimit ? calculateGasMargin(BigNumber.from(gasLimit)) : BigNumber.from(MISTX_DEFAULT_GAS_LIMIT)
 
       if (maxBaseFeePerGas && minBaseFeePerGas) {
