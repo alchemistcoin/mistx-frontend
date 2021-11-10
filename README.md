@@ -18,7 +18,7 @@ An open source interface for MistX -- a protocol for decentralized exchange of E
 
 To access the MistX Interface, use an IPFS gateway link from the
 [latest release](https://github.com/Uniswap/uniswap-interface/releases/latest), 
-or visit [app.uniswap.org](https://app.mistx.io).
+or visit [app.mistx.io](https://app.mistx.io).
 
 ## Listing a token
 
