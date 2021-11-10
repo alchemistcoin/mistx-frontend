@@ -45,8 +45,7 @@ export const walletconnect = new WalletConnectConnector({
   rpc: { 1: NETWORK_URL },
   bridge: WALLETCONNECT_BRIDGE_URL,
   infuraId: INFURA_ID,
-  qrcode: true,
-  pollingInterval: 10000
+  qrcode: true
 })
 
 // mainnet only
