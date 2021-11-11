@@ -10,15 +10,13 @@ An open source interface for MistX -- a protocol for decentralized exchange of E
 - Interface: [app.mistx.io](https://app.mistx.io)
 - Docs: [docs.alchemist.wtf/mist](https://docs.alchemist.wtf/mist/)
 - Twitter: [@_alchemistcoin_](https://twitter.com/_alchemistcoin)
-- Reddit: [/r/alchemistcoin](https://www.reddit.com/r/Uniswap/)
-- Email: [contact@uniswap.org](mailto:contact@uniswap.org)
+- Reddit: [/r/alchemistcoin](https://www.reddit.com/r/alchemistcoin/)
+- Email: [contact@alchemist.wtf](mailto:contact@alchemist.wtf)
 - Discord: [Alchemist](https://discord.gg/4CEvN6ZBnt)
 
 ## Accessing the MistX Interface
 
-To access the MistX Interface, use an IPFS gateway link from the
-[latest release](https://github.com/Uniswap/uniswap-interface/releases/latest), 
-or visit [app.uniswap.org](https://app.mistx.io).
+To access the MistX Interface, visit [app.mistx.io](https://app.mistx.io).
 
 ## Listing a token
 
