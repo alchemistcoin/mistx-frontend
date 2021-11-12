@@ -115,7 +115,7 @@ const SlippageEmojiContainer = styled.span`
   `}
 `
 
-const slippageDefaults = [10, 50, 100]
+const slippageDefaults = [100, 300, 500]
 
 export interface SlippageTabsProps {
   rawSlippage: number
@@ -212,7 +212,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
               {slippageValue / 100}%
             </Option>
           ))}
-          <OptionCustom active={![10, 50, 100].includes(rawSlippage)} warning={!slippageInputIsValid}>
+          <OptionCustom active={!slippageDefaults.includes(rawSlippage)} warning={!slippageInputIsValid}>
             {!!slippageInput &&
             (slippageError === SlippageError.RiskyLow || slippageError === SlippageError.RiskyHigh) ? (
               <SlippageEmojiContainer>

@@ -2,8 +2,13 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import { tipSettingToValue } from './reducer'
-import { DEFAULT_DEADLINE_FROM_NOW } from '../../constants'
-import { updateMatchesDarkMode, updateUserBribeMargin, updateUserDeadline } from './actions'
+import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
+import {
+  updateMatchesDarkMode,
+  updateUserBribeMargin,
+  updateUserDeadline,
+  updateUserSlippageTolerance
+} from './actions'
 
 export default function Updater(): null {
   const dispatch = useDispatch<AppDispatch>()
@@ -33,6 +38,10 @@ export default function Updater(): null {
       const oldDefaultUserDeadline = 60 * 5 // 5 minutes
       if (state.userDeadline === oldDefaultUserDeadline) {
         dispatch(updateUserDeadline({ userDeadline: DEFAULT_DEADLINE_FROM_NOW }))
+      }
+      const oldDefaultUserSlippage = 100 // 1 bips (1%)
+      if (state.userSlippageTolerance === oldDefaultUserSlippage) {
+        dispatch(updateUserSlippageTolerance({ userSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE }))
       }
     }
     setUpdatedDefaultUserSettings(true)

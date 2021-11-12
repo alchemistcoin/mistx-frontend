@@ -85,7 +85,7 @@ describe('utils', () => {
   })
 
   describe('#calculateGasMargin', () => {
-    it('adds 15%', () => {
+    it('adds 25%', () => {
       expect(calculateGasMargin(BigNumber.from(1000)).toString()).toEqual('1250')
       expect(calculateGasMargin(BigNumber.from(100)).toString()).toEqual('125')
     })
