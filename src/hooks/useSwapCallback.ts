@@ -88,7 +88,7 @@ export function useSwapCallback(
           if (library instanceof Web3Provider) {
             web3Provider = library as Web3Provider
             isMetamask = web3Provider.provider.isMetaMask
-            web3Provider.provider.isMetaMask = false
+            if (isMetamask) web3Provider.provider.isMetaMask = false
           }
 
           try {
@@ -151,7 +151,7 @@ export function useSwapCallback(
             }
 
             // Set isMetaMask again after signing. (workaround for an issue with isMetaMask set on the provider during signing)
-            if (web3Provider) {
+            if (web3Provider && isMetamask) {
               web3Provider.provider.isMetaMask = isMetamask
             }
 
@@ -254,7 +254,7 @@ export function useSwapCallback(
         } catch (error) {
           console.error(`Approval failed`, error)
           // Set isMetaMask again after signing. (workaround for an issue with isMetaMask set on the provider during signing)
-          if (web3Provider) {
+          if (web3Provider && isMetamask) {
             web3Provider.provider.isMetaMask = isMetamask
           }
           throw new Error(`Approval Failed: ${error.message}`)

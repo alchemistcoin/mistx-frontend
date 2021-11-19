@@ -5,7 +5,6 @@ import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
-import { BigNumber } from '@ethersproject/bignumber'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 import useBaseFeePerGas from './useBaseFeePerGas'
@@ -14,6 +13,7 @@ import { keccak256 } from '@ethersproject/keccak256'
 import { ethers } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { calculateGasMargin } from 'utils'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -113,7 +113,7 @@ export function useApproveCallback(
     if (library instanceof Web3Provider) {
       web3Provider = library as Web3Provider
       isMetamask = web3Provider.provider.isMetaMask
-      web3Provider.provider.isMetaMask = false
+      if (isMetamask) web3Provider.provider.isMetaMask = false
     }
     try {
       const nonce = await tokenContract.signer.getTransactionCount()
@@ -123,7 +123,7 @@ export function useApproveCallback(
         amountToApprove.quotient.toString(),
         {
           nonce: nonce,
-          gasLimit: estimatedGas.mul(BigNumber.from(10000).add(BigNumber.from(1000))).div(BigNumber.from(10000)), // add 10%
+          gasLimit: calculateGasMargin(estimatedGas), // add margin
           type: 2,
           maxFeePerGas: maxBaseFeePerGas,
           maxPriorityFeePerGas: '0x0'
